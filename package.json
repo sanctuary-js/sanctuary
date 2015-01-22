@@ -1,0 +1,23 @@
+{
+  "name": "sanctuary",
+  "version": "0.0.0",
+  "description": "Refuge from unsafe JavaScript",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/plaid/sanctuary.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "istanbul": "0.3.x",
+    "jscs": "1.10.x",
+    "jshint": "2.5.x",
+    "mocha": "2.x.x",
+    "xyz": "0.5.x"
+  },
+  "files": [
+    "/README.md",
+    "/index.js",
+    "/package.json"
+  ]
+}
