@@ -111,6 +111,62 @@
     return x == null ? Nothing() : Just(x);
   };
 
+  //  either  ////////////////////////////////////////////////////////////////
+
+  function Either() {
+    throw new Error('Cannot instantiate Either');
+  }
+
+  Either.prototype.type = Either;
+
+  function Left(value) {
+    if (!(this instanceof Left)) {
+      return new Left(value);
+    }
+    this.value = value;
+  }
+  extend(Left, Either);
+
+  //  Left#equals :: Either a b -> Boolean
+  Left.prototype.equals = function(either) {
+    return either instanceof Left && either.value === this.value;
+  };
+
+  //  Left#map :: (b -> c) -> Either a c
+  Left.prototype.map = function(f) {  // jshint ignore:line
+    return this;
+  };
+
+  function Right(value) {
+    if (!(this instanceof Right)) {
+      return new Right(value);
+    }
+    this.value = value;
+  }
+  extend(Right, Either);
+
+  //  Right#equals :: Either a b -> Boolean
+  Right.prototype.equals = function(either) {
+    return either instanceof Right && either.value === this.value;
+  };
+
+  //  Right#map :: (b -> c) -> Either a c
+  Right.prototype.map = function(f) {
+    return new Right(f(this.value));
+  };
+
+  //  either :: (a -> c) -> (b -> c) -> Either a b -> c
+  var either = curry(function(l, r, either) {
+    switch (true) {
+      case either instanceof Left:
+        return l(either.value);
+      case either instanceof Right:
+        return r(either.value);
+      default:
+        throw new TypeError('Pattern match failure');
+    }
+  });
+
   //  monad  /////////////////////////////////////////////////////////////////
 
   //  bind :: m a -> (a -> m b) -> m b
@@ -125,8 +181,8 @@
   });
 
   //  then :: (a -> m b) -> m a -> m b
-  var then = curry(function(f, maybe) {
-    return bind(maybe, f);
+  var then = curry(function(f, m) {
+    return bind(m, f);
   });
 
   //  control  ///////////////////////////////////////////////////////////////
@@ -179,11 +235,15 @@
   //  exports  ///////////////////////////////////////////////////////////////
 
   var sanctuary = {
+    Either: Either,
     Just: Just,
+    Left: Left,
     Maybe: Maybe,
     Nothing: Nothing,
+    Right: Right,
     at: at,
     bind: bind,
+    either: either,
     get: get,
     head: head,
     init: init,
