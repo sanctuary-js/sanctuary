@@ -28,6 +28,10 @@ describe('maybe', function() {
 
   describe('Nothing', function() {
 
+    it('is a function', function() {
+      eq(typeof S.Nothing, 'function');
+    });
+
     it('can be invoked with "new"', function() {
       assert(new S.Nothing() instanceof S.Nothing);
     });
@@ -37,12 +41,14 @@ describe('maybe', function() {
     });
 
     it('is a subtype of Maybe', function() {
-      assert(S.Nothing() instanceof S.Maybe);
-      eq(S.Nothing().type, S.Maybe);
+      var nothing = S.Nothing();
+      assert(nothing instanceof S.Maybe);
+      eq(nothing.type, S.Maybe);
     });
 
     it('provides an "equals" method', function() {
       var nothing = S.Nothing();
+      eq(nothing.equals.length, 1);
       eq(nothing.equals(nothing), true);
       eq(nothing.equals(S.Nothing()), true);
       eq(nothing.equals(new S.Nothing()), true);
@@ -51,12 +57,14 @@ describe('maybe', function() {
 
     it('provides a "map" method', function() {
       var nothing = S.Nothing();
+      eq(nothing.map.length, 1);
       eq(nothing.map(function() { return 42; }), nothing);
     });
 
     it('provides an "or" method', function() {
       var nothing = S.Nothing();
       var just = S.Just(42);
+      eq(S.Nothing().or.length, 1);
       eq(S.Nothing().or(nothing), nothing);
       eq(S.Nothing().or(just), just);
     });
@@ -64,6 +72,11 @@ describe('maybe', function() {
   });
 
   describe('Just', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Just, 'function');
+      eq(S.Just.length, 1);
+    });
 
     it('can be invoked with "new"', function() {
       assert(new S.Just(42) instanceof S.Just);
@@ -74,12 +87,14 @@ describe('maybe', function() {
     });
 
     it('is a subtype of Maybe', function() {
-      assert(S.Just(42) instanceof S.Maybe);
-      eq(S.Just(42).type, S.Maybe);
+      var just = S.Just(42);
+      assert(just instanceof S.Maybe);
+      eq(just.type, S.Maybe);
     });
 
     it('provides an "equals" method', function() {
       var just = S.Just(42);
+      eq(just.equals.length, 1);
       eq(just.equals(just), true);
       eq(just.equals(S.Just(42)), true);
       eq(just.equals(new S.Just(42)), true);
@@ -88,11 +103,14 @@ describe('maybe', function() {
     });
 
     it('provides a "map" method', function() {
-      assert(S.Just(42).map(function(x) { return x / 2; }).equals(S.Just(21)));
+      var just = S.Just(42);
+      eq(just.map.length, 1);
+      assert(just.map(function(x) { return x / 2; }).equals(S.Just(21)));
     });
 
     it('provides an "or" method', function() {
       var just = S.Just(42);
+      eq(just.or.length, 1);
       eq(just.or(S.Nothing()), just);
       eq(just.or(S.Just(42)), just);
     });
@@ -135,6 +153,136 @@ describe('maybe', function() {
     it('returns a Just when applied to any other value', function() {
       assert(S.toMaybe(0).equals(S.Just(0)));
       assert(S.toMaybe(false).equals(S.Just(false)));
+    });
+
+  });
+
+});
+
+describe('either', function() {
+
+  //  length :: String -> Number
+  var length = function(s) { return s.length; };
+
+  //  square :: Number -> Number
+  var square = function(n) { return n * n; };
+
+  describe('Either', function() {
+
+    it('throws if called', function() {
+      assert.throws(
+        function() { S.Either(); },
+        function(err) {
+          return err instanceof Error &&
+                 err.message === 'Cannot instantiate Either';
+        }
+      );
+    });
+
+  });
+
+  describe('Left', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Left, 'function');
+      eq(S.Left.length, 1);
+    });
+
+    it('can be invoked with "new"', function() {
+      assert(new S.Left(42) instanceof S.Left);
+    });
+
+    it('can be invoked without "new"', function() {
+      assert(S.Left(42) instanceof S.Left);
+    });
+
+    it('is a subtype of Either', function() {
+      var left = S.Left(42);
+      assert(left instanceof S.Either);
+      eq(left.type, S.Either);
+    });
+
+    it('provides an "equals" method', function() {
+      var left = S.Left(42);
+      eq(left.equals.length, 1);
+      eq(left.equals(left), true);
+      eq(left.equals(S.Left(42)), true);
+      eq(left.equals(new S.Left(42)), true);
+      eq(left.equals(S.Left('42')), false);
+      eq(left.equals(S.Right(42)), false);
+    });
+
+    it('provides a "map" method', function() {
+      var left = S.Left('Cannot divide by zero');
+      eq(left.map.length, 1);
+      eq(left.map(square), left);
+    });
+
+  });
+
+  describe('Right', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Right, 'function');
+      eq(S.Right.length, 1);
+    });
+
+    it('can be invoked with "new"', function() {
+      assert(new S.Right(42) instanceof S.Right);
+    });
+
+    it('can be invoked without "new"', function() {
+      assert(S.Right(42) instanceof S.Right);
+    });
+
+    it('is a subtype of Either', function() {
+      var right = S.Right(42);
+      assert(right instanceof S.Either);
+      eq(right.type, S.Either);
+    });
+
+    it('provides an "equals" method', function() {
+      var right = S.Right(42);
+      eq(right.equals.length, 1);
+      eq(right.equals(right), true);
+      eq(right.equals(S.Right(42)), true);
+      eq(right.equals(new S.Right(42)), true);
+      eq(right.equals(S.Right('42')), false);
+      eq(right.equals(S.Left(42)), false);
+    });
+
+    it('provides a "map" method', function() {
+      var right = S.Right(42);
+      eq(right.map.length, 1);
+      assert(right.map(square).equals(S.Right(1764)));
+    });
+
+  });
+
+  describe('either', function() {
+
+    it('can be applied to a Left', function() {
+      eq(S.either(length, square, S.Left('abc')), 3);
+    });
+
+    it('can be applied to a Right', function() {
+      eq(S.either(length, square, S.Right(42)), 1764);
+    });
+
+    it('throws if applied to a value of any other type', function() {
+      assert.throws(
+        function() { S.either(length, square, []); },
+        function(err) {
+          return err instanceof TypeError &&
+                 err.message === 'Pattern match failure';
+        }
+      );
+    });
+
+    it('is curried', function() {
+      eq(S.either(length)(square)(S.Left('abc')), 3);
+      eq(S.either(length)(square, S.Left('abc')), 3);
+      eq(S.either(length, square)(S.Left('abc')), 3);
     });
 
   });
