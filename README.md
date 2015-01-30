@@ -43,7 +43,7 @@ This approach is even cleaner if one uses [Ramda][1]:
 
 ```javascript
 // :: Maybe String
-R.map(R.toUpperCase, S.head(words))
+R.map(R.toUpper, S.head(words))
 ```
 
 
