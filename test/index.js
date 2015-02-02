@@ -46,6 +46,12 @@ describe('maybe', function() {
       eq(nothing.type, S.Maybe);
     });
 
+    it('provides a "chain" method', function() {
+      var nothing = S.Nothing();
+      eq(nothing.chain.length, 1);
+      eq(nothing.chain(S.head), nothing);
+    });
+
     it('provides an "equals" method', function() {
       var nothing = S.Nothing();
       eq(nothing.equals.length, 1);
@@ -90,6 +96,12 @@ describe('maybe', function() {
       var just = S.Just(42);
       assert(just instanceof S.Maybe);
       eq(just.type, S.Maybe);
+    });
+
+    it('provides a "chain" method', function() {
+      var just = S.Just([1, 2, 3]);
+      eq(just.chain.length, 1);
+      assert(just.chain(S.head).equals(S.Just(1)));
     });
 
     it('provides an "equals" method', function() {
@@ -283,91 +295,6 @@ describe('either', function() {
       eq(S.either(length)(square)(S.Left('abc')), 3);
       eq(S.either(length)(square, S.Left('abc')), 3);
       eq(S.either(length, square)(S.Left('abc')), 3);
-    });
-
-  });
-
-});
-
-describe('monad', function() {
-
-  describe('bind', function() {
-
-    //  toNumber :: String -> [Number]
-    var toNumber = function(s) {
-      var n = parseFloat(s);
-      return n === n ? [n] : [];
-    };
-
-    it('can be applied to empty array', function() {
-      var m = S.bind([], toNumber);
-      eq(Object.prototype.toString.call(m), '[object Array]');
-      eq(m.length, 0);
-    });
-
-    it('can be applied to singleton array', function() {
-      var m = S.bind(['42'], toNumber);
-      eq(Object.prototype.toString.call(m), '[object Array]');
-      eq(m.length, 1);
-      eq(m[0], 42);
-
-      var m2 = S.bind(['xxx'], toNumber);
-      eq(Object.prototype.toString.call(m2), '[object Array]');
-      eq(m2.length, 0);
-    });
-
-    it('can be applied to a Nothing', function() {
-      var m = S.bind(S.Nothing(), S.head);
-      assert(m.equals(S.Nothing()));
-    });
-
-    it('can be applied to a Just', function() {
-      var m = S.bind(S.Just([42, 21]), S.head);
-      assert(m.equals(S.Just(42)));
-    });
-
-    it('throws if applied to a non-monad', function() {
-      assert.throws(
-        function() { S.bind(/xxx/, S.head); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Pattern match failure';
-        }
-      );
-    });
-
-    it('is curried', function() {
-      var maybe = S.bind(S.Just([42, 21]))(S.head);
-      assert(maybe.equals(S.Just(42)));
-    });
-
-  });
-
-  describe('then', function() {
-
-    it('can be applied to a Nothing', function() {
-      var maybe = S.then(S.head, S.Nothing());
-      assert(maybe.equals(S.Nothing()));
-    });
-
-    it('can be applied to a Just', function() {
-      var maybe = S.then(S.head, S.Just([42, 21]));
-      assert(maybe.equals(S.Just(42)));
-    });
-
-    it('throws if applied to a value of non-monad', function() {
-      assert.throws(
-        function() { S.then(S.head, /xxx/); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Pattern match failure';
-        }
-      );
-    });
-
-    it('is curried', function() {
-      var maybe = S.then(S.head)(S.Just([42, 21]));
-      assert(maybe.equals(S.Just(42)));
     });
 
   });

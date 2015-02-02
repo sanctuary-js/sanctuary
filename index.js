@@ -55,6 +55,11 @@
   }
   extend(Nothing, Maybe);
 
+  //  Nothing#chain :: (a -> m b) -> m b
+  Nothing.prototype.chain = function(f) {  // jshint ignore:line
+    return this;
+  };
+
   //  Nothing#equals :: Maybe a -> Boolean
   Nothing.prototype.equals = function(maybe) {
     return maybe instanceof Nothing;
@@ -78,6 +83,11 @@
     }
   }
   extend(Just, Maybe);
+
+  //  Just#chain :: (a -> m b) -> m b
+  Just.prototype.chain = function(f) {
+    return f(this.value);
+  };
 
   //  Just#equals :: Maybe a -> Boolean
   Just.prototype.equals = function(maybe) {
@@ -167,24 +177,6 @@
     }
   });
 
-  //  monad  /////////////////////////////////////////////////////////////////
-
-  //  bind :: m a -> (a -> m b) -> m b
-  var bind = curry(function(m, f) {
-    if (isArray(m)) {
-      return m.length > 0 ? f(m[0]) : m;
-    } else if (m.type === Maybe) {
-      return m instanceof Just ? f(m.value) : m;
-    } else {
-      throw new TypeError('Pattern match failure');
-    }
-  });
-
-  //  then :: (a -> m b) -> m a -> m b
-  var then = curry(function(f, m) {
-    return bind(m, f);
-  });
-
   //  control  ///////////////////////////////////////////////////////////////
 
   //  or :: f a -> f a -> f a
@@ -265,7 +257,6 @@
     Nothing: Nothing,
     Right: Right,
     at: at,
-    bind: bind,
     either: either,
     get: get,
     head: head,
@@ -277,7 +268,6 @@
     parseInt: parseInt_,
     parseJson: parseJson,
     tail: tail,
-    then: then,
     toMaybe: toMaybe,
   };
 
