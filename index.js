@@ -246,6 +246,15 @@
     return n === n ? Just(n) : Nothing();
   });
 
+  //  parseJson :: String -> Maybe *
+  var parseJson = function(s) {
+    try {
+      return Just(JSON.parse(s));
+    } catch (err) {
+      return Nothing();
+    }
+  };
+
   //  exports  ///////////////////////////////////////////////////////////////
 
   var sanctuary = {
@@ -266,6 +275,7 @@
     or: or,
     parseFloat: parseFloat_,
     parseInt: parseInt_,
+    parseJson: parseJson,
     tail: tail,
     then: then,
     toMaybe: toMaybe,
