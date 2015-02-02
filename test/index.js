@@ -559,4 +559,20 @@ describe('parse', function() {
 
   });
 
+  describe('parseJson', function() {
+
+    it('returns a Just when applied to a valid JSON string', function() {
+      var xs = S.fromMaybe(null, S.parseJson('["foo","bar"]'));
+      eq(Object.prototype.toString.call(xs), '[object Array]');
+      eq(xs.length, 2);
+      eq(xs[0], 'foo');
+      eq(xs[1], 'bar');
+    });
+
+    it('returns a Nothing when applied to an invalid JSON string', function() {
+      assert(S.parseJson('[Invalid JSON]').equals(S.Nothing()));
+    });
+
+  });
+
 });
