@@ -232,6 +232,20 @@
     return hasOwnProperty_.call(obj, key) ? Just(obj[key]) : Nothing();
   });
 
+  //  parse  /////////////////////////////////////////////////////////////////
+
+  //  parseFloat_ :: String -> Maybe Number
+  var parseFloat_ = function(s) {
+    var n = parseFloat(s);
+    return n === n ? Just(n) : Nothing();
+  };
+
+  //  parseInt_ :: Number -> String -> Maybe Number
+  var parseInt_ = curry(function(radix, s) {
+    var n = parseInt(s, radix);
+    return n === n ? Just(n) : Nothing();
+  });
+
   //  exports  ///////////////////////////////////////////////////////////////
 
   var sanctuary = {
@@ -250,6 +264,8 @@
     fromMaybe: fromMaybe,
     last: last,
     or: or,
+    parseFloat: parseFloat_,
+    parseInt: parseInt_,
     tail: tail,
     then: then,
     toMaybe: toMaybe,
