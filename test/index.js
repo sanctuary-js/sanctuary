@@ -533,3 +533,30 @@ describe('object', function() {
   });
 
 });
+
+describe('parse', function() {
+
+  describe('parseFloat', function() {
+
+    it('returns a Maybe', function() {
+      assert(S.parseFloat('12.34').equals(S.Just(12.34)));
+      assert(S.parseFloat('xxx').equals(S.Nothing()));
+    });
+
+  });
+
+  describe('parseInt', function() {
+
+    it('returns a Maybe', function() {
+      assert(S.parseInt(10, '42').equals(S.Just(42)));
+      assert(S.parseInt(16, '2A').equals(S.Just(42)));
+      assert(S.parseInt(10, 'xxx').equals(S.Nothing()));
+    });
+
+    it('is curried', function() {
+      assert(S.parseInt(10)('42').equals(S.Just(42)));
+    });
+
+  });
+
+});
