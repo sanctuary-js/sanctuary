@@ -463,6 +463,22 @@ describe('object', function() {
 
 describe('parse', function() {
 
+  describe('parseDate', function() {
+
+    it('returns a Just when applied to a valid date string', function() {
+      var maybe = S.parseDate('2001-02-03T04:05:06Z');
+      eq(maybe.constructor, S.Just);
+      eq(S.fromMaybe(null, maybe).constructor, Date);
+      eq(S.fromMaybe(null, maybe).getFullYear(), 2001);
+    });
+
+    it('returns a Nothing when applied to an invalid date string', function() {
+      var maybe = S.parseDate('today');
+      eq(maybe.constructor, S.Nothing);
+    });
+
+  });
+
   describe('parseFloat', function() {
 
     it('returns a Maybe', function() {

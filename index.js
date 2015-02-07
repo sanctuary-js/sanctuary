@@ -226,6 +226,12 @@
 
   //  parse  /////////////////////////////////////////////////////////////////
 
+  //  parseDate :: String -> Maybe Date
+  var parseDate = function(s) {
+    var d = new Date(s);
+    return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
+  };
+
   //  parseFloat_ :: String -> Maybe Number
   var parseFloat_ = function(s) {
     var n = parseFloat(s);
@@ -264,6 +270,7 @@
     fromMaybe: fromMaybe,
     last: last,
     or: or,
+    parseDate: parseDate,
     parseFloat: parseFloat_,
     parseInt: parseInt_,
     parseJson: parseJson,
