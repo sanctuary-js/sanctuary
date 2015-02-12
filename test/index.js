@@ -478,6 +478,28 @@ describe('list', function() {
 
   });
 
+  describe('find', function() {
+
+    var T = function() { return true; };
+    var F = function() { return false; };
+
+    it('returns Just the first element satisfying the predicate', function() {
+      assert(S.find(T, [null]).equals(S.Just(null)));
+      assert(S.find(function(n) { return n >= 0; }, [-1, 0, 1])
+             .equals(S.Just(0)));
+    });
+
+    it('returns a Nothing if no element satisfies the predicate', function() {
+      assert(S.find(T, []).equals(S.Nothing()));
+      assert(S.find(F, [1, 2, 3]).equals(S.Nothing()));
+    });
+
+    it('is curried', function() {
+      assert(S.find(T)([null]).equals(S.Just(null)));
+    });
+
+  });
+
 });
 
 describe('object', function() {
