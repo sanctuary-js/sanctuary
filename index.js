@@ -121,6 +121,17 @@
     return x == null ? Nothing() : Just(x);
   };
 
+  //  encase :: (* -> a) -> (* -> Maybe a)
+  var encase = function(f) {
+    return function() {
+      try {
+        return Just(f.apply(this, arguments));
+      } catch (err) {
+        return Nothing();
+      }
+    };
+  };
+
   //  either  ////////////////////////////////////////////////////////////////
 
   function Either() {
@@ -245,13 +256,7 @@
   });
 
   //  parseJson :: String -> Maybe *
-  var parseJson = function(s) {
-    try {
-      return Just(JSON.parse(s));
-    } catch (err) {
-      return Nothing();
-    }
-  };
+  var parseJson = encase(JSON.parse);
 
   //  exports  ///////////////////////////////////////////////////////////////
 
@@ -264,6 +269,7 @@
     Right: Right,
     at: at,
     either: either,
+    encase: encase,
     get: get,
     head: head,
     init: init,

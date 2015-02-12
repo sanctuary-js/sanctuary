@@ -169,6 +169,40 @@ describe('maybe', function() {
 
   });
 
+  describe('encase', function() {
+
+    //  factorial :: Number -> Number
+    var factorial = function(n) {
+      if (n < 0) {
+        throw new Error('Cannot determine factorial of negative number');
+      } else if (n === 0) {
+        return 1;
+      } else {
+        return n * factorial(n - 1);
+      }
+    };
+
+    it('returns a function which returns a Just on success', function() {
+      assert(S.encase(factorial)(5).equals(S.Just(120)));
+    });
+
+    it('returns a function which returns a Nothing on failure', function() {
+      assert(S.encase(factorial)(-1).equals(S.Nothing()));
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      var f = S.encase(function(a, b, c, d, e) { return e; });
+      assert(f(1, 2, 3, 4, 5).equals(S.Just(5)));
+    });
+
+    it('preserves context', function() {
+      var f = S.encase(function() { return this; });
+      var ctx = {};
+      assert(f.call(ctx).equals(S.Just(ctx)));
+    });
+
+  });
+
 });
 
 describe('either', function() {
