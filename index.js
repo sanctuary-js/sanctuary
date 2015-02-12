@@ -228,6 +228,16 @@
     return xs.length > 0 ? Just(slice_.call(xs, 0, -1)) : Nothing();
   };
 
+  //  find :: (a -> Boolean) -> [a] -> Maybe a
+  var find = curry(function(pred, xs) {
+    for (var idx = 0, len = xs.length; idx < len; idx += 1) {
+      if (pred(xs[idx])) {
+        return Just(xs[idx]);
+      }
+    }
+    return Nothing();
+  });
+
   //  object  ////////////////////////////////////////////////////////////////
 
   //  get :: String -> Object -> Maybe *
@@ -270,6 +280,7 @@
     at: at,
     either: either,
     encase: encase,
+    find: find,
     get: get,
     head: head,
     init: init,
