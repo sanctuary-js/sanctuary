@@ -9,6 +9,12 @@ var S = require('..');
 
 var eq = assert.strictEqual;
 
+//  T :: a -> Boolean
+var T = function(x) { return true; };  // jshint ignore:line
+
+//  F :: a -> Boolean
+var F = function(x) { return false; };  // jshint ignore:line
+
 //  identity :: a -> a
 var identity = function(x) { return x; };
 
@@ -85,6 +91,23 @@ describe('maybe', function() {
       eq(nothing.equals(S.Nothing()), true);
       eq(nothing.equals(new S.Nothing()), true);
       eq(nothing.equals(S.Just(42)), false);
+    });
+
+    it('provides a "filter" method', function() {
+      var nothing = S.Nothing();
+      eq(nothing.filter.length, 1);
+      assert(nothing.filter(T).equals(S.Nothing()));
+      assert(nothing.filter(F).equals(S.Nothing()));
+
+      var m = S.Nothing();
+      var f = function(n) { return n * n; };
+      var p = function(n) { return n < 0; };
+      var q = function(n) { return n > 0; };
+
+      assert(m.map(f).filter(p)
+             .equals(m.filter(function(x) { return p(f(x)); }).map(f)));
+      assert(m.map(f).filter(q)
+             .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
     });
 
     it('provides a "map" method', function() {
@@ -236,6 +259,25 @@ describe('maybe', function() {
       eq(just.equals(new S.Just(42)), true);
       eq(just.equals(S.Just(43)), false);
       eq(just.equals(S.Nothing()), false);
+    });
+
+    it('provides a "filter" method', function() {
+      var just = S.Just(42);
+      eq(just.filter.length, 1);
+      assert(just.filter(T).equals(S.Just(42)));
+      assert(just.filter(F).equals(S.Nothing()));
+      assert(just.filter(function(n) { return n > 0; }).equals(S.Just(42)));
+      assert(just.filter(function(n) { return n < 0; }).equals(S.Nothing()));
+
+      var m = S.Just(-5);
+      var f = function(n) { return n * n; };
+      var p = function(n) { return n < 0; };
+      var q = function(n) { return n > 0; };
+
+      assert(m.map(f).filter(p)
+             .equals(m.filter(function(x) { return p(f(x)); }).map(f)));
+      assert(m.map(f).filter(q)
+             .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
     });
 
     it('provides a "map" method', function() {
@@ -681,9 +723,6 @@ describe('list', function() {
   });
 
   describe('find', function() {
-
-    var T = function() { return true; };
-    var F = function() { return false; };
 
     it('returns Just the first element satisfying the predicate', function() {
       assert(S.find(T, [null]).equals(S.Just(null)));
