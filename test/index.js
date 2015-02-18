@@ -9,6 +9,18 @@ var S = require('..');
 
 var eq = assert.strictEqual;
 
+//  identity :: a -> a
+var identity = function(x) { return x; };
+
+//  inc :: Number -> Number
+var inc = function(n) { return n + 1; };
+
+//  length :: [a] -> Number
+var length = function(xs) { return xs.length; };
+
+//  square :: Number -> Number
+var square = function(n) { return n * n; };
+
 
 describe('maybe', function() {
 
@@ -46,6 +58,13 @@ describe('maybe', function() {
       eq(nothing.type, S.Maybe);
     });
 
+    it('provides an "ap" method', function() {
+      var nothing = S.Nothing();
+      eq(nothing.ap.length, 1);
+      assert(nothing.ap(S.Nothing()).equals(S.Nothing()));
+      assert(nothing.ap(S.Just(42)).equals(S.Nothing()));
+    });
+
     it('provides a "chain" method', function() {
       var nothing = S.Nothing();
       eq(nothing.chain.length, 1);
@@ -75,6 +94,71 @@ describe('maybe', function() {
       eq(S.Nothing().or(just), just);
     });
 
+    it('implements Functor', function() {
+      var a = S.Nothing();
+      var f = inc;
+      var g = square;
+
+      // identity
+      assert(a.map(identity).equals(a));
+
+      // composition
+      assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
+    });
+
+    it('implements Apply', function() {
+      var a = S.Nothing();
+      var b = S.Nothing();
+      var c = S.Nothing();
+
+      // composition
+      assert(a.map(function(f) {
+        return function(g) {
+          return function(x) {
+            return f(g(x));
+          };
+        };
+      }).ap(b).ap(c).equals(a.ap(b.ap(c))));
+    });
+
+    it('implements Applicative', function() {
+      var a = S.Nothing();
+      var b = S.Nothing();
+      var f = inc;
+      var x = 7;
+
+      // identity
+      assert(a.of(identity).ap(b).equals(b));
+
+      // homomorphism
+      assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
+
+      // interchange
+      assert(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))));
+    });
+
+    it('implements Chain', function() {
+      var a = S.Nothing();
+      var f = S.head;
+      var g = S.last;
+
+      // associativity
+      assert(a.chain(f).chain(g)
+             .equals(a.chain(function(x) { return f(x).chain(g); })));
+    });
+
+    it('implements Monad', function() {
+      var a = S.Nothing();
+      var f = S.head;
+      var x = [1, 2, 3];
+
+      // left identity
+      assert(a.of(x).chain(f).equals(f(x)));
+
+      // right identity
+      assert(a.chain(a.of).equals(a));
+    });
+
   });
 
   describe('Just', function() {
@@ -96,6 +180,13 @@ describe('maybe', function() {
       var just = S.Just(42);
       assert(just instanceof S.Maybe);
       eq(just.type, S.Maybe);
+    });
+
+    it('provides an "ap" method', function() {
+      var just = S.Just(inc);
+      eq(just.ap.length, 1);
+      assert(just.ap(S.Nothing()).equals(S.Nothing()));
+      assert(just.ap(S.Just(42)).equals(S.Just(43)));
     });
 
     it('provides a "chain" method', function() {
@@ -125,6 +216,71 @@ describe('maybe', function() {
       eq(just.or.length, 1);
       eq(just.or(S.Nothing()), just);
       eq(just.or(S.Just(42)), just);
+    });
+
+    it('implements Functor', function() {
+      var a = S.Just(7);
+      var f = inc;
+      var g = square;
+
+      // identity
+      assert(a.map(identity).equals(a));
+
+      // composition
+      assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
+    });
+
+    it('implements Apply', function() {
+      var a = S.Just(inc);
+      var b = S.Just(square);
+      var c = S.Just(7);
+
+      // composition
+      assert(a.map(function(f) {
+        return function(g) {
+          return function(x) {
+            return f(g(x));
+          };
+        };
+      }).ap(b).ap(c).equals(a.ap(b.ap(c))));
+    });
+
+    it('implements Applicative', function() {
+      var a = S.Just(null);
+      var b = S.Just(inc);
+      var f = inc;
+      var x = 7;
+
+      // identity
+      assert(a.of(identity).ap(b).equals(b));
+
+      // homomorphism
+      assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
+
+      // interchange
+      assert(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))));
+    });
+
+    it('implements Chain', function() {
+      var a = S.Just([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+      var f = S.head;
+      var g = S.last;
+
+      // associativity
+      assert(a.chain(f).chain(g)
+             .equals(a.chain(function(x) { return f(x).chain(g); })));
+    });
+
+    it('implements Monad', function() {
+      var a = S.Just(null);
+      var f = S.head;
+      var x = [1, 2, 3];
+
+      // left identity
+      assert(a.of(x).chain(f).equals(f(x)));
+
+      // right identity
+      assert(a.chain(a.of).equals(a));
     });
 
   });
@@ -206,12 +362,6 @@ describe('maybe', function() {
 });
 
 describe('either', function() {
-
-  //  length :: String -> Number
-  var length = function(s) { return s.length; };
-
-  //  square :: Number -> Number
-  var square = function(n) { return n * n; };
 
   describe('Either', function() {
 

@@ -46,6 +46,13 @@
     throw new Error('Cannot instantiate Maybe');
   }
 
+  //  Maybe.of :: a -> m a
+  Maybe.of = function(x) {
+    return new Just(x);
+  };
+
+  Maybe.prototype.of = Maybe.of;
+
   Maybe.prototype.type = Maybe;
 
   function Nothing() {
@@ -54,6 +61,11 @@
     }
   }
   extend(Nothing, Maybe);
+
+  //  Nothing#ap :: m a -> m b
+  Nothing.prototype.ap = function(x) {  // jshint ignore:line
+    return this;
+  };
 
   //  Nothing#chain :: (a -> m b) -> m b
   Nothing.prototype.chain = function(f) {  // jshint ignore:line
@@ -83,6 +95,11 @@
     }
   }
   extend(Just, Maybe);
+
+  //  Just#ap :: m a -> m b
+  Just.prototype.ap = function(x) {
+    return x.map(this.value);
+  };
 
   //  Just#chain :: (a -> m b) -> m b
   Just.prototype.chain = function(f) {
