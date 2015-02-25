@@ -46,10 +46,17 @@
     throw new Error('Cannot instantiate Maybe');
   }
 
+  //  Maybe.empty :: -> m a
+  Maybe.empty = function() {
+    return new Nothing();
+  };
+
   //  Maybe.of :: a -> m a
   Maybe.of = function(x) {
     return new Just(x);
   };
+
+  Maybe.prototype.empty = Maybe.empty;
 
   Maybe.prototype.of = Maybe.of;
 
@@ -70,6 +77,11 @@
   //  Nothing#chain :: (a -> m b) -> m b
   Nothing.prototype.chain = function(f) {  // jshint ignore:line
     return this;
+  };
+
+  //  Nothing#concat :: m a -> m a
+  Nothing.prototype.concat = function(maybe) {
+    return maybe;
   };
 
   //  Nothing#equals :: Maybe a -> Boolean
@@ -104,6 +116,11 @@
   //  Just#chain :: (a -> m b) -> m b
   Just.prototype.chain = function(f) {
     return f(this.value);
+  };
+
+  //  Just#concat :: m a -> m a
+  Just.prototype.concat = function(maybe) {
+    return maybe instanceof Just ? Just(this.value.concat(maybe.value)) : this;
   };
 
   //  Just#equals :: Maybe a -> Boolean
