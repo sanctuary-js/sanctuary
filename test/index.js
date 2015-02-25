@@ -71,6 +71,13 @@ describe('maybe', function() {
       eq(nothing.chain(S.head), nothing);
     });
 
+    it('provides a "concat" method', function() {
+      var nothing = S.Nothing();
+      eq(nothing.concat.length, 1);
+      assert(nothing.concat(S.Nothing()).equals(S.Nothing()));
+      assert(nothing.concat(S.Just('foo')).equals(S.Just('foo')));
+    });
+
     it('provides an "equals" method', function() {
       var nothing = S.Nothing();
       eq(nothing.equals.length, 1);
@@ -92,6 +99,25 @@ describe('maybe', function() {
       eq(S.Nothing().or.length, 1);
       eq(S.Nothing().or(nothing), nothing);
       eq(S.Nothing().or(just), just);
+    });
+
+    it('implements Semigroup', function() {
+      var a = S.Nothing();
+      var b = S.Nothing();
+      var c = S.Nothing();
+
+      // associativity
+      assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
+    });
+
+    it('implements Monoid', function() {
+      var a = S.Nothing();
+
+      // left identity
+      assert(a.empty().concat(a).equals(a));
+
+      // right identity
+      assert(a.concat(a.empty()).equals(a));
     });
 
     it('implements Functor', function() {
@@ -195,6 +221,13 @@ describe('maybe', function() {
       assert(just.chain(S.head).equals(S.Just(1)));
     });
 
+    it('provides a "concat" method', function() {
+      var just = S.Just('foo');
+      eq(just.concat.length, 1);
+      assert(just.concat(S.Nothing()).equals(S.Just('foo')));
+      assert(just.concat(S.Just('bar')).equals(S.Just('foobar')));
+    });
+
     it('provides an "equals" method', function() {
       var just = S.Just(42);
       eq(just.equals.length, 1);
@@ -216,6 +249,25 @@ describe('maybe', function() {
       eq(just.or.length, 1);
       eq(just.or(S.Nothing()), just);
       eq(just.or(S.Just(42)), just);
+    });
+
+    it('implements Semigroup', function() {
+      var a = S.Just('foo');
+      var b = S.Just('bar');
+      var c = S.Just('baz');
+
+      // associativity
+      assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
+    });
+
+    it('implements Monoid', function() {
+      var a = S.Just([1, 2, 3]);
+
+      // left identity
+      assert(a.empty().concat(a).equals(a));
+
+      // right identity
+      assert(a.concat(a.empty()).equals(a));
     });
 
     it('implements Functor', function() {
