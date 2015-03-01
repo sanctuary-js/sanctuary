@@ -40,6 +40,12 @@
     Child.super_ = Parent.prototype;
   };
 
+  var filter = function(pred, m) {
+    return m.chain(function(x) {
+      return pred(x) ? m.of(x) : m.empty();
+    });
+  };
+
   //  maybe  /////////////////////////////////////////////////////////////////
 
   function Maybe() {
@@ -57,6 +63,11 @@
   };
 
   Maybe.prototype.empty = Maybe.empty;
+
+  //  Maybe#filter :: (a -> Boolean) -> m a
+  Maybe.prototype.filter = function(pred) {
+    return filter(pred, this);
+  };
 
   Maybe.prototype.of = Maybe.of;
 
