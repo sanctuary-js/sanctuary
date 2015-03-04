@@ -30,7 +30,6 @@
   "requireSpaceBetweenArguments": true,
   "requireSpacesInConditionalExpression": true,
   "requireSpacesInFunction": {"beforeOpeningCurlyBrace": true},
-  "requireTrailingComma": {"ignoreSingleLine": true},
   "validateLineBreaks": "LF",
   "validateQuoteMarks": {"escape": true, "mark": "'"}
 }

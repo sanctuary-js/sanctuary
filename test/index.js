@@ -93,6 +93,15 @@ describe('maybe', function() {
       eq(nothing.equals(S.Just(42)), false);
     });
 
+    it('provides an "expose" method', function(done) {
+      var nothing = S.Nothing();
+      eq(nothing.expose.length, 1);
+      nothing.expose(function() {
+        eq(arguments.length, 0);
+        done();
+      });
+    });
+
     it('provides a "filter" method', function() {
       var nothing = S.Nothing();
       eq(nothing.filter.length, 1);
@@ -259,6 +268,16 @@ describe('maybe', function() {
       eq(just.equals(new S.Just(42)), true);
       eq(just.equals(S.Just(43)), false);
       eq(just.equals(S.Nothing()), false);
+    });
+
+    it('provides an "expose" method', function(done) {
+      var just = S.Just(42);
+      eq(just.expose.length, 1);
+      just.expose(function(x) {
+        eq(arguments.length, 1);
+        eq(x, 42);
+        done();
+      });
     });
 
     it('provides a "filter" method', function() {
@@ -502,6 +521,16 @@ describe('either', function() {
       eq(left.equals(S.Right(42)), false);
     });
 
+    it('provides an "expose" method', function(done) {
+      var left = S.Left(42);
+      eq(left.expose.length, 1);
+      left.expose(function(x) {
+        eq(arguments.length, 1);
+        eq(x, 42);
+        done();
+      });
+    });
+
     it('provides a "map" method', function() {
       var left = S.Left('Cannot divide by zero');
       eq(left.map.length, 1);
@@ -539,6 +568,16 @@ describe('either', function() {
       eq(right.equals(new S.Right(42)), true);
       eq(right.equals(S.Right('42')), false);
       eq(right.equals(S.Left(42)), false);
+    });
+
+    it('provides an "expose" method', function(done) {
+      var right = S.Right(42);
+      eq(right.expose.length, 1);
+      right.expose(function(x) {
+        eq(arguments.length, 1);
+        eq(x, 42);
+        done();
+      });
     });
 
     it('provides a "map" method', function() {
@@ -580,6 +619,102 @@ describe('either', function() {
 });
 
 describe('control', function() {
+
+  describe('match', function() {
+
+    function Add() {}
+    function Sub() {}
+    function Mul() {}
+    function Div() {}
+
+    function Val(n) { this.n = n; }
+    function App(op, l, r) { this.op = op; this.l = l; this.r = r; }
+
+    Add.prototype.expose =
+    Sub.prototype.expose =
+    Mul.prototype.expose =
+    Div.prototype.expose = function(f) { return f(); };
+
+    Val.prototype.expose = function(f) { return f(this.n); };
+    App.prototype.expose = function(f) { return f(this.op, this.l, this.r); };
+
+    //  evaluate :: Expr -> Number
+    var evaluate = S.match([
+      [Val, identity],
+      [App, function(op, l, r) {
+        return S.match([
+          [Add, function() { return evaluate(l) + evaluate(r); }],
+          [Sub, function() { return evaluate(l) - evaluate(r); }],
+          [Mul, function() { return evaluate(l) * evaluate(r); }],
+          [Div, function() { return evaluate(l) / evaluate(r); }],
+        ], op);
+      }],
+    ]);
+
+    it('provides pattern matching of user-defined types', function() {
+      // (8 - 2) * (3 + 4) = 42
+      eq(evaluate(new App(new Mul(),
+                          new App(new Sub(), new Val(8), new Val(2)),
+                          new App(new Add(), new Val(3), new Val(4)))), 42);
+    });
+
+    it('throws if none of the constructors is a match', function() {
+      assert.throws(
+        function() { evaluate(new Div()); },
+        function(err) {
+          return err instanceof Error &&
+                 err.message === 'Pattern match failure';
+        }
+      );
+    });
+
+    it('provides pattern matching of maybes', function() {
+      var toNumber = S.match([
+        [S.Just, function(n) { return n; }],
+        [S.Nothing, function() { return -1; }],
+      ]);
+      eq(toNumber(S.Just(42)), 42);
+      eq(toNumber(S.Nothing()), -1);
+    });
+
+    it('provides pattern matching of eithers', function() {
+      var toNumber = S.match([
+        [S.Left,  length],
+        [S.Right, square],
+      ]);
+      eq(toNumber(S.Left('abc')), 3);
+      eq(toNumber(S.Right(5)), 25);
+    });
+
+    //  inspect :: * -> String
+    var inspect = S.match([
+      [Number, function(n) { return n + ' is a number'; }],
+      [String, function(s) { return '"' + s + '" is a string'; }],
+      [Object, function(x) { return x + ' is neither number nor string'; }],
+    ]);
+
+    it('provides basic support for built-in types', function() {
+      /* jshint -W053 */
+      eq(inspect(new Number(42)), '42 is a number');
+      eq(inspect(new String('abc')), '"abc" is a string');
+      /* jshint +W053 */
+    });
+
+    it('matches primitive to appropriate constructor', function() {
+      eq(inspect(42), '42 is a number');
+      eq(inspect('abc'), '"abc" is a string');
+    });
+
+    it('matches value to supertype via prototype chain', function() {
+      eq(inspect(/(?:)/), '/(?:)/ is neither number nor string');
+    });
+
+    it('chooses leftmost match', function() {
+      eq(S.match([[Number, T], [Number, F]], 42), true);
+      eq(S.match([[Number, F], [Number, T]], 42), false);
+    });
+
+  });
 
   describe('or', function() {
 
