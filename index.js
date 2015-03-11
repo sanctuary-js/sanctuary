@@ -20,6 +20,12 @@
     return toString_.call(x) === '[object Array]';
   };
 
+  var always = function(x) {
+    return function() {
+      return x;
+    };
+  };
+
   var curry = function(f) {
     var arity = f.length;
     var recurry = function(args) {
@@ -44,6 +50,10 @@
     return m.chain(function(x) {
       return pred(x) ? m.of(x) : m.empty();
     });
+  };
+
+  var identity = function(x) {
+    return x;
   };
 
   //  maybe  /////////////////////////////////////////////////////////////////
@@ -100,6 +110,11 @@
     return maybe instanceof Nothing;
   };
 
+  //  Nothing#expose :: (-> b) -> b
+  Nothing.prototype.expose = function(f) {
+    return f();
+  };
+
   //  Nothing#or :: Maybe a -> Maybe a
   Nothing.prototype.or = function(maybe) {
     return maybe;
@@ -139,6 +154,11 @@
     return maybe instanceof Just && maybe.value === this.value;
   };
 
+  //  Just#expose :: (a -> b) -> b
+  Just.prototype.expose = function(f) {
+    return f(this.value);
+  };
+
   //  Just#or :: Maybe a -> Maybe a
   Just.prototype.or = function(maybe) {  // jshint ignore:line
     return this;
@@ -151,14 +171,7 @@
 
   //  fromMaybe :: a -> Maybe a -> a
   var fromMaybe = curry(function(x, maybe) {
-    switch (true) {
-      case maybe instanceof Nothing:
-        return x;
-      case maybe instanceof Just:
-        return maybe.value;
-      default:
-        throw new TypeError('Pattern match failure');
-    }
+    return match([[Nothing, always(x)], [Just, identity]], maybe);
   });
 
   //  toMaybe :: a? -> Maybe a
@@ -182,6 +195,11 @@
   function Either() {
     throw new Error('Cannot instantiate Either');
   }
+
+  //  Either#expose :: (a -> b) -> b
+  Either.prototype.expose = function(f) {
+    return f(this.value);
+  };
 
   Either.prototype.type = Either;
 
@@ -223,17 +241,24 @@
 
   //  either :: (a -> c) -> (b -> c) -> Either a b -> c
   var either = curry(function(l, r, either) {
-    switch (true) {
-      case either instanceof Left:
-        return l(either.value);
-      case either instanceof Right:
-        return r(either.value);
-      default:
-        throw new TypeError('Pattern match failure');
-    }
+    return match([[Left, l], [Right, r]], either);
   });
 
   //  control  ///////////////////////////////////////////////////////////////
+
+  //  match :: [[A,(** -> b)]] -> a -> b
+  var match = curry(function(cases, x) {
+    for (var idx = 0, len = cases.length; idx < len; idx += 1) {
+      if (Object(x) instanceof cases[idx][0]) {
+        if (typeof x.expose === 'function') {
+          return x.expose(cases[idx][1]);
+        } else {
+          return cases[idx][1](x);
+        }
+      }
+    }
+    throw new TypeError('Pattern match failure');
+  });
 
   //  or :: f a -> f a -> f a
   var or = curry(function(x, y) {
@@ -331,6 +356,7 @@
     init: init,
     fromMaybe: fromMaybe,
     last: last,
+    match: match,
     or: or,
     parseDate: parseDate,
     parseFloat: parseFloat_,
