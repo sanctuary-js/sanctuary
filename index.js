@@ -60,6 +60,13 @@
     });
   };
 
+  //  combinator  ////////////////////////////////////////////////////////////
+
+  //  K :: a -> b -> a
+  var K = curry(function(x, y) {  // jshint ignore:line
+    return x;
+  });
+
   //  maybe  /////////////////////////////////////////////////////////////////
 
   function Maybe() {
@@ -343,6 +350,7 @@
   var sanctuary = {
     Either: Either,
     Just: Just,
+    K: K,
     Left: Left,
     Maybe: Maybe,
     Nothing: Nothing,
