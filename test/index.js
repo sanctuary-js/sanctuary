@@ -381,6 +381,11 @@ describe('maybe', function() {
 
   describe('fromMaybe', function() {
 
+    it('is a binary function', function() {
+      eq(typeof S.fromMaybe, 'function');
+      eq(S.fromMaybe.length, 2);
+    });
+
     it('can be applied to a Nothing', function() {
       eq(S.fromMaybe(0, S.Nothing()), 0);
     });
@@ -407,6 +412,11 @@ describe('maybe', function() {
 
   describe('toMaybe', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.toMaybe, 'function');
+      eq(S.toMaybe.length, 1);
+    });
+
     it('returns a Nothing when applied to null/undefined', function() {
       assert(S.toMaybe(null).equals(S.Nothing()));
       assert(S.toMaybe(undefined).equals(S.Nothing()));
@@ -420,6 +430,11 @@ describe('maybe', function() {
   });
 
   describe('encase', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.encase, 'function');
+      eq(S.encase.length, 1);
+    });
 
     //  factorial :: Number -> Number
     var factorial = function(n) {
@@ -443,6 +458,11 @@ describe('maybe', function() {
     it('can be applied to a function of arbitrary arity', function() {
       var f = S.encase(function(a, b, c, d, e) { return e; });
       assert(f(1, 2, 3, 4, 5).equals(S.Just(5)));
+    });
+
+    it('returns a function of appropriate arity', function() {
+      var f = S.encase(function(a, b, c, d, e) { return e; });
+      eq(f.length, 5);
     });
 
     it('preserves context', function() {
@@ -551,6 +571,11 @@ describe('either', function() {
 
   describe('either', function() {
 
+    it('is a ternary function', function() {
+      eq(typeof S.either, 'function');
+      eq(S.either.length, 3);
+    });
+
     it('can be applied to a Left', function() {
       eq(S.either(length, square, S.Left('abc')), 3);
     });
@@ -592,6 +617,11 @@ describe('control', function() {
     var nothing2 = S.Nothing();
     var just = S.Just(42);
     var just2 = S.Just(42);
+
+    it('is a binary function', function() {
+      eq(typeof S.or, 'function');
+      eq(S.or.length, 2);
+    });
 
     it('can be applied to arrays', function() {
       eq(S.or(empty, empty2), empty2);
@@ -651,6 +681,11 @@ describe('list', function() {
 
   describe('at', function() {
 
+    it('is a binary function', function() {
+      eq(typeof S.at, 'function');
+      eq(S.at.length, 2);
+    });
+
     it('returns Just the nth element of a list', function() {
       assert(S.at(1, ['foo', 'bar', 'baz']).equals(S.Just('bar')));
     });
@@ -672,6 +707,11 @@ describe('list', function() {
 
   describe('head', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.head, 'function');
+      eq(S.head.length, 1);
+    });
+
     it('returns a Nothing if applied to empty list', function() {
       assert(S.head([]).equals(S.Nothing()));
     });
@@ -684,6 +724,11 @@ describe('list', function() {
 
   describe('last', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.last, 'function');
+      eq(S.last.length, 1);
+    });
+
     it('returns a Nothing if applied to empty list', function() {
       assert(S.last([]).equals(S.Nothing()));
     });
@@ -695,6 +740,11 @@ describe('list', function() {
   });
 
   describe('tail', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.tail, 'function');
+      eq(S.tail.length, 1);
+    });
 
     it('returns a Nothing if applied to empty list', function() {
       assert(S.tail([]).equals(S.Nothing()));
@@ -710,6 +760,11 @@ describe('list', function() {
 
   describe('init', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.init, 'function');
+      eq(S.init.length, 1);
+    });
+
     it('returns a Nothing if applied to empty list', function() {
       assert(S.init([]).equals(S.Nothing()));
     });
@@ -723,6 +778,11 @@ describe('list', function() {
   });
 
   describe('find', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.find, 'function');
+      eq(S.find.length, 2);
+    });
 
     it('returns Just the first element satisfying the predicate', function() {
       assert(S.find(T, [null]).equals(S.Just(null)));
@@ -746,6 +806,11 @@ describe('list', function() {
 describe('object', function() {
 
   describe('get', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.get, 'function');
+      eq(S.get.length, 2);
+    });
 
     it('returns a Maybe', function() {
       var obj = {x: 0, y: 42};
@@ -774,6 +839,11 @@ describe('parse', function() {
 
   describe('parseDate', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.parseDate, 'function');
+      eq(S.parseDate.length, 1);
+    });
+
     it('returns a Just when applied to a valid date string', function() {
       var maybe = S.parseDate('2001-02-03T04:05:06Z');
       eq(maybe.constructor, S.Just);
@@ -790,6 +860,11 @@ describe('parse', function() {
 
   describe('parseFloat', function() {
 
+    it('is a unary function', function() {
+      eq(typeof S.parseFloat, 'function');
+      eq(S.parseFloat.length, 1);
+    });
+
     it('returns a Maybe', function() {
       assert(S.parseFloat('12.34').equals(S.Just(12.34)));
       assert(S.parseFloat('xxx').equals(S.Nothing()));
@@ -798,6 +873,11 @@ describe('parse', function() {
   });
 
   describe('parseInt', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.parseInt, 'function');
+      eq(S.parseInt.length, 2);
+    });
 
     it('returns a Maybe', function() {
       assert(S.parseInt(10, '42').equals(S.Just(42)));
@@ -812,6 +892,11 @@ describe('parse', function() {
   });
 
   describe('parseJson', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.parseJson, 'function');
+      eq(S.parseJson.length, 1);
+    });
 
     it('returns a Just when applied to a valid JSON string', function() {
       var xs = S.fromMaybe(null, S.parseJson('["foo","bar"]'));
