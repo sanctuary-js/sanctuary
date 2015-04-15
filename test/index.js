@@ -756,6 +756,18 @@ describe('object', function() {
 
   });
 
+  describe('gets', function() {
+
+    it('returns a Maybe', function() {
+      var obj = {x: {z: 0}, y: 42};
+      assert.deepEqual(S.fromMaybe({}, S.gets([], obj)), obj);
+      assert(S.gets(['y'], obj).equals(S.Just(42)));
+      assert(S.gets(['z'], obj).equals(S.Nothing()));
+      assert(S.gets(['x', 'z'], obj).equals(S.Just(0)));
+    });
+
+  });
+
 });
 
 describe('parse', function() {

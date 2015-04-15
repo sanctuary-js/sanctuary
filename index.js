@@ -290,6 +290,15 @@
     return hasOwnProperty_.call(obj, key) ? Just(obj[key]) : Nothing();
   });
 
+  //  gets :: [String] -> Object -> Maybe *
+  var gets = curry(function(keys, obj) {
+    var acc = Just(obj);
+    for (var idx = 0, len = keys.length; idx < len; idx += 1) {
+      acc = acc.chain(get(keys[idx]));
+    }
+    return acc;
+  });
+
   //  parse  /////////////////////////////////////////////////////////////////
 
   //  parseDate :: String -> Maybe Date
@@ -327,6 +336,7 @@
     encase: encase,
     find: find,
     get: get,
+    gets: gets,
     head: head,
     init: init,
     fromMaybe: fromMaybe,
