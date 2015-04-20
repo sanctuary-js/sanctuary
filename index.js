@@ -20,15 +20,29 @@
     return toString_.call(x) === '[object Array]';
   };
 
+  var arity = function(n, f) {
+    var params = Array(n + 1).join('x').replace(/x/g, function(_, n) {
+      return n === 0 ? '$0' : ', $' + n;
+    });
+    return Function(  // jshint ignore:line
+      'f',
+      'return function(' + params + ') { return f.apply(this, arguments); }'
+    ).call(this, f);
+  };
+
   var curry = function(f) {
-    var arity = f.length;
-    var recurry = function(args) {
-      return function() {
-        var args2 = args.concat(slice_.call(arguments));
-        return args2.length >= arity ? f.apply(this, args2) : recurry(args2);
-      };
-    };
-    return recurry([]);
+    var len = f.length;
+    return arity(len, function() {
+      var shortfall = len - arguments.length;
+      if (shortfall <= 0) {
+        return f.apply(this, arguments);
+      } else {
+        var args = slice_.call(arguments);
+        return curry(arity(shortfall, function() {
+          return f.apply(this, args.concat(slice_.call(arguments)));
+        }));
+      }
+    });
   };
 
   var extend = function(Child, Parent) {
@@ -168,13 +182,13 @@
 
   //  encase :: (* -> a) -> (* -> Maybe a)
   var encase = function(f) {
-    return function() {
+    return arity(f.length, function() {
       try {
         return Just(f.apply(this, arguments));
       } catch (err) {
         return Nothing();
       }
-    };
+    });
   };
 
   //  either  ////////////////////////////////////////////////////////////////
@@ -320,7 +334,9 @@
   });
 
   //  parseJson :: String -> Maybe *
-  var parseJson = encase(JSON.parse);
+  var parseJson = encase(function(s) {
+    return JSON.parse(s);
+  });
 
   //  exports  ///////////////////////////////////////////////////////////////
 
