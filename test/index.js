@@ -150,12 +150,10 @@ describe('maybe', function() {
       eq(nothing.map(function() { return 42; }), nothing);
     });
 
-    it('provides an "or" method', function() {
+    it('provides a "toBoolean" method', function() {
       var nothing = S.Nothing();
-      var just = S.Just(42);
-      eq(S.Nothing().or.length, 1);
-      eq(S.Nothing().or(nothing), nothing);
-      eq(S.Nothing().or(just), just);
+      eq(nothing.toBoolean.length, 0);
+      eq(nothing.toBoolean(), false);
     });
 
     it('implements Semigroup', function() {
@@ -320,11 +318,10 @@ describe('maybe', function() {
       assert(just.map(function(x) { return x / 2; }).equals(S.Just(21)));
     });
 
-    it('provides an "or" method', function() {
+    it('provides a "toBoolean" method', function() {
       var just = S.Just(42);
-      eq(just.or.length, 1);
-      eq(just.or(S.Nothing()), just);
-      eq(just.or(S.Just(42)), just);
+      eq(just.toBoolean.length, 0);
+      eq(just.toBoolean(), true);
     });
 
     it('implements Semigroup', function() {
@@ -640,21 +637,84 @@ describe('either', function() {
 
 describe('control', function() {
 
+  var empty = [];
+  var empty2 = [];
+  var nonempty = [42];
+  var nonempty2 = [42];
+
+  var nothing = S.Nothing();
+  var nothing2 = S.Nothing();
+  var just = S.Just(42);
+  var just2 = S.Just(42);
+
+  describe('and', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.and, 'function');
+      eq(S.and.length, 2);
+    });
+
+    it('can be applied to Booleans', function() {
+      eq(S.and(false, false), false);
+      eq(S.and(false, true), false);
+      eq(S.and(true, false), false);
+      eq(S.and(true, true), true);
+    });
+
+    it('can be applied to arrays', function() {
+      eq(S.and(empty, empty2), empty);
+      eq(S.and(empty, nonempty), empty);
+      eq(S.and(nonempty, empty), empty);
+      eq(S.and(nonempty, nonempty2), nonempty2);
+    });
+
+    it('can be applied to maybes', function() {
+      eq(S.and(nothing, nothing2), nothing);
+      eq(S.and(nothing, just), nothing);
+      eq(S.and(just, nothing), nothing);
+      eq(S.and(just, just2), just2);
+    });
+
+    it('throws if applied to values of different types', function() {
+      function Foo() {}
+      Foo.prototype.type = Foo;
+      var foo = new Foo();
+
+      assert.throws(
+        function() { S.and(empty, nothing); },
+        function(err) {
+          return err instanceof TypeError &&
+                 err.message === 'Type mismatch';
+        }
+      );
+
+      assert.throws(
+        function() { S.and(nothing, foo); },
+        function(err) {
+          return err instanceof TypeError &&
+                 err.message === 'Type mismatch';
+        }
+      );
+    });
+
+    it('is curried', function() {
+      eq(S.and(empty)(nonempty), empty);
+    });
+
+  });
+
   describe('or', function() {
-
-    var empty = [];
-    var empty2 = [];
-    var nonempty = [42];
-    var nonempty2 = [42];
-
-    var nothing = S.Nothing();
-    var nothing2 = S.Nothing();
-    var just = S.Just(42);
-    var just2 = S.Just(42);
 
     it('is a binary function', function() {
       eq(typeof S.or, 'function');
       eq(S.or.length, 2);
+    });
+
+    it('can be applied to Booleans', function() {
+      eq(S.or(false, false), false);
+      eq(S.or(false, true), true);
+      eq(S.or(true, false), true);
+      eq(S.or(true, true), true);
     });
 
     it('can be applied to arrays', function() {
@@ -693,18 +753,64 @@ describe('control', function() {
       );
     });
 
-    it('throws if applied to non-functors', function() {
+    it('is curried', function() {
+      eq(S.or(empty)(nonempty), nonempty);
+    });
+
+  });
+
+  describe('xor', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.xor, 'function');
+      eq(S.xor.length, 2);
+    });
+
+    it('can be applied to Booleans', function() {
+      eq(S.xor(false, false), false);
+      eq(S.xor(false, true), true);
+      eq(S.xor(true, false), true);
+      eq(S.xor(true, true), false);
+    });
+
+    it('can be applied to arrays', function() {
+      eq(S.xor(empty, empty2).length, 0);
+      eq(S.xor(empty, nonempty), nonempty);
+      eq(S.xor(nonempty, empty), nonempty);
+      eq(S.xor(nonempty, nonempty2).length, 0);
+    });
+
+    it('can be applied to maybes', function() {
+      eq(S.xor(nothing, nothing2).constructor, S.Nothing);
+      eq(S.xor(nothing, just), just);
+      eq(S.xor(just, nothing), just);
+      eq(S.xor(just, just2).constructor, S.Nothing);
+    });
+
+    it('throws if applied to values of different types', function() {
+      function Foo() {}
+      Foo.prototype.type = Foo;
+      var foo = new Foo();
+
       assert.throws(
-        function() { S.or(42, 42); },
+        function() { S.xor(empty, nothing); },
         function(err) {
           return err instanceof TypeError &&
-                 err.message === '"or" unspecified for Number';
+                 err.message === 'Type mismatch';
+        }
+      );
+
+      assert.throws(
+        function() { S.xor(nothing, foo); },
+        function(err) {
+          return err instanceof TypeError &&
+                 err.message === 'Type mismatch';
         }
       );
     });
 
     it('is curried', function() {
-      eq(S.or(empty)(nonempty), nonempty);
+      eq(S.xor(empty)(nonempty), nonempty);
     });
 
   });
