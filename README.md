@@ -1,7 +1,8 @@
 # Sanctuary
 
-Sanctuary is small functional programming library inspired by Haskell and
-PureScript. Sanctuary makes it possible to write safe code without null checks.
+Sanctuary is a small functional programming library inspired by Haskell and
+PureScript. It depends on and works nicely with [Ramda][1]. Sanctuary makes
+it possible to write safe code without null checks.
 
 In JavaScript it's trivial to introduce a possible run-time type error:
 

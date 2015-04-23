@@ -12,38 +12,17 @@
 
   'use strict';
 
-  var hasOwnProperty_ = Object.prototype.hasOwnProperty;
-  var slice_ = Array.prototype.slice;
-  var toString_ = Object.prototype.toString;
+  var R;
+  var S = {};
 
-  var isArray = function(x) {
-    return toString_.call(x) === '[object Array]';
-  };
-
-  var arity = function(n, f) {
-    var params = Array(n + 1).join('x').replace(/x/g, function(_, n) {
-      return n === 0 ? '$0' : ', $' + n;
-    });
-    return Function(  // jshint ignore:line
-      'f',
-      'return function(' + params + ') { return f.apply(this, arguments); }'
-    ).call(this, f);
-  };
-
-  var curry = function(f) {
-    var len = f.length;
-    return arity(len, function() {
-      var shortfall = len - arguments.length;
-      if (shortfall <= 0) {
-        return f.apply(this, arguments);
-      } else {
-        var args = slice_.call(arguments);
-        return curry(arity(shortfall, function() {
-          return f.apply(this, args.concat(slice_.call(arguments)));
-        }));
-      }
-    });
-  };
+  /* istanbul ignore else */
+  if (typeof module !== 'undefined') {
+    R = require('ramda');
+    module.exports = S;
+  } else {
+    R = this.R;
+    this.sanctuary = S;
+  }
 
   var extend = function(Child, Parent) {
     function Ctor() {
@@ -63,15 +42,15 @@
   //  combinator  ////////////////////////////////////////////////////////////
 
   //  K :: a -> b -> a
-  var K = curry(function(x, y) {  // jshint ignore:line
+  S.K = R.curry(function(x, y) {  // jshint ignore:line
     return x;
   });
 
   //  maybe  /////////////////////////////////////////////////////////////////
 
-  function Maybe() {
+  var Maybe = S.Maybe = function Maybe() {
     throw new Error('Cannot instantiate Maybe');
-  }
+  };
 
   //  Maybe.empty :: -> m a
   Maybe.empty = function() {
@@ -94,11 +73,11 @@
 
   Maybe.prototype.type = Maybe;
 
-  function Nothing() {
+  var Nothing = S.Nothing = function Nothing() {
     if (!(this instanceof Nothing)) {
       return new Nothing();
     }
-  }
+  };
   extend(Nothing, Maybe);
 
   //  Nothing#ap :: m a -> m b
@@ -131,13 +110,13 @@
     return this;
   };
 
-  function Just(value) {
+  var Just = S.Just = function Just(value) {
     if (!(this instanceof Just)) {
       return new Just(value);
     } else {
       this.value = value;
     }
-  }
+  };
   extend(Just, Maybe);
 
   //  Just#ap :: m a -> m b
@@ -171,7 +150,7 @@
   };
 
   //  fromMaybe :: a -> Maybe a -> a
-  var fromMaybe = curry(function(x, maybe) {
+  S.fromMaybe = R.curry(function(x, maybe) {
     switch (true) {
       case maybe instanceof Nothing:
         return x;
@@ -183,35 +162,33 @@
   });
 
   //  toMaybe :: a? -> Maybe a
-  var toMaybe = function(x) {
-    return x == null ? Nothing() : Just(x);
-  };
+  S.toMaybe = R.ifElse(R.isNil, Nothing, Just);
 
   //  encase :: (* -> a) -> (* -> Maybe a)
-  var encase = function(f) {
-    return arity(f.length, function() {
+  var encase = S.encase = R.curry(function(f) {
+    return R.curryN(f.length, function() {
       try {
         return Just(f.apply(this, arguments));
       } catch (err) {
         return Nothing();
       }
     });
-  };
+  });
 
   //  either  ////////////////////////////////////////////////////////////////
 
-  function Either() {
+  var Either = S.Either = function Either() {
     throw new Error('Cannot instantiate Either');
-  }
+  };
 
   Either.prototype.type = Either;
 
-  function Left(value) {
+  var Left = S.Left = function Left(value) {
     if (!(this instanceof Left)) {
       return new Left(value);
     }
     this.value = value;
-  }
+  };
   extend(Left, Either);
 
   //  Left#equals :: Either a b -> Boolean
@@ -224,12 +201,12 @@
     return this;
   };
 
-  function Right(value) {
+  var Right = S.Right = function Right(value) {
     if (!(this instanceof Right)) {
       return new Right(value);
     }
     this.value = value;
-  }
+  };
   extend(Right, Either);
 
   //  Right#equals :: Either a b -> Boolean
@@ -243,7 +220,7 @@
   };
 
   //  either :: (a -> c) -> (b -> c) -> Either a b -> c
-  var either = curry(function(l, r, either) {
+  S.either = R.curry(function(l, r, either) {
     switch (true) {
       case either instanceof Left:
         return l(either.value);
@@ -257,12 +234,12 @@
   //  control  ///////////////////////////////////////////////////////////////
 
   //  or :: f a -> f a -> f a
-  var or = curry(function(x, y) {
-    if (toString_.call(x) !== toString_.call(y) || x.type !== y.type) {
+  S.or = R.curry(function(x, y) {
+    if (R.type(x) !== R.type(y) || x.type !== y.type) {
       throw new TypeError('Type mismatch');
     } else if (typeof x.or === 'function') {
       return x.or(y);
-    } else if (isArray(x)) {
+    } else if (R.is(Array, x)) {
       return x.length > 0 ? x : y;
     } else {
       throw new TypeError('"or" unspecified for ' + x.constructor.name);
@@ -272,30 +249,26 @@
   //  list  //////////////////////////////////////////////////////////////////
 
   //  at :: Number -> [a] -> Maybe a
-  var at = curry(function(n, xs) {
+  var at = S.at = R.curry(function(n, xs) {
     var len = xs.length;
     var idx = n < 0 ? len + n : n;
     return idx >= 0 && idx < len ? Just(xs[idx]) : Nothing();
   });
 
   //  head :: [a] -> Maybe a
-  var head = at(0);
+  S.head = at(0);
 
   //  last :: [a] -> Maybe a
-  var last = at(-1);
+  S.last = at(-1);
 
   //  tail :: [a] -> Maybe [a]
-  var tail = function(xs) {
-    return xs.length > 0 ? Just(slice_.call(xs, 1)) : Nothing();
-  };
+  S.tail = R.ifElse(R.isEmpty, Nothing, R.compose(Just, R.tail));
 
   //  init :: [a] -> Maybe [a]
-  var init = function(xs) {
-    return xs.length > 0 ? Just(slice_.call(xs, 0, -1)) : Nothing();
-  };
+  S.init = R.ifElse(R.isEmpty, Nothing, R.compose(Just, R.init));
 
   //  find :: (a -> Boolean) -> [a] -> Maybe a
-  var find = curry(function(pred, xs) {
+  S.find = R.curry(function(pred, xs) {
     for (var idx = 0, len = xs.length; idx < len; idx += 1) {
       if (pred(xs[idx])) {
         return Just(xs[idx]);
@@ -307,82 +280,38 @@
   //  object  ////////////////////////////////////////////////////////////////
 
   //  get :: String -> Object -> Maybe *
-  var get = curry(function(key, obj) {
-    return hasOwnProperty_.call(obj, key) ? Just(obj[key]) : Nothing();
-  });
+  var get = S.get = R.ifElse(R.has, R.compose(Just, R.prop), Nothing);
 
   //  gets :: [String] -> Object -> Maybe *
-  var gets = curry(function(keys, obj) {
-    var acc = Just(obj);
-    for (var idx = 0, len = keys.length; idx < len; idx += 1) {
-      acc = acc.chain(get(keys[idx]));
-    }
-    return acc;
+  S.gets = R.curry(function(keys, obj) {
+    return R.reduce(function(acc, key) {
+      return R.chain(get(key), acc);
+    }, Just(obj), keys);
   });
 
   //  parse  /////////////////////////////////////////////////////////////////
 
   //  parseDate :: String -> Maybe Date
-  var parseDate = function(s) {
+  S.parseDate = R.curry(function(s) {
     var d = new Date(s);
     return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
-  };
+  });
 
-  //  parseFloat_ :: String -> Maybe Number
-  var parseFloat_ = function(s) {
+  //  parseFloat :: String -> Maybe Number
+  S.parseFloat = R.curry(function(s) {
     var n = parseFloat(s);
     return n === n ? Just(n) : Nothing();
-  };
+  });
 
-  //  parseInt_ :: Number -> String -> Maybe Number
-  var parseInt_ = curry(function(radix, s) {
+  //  parseInt :: Number -> String -> Maybe Number
+  S.parseInt = R.curry(function(radix, s) {
     var n = parseInt(s, radix);
     return n === n ? Just(n) : Nothing();
   });
 
   //  parseJson :: String -> Maybe *
-  var parseJson = encase(function(s) {
+  S.parseJson = encase(function(s) {
     return JSON.parse(s);
   });
 
-  //  exports  ///////////////////////////////////////////////////////////////
-
-  var sanctuary = {
-    Either: Either,
-    Just: Just,
-    K: K,
-    Left: Left,
-    Maybe: Maybe,
-    Nothing: Nothing,
-    Right: Right,
-    at: at,
-    either: either,
-    encase: encase,
-    find: find,
-    get: get,
-    gets: gets,
-    head: head,
-    init: init,
-    fromMaybe: fromMaybe,
-    last: last,
-    or: or,
-    parseDate: parseDate,
-    parseFloat: parseFloat_,
-    parseInt: parseInt_,
-    parseJson: parseJson,
-    tail: tail,
-    toMaybe: toMaybe,
-  };
-
-  /* global define, window */
-
-  /* istanbul ignore else */
-  if (typeof module !== 'undefined') {
-    module.exports = sanctuary;
-  } else if (typeof define === 'function' && define.amd) {
-    define(sanctuary);
-  } else {
-    window.sanctuary = sanctuary;
-  }
-
-}());
+}.call(this));

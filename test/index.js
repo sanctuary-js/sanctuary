@@ -4,29 +4,40 @@
 
 var assert = require('assert');
 
+var R = require('ramda');
+
 var S = require('..');
 
 
 var eq = assert.strictEqual;
 
-//  T :: a -> Boolean
-var T = function(x) { return true; };  // jshint ignore:line
-
-//  F :: a -> Boolean
-var F = function(x) { return false; };  // jshint ignore:line
-
-//  identity :: a -> a
-var identity = function(x) { return x; };
-
-//  inc :: Number -> Number
-var inc = function(n) { return n + 1; };
-
-//  length :: [a] -> Number
-var length = function(xs) { return xs.length; };
-
 //  square :: Number -> Number
 var square = function(n) { return n * n; };
 
+
+describe('invariants', function() {
+
+  it('f() is equivalent to f for every "regular" function', function() {
+    for (var prop in S) {
+      if (typeof S[prop] === 'function' && /^(?![A-Z])/.test(prop)) {
+        var result = S[prop]();
+        eq(typeof result, 'function');
+        eq(result.length, S[prop].length);
+      }
+    }
+  });
+
+  it('f(R.__) is equivalent to f for every "regular" function', function() {
+    for (var prop in S) {
+      if (typeof S[prop] === 'function' && /^(?![A-Z])/.test(prop)) {
+        var result = S[prop](R.__);
+        eq(typeof result, 'function');
+        eq(result.length, S[prop].length);
+      }
+    }
+  });
+
+});
 
 describe('combinator', function() {
 
@@ -119,8 +130,8 @@ describe('maybe', function() {
     it('provides a "filter" method', function() {
       var nothing = S.Nothing();
       eq(nothing.filter.length, 1);
-      assert(nothing.filter(T).equals(S.Nothing()));
-      assert(nothing.filter(F).equals(S.Nothing()));
+      assert(nothing.filter(R.T).equals(S.Nothing()));
+      assert(nothing.filter(R.F).equals(S.Nothing()));
 
       var m = S.Nothing();
       var f = function(n) { return n * n; };
@@ -168,11 +179,11 @@ describe('maybe', function() {
 
     it('implements Functor', function() {
       var a = S.Nothing();
-      var f = inc;
+      var f = R.inc;
       var g = square;
 
       // identity
-      assert(a.map(identity).equals(a));
+      assert(a.map(R.identity).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
@@ -196,11 +207,11 @@ describe('maybe', function() {
     it('implements Applicative', function() {
       var a = S.Nothing();
       var b = S.Nothing();
-      var f = inc;
+      var f = R.inc;
       var x = 7;
 
       // identity
-      assert(a.of(identity).ap(b).equals(b));
+      assert(a.of(R.identity).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
@@ -255,7 +266,7 @@ describe('maybe', function() {
     });
 
     it('provides an "ap" method', function() {
-      var just = S.Just(inc);
+      var just = S.Just(R.inc);
       eq(just.ap.length, 1);
       assert(just.ap(S.Nothing()).equals(S.Nothing()));
       assert(just.ap(S.Just(42)).equals(S.Just(43)));
@@ -287,8 +298,8 @@ describe('maybe', function() {
     it('provides a "filter" method', function() {
       var just = S.Just(42);
       eq(just.filter.length, 1);
-      assert(just.filter(T).equals(S.Just(42)));
-      assert(just.filter(F).equals(S.Nothing()));
+      assert(just.filter(R.T).equals(S.Just(42)));
+      assert(just.filter(R.F).equals(S.Nothing()));
       assert(just.filter(function(n) { return n > 0; }).equals(S.Just(42)));
       assert(just.filter(function(n) { return n < 0; }).equals(S.Nothing()));
 
@@ -337,18 +348,18 @@ describe('maybe', function() {
 
     it('implements Functor', function() {
       var a = S.Just(7);
-      var f = inc;
+      var f = R.inc;
       var g = square;
 
       // identity
-      assert(a.map(identity).equals(a));
+      assert(a.map(R.identity).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
     });
 
     it('implements Apply', function() {
-      var a = S.Just(inc);
+      var a = S.Just(R.inc);
       var b = S.Just(square);
       var c = S.Just(7);
 
@@ -364,12 +375,12 @@ describe('maybe', function() {
 
     it('implements Applicative', function() {
       var a = S.Just(null);
-      var b = S.Just(inc);
-      var f = inc;
+      var b = S.Just(R.inc);
+      var f = R.inc;
       var x = 7;
 
       // identity
-      assert(a.of(identity).ap(b).equals(b));
+      assert(a.of(R.identity).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
@@ -600,16 +611,16 @@ describe('either', function() {
     });
 
     it('can be applied to a Left', function() {
-      eq(S.either(length, square, S.Left('abc')), 3);
+      eq(S.either(R.length, square, S.Left('abc')), 3);
     });
 
     it('can be applied to a Right', function() {
-      eq(S.either(length, square, S.Right(42)), 1764);
+      eq(S.either(R.length, square, S.Right(42)), 1764);
     });
 
     it('throws if applied to a value of any other type', function() {
       assert.throws(
-        function() { S.either(length, square, []); },
+        function() { S.either(R.length, square, []); },
         function(err) {
           return err instanceof TypeError &&
                  err.message === 'Pattern match failure';
@@ -618,9 +629,9 @@ describe('either', function() {
     });
 
     it('is curried', function() {
-      eq(S.either(length)(square)(S.Left('abc')), 3);
-      eq(S.either(length)(square, S.Left('abc')), 3);
-      eq(S.either(length, square)(S.Left('abc')), 3);
+      eq(S.either(R.length)(square)(S.Left('abc')), 3);
+      eq(S.either(R.length)(square, S.Left('abc')), 3);
+      eq(S.either(R.length, square)(S.Left('abc')), 3);
     });
 
   });
@@ -808,18 +819,18 @@ describe('list', function() {
     });
 
     it('returns Just the first element satisfying the predicate', function() {
-      assert(S.find(T, [null]).equals(S.Just(null)));
+      assert(S.find(R.T, [null]).equals(S.Just(null)));
       assert(S.find(function(n) { return n >= 0; }, [-1, 0, 1])
              .equals(S.Just(0)));
     });
 
     it('returns a Nothing if no element satisfies the predicate', function() {
-      assert(S.find(T, []).equals(S.Nothing()));
-      assert(S.find(F, [1, 2, 3]).equals(S.Nothing()));
+      assert(S.find(R.T, []).equals(S.Nothing()));
+      assert(S.find(R.F, [1, 2, 3]).equals(S.Nothing()));
     });
 
     it('is curried', function() {
-      assert(S.find(T)([null]).equals(S.Just(null)));
+      assert(S.find(R.T)([null]).equals(S.Just(null)));
     });
 
   });

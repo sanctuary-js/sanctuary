@@ -7,7 +7,9 @@
     "type": "git",
     "url": "git://github.com/plaid/sanctuary.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ramda": "0.13.x"
+  },
   "devDependencies": {
     "istanbul": "0.3.x",
     "jscs": "1.10.x",
