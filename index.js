@@ -277,6 +277,20 @@
     return Nothing();
   });
 
+  //. pluck :: String -> [{String: *}] -> [Maybe *]
+  //.
+  //. Takes a list of objects and plucks the value of the specified key
+  //. for each object in the list. Returns the value wrapped in a Just
+  //. if an object has the key and a Nothing if it does not.
+  //.
+  //. ```javascript
+  //. > pluck('a', [{a: 1, b: 2}, {a: 4, b: 5}, {b: 3, c: 7}])
+  //. [Just(1), Just(4), Nothing()]
+  //. ```
+  S.pluck = R.curry(function(key, xs) {
+    return R.map(get(key), xs);
+  });
+
   //  object  ////////////////////////////////////////////////////////////////
 
   //  get :: String -> Object -> Maybe *
