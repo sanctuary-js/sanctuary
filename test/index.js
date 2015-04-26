@@ -835,6 +835,34 @@ describe('list', function() {
 
   });
 
+  describe('pluck', function() {
+
+    it('returns array of Justs for found keys', function() {
+      var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
+      var maybeXs = [S.Just(1), S.Just(2), S.Just(3)];
+      assert.deepEqual(S.pluck('a', xs), maybeXs);
+    });
+
+    it('returns array of Nothings for keys not found', function() {
+      var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
+      var maybeXs = [S.Nothing(), S.Nothing(), S.Nothing()];
+      assert.deepEqual(S.pluck('c', xs), maybeXs);
+    });
+
+    it('returns Just(undefined) for defined key with no value', function() {
+      var xs = [{a: 1, b: 3}, {a: void 0, b: 4}, {a: 3, b: 5}];
+      var maybeXs = [S.Just(1), S.Just(void 0), S.Just(3)];
+      assert.deepEqual(S.pluck('a', xs), maybeXs);
+    });
+
+    it('returns an array of Maybes for various values', function() {
+      var xs = [{a: 1}, {a: void 0}, {a: 4}, {b: 1}];
+      var maybeXs = [S.Just(1), S.Just(void 0), S.Just(4), S.Nothing()];
+      assert.deepEqual(S.pluck('a', xs), maybeXs);
+    });
+
+  });
+
 });
 
 describe('object', function() {
