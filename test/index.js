@@ -974,4 +974,29 @@ describe('parse', function() {
 
   });
 
+  describe('Map', function() {
+
+    it('provides an "insert" method', function() {
+      var empty = new Map();
+      var map_with_foo = S.insert('foo', 1, empty);
+      eq(map_with_foo.get('foo'), 1);
+      eq(empty.size, 0);
+    });
+
+    it('provides a "delete" method', function() {
+      var map_with_foo = S.insert('foo', 1, new Map());
+      var empty = S.delete('foo', map_with_foo);
+      eq(map_with_foo.get('foo'), 1);
+      eq(empty.size, 0);
+    });
+
+    it('provides a "lookup" method', function() {
+      var map_with_foo = S.insert('foo', 1, new Map());
+      assert(S.lookup('foo', map_with_foo) instanceof S.Just);
+      eq(S.fromMaybe(-1, S.lookup('foo', map_with_foo)), 1);
+      assert(S.lookup('bar', map_with_foo) instanceof S.Nothing);
+    });
+
+  });
+
 });
