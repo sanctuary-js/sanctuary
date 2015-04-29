@@ -328,4 +328,27 @@
     return JSON.parse(s);
   });
 
+  //  Map  ////////////////////////////////////////////////////////////////////
+
+  // insert :: k -> a -> Map k a -> Map k a
+  S.insert = R.curry(function(key, value, map) {
+    var mapCopy = new Map(map);
+    mapCopy.set(key, value);
+    return mapCopy;
+  });
+
+  // delete :: k -> Map k a -> Map k a
+  S.delete = R.curry(function(key, map) {
+    var mapCopy = new Map(map);
+    mapCopy.delete(key);
+    return mapCopy;
+  });
+
+  // lookup :: k -> Map k a -> Maybe a
+  S.lookup = R.curry(function(key, map) {
+    return map.has(key) ?
+             Just(map.get(key)) :
+           Nothing();
+  });
+
 }.call(this));
