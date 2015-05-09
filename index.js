@@ -100,14 +100,14 @@
     return maybe instanceof Nothing;
   };
 
-  //  Nothing#or :: Maybe a -> Maybe a
-  Nothing.prototype.or = function(maybe) {
-    return maybe;
-  };
-
   //  Nothing#map :: (a -> b) -> Maybe b
   Nothing.prototype.map = function(f) {  // jshint ignore:line
     return this;
+  };
+
+  //  Nothing#toBoolean :: -> Boolean
+  Nothing.prototype.toBoolean = function() {
+    return false;
   };
 
   var Just = S.Just = function Just(value) {
@@ -139,14 +139,14 @@
     return maybe instanceof Just && maybe.value === this.value;
   };
 
-  //  Just#or :: Maybe a -> Maybe a
-  Just.prototype.or = function(maybe) {  // jshint ignore:line
-    return this;
-  };
-
   //  Just#map :: (a -> b) -> Maybe b
   Just.prototype.map = function(f) {
     return new Just(f(this.value));
+  };
+
+  //  Just#toBoolean :: -> Boolean
+  Just.prototype.toBoolean = function() {
+    return true;
   };
 
   //  fromMaybe :: a -> Maybe a -> a
@@ -233,16 +233,41 @@
 
   //  control  ///////////////////////////////////////////////////////////////
 
-  //  or :: f a -> f a -> f a
-  S.or = R.curry(function(x, y) {
+  var assertTypeMatch = function(x, y) {
     if (R.type(x) !== R.type(y) || x.type !== y.type) {
       throw new TypeError('Type mismatch');
-    } else if (typeof x.or === 'function') {
-      return x.or(y);
-    } else if (R.is(Array, x)) {
-      return x.length > 0 ? x : y;
-    } else {
-      throw new TypeError('"or" unspecified for ' + x.constructor.name);
+    }
+  };
+
+  //  toBoolean :: * -> Boolean
+  var toBoolean = function(x) {
+    switch (true) {
+      case R.is(Array, x):    return x.length > 0;
+      case R.is(Boolean, x):  return x;
+      default:                return x.toBoolean();
+    }
+  };
+
+  //  and :: a -> a -> a
+  S.and = R.curry(function(x, y) {
+    assertTypeMatch(x, y);
+    return toBoolean(x) ? y : x;
+  });
+
+  //  or :: a -> a -> a
+  var or = S.or = R.curry(function(x, y) {
+    assertTypeMatch(x, y);
+    return toBoolean(x) ? x : y;
+  });
+
+  //  xor :: a -> a -> a
+  S.xor = R.curry(function(x, y) {
+    assertTypeMatch(x, y);
+    switch (true) {
+      case toBoolean(x) !== toBoolean(y): return or(x, y);
+      case R.is(Array, x):                return [];
+      case R.is(Boolean, x):              return false;
+      default:                            return x.empty();
     }
   });
 
