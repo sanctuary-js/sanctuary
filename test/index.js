@@ -11,8 +11,20 @@ var S = require('..');
 
 var eq = assert.strictEqual;
 
+//  parseHex :: String -> Either String Number
+var parseHex = function(s) {
+  var n = parseInt(s, 16);
+  return n !== n ? S.Left('Invalid hexadecimal string') : S.Right(n);
+};
+
 //  square :: Number -> Number
 var square = function(n) { return n * n; };
+
+//  squareRoot :: Number -> Either String Number
+var squareRoot = function(n) {
+  return n < 0 ? S.Left('Cannot represent square root of negative number')
+               : S.Right(Math.sqrt(n));
+};
 
 
 describe('invariants', function() {
@@ -543,6 +555,19 @@ describe('either', function() {
       eq(left.type, S.Either);
     });
 
+    it('provides an "ap" method', function() {
+      var left = S.Left('abc');
+      eq(left.ap.length, 1);
+      assert(left.ap(S.Left('xyz')).equals(S.Left('abc')));
+      assert(left.ap(S.Right(42)).equals(S.Left('abc')));
+    });
+
+    it('provides a "chain" method', function() {
+      var left = S.Left('abc');
+      eq(left.chain.length, 1);
+      eq(left.chain(squareRoot), left);
+    });
+
     it('provides an "equals" method', function() {
       var left = S.Left(42);
       eq(left.equals.length, 1);
@@ -557,6 +582,71 @@ describe('either', function() {
       var left = S.Left('Cannot divide by zero');
       eq(left.map.length, 1);
       eq(left.map(square), left);
+    });
+
+    it('implements Functor', function() {
+      var a = S.Left('Cannot divide by zero');
+      var f = R.inc;
+      var g = square;
+
+      // identity
+      assert(a.map(R.identity).equals(a));
+
+      // composition
+      assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
+    });
+
+    it('implements Apply', function() {
+      var a = S.Left('Cannot divide by zero');
+      var b = S.Left('Cannot divide by zero');
+      var c = S.Left('Cannot divide by zero');
+
+      // composition
+      assert(a.map(function(f) {
+        return function(g) {
+          return function(x) {
+            return f(g(x));
+          };
+        };
+      }).ap(b).ap(c).equals(a.ap(b.ap(c))));
+    });
+
+    it('implements Applicative', function() {
+      var a = S.Left('Cannot divide by zero');
+      var b = S.Left('Cannot divide by zero');
+      var f = R.inc;
+      var x = 7;
+
+      // identity
+      assert(a.of(R.identity).ap(b).equals(b));
+
+      // homomorphism
+      assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
+
+      // interchange
+      assert(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))));
+    });
+
+    it('implements Chain', function() {
+      var a = S.Left('Cannot divide by zero');
+      var f = parseHex;
+      var g = squareRoot;
+
+      // associativity
+      assert(a.chain(f).chain(g)
+             .equals(a.chain(function(x) { return f(x).chain(g); })));
+    });
+
+    it('implements Monad', function() {
+      var a = S.Left('Cannot divide by zero');
+      var f = squareRoot;
+      var x = 25;
+
+      // left identity
+      assert(a.of(x).chain(f).equals(f(x)));
+
+      // right identity
+      assert(a.chain(a.of).equals(a));
     });
 
   });
@@ -582,6 +672,19 @@ describe('either', function() {
       eq(right.type, S.Either);
     });
 
+    it('provides an "ap" method', function() {
+      var right = S.Right(R.inc);
+      eq(right.ap.length, 1);
+      assert(right.ap(S.Left('abc')).equals(S.Left('abc')));
+      assert(right.ap(S.Right(42)).equals(S.Right(43)));
+    });
+
+    it('provides a "chain" method', function() {
+      var right = S.Right(25);
+      eq(right.chain.length, 1);
+      assert(right.chain(squareRoot).equals(S.Right(5)));
+    });
+
     it('provides an "equals" method', function() {
       var right = S.Right(42);
       eq(right.equals.length, 1);
@@ -596,6 +699,71 @@ describe('either', function() {
       var right = S.Right(42);
       eq(right.map.length, 1);
       assert(right.map(square).equals(S.Right(1764)));
+    });
+
+    it('implements Functor', function() {
+      var a = S.Right(7);
+      var f = R.inc;
+      var g = square;
+
+      // identity
+      assert(a.map(R.identity).equals(a));
+
+      // composition
+      assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
+    });
+
+    it('implements Apply', function() {
+      var a = S.Right(R.inc);
+      var b = S.Right(square);
+      var c = S.Right(7);
+
+      // composition
+      assert(a.map(function(f) {
+        return function(g) {
+          return function(x) {
+            return f(g(x));
+          };
+        };
+      }).ap(b).ap(c).equals(a.ap(b.ap(c))));
+    });
+
+    it('implements Applicative', function() {
+      var a = S.Right(null);
+      var b = S.Right(R.inc);
+      var f = R.inc;
+      var x = 7;
+
+      // identity
+      assert(a.of(R.identity).ap(b).equals(b));
+
+      // homomorphism
+      assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
+
+      // interchange
+      assert(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))));
+    });
+
+    it('implements Chain', function() {
+      var a = S.Right('0x0100');
+      var f = parseHex;
+      var g = squareRoot;
+
+      // associativity
+      assert(a.chain(f).chain(g)
+             .equals(a.chain(function(x) { return f(x).chain(g); })));
+    });
+
+    it('implements Monad', function() {
+      var a = S.Right(null);
+      var f = squareRoot;
+      var x = 25;
+
+      // left identity
+      assert(a.of(x).chain(f).equals(f(x)));
+
+      // right identity
+      assert(a.chain(a.of).equals(a));
     });
 
   });

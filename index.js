@@ -181,6 +181,13 @@
     throw new Error('Cannot instantiate Either');
   };
 
+  //  Either.of :: b -> m a b
+  Either.of = function(x) {
+    return new Right(x);
+  };
+
+  Either.prototype.of = Either.of;
+
   Either.prototype.type = Either;
 
   var Left = S.Left = function Left(value) {
@@ -190,6 +197,16 @@
     this.value = value;
   };
   extend(Left, Either);
+
+  //  Left#ap :: m a -> m b
+  Left.prototype.ap = function(x) {  // jshint ignore:line
+    return this;
+  };
+
+  //  Left#chain :: (a -> m b) -> m b
+  Left.prototype.chain = function(f) {  // jshint ignore:line
+    return this;
+  };
 
   //  Left#equals :: Either a b -> Boolean
   Left.prototype.equals = function(either) {
@@ -208,6 +225,16 @@
     this.value = value;
   };
   extend(Right, Either);
+
+  //  Right#ap :: m a -> m b
+  Right.prototype.ap = function(x) {
+    return x.map(this.value);
+  };
+
+  //  Right#chain :: (a -> m b) -> m b
+  Right.prototype.chain = function(f) {
+    return f(this.value);
+  };
 
   //  Right#equals :: Either a b -> Boolean
   Right.prototype.equals = function(either) {
