@@ -110,6 +110,11 @@
     return false;
   };
 
+  //  Nothing#toString :: -> String
+  Nothing.prototype.toString = function() {
+    return 'Nothing()';
+  };
+
   var Just = S.Just = function Just(value) {
     if (!(this instanceof Just)) {
       return new Just(value);
@@ -147,6 +152,11 @@
   //  Just#toBoolean :: -> Boolean
   Just.prototype.toBoolean = function() {
     return true;
+  };
+
+  //  Just#toString :: -> String
+  Just.prototype.toString = function() {
+    return 'Just(' + R.toString(this.value) + ')';
   };
 
   //  fromMaybe :: a -> Maybe a -> a
@@ -218,6 +228,11 @@
     return this;
   };
 
+  //  Left#toString :: -> String
+  Left.prototype.toString = function() {
+    return 'Left(' + R.toString(this.value) + ')';
+  };
+
   var Right = S.Right = function Right(value) {
     if (!(this instanceof Right)) {
       return new Right(value);
@@ -244,6 +259,11 @@
   //  Right#map :: (b -> c) -> Either a c
   Right.prototype.map = function(f) {
     return new Right(f(this.value));
+  };
+
+  //  Right#toString :: -> String
+  Right.prototype.toString = function() {
+    return 'Right(' + R.toString(this.value) + ')';
   };
 
   //  either :: (a -> c) -> (b -> c) -> Either a b -> c
