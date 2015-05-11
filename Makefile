@@ -2,15 +2,25 @@ ISTANBUL = node_modules/.bin/istanbul
 JSCS = node_modules/.bin/jscs
 JSHINT = node_modules/.bin/jshint
 NPM = npm
-XYZ = node_modules/.bin/xyz --repo git@github.com:plaid/sanctuary.git
+TRANSCRIBE = node_modules/.bin/transcribe
+XYZ = node_modules/.bin/xyz --repo git@github.com:plaid/sanctuary.git --script scripts/prepublish
 
-SRC = $(shell find . -name '*.js' -not -path './coverage/*' -not -path './node_modules/*')
+
+.PHONY: all
+all: README.md
+
+README.md: index.js
+	$(TRANSCRIBE) \
+	  --heading-level 4 \
+	  --url 'https://github.com/plaid/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
+	  -- $^ \
+	| sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
 
 
 .PHONY: lint
 lint:
-	$(JSHINT) -- $(SRC)
-	$(JSCS) -- $(SRC)
+	$(JSHINT) -- index.js test/index.js
+	$(JSCS) -- index.js test/index.js
 
 
 .PHONY: release-major release-minor release-patch
@@ -27,3 +37,10 @@ setup:
 test:
 	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive
 	$(ISTANBUL) check-coverage --branches 100
+	@<index.js \
+	    sed -n "/^[ ]*\/\/\. >/{N;p;}" \
+	  | sed -e "s:^[ ]*\/\/\. ::" \
+	        -e "s:^\([^>].*\):   '\1');:" \
+	        -e "s:^> \(.*\):eq(R.toString(\1),:" \
+	  | sed "1 s:^:var eq = require('assert').strictEqual, R = require('ramda'), S = require('./');:" \
+	  | node

@@ -14,7 +14,6 @@
   "disallowSpacesInsideParentheses": true,
   "disallowTrailingWhitespace": true,
   "disallowYodaConditions": true,
-  "maximumLineLength": {"value": 79, "allowRegex": true},
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
   "requireCurlyBraces": ["else", "for", "while", "do", "try", "catch", "finally"],
