@@ -168,6 +168,12 @@ describe('maybe', function() {
       eq(nothing.toBoolean(), false);
     });
 
+    it('provides a "toString" method', function() {
+      var nothing = S.Nothing();
+      eq(nothing.toString.length, 0);
+      eq(nothing.toString(), 'Nothing()');
+    });
+
     it('implements Semigroup', function() {
       var a = S.Nothing();
       var b = S.Nothing();
@@ -334,6 +340,12 @@ describe('maybe', function() {
       var just = S.Just(42);
       eq(just.toBoolean.length, 0);
       eq(just.toBoolean(), true);
+    });
+
+    it('provides a "toString" method', function() {
+      var just = S.Just([1, 2, 3]);
+      eq(just.toString.length, 0);
+      eq(just.toString(), 'Just([1, 2, 3])');
     });
 
     it('implements Semigroup', function() {
@@ -584,6 +596,12 @@ describe('either', function() {
       eq(left.map(square), left);
     });
 
+    it('provides a "toString" method', function() {
+      var left = S.Left('Cannot divide by zero');
+      eq(left.toString.length, 0);
+      eq(left.toString(), 'Left("Cannot divide by zero")');
+    });
+
     it('implements Functor', function() {
       var a = S.Left('Cannot divide by zero');
       var f = R.inc;
@@ -699,6 +717,12 @@ describe('either', function() {
       var right = S.Right(42);
       eq(right.map.length, 1);
       assert(right.map(square).equals(S.Right(1764)));
+    });
+
+    it('provides a "toString" method', function() {
+      var right = S.Right([1, 2, 3]);
+      eq(right.toString.length, 0);
+      eq(right.toString(), 'Right([1, 2, 3])');
     });
 
     it('implements Functor', function() {
