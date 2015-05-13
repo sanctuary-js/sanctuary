@@ -14,7 +14,7 @@
   "nonew": true,
   "plusplus": true,
   "undef": true,
-  "unused": true,
+  "unused": "vars",
   "strict": false,
   "maxparams": 99,
   "maxdepth": 99,

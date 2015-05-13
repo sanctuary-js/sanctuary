@@ -42,7 +42,7 @@
   //  combinator  ////////////////////////////////////////////////////////////
 
   //  K :: a -> b -> a
-  S.K = R.curry(function(x, y) {  // jshint ignore:line
+  S.K = R.curry(function(x, y) {
     return x;
   });
 
@@ -81,12 +81,12 @@
   extend(Nothing, Maybe);
 
   //  Nothing#ap :: m a -> m b
-  Nothing.prototype.ap = function(x) {  // jshint ignore:line
+  Nothing.prototype.ap = function(x) {
     return this;
   };
 
   //  Nothing#chain :: (a -> m b) -> m b
-  Nothing.prototype.chain = function(f) {  // jshint ignore:line
+  Nothing.prototype.chain = function(f) {
     return this;
   };
 
@@ -101,7 +101,7 @@
   };
 
   //  Nothing#map :: (a -> b) -> Maybe b
-  Nothing.prototype.map = function(f) {  // jshint ignore:line
+  Nothing.prototype.map = function(f) {
     return this;
   };
 
@@ -209,12 +209,12 @@
   extend(Left, Either);
 
   //  Left#ap :: m a -> m b
-  Left.prototype.ap = function(x) {  // jshint ignore:line
+  Left.prototype.ap = function(x) {
     return this;
   };
 
   //  Left#chain :: (a -> m b) -> m b
-  Left.prototype.chain = function(f) {  // jshint ignore:line
+  Left.prototype.chain = function(f) {
     return this;
   };
 
@@ -224,7 +224,7 @@
   };
 
   //  Left#map :: (b -> c) -> Either a c
-  Left.prototype.map = function(f) {  // jshint ignore:line
+  Left.prototype.map = function(f) {
     return this;
   };
 
