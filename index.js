@@ -218,6 +218,11 @@
     return this;
   };
 
+  //  Left#concat :: Either a b -> Either a b
+  Left.prototype.concat = function(either) {
+    return R.is(Left, either) ? Left(this.value.concat(either.value)) : either;
+  };
+
   //  Left#equals :: Either a b -> Boolean
   Left.prototype.equals = function(either) {
     return either instanceof Left && either.value === this.value;
@@ -249,6 +254,11 @@
   //  Right#chain :: (a -> m b) -> m b
   Right.prototype.chain = function(f) {
     return f(this.value);
+  };
+
+  //  Right#concat :: Either a b -> Either a b
+  Right.prototype.concat = function(either) {
+    return R.is(Right, either) ? Right(this.value.concat(either.value)) : this;
   };
 
   //  Right#equals :: Either a b -> Boolean

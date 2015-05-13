@@ -580,6 +580,13 @@ describe('either', function() {
       eq(left.chain(squareRoot), left);
     });
 
+    it('provides a "concat" method', function() {
+      var left = S.Left('abc');
+      eq(left.concat.length, 1);
+      assert(left.concat(S.Left('def')).equals(S.Left('abcdef')));
+      assert(left.concat(S.Right('xyz')).equals(S.Right('xyz')));
+    });
+
     it('provides an "equals" method', function() {
       var left = S.Left(42);
       eq(left.equals.length, 1);
@@ -600,6 +607,15 @@ describe('either', function() {
       var left = S.Left('Cannot divide by zero');
       eq(left.toString.length, 0);
       eq(left.toString(), 'Left("Cannot divide by zero")');
+    });
+
+    it('implements Semigroup', function() {
+      var a = S.Left('foo');
+      var b = S.Left('bar');
+      var c = S.Left('baz');
+
+      // associativity
+      assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
     });
 
     it('implements Functor', function() {
@@ -703,6 +719,13 @@ describe('either', function() {
       assert(right.chain(squareRoot).equals(S.Right(5)));
     });
 
+    it('provides a "concat" method', function() {
+      var right = S.Right('abc');
+      eq(right.concat.length, 1);
+      assert(right.concat(S.Left('xyz')).equals(S.Right('abc')));
+      assert(right.concat(S.Right('def')).equals(S.Right('abcdef')));
+    });
+
     it('provides an "equals" method', function() {
       var right = S.Right(42);
       eq(right.equals.length, 1);
@@ -723,6 +746,15 @@ describe('either', function() {
       var right = S.Right([1, 2, 3]);
       eq(right.toString.length, 0);
       eq(right.toString(), 'Right([1, 2, 3])');
+    });
+
+    it('implements Semigroup', function() {
+      var a = S.Right('foo');
+      var b = S.Right('bar');
+      var c = S.Right('baz');
+
+      // associativity
+      assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
     });
 
     it('implements Functor', function() {
