@@ -601,6 +601,12 @@ describe('either', function() {
       eq(left.map(square), left);
     });
 
+    it('provides a "toBoolean" method', function() {
+      var left = S.Left('Cannot divide by zero');
+      eq(left.toBoolean.length, 0);
+      eq(left.toBoolean(), false);
+    });
+
     it('provides a "toString" method', function() {
       var left = S.Left('Cannot divide by zero');
       eq(left.toString.length, 0);
@@ -740,6 +746,12 @@ describe('either', function() {
       assert(right.map(square).equals(S.Right(1764)));
     });
 
+    it('provides a "toBoolean" method', function() {
+      var right = S.Right(42);
+      eq(right.toBoolean.length, 0);
+      eq(right.toBoolean(), true);
+    });
+
     it('provides a "toString" method', function() {
       var right = S.Right([1, 2, 3]);
       eq(right.toString.length, 0);
@@ -864,6 +876,11 @@ describe('control', function() {
   var just = S.Just(42);
   var just2 = S.Just(42);
 
+  var left = S.Left('Invalid JSON');
+  var left2 = S.Left('Cannot divide by zero');
+  var right = S.Right(42);
+  var right2 = S.Right(42);
+
   describe('and', function() {
 
     it('is a binary function', function() {
@@ -892,6 +909,13 @@ describe('control', function() {
       eq(S.and(just, just2), just2);
     });
 
+    it('can be applied to eithers', function() {
+      eq(S.and(left, left2), left);
+      eq(S.and(left, right), left);
+      eq(S.and(right, left), left);
+      eq(S.and(right, right2), right2);
+    });
+
     it('throws if applied to values of different types', function() {
       function Foo() {}
       Foo.prototype.type = Foo;
@@ -902,6 +926,12 @@ describe('control', function() {
 
       assert.throws(function() { S.and(nothing, foo); },
                     isTypeMismatch);
+    });
+
+    it('throws if applied to values without a "toBoolean" method', function() {
+      assert.throws(function() { S.and(0, 1); },
+                    R.both(R.is(TypeError),
+                           messageEq('0 does not have a "toBoolean" method')));
     });
 
     it('is curried', function() {
@@ -938,6 +968,13 @@ describe('control', function() {
       eq(S.or(just, just2), just);
     });
 
+    it('can be applied to eithers', function() {
+      eq(S.or(left, left2), left2);
+      eq(S.or(left, right), right);
+      eq(S.or(right, left), right);
+      eq(S.or(right, right2), right);
+    });
+
     it('throws if applied to values of different types', function() {
       function Foo() {}
       Foo.prototype.type = Foo;
@@ -948,6 +985,12 @@ describe('control', function() {
 
       assert.throws(function() { S.or(nothing, foo); },
                     isTypeMismatch);
+    });
+
+    it('throws if applied to values without a "toBoolean" method', function() {
+      assert.throws(function() { S.or(0, 1); },
+                    R.both(R.is(TypeError),
+                           messageEq('0 does not have a "toBoolean" method')));
     });
 
     it('is curried', function() {
@@ -984,6 +1027,27 @@ describe('control', function() {
       eq(S.xor(just, just2).constructor, S.Nothing);
     });
 
+    it('cannot be applied to eithers', function() {
+      //  message :: String -> String
+      var message = R.concat(R.__, ' does not have an "empty" method');
+
+      assert.throws(function() { S.xor(left, left2); },
+                    R.both(R.is(TypeError),
+                           messageEq(message('Left("Invalid JSON")'))));
+
+      assert.throws(function() { S.xor(left, right); },
+                    R.both(R.is(TypeError),
+                           messageEq(message('Left("Invalid JSON")'))));
+
+      assert.throws(function() { S.xor(right, left); },
+                    R.both(R.is(TypeError),
+                           messageEq(message('Right(42)'))));
+
+      assert.throws(function() { S.xor(right, right2); },
+                    R.both(R.is(TypeError),
+                           messageEq(message('Right(42)'))));
+    });
+
     it('throws if applied to values of different types', function() {
       function Foo() {}
       Foo.prototype.type = Foo;
@@ -994,6 +1058,12 @@ describe('control', function() {
 
       assert.throws(function() { S.xor(nothing, foo); },
                     isTypeMismatch);
+    });
+
+    it('throws if applied to values without a "toBoolean" method', function() {
+      assert.throws(function() { S.xor(0, 1); },
+                    R.both(R.is(TypeError),
+                           messageEq('0 does not have a "toBoolean" method')));
     });
 
     it('is curried', function() {
