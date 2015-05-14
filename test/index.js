@@ -11,6 +11,17 @@ var S = require('..');
 
 var eq = assert.strictEqual;
 
+//  messageEq :: a -> Object -> Boolean
+var messageEq = R.propEq('message');
+
+//  isPatternMatchFailure :: a -> Boolean
+var isPatternMatchFailure =
+R.both(R.is(TypeError), messageEq('Pattern match failure'));
+
+//  isTypeMismatch :: a -> Boolean
+var isTypeMismatch =
+R.both(R.is(TypeError), messageEq('Type mismatch'));
+
 //  parseHex :: String -> Either String Number
 var parseHex = function(s) {
   var n = parseInt(s, 16);
@@ -79,13 +90,9 @@ describe('maybe', function() {
   describe('Maybe', function() {
 
     it('throws if called', function() {
-      assert.throws(
-        function() { S.Maybe(); },
-        function(err) {
-          return err instanceof Error &&
-                 err.message === 'Cannot instantiate Maybe';
-        }
-      );
+      assert.throws(function() { S.Maybe(); },
+                    R.both(R.is(Error),
+                           messageEq('Cannot instantiate Maybe')));
     });
 
   });
@@ -450,13 +457,8 @@ describe('maybe', function() {
     });
 
     it('throws if applied to a value of any other type', function() {
-      assert.throws(
-        function() { S.fromMaybe(0, []); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Pattern match failure';
-        }
-      );
+      assert.throws(function() { S.fromMaybe(0, []); },
+                    isPatternMatchFailure);
     });
 
     it('is curried', function() {
@@ -535,13 +537,9 @@ describe('either', function() {
   describe('Either', function() {
 
     it('throws if called', function() {
-      assert.throws(
-        function() { S.Either(); },
-        function(err) {
-          return err instanceof Error &&
-                 err.message === 'Cannot instantiate Either';
-        }
-      );
+      assert.throws(function() { S.Either(); },
+                    R.both(R.is(Error),
+                           messageEq('Cannot instantiate Either')));
     });
 
   });
@@ -840,13 +838,8 @@ describe('either', function() {
     });
 
     it('throws if applied to a value of any other type', function() {
-      assert.throws(
-        function() { S.either(R.length, square, []); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Pattern match failure';
-        }
-      );
+      assert.throws(function() { S.either(R.length, square, []); },
+                    isPatternMatchFailure);
     });
 
     it('is curried', function() {
@@ -904,21 +897,11 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(
-        function() { S.and(empty, nothing); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.and(empty, nothing); },
+                    isTypeMismatch);
 
-      assert.throws(
-        function() { S.and(nothing, foo); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.and(nothing, foo); },
+                    isTypeMismatch);
     });
 
     it('is curried', function() {
@@ -960,21 +943,11 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(
-        function() { S.or(empty, nothing); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.or(empty, nothing); },
+                    isTypeMismatch);
 
-      assert.throws(
-        function() { S.or(nothing, foo); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.or(nothing, foo); },
+                    isTypeMismatch);
     });
 
     it('is curried', function() {
@@ -1016,21 +989,11 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(
-        function() { S.xor(empty, nothing); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.xor(empty, nothing); },
+                    isTypeMismatch);
 
-      assert.throws(
-        function() { S.xor(nothing, foo); },
-        function(err) {
-          return err instanceof TypeError &&
-                 err.message === 'Type mismatch';
-        }
-      );
+      assert.throws(function() { S.xor(nothing, foo); },
+                    isTypeMismatch);
     });
 
     it('is curried', function() {
