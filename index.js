@@ -141,7 +141,7 @@
 
   //  Just#equals :: Maybe a -> Boolean
   Just.prototype.equals = function(maybe) {
-    return maybe instanceof Just && maybe.value === this.value;
+    return maybe instanceof Just && R.eqProps('value', maybe, this);
   };
 
   //  Just#map :: (a -> b) -> Maybe b
@@ -225,7 +225,7 @@
 
   //  Left#equals :: Either a b -> Boolean
   Left.prototype.equals = function(either) {
-    return either instanceof Left && either.value === this.value;
+    return either instanceof Left && R.eqProps('value', either, this);
   };
 
   //  Left#map :: (b -> c) -> Either a c
@@ -268,7 +268,7 @@
 
   //  Right#equals :: Either a b -> Boolean
   Right.prototype.equals = function(either) {
-    return either instanceof Right && either.value === this.value;
+    return either instanceof Right && R.eqProps('value', either, this);
   };
 
   //  Right#map :: (b -> c) -> Either a c
