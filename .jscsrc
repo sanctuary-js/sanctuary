@@ -17,7 +17,7 @@
   "maximumLineLength": {"value": 79, "allowRegex": true},
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
-  "requireCurlyBraces": ["if", "else", "for", "while", "do", "try", "catch", "finally"],
+  "requireCurlyBraces": ["else", "for", "while", "do", "try", "catch", "finally"],
   "requireDotNotation": true,
   "requireLineFeedAtFileEnd": true,
   "requireParenthesesAroundIIFE": true,

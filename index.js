@@ -233,6 +233,11 @@
     return this;
   };
 
+  //  Left#toBoolean :: -> Boolean
+  Left.prototype.toBoolean = function() {
+    return false;
+  };
+
   //  Left#toString :: -> String
   Left.prototype.toString = function() {
     return 'Left(' + R.toString(this.value) + ')';
@@ -271,6 +276,11 @@
     return new Right(f(this.value));
   };
 
+  //  Right#toBoolean :: -> Boolean
+  Right.prototype.toBoolean = function() {
+    return true;
+  };
+
   //  Right#toString :: -> String
   Right.prototype.toString = function() {
     return 'Right(' + R.toString(this.value) + ')';
@@ -298,11 +308,18 @@
 
   //  toBoolean :: * -> Boolean
   var toBoolean = function(x) {
-    switch (true) {
-      case R.is(Array, x):    return x.length > 0;
-      case R.is(Boolean, x):  return x;
-      default:                return x.toBoolean();
-    }
+    if (R.is(Array, x))               return x.length > 0;
+    if (R.is(Boolean, x))             return x;
+    if (R.is(Function, x.toBoolean))  return x.toBoolean();
+    throw new TypeError(R.toString(x) + ' does not have a "toBoolean" method');
+  };
+
+  //  empty :: a -> a
+  var empty = function(x) {
+    if (R.is(Array, x))               return [];
+    if (R.is(Boolean, x))             return false;
+    if (R.is(Function, x.empty))      return x.empty();
+    throw new TypeError(R.toString(x) + ' does not have an "empty" method');
   };
 
   //  and :: a -> a -> a
@@ -320,12 +337,10 @@
   //  xor :: a -> a -> a
   S.xor = R.curry(function(x, y) {
     assertTypeMatch(x, y);
-    switch (true) {
-      case toBoolean(x) !== toBoolean(y): return or(x, y);
-      case R.is(Array, x):                return [];
-      case R.is(Boolean, x):              return false;
-      default:                            return x.empty();
-    }
+    var xBool = toBoolean(x);
+    var yBool = toBoolean(y);
+    var xEmpty = empty(x);
+    return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
   //  list  //////////////////////////////////////////////////////////////////
