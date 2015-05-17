@@ -316,6 +316,11 @@ describe('maybe', function() {
       eq(just.equals(new S.Just(42)), true);
       eq(just.equals(S.Just(43)), false);
       eq(just.equals(S.Nothing()), false);
+
+      // SameValue semantics:
+      eq(S.Just(0).equals(S.Just(-0)), false);
+      eq(S.Just(-0).equals(S.Just(0)), false);
+      eq(S.Just(NaN).equals(S.Just(NaN)), true);
     });
 
     it('provides a "filter" method', function() {
@@ -593,6 +598,11 @@ describe('either', function() {
       eq(left.equals(new S.Left(42)), true);
       eq(left.equals(S.Left('42')), false);
       eq(left.equals(S.Right(42)), false);
+
+      // SameValue semantics:
+      eq(S.Left(0).equals(S.Left(-0)), false);
+      eq(S.Left(-0).equals(S.Left(0)), false);
+      eq(S.Left(NaN).equals(S.Left(NaN)), true);
     });
 
     it('provides a "map" method', function() {
@@ -738,6 +748,11 @@ describe('either', function() {
       eq(right.equals(new S.Right(42)), true);
       eq(right.equals(S.Right('42')), false);
       eq(right.equals(S.Left(42)), false);
+
+      // SameValue semantics:
+      eq(S.Right(0).equals(S.Right(-0)), false);
+      eq(S.Right(-0).equals(S.Right(0)), false);
+      eq(S.Right(NaN).equals(S.Right(NaN)), true);
     });
 
     it('provides a "map" method', function() {
