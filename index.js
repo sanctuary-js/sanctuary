@@ -425,4 +425,21 @@
     return JSON.parse(s);
   });
 
+  //  regexp  ////////////////////////////////////////////////////////////////
+
+  //. match :: RegExp -> String -> Maybe [Maybe String]
+  //.
+  //. Takes a regular expression and tests it against the supplied string
+  //. returning a Nothing if there are no matches or a Just containing an
+  //. array of Maybe types corresponding to the matches found.
+  //.
+  //. ```javascript
+  //. > S.match(/abcd/, 'abcdefg')
+  //. Just([Just("abcd")])
+  //.
+  //. > S.match(/(good)?bye/, 'bye')
+  //. Just([Just("bye"), Nothing()])
+  //. ```
+  S.match = R.curry(R.compose(R.map(R.map(S.toMaybe)), S.toMaybe, R.match));
+
 }.call(this));
