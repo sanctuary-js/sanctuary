@@ -343,6 +343,10 @@
     return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
+  var sanctifyIndexOf = function(f) {
+    return R.curry(R.compose(R.ifElse(R.gte(R.__, 0), Just, Nothing), f));
+  };
+
   //  list  //////////////////////////////////////////////////////////////////
 
   //  at :: Number -> [a] -> Maybe a
@@ -373,6 +377,30 @@
     }
     return Nothing();
   });
+
+  //. indexOf :: a -> [a] -> Maybe Number
+  //.
+  //. Returns Just the position of the first occurrence of an
+  //. element in a list, or Nothing if the element does not occur
+  //. in the list.
+  //.
+  //. ```javascript
+  //. > S.indexOf('c', ['a', 'b', 'c', 'd', 'e'])
+  //. Just(2)
+  //. ```
+  S.indexOf = sanctifyIndexOf(R.indexOf);
+
+  //. lastIndexOf :: a -> [a] -> Maybe Number
+  //.
+  //. Returns Just the position of the last occurrence of an
+  //. element in a list, or Nothing if the element does not occur
+  //. in the list.
+  //.
+  //. ```javascript
+  //. > S.lastIndexOf('c', ['a', 'b', 'b', 'c', 'c'])
+  //. Just(4)
+  //. ```
+  S.lastIndexOf = sanctifyIndexOf(R.lastIndexOf);
 
   //. pluck :: String -> [{String: *}] -> [Maybe *]
   //.

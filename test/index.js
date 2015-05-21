@@ -1213,6 +1213,40 @@ describe('list', function() {
 
   });
 
+  describe('indexOf', function() {
+
+    it('returns a Nothing for an empty list', function() {
+      assert(S.indexOf(10, []).equals(S.Nothing()));
+    });
+
+    it('returns a Nothing if the element is not found', function() {
+      assert(S.indexOf(10, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+    });
+
+    it('returns Just the index of the element found', function() {
+      assert(S.indexOf(3, [1, 2, 3, 4, 5]).equals(S.Just(2)));
+    });
+
+  });
+
+  describe('lastIndexOf', function() {
+
+    it('returns a Nothing for an empty list', function() {
+      assert(S.lastIndexOf('a', []).equals(S.Nothing()));
+    });
+
+    it('returns a Nothing if the element is not found', function() {
+      assert(S.lastIndexOf('d', ['a', 'b', 'b', 'c', 'c'])
+        .equals(S.Nothing()));
+    });
+
+    it('returns Just the last index of the element found', function() {
+      assert(S.lastIndexOf('c', ['a', 'b', 'b', 'c', 'c'])
+        .equals(S.Just(4)));
+    });
+
+  });
+
   describe('pluck', function() {
 
     it('returns array of Justs for found keys', function() {
