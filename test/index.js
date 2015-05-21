@@ -1353,3 +1353,31 @@ describe('parse', function() {
   });
 
 });
+
+describe('regexp', function() {
+
+  describe('match', function() {
+
+    it('returns a Just containing an array of Justs', function() {
+      eq(S.match(/abcd/, 'abcdefg').toString(), 'Just([Just("abcd")])');
+    });
+
+    it('supports global patterns', function() {
+      eq(S.match(/[a-z]a/g, 'bananas').toString(),
+        'Just([Just("ba"), Just("na"), Just("na")])');
+    });
+
+    it('supports (optional) capturing groups', function() {
+      eq(S.match(/(good)?bye/, 'goodbye').toString(),
+        'Just([Just("goodbye"), Just("good")])');
+      eq(S.match(/(good)?bye/, 'bye').toString(),
+        'Just([Just("bye"), Nothing()])');
+    });
+
+    it('returns a Nothing() if no match', function() {
+      assert(S.match(/zzz/, 'abcdefg').equals(S.Nothing()));
+    });
+
+  });
+
+});
