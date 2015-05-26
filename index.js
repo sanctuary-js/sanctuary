@@ -1053,6 +1053,36 @@
     }, Just(obj), keys);
   });
 
+  //. ### String
+
+  //# strIndexOf :: String -> String -> Maybe String
+  //.
+  //. Finds Just the first index of a substring in a string; Nothing
+  //. otherwise.
+  //.
+  //. ```javascript
+  //. > S.strIndexOf('c', 'abcdefg')
+  //. Just(2)
+  //.
+  //. > S.strIndexOf('f', 'abcde')
+  //. Nothing()
+  //. ```
+  S.strIndexOf = sanctifyIndexOf(R.strIndexOf);
+
+  //# strLastIndexOf :: String -> String -> Maybe String
+  //.
+  //. Finds Just the last index of a substring in a string; Nothing
+  //. otherwise.
+  //.
+  //. ```javascript
+  //. > S.strLastIndexOf('s', 'mississippi')
+  //. Just(6)
+  //.
+  //. > S.strLastIndexOf('f', 'abcde')
+  //. Nothing()
+  //. ```
+  S.strLastIndexOf = sanctifyIndexOf(R.strLastIndexOf);
+
   //. ### Parse
 
   //# parseDate :: String -> Maybe Date

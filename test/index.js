@@ -1309,6 +1309,42 @@ describe('object', function() {
 
 });
 
+describe('string', function() {
+
+  describe('strIndexOf', function() {
+
+    it('returns a Nothing for an empty string', function() {
+      assert(S.strIndexOf('c', '').equals(S.Nothing()));
+    });
+
+    it('returns a Nothing if the element is not found', function() {
+      assert(S.strIndexOf('f', 'abcde').equals(S.Nothing()));
+    });
+
+    it('returns Just the first index of the element found', function() {
+      assert(S.strIndexOf('c', 'abcdefg').equals(S.Just(2)));
+    });
+
+  });
+
+  describe('strLastIndexOf', function() {
+
+    it('returns a Nothing for an empty string', function() {
+      assert(S.strLastIndexOf('c', '').equals(S.Nothing()));
+    });
+
+    it('returns a Nothing if the element is not found', function() {
+      assert(S.strLastIndexOf('f', 'abcde').equals(S.Nothing()));
+    });
+
+    it('returns Just the last index of the element found', function() {
+      assert(S.strLastIndexOf('s', 'mississippi').equals(S.Just(6)));
+    });
+
+  });
+
+});
+
 describe('parse', function() {
 
   describe('parseDate', function() {
