@@ -864,6 +864,44 @@
 
   //. ### List
 
+  //# slice :: Number -> Number -> [a] -> Maybe [a]
+  //.
+  //. Returns Just a list containing the elements from the supplied list
+  //. from a beginning index (inclusive) to an end index (exclusive).
+  //. Returns Nothing unless the start interval is less than or equal to
+  //. the end interval, and the list contains both (half-open) intervals.
+  //. Accepts negative indices, which indicate an offset from the end of
+  //. the list.
+  //.
+  //. ```javascript
+  //. > S.slice(1, 1, ['a', 'b', 'c', 'd', 'e'])
+  //. Just([])
+  //.
+  //. > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["b", "c"])
+  //.
+  //. > S.slice(-2, -0, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["d", "e"])
+  //.
+  //. > S.slice(2, -0, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["c", "d", "e"])
+  //.
+  //. > S.slice(0, 2, [])
+  //. Nothing()
+  //.
+  //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
+  //. Nothing()
+  //. ```
+  var slice = S.slice = R.curry(function(start, end, xs) {
+    var len = xs.length;
+    var startIdx = R.eq(-0, start) ? len : start < 0 ? start + len : start;
+    var endIdx = R.eq(-0, end) ? len : end < 0 ? end + len : end;
+
+    return (Math.abs(start) <= len && Math.abs(end) <= len && startIdx <= endIdx) ?
+      Just(R.slice(startIdx, endIdx, xs)) :
+      Nothing();
+  });
+
   //# at :: Number -> [a] -> Maybe a
   //.
   //. Takes an index and a list and returns Just the element of the list at
@@ -881,9 +919,7 @@
   //. Just("d")
   //. ```
   var at = S.at = R.curry(function(n, xs) {
-    var len = xs.length;
-    var idx = n < 0 ? len + n : n;
-    return idx >= 0 && idx < len ? Just(xs[idx]) : Nothing();
+    return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
   //# head :: [a] -> Maybe a
@@ -927,7 +963,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = R.ifElse(R.isEmpty, Nothing, R.compose(Just, R.tail));
+  S.tail = S.slice(1, -0);
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -942,7 +978,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = R.ifElse(R.isEmpty, Nothing, R.compose(Just, R.init));
+  S.init = S.slice(0, -1);
 
   //# find :: (a -> Boolean) -> [a] -> Maybe a
   //.
