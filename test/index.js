@@ -9,7 +9,9 @@ var R = require('ramda');
 var S = require('..');
 
 
-var eq = assert.strictEqual;
+var eq = function(actual, expected) {
+  assert.strictEqual(R.toString(actual), R.toString(expected));
+};
 
 //  messageEq :: a -> Object -> Boolean
 var messageEq = R.propEq('message');
@@ -112,45 +114,37 @@ describe('maybe', function() {
     });
 
     it('is a subtype of Maybe', function() {
-      var nothing = S.Nothing();
-      assert(nothing instanceof S.Maybe);
-      eq(nothing.type, S.Maybe);
+      assert(S.Nothing() instanceof S.Maybe);
+      eq(S.Nothing().type, S.Maybe);
     });
 
     it('provides an "ap" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.ap.length, 1);
-      assert(nothing.ap(S.Nothing()).equals(S.Nothing()));
-      assert(nothing.ap(S.Just(42)).equals(S.Nothing()));
+      eq(S.Nothing().ap.length, 1);
+      eq(S.Nothing().ap(S.Nothing()), S.Nothing());
+      eq(S.Nothing().ap(S.Just(42)), S.Nothing());
     });
 
     it('provides a "chain" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.chain.length, 1);
-      eq(nothing.chain(S.head), nothing);
+      eq(S.Nothing().chain.length, 1);
+      eq(S.Nothing().chain(S.head), S.Nothing());
     });
 
     it('provides a "concat" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.concat.length, 1);
-      assert(nothing.concat(S.Nothing()).equals(S.Nothing()));
-      assert(nothing.concat(S.Just('foo')).equals(S.Just('foo')));
+      eq(S.Nothing().concat.length, 1);
+      eq(S.Nothing().concat(S.Nothing()), S.Nothing());
+      eq(S.Nothing().concat(S.Just('foo')), S.Just('foo'));
     });
 
     it('provides an "equals" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.equals.length, 1);
-      eq(nothing.equals(nothing), true);
-      eq(nothing.equals(S.Nothing()), true);
-      eq(nothing.equals(new S.Nothing()), true);
-      eq(nothing.equals(S.Just(42)), false);
+      eq(S.Nothing().equals.length, 1);
+      eq(S.Nothing().equals(S.Nothing()), true);
+      eq(S.Nothing().equals(S.Just(42)), false);
     });
 
     it('provides a "filter" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.filter.length, 1);
-      assert(nothing.filter(R.T).equals(S.Nothing()));
-      assert(nothing.filter(R.F).equals(S.Nothing()));
+      eq(S.Nothing().filter.length, 1);
+      eq(S.Nothing().filter(R.T), S.Nothing());
+      eq(S.Nothing().filter(R.F), S.Nothing());
 
       var m = S.Nothing();
       var f = function(n) { return n * n; };
@@ -164,21 +158,18 @@ describe('maybe', function() {
     });
 
     it('provides a "map" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.map.length, 1);
-      eq(nothing.map(function() { return 42; }), nothing);
+      eq(S.Nothing().map.length, 1);
+      eq(S.Nothing().map(function() { return 42; }), S.Nothing());
     });
 
     it('provides a "toBoolean" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.toBoolean.length, 0);
-      eq(nothing.toBoolean(), false);
+      eq(S.Nothing().toBoolean.length, 0);
+      eq(S.Nothing().toBoolean(), false);
     });
 
     it('provides a "toString" method', function() {
-      var nothing = S.Nothing();
-      eq(nothing.toString.length, 0);
-      eq(nothing.toString(), 'Nothing()');
+      eq(S.Nothing().toString.length, 0);
+      eq(S.Nothing().toString(), 'Nothing()');
     });
 
     it('implements Semigroup', function() {
@@ -283,39 +274,32 @@ describe('maybe', function() {
     });
 
     it('is a subtype of Maybe', function() {
-      var just = S.Just(42);
-      assert(just instanceof S.Maybe);
-      eq(just.type, S.Maybe);
+      assert(S.Just(42) instanceof S.Maybe);
+      eq(S.Just(42).type, S.Maybe);
     });
 
     it('provides an "ap" method', function() {
-      var just = S.Just(R.inc);
-      eq(just.ap.length, 1);
-      assert(just.ap(S.Nothing()).equals(S.Nothing()));
-      assert(just.ap(S.Just(42)).equals(S.Just(43)));
+      eq(S.Just(R.inc).ap.length, 1);
+      eq(S.Just(R.inc).ap(S.Nothing()), S.Nothing());
+      eq(S.Just(R.inc).ap(S.Just(42)), S.Just(43));
     });
 
     it('provides a "chain" method', function() {
-      var just = S.Just([1, 2, 3]);
-      eq(just.chain.length, 1);
-      assert(just.chain(S.head).equals(S.Just(1)));
+      eq(S.Just([1, 2, 3]).chain.length, 1);
+      eq(S.Just([1, 2, 3]).chain(S.head), S.Just(1));
     });
 
     it('provides a "concat" method', function() {
-      var just = S.Just('foo');
-      eq(just.concat.length, 1);
-      assert(just.concat(S.Nothing()).equals(S.Just('foo')));
-      assert(just.concat(S.Just('bar')).equals(S.Just('foobar')));
+      eq(S.Just('foo').concat.length, 1);
+      eq(S.Just('foo').concat(S.Nothing()), S.Just('foo'));
+      eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
     });
 
     it('provides an "equals" method', function() {
-      var just = S.Just(42);
-      eq(just.equals.length, 1);
-      eq(just.equals(just), true);
-      eq(just.equals(S.Just(42)), true);
-      eq(just.equals(new S.Just(42)), true);
-      eq(just.equals(S.Just(43)), false);
-      eq(just.equals(S.Nothing()), false);
+      eq(S.Just(42).equals.length, 1);
+      eq(S.Just(42).equals(S.Just(42)), true);
+      eq(S.Just(42).equals(S.Just(43)), false);
+      eq(S.Just(42).equals(S.Nothing()), false);
 
       // SameValue semantics:
       eq(S.Just(0).equals(S.Just(-0)), false);
@@ -324,12 +308,11 @@ describe('maybe', function() {
     });
 
     it('provides a "filter" method', function() {
-      var just = S.Just(42);
-      eq(just.filter.length, 1);
-      assert(just.filter(R.T).equals(S.Just(42)));
-      assert(just.filter(R.F).equals(S.Nothing()));
-      assert(just.filter(function(n) { return n > 0; }).equals(S.Just(42)));
-      assert(just.filter(function(n) { return n < 0; }).equals(S.Nothing()));
+      eq(S.Just(42).filter.length, 1);
+      eq(S.Just(42).filter(R.T), S.Just(42));
+      eq(S.Just(42).filter(R.F), S.Nothing());
+      eq(S.Just(42).filter(function(n) { return n > 0; }), S.Just(42));
+      eq(S.Just(42).filter(function(n) { return n < 0; }), S.Nothing());
 
       var m = S.Just(-5);
       var f = function(n) { return n * n; };
@@ -343,21 +326,18 @@ describe('maybe', function() {
     });
 
     it('provides a "map" method', function() {
-      var just = S.Just(42);
-      eq(just.map.length, 1);
-      assert(just.map(function(x) { return x / 2; }).equals(S.Just(21)));
+      eq(S.Just(42).map.length, 1);
+      eq(S.Just(42).map(function(x) { return x / 2; }), S.Just(21));
     });
 
     it('provides a "toBoolean" method', function() {
-      var just = S.Just(42);
-      eq(just.toBoolean.length, 0);
-      eq(just.toBoolean(), true);
+      eq(S.Just(42).toBoolean.length, 0);
+      eq(S.Just(42).toBoolean(), true);
     });
 
     it('provides a "toString" method', function() {
-      var just = S.Just([1, 2, 3]);
-      eq(just.toString.length, 0);
-      eq(just.toString(), 'Just([1, 2, 3])');
+      eq(S.Just([1, 2, 3]).toString.length, 0);
+      eq(S.Just([1, 2, 3]).toString(), 'Just([1, 2, 3])');
     });
 
     it('implements Semigroup', function() {
@@ -480,13 +460,13 @@ describe('maybe', function() {
     });
 
     it('returns a Nothing when applied to null/undefined', function() {
-      assert(S.toMaybe(null).equals(S.Nothing()));
-      assert(S.toMaybe(undefined).equals(S.Nothing()));
+      eq(S.toMaybe(null), S.Nothing());
+      eq(S.toMaybe(undefined), S.Nothing());
     });
 
     it('returns a Just when applied to any other value', function() {
-      assert(S.toMaybe(0).equals(S.Just(0)));
-      assert(S.toMaybe(false).equals(S.Just(false)));
+      eq(S.toMaybe(0), S.Just(0));
+      eq(S.toMaybe(false), S.Just(false));
     });
 
   });
@@ -510,16 +490,16 @@ describe('maybe', function() {
     };
 
     it('returns a function which returns a Just on success', function() {
-      assert(S.encase(factorial)(5).equals(S.Just(120)));
+      eq(S.encase(factorial)(5), S.Just(120));
     });
 
     it('returns a function which returns a Nothing on failure', function() {
-      assert(S.encase(factorial)(-1).equals(S.Nothing()));
+      eq(S.encase(factorial)(-1), S.Nothing());
     });
 
     it('can be applied to a function of arbitrary arity', function() {
       var f = S.encase(function(a, b, c, d, e) { return e; });
-      assert(f(1, 2, 3, 4, 5).equals(S.Just(5)));
+      eq(f(1, 2, 3, 4, 5), S.Just(5));
     });
 
     it('returns a function of appropriate arity', function() {
@@ -529,8 +509,7 @@ describe('maybe', function() {
 
     it('preserves context', function() {
       var f = S.encase(function() { return this; });
-      var ctx = {};
-      assert(f.call(ctx).equals(S.Just(ctx)));
+      eq(f.call({foo: 42}), S.Just({foo: 42}));
     });
 
   });
@@ -565,39 +544,32 @@ describe('either', function() {
     });
 
     it('is a subtype of Either', function() {
-      var left = S.Left(42);
-      assert(left instanceof S.Either);
-      eq(left.type, S.Either);
+      assert(S.Left(42) instanceof S.Either);
+      eq(S.Left(42).type, S.Either);
     });
 
     it('provides an "ap" method', function() {
-      var left = S.Left('abc');
-      eq(left.ap.length, 1);
-      assert(left.ap(S.Left('xyz')).equals(S.Left('abc')));
-      assert(left.ap(S.Right(42)).equals(S.Left('abc')));
+      eq(S.Left('abc').ap.length, 1);
+      eq(S.Left('abc').ap(S.Left('xyz')), S.Left('abc'));
+      eq(S.Left('abc').ap(S.Right(42)), S.Left('abc'));
     });
 
     it('provides a "chain" method', function() {
-      var left = S.Left('abc');
-      eq(left.chain.length, 1);
-      eq(left.chain(squareRoot), left);
+      eq(S.Left('abc').chain.length, 1);
+      eq(S.Left('abc').chain(squareRoot), S.Left('abc'));
     });
 
     it('provides a "concat" method', function() {
-      var left = S.Left('abc');
-      eq(left.concat.length, 1);
-      assert(left.concat(S.Left('def')).equals(S.Left('abcdef')));
-      assert(left.concat(S.Right('xyz')).equals(S.Right('xyz')));
+      eq(S.Left('abc').concat.length, 1);
+      eq(S.Left('abc').concat(S.Left('def')), S.Left('abcdef'));
+      eq(S.Left('abc').concat(S.Right('xyz')), S.Right('xyz'));
     });
 
     it('provides an "equals" method', function() {
-      var left = S.Left(42);
-      eq(left.equals.length, 1);
-      eq(left.equals(left), true);
-      eq(left.equals(S.Left(42)), true);
-      eq(left.equals(new S.Left(42)), true);
-      eq(left.equals(S.Left('42')), false);
-      eq(left.equals(S.Right(42)), false);
+      eq(S.Left(42).equals.length, 1);
+      eq(S.Left(42).equals(S.Left(42)), true);
+      eq(S.Left(42).equals(S.Left('42')), false);
+      eq(S.Left(42).equals(S.Right(42)), false);
 
       // SameValue semantics:
       eq(S.Left(0).equals(S.Left(-0)), false);
@@ -606,21 +578,18 @@ describe('either', function() {
     });
 
     it('provides a "map" method', function() {
-      var left = S.Left('Cannot divide by zero');
-      eq(left.map.length, 1);
-      eq(left.map(square), left);
+      eq(S.Left('abc').map.length, 1);
+      eq(S.Left('abc').map(square), S.Left('abc'));
     });
 
     it('provides a "toBoolean" method', function() {
-      var left = S.Left('Cannot divide by zero');
-      eq(left.toBoolean.length, 0);
-      eq(left.toBoolean(), false);
+      eq(S.Left('abc').toBoolean.length, 0);
+      eq(S.Left('abc').toBoolean(), false);
     });
 
     it('provides a "toString" method', function() {
-      var left = S.Left('Cannot divide by zero');
-      eq(left.toString.length, 0);
-      eq(left.toString(), 'Left("Cannot divide by zero")');
+      eq(S.Left('abc').toString.length, 0);
+      eq(S.Left('abc').toString(), 'Left("abc")');
     });
 
     it('implements Semigroup', function() {
@@ -715,39 +684,32 @@ describe('either', function() {
     });
 
     it('is a subtype of Either', function() {
-      var right = S.Right(42);
-      assert(right instanceof S.Either);
-      eq(right.type, S.Either);
+      assert(S.Right(42) instanceof S.Either);
+      eq(S.Right(42).type, S.Either);
     });
 
     it('provides an "ap" method', function() {
-      var right = S.Right(R.inc);
-      eq(right.ap.length, 1);
-      assert(right.ap(S.Left('abc')).equals(S.Left('abc')));
-      assert(right.ap(S.Right(42)).equals(S.Right(43)));
+      eq(S.Right(R.inc).ap.length, 1);
+      eq(S.Right(R.inc).ap(S.Left('abc')), S.Left('abc'));
+      eq(S.Right(R.inc).ap(S.Right(42)), S.Right(43));
     });
 
     it('provides a "chain" method', function() {
-      var right = S.Right(25);
-      eq(right.chain.length, 1);
-      assert(right.chain(squareRoot).equals(S.Right(5)));
+      eq(S.Right(25).chain.length, 1);
+      eq(S.Right(25).chain(squareRoot), S.Right(5));
     });
 
     it('provides a "concat" method', function() {
-      var right = S.Right('abc');
-      eq(right.concat.length, 1);
-      assert(right.concat(S.Left('xyz')).equals(S.Right('abc')));
-      assert(right.concat(S.Right('def')).equals(S.Right('abcdef')));
+      eq(S.Right('abc').concat.length, 1);
+      eq(S.Right('abc').concat(S.Left('xyz')), S.Right('abc'));
+      eq(S.Right('abc').concat(S.Right('def')), S.Right('abcdef'));
     });
 
     it('provides an "equals" method', function() {
-      var right = S.Right(42);
-      eq(right.equals.length, 1);
-      eq(right.equals(right), true);
-      eq(right.equals(S.Right(42)), true);
-      eq(right.equals(new S.Right(42)), true);
-      eq(right.equals(S.Right('42')), false);
-      eq(right.equals(S.Left(42)), false);
+      eq(S.Right(42).equals.length, 1);
+      eq(S.Right(42).equals(S.Right(42)), true);
+      eq(S.Right(42).equals(S.Right('42')), false);
+      eq(S.Right(42).equals(S.Left(42)), false);
 
       // SameValue semantics:
       eq(S.Right(0).equals(S.Right(-0)), false);
@@ -756,21 +718,18 @@ describe('either', function() {
     });
 
     it('provides a "map" method', function() {
-      var right = S.Right(42);
-      eq(right.map.length, 1);
-      assert(right.map(square).equals(S.Right(1764)));
+      eq(S.Right(42).map.length, 1);
+      eq(S.Right(42).map(square), S.Right(1764));
     });
 
     it('provides a "toBoolean" method', function() {
-      var right = S.Right(42);
-      eq(right.toBoolean.length, 0);
-      eq(right.toBoolean(), true);
+      eq(S.Right(42).toBoolean.length, 0);
+      eq(S.Right(42).toBoolean(), true);
     });
 
     it('provides a "toString" method', function() {
-      var right = S.Right([1, 2, 3]);
-      eq(right.toString.length, 0);
-      eq(right.toString(), 'Right([1, 2, 3])');
+      eq(S.Right([1, 2, 3]).toString.length, 0);
+      eq(S.Right([1, 2, 3]).toString(), 'Right([1, 2, 3])');
     });
 
     it('implements Semigroup', function() {
@@ -881,21 +840,6 @@ describe('either', function() {
 
 describe('control', function() {
 
-  var empty = [];
-  var empty2 = [];
-  var nonempty = [42];
-  var nonempty2 = [42];
-
-  var nothing = S.Nothing();
-  var nothing2 = S.Nothing();
-  var just = S.Just(42);
-  var just2 = S.Just(42);
-
-  var left = S.Left('Invalid JSON');
-  var left2 = S.Left('Cannot divide by zero');
-  var right = S.Right(42);
-  var right2 = S.Right(42);
-
   describe('and', function() {
 
     it('is a binary function', function() {
@@ -911,24 +855,24 @@ describe('control', function() {
     });
 
     it('can be applied to arrays', function() {
-      eq(S.and(empty, empty2), empty);
-      eq(S.and(empty, nonempty), empty);
-      eq(S.and(nonempty, empty), empty);
-      eq(S.and(nonempty, nonempty2), nonempty2);
+      eq(S.and([], []), []);
+      eq(S.and([], [42]), []);
+      eq(S.and([42], []), []);
+      eq(S.and([42], [43]), [43]);
     });
 
     it('can be applied to maybes', function() {
-      eq(S.and(nothing, nothing2), nothing);
-      eq(S.and(nothing, just), nothing);
-      eq(S.and(just, nothing), nothing);
-      eq(S.and(just, just2), just2);
+      eq(S.and(S.Nothing(), S.Nothing()), S.Nothing());
+      eq(S.and(S.Nothing(), S.Just(42)), S.Nothing());
+      eq(S.and(S.Just(42), S.Nothing()), S.Nothing());
+      eq(S.and(S.Just(42), S.Just(43)), S.Just(43));
     });
 
     it('can be applied to eithers', function() {
-      eq(S.and(left, left2), left);
-      eq(S.and(left, right), left);
-      eq(S.and(right, left), left);
-      eq(S.and(right, right2), right2);
+      eq(S.and(S.Left('foo'), S.Left('bar')), S.Left('foo'));
+      eq(S.and(S.Left('foo'), S.Right(42)), S.Left('foo'));
+      eq(S.and(S.Right(42), S.Left('foo')), S.Left('foo'));
+      eq(S.and(S.Right(42), S.Right(43)), S.Right(43));
     });
 
     it('throws if applied to values of different types', function() {
@@ -936,10 +880,10 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(function() { S.and(empty, nothing); },
+      assert.throws(function() { S.and([], S.Nothing()); },
                     isTypeMismatch);
 
-      assert.throws(function() { S.and(nothing, foo); },
+      assert.throws(function() { S.and(S.Nothing(), foo); },
                     isTypeMismatch);
     });
 
@@ -950,7 +894,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
-      eq(S.and(empty)(nonempty), empty);
+      eq(S.and([])([42]), []);
     });
 
   });
@@ -970,24 +914,24 @@ describe('control', function() {
     });
 
     it('can be applied to arrays', function() {
-      eq(S.or(empty, empty2), empty2);
-      eq(S.or(empty, nonempty), nonempty);
-      eq(S.or(nonempty, empty), nonempty);
-      eq(S.or(nonempty, nonempty2), nonempty);
+      eq(S.or([], []), []);
+      eq(S.or([], [42]), [42]);
+      eq(S.or([42], []), [42]);
+      eq(S.or([42], [43]), [42]);
     });
 
     it('can be applied to maybes', function() {
-      eq(S.or(nothing, nothing2), nothing2);
-      eq(S.or(nothing, just), just);
-      eq(S.or(just, nothing), just);
-      eq(S.or(just, just2), just);
+      eq(S.or(S.Nothing(), S.Nothing()), S.Nothing());
+      eq(S.or(S.Nothing(), S.Just(42)), S.Just(42));
+      eq(S.or(S.Just(42), S.Nothing()), S.Just(42));
+      eq(S.or(S.Just(42), S.Just(43)), S.Just(42));
     });
 
     it('can be applied to eithers', function() {
-      eq(S.or(left, left2), left2);
-      eq(S.or(left, right), right);
-      eq(S.or(right, left), right);
-      eq(S.or(right, right2), right);
+      eq(S.or(S.Left('foo'), S.Left('bar')), S.Left('bar'));
+      eq(S.or(S.Left('foo'), S.Right(42)), S.Right(42));
+      eq(S.or(S.Right(42), S.Left('foo')), S.Right(42));
+      eq(S.or(S.Right(42), S.Right(43)), S.Right(42));
     });
 
     it('throws if applied to values of different types', function() {
@@ -995,10 +939,10 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(function() { S.or(empty, nothing); },
+      assert.throws(function() { S.or([], S.Nothing()); },
                     isTypeMismatch);
 
-      assert.throws(function() { S.or(nothing, foo); },
+      assert.throws(function() { S.or(S.Nothing(), foo); },
                     isTypeMismatch);
     });
 
@@ -1009,7 +953,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
-      eq(S.or(empty)(nonempty), nonempty);
+      eq(S.or([])([42]), [42]);
     });
 
   });
@@ -1029,36 +973,36 @@ describe('control', function() {
     });
 
     it('can be applied to arrays', function() {
-      eq(S.xor(empty, empty2).length, 0);
-      eq(S.xor(empty, nonempty), nonempty);
-      eq(S.xor(nonempty, empty), nonempty);
-      eq(S.xor(nonempty, nonempty2).length, 0);
+      eq(S.xor([], []), []);
+      eq(S.xor([], [42]), [42]);
+      eq(S.xor([42], []), [42]);
+      eq(S.xor([42], [43]), []);
     });
 
     it('can be applied to maybes', function() {
-      eq(S.xor(nothing, nothing2).constructor, S.Nothing);
-      eq(S.xor(nothing, just), just);
-      eq(S.xor(just, nothing), just);
-      eq(S.xor(just, just2).constructor, S.Nothing);
+      eq(S.xor(S.Nothing(), S.Nothing()), S.Nothing());
+      eq(S.xor(S.Nothing(), S.Just(42)), S.Just(42));
+      eq(S.xor(S.Just(42), S.Nothing()), S.Just(42));
+      eq(S.xor(S.Just(42), S.Just(43)), S.Nothing());
     });
 
     it('cannot be applied to eithers', function() {
       //  message :: String -> String
       var message = R.concat(R.__, ' does not have an "empty" method');
 
-      assert.throws(function() { S.xor(left, left2); },
+      assert.throws(function() { S.xor(S.Left('foo'), S.Left('bar')); },
                     R.both(R.is(TypeError),
-                           messageEq(message('Left("Invalid JSON")'))));
+                           messageEq(message('Left("foo")'))));
 
-      assert.throws(function() { S.xor(left, right); },
+      assert.throws(function() { S.xor(S.Left('foo'), S.Right(42)); },
                     R.both(R.is(TypeError),
-                           messageEq(message('Left("Invalid JSON")'))));
+                           messageEq(message('Left("foo")'))));
 
-      assert.throws(function() { S.xor(right, left); },
+      assert.throws(function() { S.xor(S.Right(42), S.Left('foo')); },
                     R.both(R.is(TypeError),
                            messageEq(message('Right(42)'))));
 
-      assert.throws(function() { S.xor(right, right2); },
+      assert.throws(function() { S.xor(S.Right(42), S.Right(43)); },
                     R.both(R.is(TypeError),
                            messageEq(message('Right(42)'))));
     });
@@ -1068,10 +1012,10 @@ describe('control', function() {
       Foo.prototype.type = Foo;
       var foo = new Foo();
 
-      assert.throws(function() { S.xor(empty, nothing); },
+      assert.throws(function() { S.xor([], S.Nothing()); },
                     isTypeMismatch);
 
-      assert.throws(function() { S.xor(nothing, foo); },
+      assert.throws(function() { S.xor(S.Nothing(), foo); },
                     isTypeMismatch);
     });
 
@@ -1082,7 +1026,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
-      eq(S.xor(empty)(nonempty), nonempty);
+      eq(S.xor([])([42]), [42]);
     });
 
   });
@@ -1099,21 +1043,21 @@ describe('list', function() {
     });
 
     it('returns Just the nth element of a list', function() {
-      assert(S.at(1, ['foo', 'bar', 'baz']).equals(S.Just('bar')));
+      eq(S.at(1, ['foo', 'bar', 'baz']), S.Just('bar'));
     });
 
     it('accepts negative offset', function() {
-      assert(S.at(-1, ['foo', 'bar', 'baz']).equals(S.Just('baz')));
+      eq(S.at(-1, ['foo', 'bar', 'baz']), S.Just('baz'));
     });
 
     it('returns a Nothing if index out of bounds', function() {
-      assert(S.at(-0, ['foo', 'bar', 'baz']).equals(S.Nothing()));
-      assert(S.at(3, ['foo', 'bar', 'baz']).equals(S.Nothing()));
-      assert(S.at(-4, ['foo', 'bar', 'baz']).equals(S.Nothing()));
+      eq(S.at(3, ['foo', 'bar', 'baz']), S.Nothing());
+      eq(S.at(-4, ['foo', 'bar', 'baz']), S.Nothing());
+      eq(S.at(-0, ['foo', 'bar', 'baz']), S.Nothing());
     });
 
     it('is curried', function() {
-      assert(S.at(1)(['foo', 'bar', 'baz']).equals(S.Just('bar')));
+      eq(S.at(1)(['foo', 'bar', 'baz']), S.Just('bar'));
     });
 
   });
@@ -1121,51 +1065,51 @@ describe('list', function() {
   describe('slice', function() {
 
     it('returns a Nothing with a positive end index greater than start index', function() {
-      assert(S.slice(6, 1, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+      eq(S.slice(6, 1, [1, 2, 3, 4, 5]), S.Nothing());
     });
 
     it('returns a Nothing with a positive end index greater than list length', function() {
-      assert(S.slice(1, 6, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+      eq(S.slice(1, 6, [1, 2, 3, 4, 5]), S.Nothing());
     });
 
     it('returns a Nothing with a negative end index greater than list length', function() {
-      assert(S.slice(1, -6, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+      eq(S.slice(1, -6, [1, 2, 3, 4, 5]), S.Nothing());
     });
 
     it('returns a Nothing with a negative start index greater than list length', function() {
-      assert(S.slice(-6, 1, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+      eq(S.slice(-6, 1, [1, 2, 3, 4, 5]), S.Nothing());
     });
 
     it('returns a Just with an empty array when start index equals end index', function() {
-      eq(S.slice(1, 1, [1, 2, 3, 4, 5]).toString(), 'Just([])');
-      eq(S.slice(1, -4, [1, 2, 3, 4, 5]).toString(), 'Just([])');
-      eq(S.slice(-4, 1, [1, 2, 3, 4, 5]).toString(), 'Just([])');
-      eq(S.slice(-4, -4, [1, 2, 3, 4, 5]).toString(), 'Just([])');
-      eq(S.slice(0, 0, []).toString(), 'Just([])');
-      eq(S.slice(0, -0, []).toString(), 'Just([])');
-      eq(S.slice(-0, 0, []).toString(), 'Just([])');
-      eq(S.slice(-0, -0, []).toString(), 'Just([])');
+      eq(S.slice(1, 1, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(1, -4, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(-4, 1, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(-4, -4, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(0, 0, []), S.Just([]));
+      eq(S.slice(0, -0, []), S.Just([]));
+      eq(S.slice(-0, 0, []), S.Just([]));
+      eq(S.slice(-0, -0, []), S.Just([]));
     });
 
     it('returns a Just with a positive start and end index', function() {
-      eq(S.slice(1, 3, [1, 2, 3, 4, 5]).toString(), 'Just([2, 3])');
+      eq(S.slice(1, 3, [1, 2, 3, 4, 5]), S.Just([2, 3]));
     });
 
     it('returns a Just with a negative start index', function() {
-      eq(S.slice(-3, 5, [1, 2, 3, 4, 5]).toString(), 'Just([3, 4, 5])');
+      eq(S.slice(-3, 5, [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
     });
 
     it('returns a Just with a negative end index', function() {
-      eq(S.slice(1, -2, [1, 2, 3, 4, 5]).toString(), 'Just([2, 3])');
+      eq(S.slice(1, -2, [1, 2, 3, 4, 5]), S.Just([2, 3]));
     });
 
     it('accepts -0 as the position half a step beyond the last index', function() {
-      eq(S.slice(-0, 5, [1, 2, 3, 4, 5]).toString(), 'Just([])');
-      eq(S.slice(2, -0, [1, 2, 3, 4, 5]).toString(), 'Just([3, 4, 5])');
+      eq(S.slice(-0, 5, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(2, -0, [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
     });
 
     it('returns a Just with the whole list', function() {
-      eq(S.slice(0, 5, [1, 2, 3, 4, 5]).toString(), 'Just([1, 2, 3, 4, 5])');
+      eq(S.slice(0, 5, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
     });
 
   });
@@ -1178,11 +1122,11 @@ describe('list', function() {
     });
 
     it('returns a Nothing if applied to empty list', function() {
-      assert(S.head([]).equals(S.Nothing()));
+      eq(S.head([]), S.Nothing());
     });
 
     it('returns Just the head of a nonempty list', function() {
-      assert(S.head(['foo', 'bar', 'baz']).equals(S.Just('foo')));
+      eq(S.head(['foo', 'bar', 'baz']), S.Just('foo'));
     });
 
   });
@@ -1195,11 +1139,11 @@ describe('list', function() {
     });
 
     it('returns a Nothing if applied to empty list', function() {
-      assert(S.last([]).equals(S.Nothing()));
+      eq(S.last([]), S.Nothing());
     });
 
     it('returns Just the last element of a nonempty list', function() {
-      assert(S.last(['foo', 'bar', 'baz']).equals(S.Just('baz')));
+      eq(S.last(['foo', 'bar', 'baz']), S.Just('baz'));
     });
 
   });
@@ -1212,13 +1156,11 @@ describe('list', function() {
     });
 
     it('returns a Nothing if applied to empty list', function() {
-      assert(S.tail([]).equals(S.Nothing()));
+      eq(S.tail([]), S.Nothing());
     });
 
     it('returns Just the tail of a nonempty list', function() {
-      var result = S.tail(['foo', 'bar', 'baz']);
-      eq(result.constructor, S.Just);
-      eq(JSON.stringify(S.fromMaybe(null, result)), '["bar","baz"]');
+      eq(S.tail(['foo', 'bar', 'baz']), S.Just(['bar', 'baz']));
     });
 
   });
@@ -1231,13 +1173,11 @@ describe('list', function() {
     });
 
     it('returns a Nothing if applied to empty list', function() {
-      assert(S.init([]).equals(S.Nothing()));
+      eq(S.init([]), S.Nothing());
     });
 
     it('returns Just the initial elements of a nonempty list', function() {
-      var result = S.init(['foo', 'bar', 'baz']);
-      eq(result.constructor, S.Just);
-      eq(JSON.stringify(S.fromMaybe(null, result)), '["foo","bar"]');
+      eq(S.init(['foo', 'bar', 'baz']), S.Just(['foo', 'bar']));
     });
 
   });
@@ -1250,18 +1190,17 @@ describe('list', function() {
     });
 
     it('returns Just the first element satisfying the predicate', function() {
-      assert(S.find(R.T, [null]).equals(S.Just(null)));
-      assert(S.find(function(n) { return n >= 0; }, [-1, 0, 1])
-             .equals(S.Just(0)));
+      eq(S.find(R.T, [null]), S.Just(null));
+      eq(S.find(function(n) { return n >= 0; }, [-1, 0, 1]), S.Just(0));
     });
 
     it('returns a Nothing if no element satisfies the predicate', function() {
-      assert(S.find(R.T, []).equals(S.Nothing()));
-      assert(S.find(R.F, [1, 2, 3]).equals(S.Nothing()));
+      eq(S.find(R.T, []), S.Nothing());
+      eq(S.find(R.F, [1, 2, 3]), S.Nothing());
     });
 
     it('is curried', function() {
-      assert(S.find(R.T)([null]).equals(S.Just(null)));
+      eq(S.find(R.T)([null]), S.Just(null));
     });
 
   });
@@ -1269,15 +1208,15 @@ describe('list', function() {
   describe('indexOf', function() {
 
     it('returns a Nothing for an empty list', function() {
-      assert(S.indexOf(10, []).equals(S.Nothing()));
+      eq(S.indexOf(10, []), S.Nothing());
     });
 
     it('returns a Nothing if the element is not found', function() {
-      assert(S.indexOf(10, [1, 2, 3, 4, 5]).equals(S.Nothing()));
+      eq(S.indexOf(10, [1, 2, 3, 4, 5]), S.Nothing());
     });
 
     it('returns Just the index of the element found', function() {
-      assert(S.indexOf(3, [1, 2, 3, 4, 5]).equals(S.Just(2)));
+      eq(S.indexOf(3, [1, 2, 3, 4, 5]), S.Just(2));
     });
 
   });
@@ -1285,17 +1224,15 @@ describe('list', function() {
   describe('lastIndexOf', function() {
 
     it('returns a Nothing for an empty list', function() {
-      assert(S.lastIndexOf('a', []).equals(S.Nothing()));
+      eq(S.lastIndexOf('a', []), S.Nothing());
     });
 
     it('returns a Nothing if the element is not found', function() {
-      assert(S.lastIndexOf('d', ['a', 'b', 'b', 'c', 'c'])
-        .equals(S.Nothing()));
+      eq(S.lastIndexOf('d', ['a', 'b', 'b', 'c', 'c']), S.Nothing());
     });
 
     it('returns Just the last index of the element found', function() {
-      assert(S.lastIndexOf('c', ['a', 'b', 'b', 'c', 'c'])
-        .equals(S.Just(4)));
+      eq(S.lastIndexOf('c', ['a', 'b', 'b', 'c', 'c']), S.Just(4));
     });
 
   });
@@ -1304,26 +1241,23 @@ describe('list', function() {
 
     it('returns array of Justs for found keys', function() {
       var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
-      var maybeXs = [S.Just(1), S.Just(2), S.Just(3)];
-      assert.deepEqual(S.pluck('a', xs), maybeXs);
+      eq(S.pluck('a', xs), [S.Just(1), S.Just(2), S.Just(3)]);
     });
 
     it('returns array of Nothings for keys not found', function() {
       var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
-      var maybeXs = [S.Nothing(), S.Nothing(), S.Nothing()];
-      assert.deepEqual(S.pluck('c', xs), maybeXs);
+      eq(S.pluck('c', xs), [S.Nothing(), S.Nothing(), S.Nothing()]);
     });
 
     it('returns Just(undefined) for defined key with no value', function() {
       var xs = [{a: 1, b: 3}, {a: void 0, b: 4}, {a: 3, b: 5}];
-      var maybeXs = [S.Just(1), S.Just(void 0), S.Just(3)];
-      assert.deepEqual(S.pluck('a', xs), maybeXs);
+      eq(S.pluck('a', xs), [S.Just(1), S.Just(undefined), S.Just(3)]);
     });
 
     it('returns an array of Maybes for various values', function() {
       var xs = [{a: 1}, {a: void 0}, {a: 4}, {b: 1}];
-      var maybeXs = [S.Just(1), S.Just(void 0), S.Just(4), S.Nothing()];
-      assert.deepEqual(S.pluck('a', xs), maybeXs);
+      eq(S.pluck('a', xs),
+         [S.Just(1), S.Just(undefined), S.Just(4), S.Nothing()]);
     });
 
   });
@@ -1341,9 +1275,9 @@ describe('object', function() {
 
     it('returns a Maybe', function() {
       var obj = {x: 0, y: 42};
-      assert(S.get('x', obj).equals(S.Just(0)));
-      assert(S.get('y', obj).equals(S.Just(42)));
-      assert(S.get('z', obj).equals(S.Nothing()));
+      eq(S.get('x', obj), S.Just(0));
+      eq(S.get('y', obj), S.Just(42));
+      eq(S.get('z', obj), S.Nothing());
     });
 
   });
@@ -1352,10 +1286,10 @@ describe('object', function() {
 
     it('returns a Maybe', function() {
       var obj = {x: {z: 0}, y: 42};
-      assert.deepEqual(S.fromMaybe({}, S.gets([], obj)), obj);
-      assert(S.gets(['y'], obj).equals(S.Just(42)));
-      assert(S.gets(['z'], obj).equals(S.Nothing()));
-      assert(S.gets(['x', 'z'], obj).equals(S.Just(0)));
+      eq(S.gets([], obj), S.Just({x: {z: 0}, y: 42}));
+      eq(S.gets(['y'], obj), S.Just(42));
+      eq(S.gets(['z'], obj), S.Nothing());
+      eq(S.gets(['x', 'z'], obj), S.Just(0));
     });
 
   });
@@ -1372,15 +1306,12 @@ describe('parse', function() {
     });
 
     it('returns a Just when applied to a valid date string', function() {
-      var maybe = S.parseDate('2001-02-03T04:05:06Z');
-      eq(maybe.constructor, S.Just);
-      eq(S.fromMaybe(null, maybe).constructor, Date);
-      eq(S.fromMaybe(null, maybe).getFullYear(), 2001);
+      eq(S.parseDate('2001-02-03T04:05:06Z'),
+         S.Just(new Date('2001-02-03T04:05:06Z')));
     });
 
     it('returns a Nothing when applied to an invalid date string', function() {
-      var maybe = S.parseDate('today');
-      eq(maybe.constructor, S.Nothing);
+      eq(S.parseDate('today'), S.Nothing());
     });
 
   });
@@ -1393,8 +1324,8 @@ describe('parse', function() {
     });
 
     it('returns a Maybe', function() {
-      assert(S.parseFloat('12.34').equals(S.Just(12.34)));
-      assert(S.parseFloat('xxx').equals(S.Nothing()));
+      eq(S.parseFloat('12.34'), S.Just(12.34));
+      eq(S.parseFloat('xxx'), S.Nothing());
     });
 
   });
@@ -1407,13 +1338,13 @@ describe('parse', function() {
     });
 
     it('returns a Maybe', function() {
-      assert(S.parseInt(10, '42').equals(S.Just(42)));
-      assert(S.parseInt(16, '2A').equals(S.Just(42)));
-      assert(S.parseInt(10, 'xxx').equals(S.Nothing()));
+      eq(S.parseInt(10, '42'), S.Just(42));
+      eq(S.parseInt(16, '2A'), S.Just(42));
+      eq(S.parseInt(10, 'xxx'), S.Nothing());
     });
 
     it('is curried', function() {
-      assert(S.parseInt(10)('42').equals(S.Just(42)));
+      eq(S.parseInt(10)('42'), S.Just(42));
     });
 
   });
@@ -1426,15 +1357,11 @@ describe('parse', function() {
     });
 
     it('returns a Just when applied to a valid JSON string', function() {
-      var xs = S.fromMaybe(null, S.parseJson('["foo","bar"]'));
-      eq(Object.prototype.toString.call(xs), '[object Array]');
-      eq(xs.length, 2);
-      eq(xs[0], 'foo');
-      eq(xs[1], 'bar');
+      eq(S.parseJson('["foo","bar"]'), S.Just(['foo', 'bar']));
     });
 
     it('returns a Nothing when applied to an invalid JSON string', function() {
-      assert(S.parseJson('[Invalid JSON]').equals(S.Nothing()));
+      eq(S.parseJson('[Invalid JSON]'), S.Nothing());
     });
 
   });
@@ -1446,23 +1373,23 @@ describe('regexp', function() {
   describe('match', function() {
 
     it('returns a Just containing an array of Justs', function() {
-      eq(S.match(/abcd/, 'abcdefg').toString(), 'Just([Just("abcd")])');
+      eq(S.match(/abcd/, 'abcdefg'), S.Just([S.Just('abcd')]));
     });
 
     it('supports global patterns', function() {
-      eq(S.match(/[a-z]a/g, 'bananas').toString(),
-        'Just([Just("ba"), Just("na"), Just("na")])');
+      eq(S.match(/[a-z]a/g, 'bananas'),
+         S.Just([S.Just('ba'), S.Just('na'), S.Just('na')]));
     });
 
     it('supports (optional) capturing groups', function() {
-      eq(S.match(/(good)?bye/, 'goodbye').toString(),
-        'Just([Just("goodbye"), Just("good")])');
-      eq(S.match(/(good)?bye/, 'bye').toString(),
-        'Just([Just("bye"), Nothing()])');
+      eq(S.match(/(good)?bye/, 'goodbye'),
+         S.Just([S.Just('goodbye'), S.Just('good')]));
+      eq(S.match(/(good)?bye/, 'bye'),
+         S.Just([S.Just('bye'), S.Nothing()]));
     });
 
     it('returns a Nothing() if no match', function() {
-      assert(S.match(/zzz/, 'abcdefg').equals(S.Nothing()));
+      eq(S.match(/zzz/, 'abcdefg'), S.Nothing());
     });
 
   });
