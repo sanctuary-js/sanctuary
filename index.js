@@ -862,6 +862,26 @@
     return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
+  //. ### Number
+  //. divide :: Number -> Number -> Maybe Number
+  //.
+  //. Divides two numbers, returns Nothing if the divisor is zero; Just
+  //. the result otherwise.
+  //.
+  //. ```javascript
+  //. > S.divide(20, 5)
+  //. Just(4)
+  //.
+  //. > S.divide(21, 5)
+  //. Just(4.2)
+  //. ```
+  //. > S.divide(5, 0)
+  //. Nothing()
+  //. ```
+  S.divide = R.curry(function(a, b) {
+    return b === 0 ? Nothing() : Just(a / b);
+  });
+
   //. ### List
 
   //# slice :: Number -> Number -> [a] -> Maybe [a]
