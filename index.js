@@ -980,6 +980,48 @@
   //. ```
   S.init = S.slice(0, -1);
 
+  //# take :: Number -> [a] -> Maybe [a]
+  //.
+  //. Returns Just the first N elements of the given collection if N is
+  //. greater than or equal to zero and less than or equal to the length
+  //. of the collection; Nothing otherwise. Supports Array, String, and
+  //. any other collection type which provides a `slice` method.
+  //.
+  //. ```javascript
+  //. > S.take(2, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["a", "b"])
+  //.
+  //. > S.take(4, 'abcdefg')
+  //. Just("abcd")
+  //.
+  //. > S.take(4, ['a', 'b', 'c'])
+  //. Nothing()
+  //. ```
+  S.take = R.curry(function(n, xs) {
+    return n < 0 || R.eq(n, -0) ? Nothing() : slice(0, n, xs);
+  });
+
+  //# drop :: Number -> [a] -> Maybe [a]
+  //.
+  //. Returns Just all but the first N elements of the given collection
+  //. if N is greater than or equal to zero and less than or equal to the
+  //. length of the collection; Nothing otherwise. Supports Array, String,
+  //. and any other collection type which provides a `slice` method.
+  //.
+  //. ```javascript
+  //. > S.drop(2, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["c", "d", "e"])
+  //.
+  //. > S.drop(4, 'abcdefg')
+  //. Just("efg")
+  //.
+  //. > S.drop(4, 'abc')
+  //. Nothing()
+  //. ```
+  S.drop = R.curry(function(n, xs) {
+    return n < 0 || R.eq(n, -0) ? Nothing() : slice(n, -0, xs);
+  });
+
   //# find :: (a -> Boolean) -> [a] -> Maybe a
   //.
   //. Takes a predicate and a list and returns Just the leftmost element of
