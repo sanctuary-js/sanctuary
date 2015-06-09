@@ -1182,6 +1182,68 @@ describe('list', function() {
 
   });
 
+  describe('take', function() {
+
+    it('returns a Nothing if n is greater than collection length', function() {
+      eq(S.take(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.take(6, 'abcde'), S.Nothing());
+    });
+
+    it('returns a Nothing if n is negative', function() {
+      eq(S.take(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.take(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.take(-0, 'abcdefg'), S.Nothing());
+      eq(S.take(-1, 'abcde'), S.Nothing());
+    });
+
+    it('returns an empty collection if n is 0', function() {
+      eq(S.take(0, ['a', 'b', 'c', 'd', 'e']), S.Just([]));
+      eq(S.take(0, 'abcde'), S.Just(''));
+    });
+
+    it('returns Just the first two elements from the collection', function() {
+      eq(S.take(2, ['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b']));
+      eq(S.take(2, 'abcdefg'), S.Just('ab'));
+    });
+
+    it('returns Just the whole collection if n is equal to array length', function() {
+      eq(S.take(5, ['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c', 'd', 'e']));
+      eq(S.take(7, 'abcdefg'), S.Just('abcdefg'));
+    });
+
+  });
+
+  describe('drop', function() {
+
+    it('returns a Nothing if n is greater than collection length', function() {
+      eq(S.drop(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.drop(6, 'abcde'), S.Nothing());
+    });
+
+    it('returns a Nothing if n is negative', function() {
+      eq(S.drop(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.drop(-3, 'abcde'), S.Nothing());
+      eq(S.drop(-0, 'abcde'), S.Nothing());
+    });
+
+    it('returns an empty collection if n is equal to collection length', function() {
+      eq(S.drop(5, ['a', 'b', 'c', 'd', 'e']), S.Just([]));
+      eq(S.drop(5, 'abcde'), S.Just(''));
+    });
+
+    it('returns Just the last three elements from the collection', function() {
+      eq(S.drop(2, ['a', 'b', 'c', 'd', 'e']), S.Just(['c', 'd', 'e']));
+      eq(S.drop(4, 'abcdefg'), S.Just('efg'));
+    });
+
+    it('returns Just the whole collection if n is zero', function() {
+      eq(S.drop(0, ['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c', 'd', 'e']));
+      eq(S.drop(0, 'abcdefg'), S.Just('abcdefg'));
+    });
+
+  });
+
   describe('find', function() {
 
     it('is a binary function', function() {
