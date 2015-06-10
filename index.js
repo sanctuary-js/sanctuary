@@ -453,7 +453,7 @@
   //. > S.toMaybe(42)
   //. Just(42)
   //. ```
-  S.toMaybe = R.ifElse(R.isNil, Nothing, Just);
+  var toMaybe = S.toMaybe = R.ifElse(R.isNil, Nothing, Just);
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
@@ -963,7 +963,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = S.slice(1, -0);
+  S.tail = slice(1, -0);
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -978,7 +978,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = S.slice(0, -1);
+  S.init = slice(0, -1);
 
   //# take :: Number -> [a] -> Maybe [a]
   //.
@@ -1219,7 +1219,7 @@
   //. > S.match(/(good)?bye/, 'bye')
   //. Just([Just("bye"), Nothing()])
   //. ```
-  S.match = R.curry(R.compose(R.map(R.map(S.toMaybe)), S.toMaybe, R.match));
+  S.match = R.curry(R.compose(R.map(R.map(toMaybe)), toMaybe, R.match));
 
 }.call(this));
 
