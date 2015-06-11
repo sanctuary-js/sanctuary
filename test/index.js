@@ -13,16 +13,10 @@ var eq = function(actual, expected) {
   assert.strictEqual(R.toString(actual), R.toString(expected));
 };
 
-//  messageEq :: a -> Object -> Boolean
-var messageEq = R.propEq('message');
-
-//  isPatternMatchFailure :: a -> Boolean
-var isPatternMatchFailure =
-R.both(R.is(TypeError), messageEq('Pattern match failure'));
-
-//  isTypeMismatch :: a -> Boolean
-var isTypeMismatch =
-R.both(R.is(TypeError), messageEq('Type mismatch'));
+//  errorEq :: Function -> String -> Error -> Boolean
+var errorEq = R.curry(function(type, message, error) {
+  return error.constructor === type && error.message === message;
+});
 
 //  parseHex :: String -> Either String Number
 var parseHex = function(s) {
@@ -93,8 +87,7 @@ describe('maybe', function() {
 
     it('throws if called', function() {
       assert.throws(function() { S.Maybe(); },
-                    R.both(R.is(Error),
-                           messageEq('Cannot instantiate Maybe')));
+                    errorEq(Error, 'Cannot instantiate Maybe'));
     });
 
   });
@@ -443,7 +436,7 @@ describe('maybe', function() {
 
     it('throws if applied to a value of any other type', function() {
       assert.throws(function() { S.fromMaybe(0, []); },
-                    isPatternMatchFailure);
+                    errorEq(TypeError, 'Pattern match failure'));
     });
 
     it('is curried', function() {
@@ -522,8 +515,7 @@ describe('either', function() {
 
     it('throws if called', function() {
       assert.throws(function() { S.Either(); },
-                    R.both(R.is(Error),
-                           messageEq('Cannot instantiate Either')));
+                    errorEq(Error, 'Cannot instantiate Either'));
     });
 
   });
@@ -825,7 +817,7 @@ describe('either', function() {
 
     it('throws if applied to a value of any other type', function() {
       assert.throws(function() { S.either(R.length, square, []); },
-                    isPatternMatchFailure);
+                    errorEq(TypeError, 'Pattern match failure'));
     });
 
     it('is curried', function() {
@@ -881,16 +873,16 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.and([], S.Nothing()); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
 
       assert.throws(function() { S.and(S.Nothing(), foo); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       assert.throws(function() { S.and(0, 1); },
-                    R.both(R.is(TypeError),
-                           messageEq('0 does not have a "toBoolean" method')));
+                    errorEq(TypeError,
+                            '0 does not have a "toBoolean" method'));
     });
 
     it('is curried', function() {
@@ -940,16 +932,16 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.or([], S.Nothing()); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
 
       assert.throws(function() { S.or(S.Nothing(), foo); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       assert.throws(function() { S.or(0, 1); },
-                    R.both(R.is(TypeError),
-                           messageEq('0 does not have a "toBoolean" method')));
+                    errorEq(TypeError,
+                            '0 does not have a "toBoolean" method'));
     });
 
     it('is curried', function() {
@@ -987,24 +979,21 @@ describe('control', function() {
     });
 
     it('cannot be applied to eithers', function() {
-      //  message :: String -> String
-      var message = R.concat(R.__, ' does not have an "empty" method');
-
       assert.throws(function() { S.xor(S.Left('foo'), S.Left('bar')); },
-                    R.both(R.is(TypeError),
-                           messageEq(message('Left("foo")'))));
+                    errorEq(TypeError,
+                            'Left("foo") does not have an "empty" method'));
 
       assert.throws(function() { S.xor(S.Left('foo'), S.Right(42)); },
-                    R.both(R.is(TypeError),
-                           messageEq(message('Left("foo")'))));
+                    errorEq(TypeError,
+                            'Left("foo") does not have an "empty" method'));
 
       assert.throws(function() { S.xor(S.Right(42), S.Left('foo')); },
-                    R.both(R.is(TypeError),
-                           messageEq(message('Right(42)'))));
+                    errorEq(TypeError,
+                            'Right(42) does not have an "empty" method'));
 
       assert.throws(function() { S.xor(S.Right(42), S.Right(43)); },
-                    R.both(R.is(TypeError),
-                           messageEq(message('Right(42)'))));
+                    errorEq(TypeError,
+                            'Right(42) does not have an "empty" method'));
     });
 
     it('throws if applied to values of different types', function() {
@@ -1013,16 +1002,16 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.xor([], S.Nothing()); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
 
       assert.throws(function() { S.xor(S.Nothing(), foo); },
-                    isTypeMismatch);
+                    errorEq(TypeError, 'Type mismatch'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       assert.throws(function() { S.xor(0, 1); },
-                    R.both(R.is(TypeError),
-                           messageEq('0 does not have a "toBoolean" method')));
+                    errorEq(TypeError,
+                            '0 does not have a "toBoolean" method'));
     });
 
     it('is curried', function() {
