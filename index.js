@@ -876,10 +876,10 @@
   //. Accepts negative indices, which indicate an offset from the end of
   //. the list.
   //.
-  //. ```javascript
-  //. > S.slice(1, 1, ['a', 'b', 'c', 'd', 'e'])
-  //. Just([])
+  //. Dispatches to its third argument's `slice` method if present. As a
+  //. result, one may replace `[a]` with `String` in the type signature.
   //.
+  //. ```javascript
   //. > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
   //. Just(["b", "c"])
   //.
@@ -889,11 +889,11 @@
   //. > S.slice(2, -0, ['a', 'b', 'c', 'd', 'e'])
   //. Just(["c", "d", "e"])
   //.
-  //. > S.slice(0, 2, [])
-  //. Nothing()
-  //.
   //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing()
+  //.
+  //. > S.slice(2, 6, 'banana')
+  //. Just("nana")
   //. ```
   var slice = S.slice = R.curry(function(start, end, xs) {
     var len = xs.length;
@@ -1057,11 +1057,21 @@
   //. of the first occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
+  //. Dispatches to its second argument's `indexOf` method if present.
+  //. As a result, `String -> String -> Maybe Number` is an alternative
+  //. type signature.
+  //.
   //. ```javascript
   //. > S.indexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
   //. Just(1)
   //.
   //. > S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
+  //. Nothing()
+  //.
+  //. > S.indexOf('an', 'banana')
+  //. Just(1)
+  //.
+  //. > S.indexOf('ax', 'banana')
   //. Nothing()
   //. ```
   S.indexOf = sanctifyIndexOf(R.indexOf);
@@ -1072,11 +1082,21 @@
   //. of the last occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
+  //. Dispatches to its second argument's `lastIndexOf` method if present.
+  //. As a result, `String -> String -> Maybe Number` is an alternative
+  //. type signature.
+  //.
   //. ```javascript
   //. > S.lastIndexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
   //. Just(5)
   //.
   //. > S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
+  //. Nothing()
+  //.
+  //. > S.lastIndexOf('an', 'banana')
+  //. Just(3)
+  //.
+  //. > S.lastIndexOf('ax', 'banana')
   //. Nothing()
   //. ```
   S.lastIndexOf = sanctifyIndexOf(R.lastIndexOf);
