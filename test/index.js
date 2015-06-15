@@ -1116,6 +1116,13 @@ describe('list', function() {
       eq(S.slice(0, 5, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
     });
 
+    it('can operate on strings', function() {
+      eq(S.slice(0, -0, 'ramda'), S.Just('ramda'));
+      eq(S.slice(1, -3, 'ramda'), S.Just('a'));
+      eq(S.slice(2, -3, 'ramda'), S.Just(''));
+      eq(S.slice(3, -3, 'ramda'), S.Nothing());
+    });
+
   });
 
   describe('head', function() {
@@ -1278,11 +1285,16 @@ describe('list', function() {
     });
 
     it('returns a Nothing if the element is not found', function() {
-      eq(S.indexOf(10, [1, 2, 3, 4, 5]), S.Nothing());
+      eq(S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing());
     });
 
     it('returns Just the index of the element found', function() {
-      eq(S.indexOf(3, [1, 2, 3, 4, 5]), S.Just(2));
+      eq(S.indexOf('a', ['b', 'a', 'n', 'a', 'n', 'a']), S.Just(1));
+    });
+
+    it('can operate on strings', function() {
+      eq(S.indexOf('an', 'banana'), S.Just(1));
+      eq(S.indexOf('ax', 'banana'), S.Nothing());
     });
 
   });
@@ -1294,11 +1306,16 @@ describe('list', function() {
     });
 
     it('returns a Nothing if the element is not found', function() {
-      eq(S.lastIndexOf('d', ['a', 'b', 'b', 'c', 'c']), S.Nothing());
+      eq(S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing());
     });
 
     it('returns Just the last index of the element found', function() {
-      eq(S.lastIndexOf('c', ['a', 'b', 'b', 'c', 'c']), S.Just(4));
+      eq(S.lastIndexOf('a', ['b', 'a', 'n', 'a', 'n', 'a']), S.Just(5));
+    });
+
+    it('can operate on strings', function() {
+      eq(S.lastIndexOf('an', 'banana'), S.Just(3));
+      eq(S.lastIndexOf('ax', 'banana'), S.Nothing());
     });
 
   });
