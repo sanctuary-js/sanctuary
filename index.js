@@ -94,6 +94,9 @@
     });
   };
 
+  //  negativeZero :: a -> Boolean
+  var negativeZero = R.identical(-0);
+
   //. ### Combinator
 
   //# K :: a -> b -> a
@@ -226,20 +229,20 @@
   //.
   //.   - it is a Nothing and `this` is a Nothing; or
   //.
-  //.   - it is a Just and `this` is a Just, and their values are equal,
-  //.     in [SameValue][] terms.
+  //.   - it is a Just and `this` is a Just, and their values are equal
+  //.     according to [`R.equals`][R.equals].
   //.
   //. ```javascript
   //. > S.Nothing().equals(S.Nothing())
   //. true
   //.
-  //. > S.Just(42).equals(S.Just(42))
+  //. > S.Just([1, 2, 3]).equals(S.Just([1, 2, 3]))
   //. true
   //.
-  //. > S.Just(42).equals(S.Just(43))
+  //. > S.Just([1, 2, 3]).equals(S.Just([3, 2, 1]))
   //. false
   //.
-  //. > S.Just(42).equals(S.Nothing())
+  //. > S.Just([1, 2, 3]).equals(S.Nothing())
   //. false
   //. ```
 
@@ -575,17 +578,17 @@
   //.
   //. Takes an Either and returns `true` if:
   //.
-  //.   - it is a Left and `this` is a Left, and their values are equal,
-  //.     in [SameValue][] terms; or
+  //.   - it is a Left and `this` is a Left, and their values are equal
+  //.     according to [`R.equals`][R.equals]; or
   //.
-  //.   - it is a Right and `this` is a Right, and their values are equal,
-  //.     in [SameValue][] terms.
+  //.   - it is a Right and `this` is a Right, and their values are equal
+  //.     according to [`R.equals`][R.equals].
   //.
   //. ```javascript
-  //. > S.Right(42).equals(S.Right(42))
+  //. > S.Right([1, 2, 3]).equals(S.Right([1, 2, 3]))
   //. true
   //.
-  //. > S.Right(42).equals(S.Left(42))
+  //. > S.Right([1, 2, 3]).equals(S.Left([1, 2, 3]))
   //. false
   //. ```
 
@@ -894,8 +897,8 @@
   //. ```
   var slice = S.slice = R.curry(function(start, end, xs) {
     var len = xs.length;
-    var startIdx = R.eq(-0, start) ? len : start < 0 ? start + len : start;
-    var endIdx = R.eq(-0, end) ? len : end < 0 ? end + len : end;
+    var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
+    var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
 
     return (Math.abs(start) <= len && Math.abs(end) <= len && startIdx <= endIdx) ?
       Just(R.slice(startIdx, endIdx, xs)) :
@@ -998,7 +1001,7 @@
   //. Nothing()
   //. ```
   S.take = R.curry(function(n, xs) {
-    return n < 0 || R.eq(n, -0) ? Nothing() : slice(0, n, xs);
+    return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
   //# drop :: Number -> [a] -> Maybe [a]
@@ -1019,7 +1022,7 @@
   //. Nothing()
   //. ```
   S.drop = R.curry(function(n, xs) {
-    return n < 0 || R.eq(n, -0) ? Nothing() : slice(n, -0, xs);
+    return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
   //# find :: (a -> Boolean) -> [a] -> Maybe a
@@ -1225,7 +1228,7 @@
 
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
+//. [R.equals]:     http://ramdajs.com/docs/#equals
 //. [R.map]:        http://ramdajs.com/docs/#map
 //. [Ramda]:        http://ramdajs.com/
-//. [SameValue]:    http://ecma-international.org/ecma-262/5.1/#sec-9.12
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup

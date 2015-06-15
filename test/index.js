@@ -294,10 +294,15 @@ describe('maybe', function() {
       eq(S.Just(42).equals(S.Just(43)), false);
       eq(S.Just(42).equals(S.Nothing()), false);
 
-      // SameValue semantics:
+      // Value-based equality:
       eq(S.Just(0).equals(S.Just(-0)), false);
       eq(S.Just(-0).equals(S.Just(0)), false);
       eq(S.Just(NaN).equals(S.Just(NaN)), true);
+      eq(S.Just([1, 2, 3]).equals(S.Just([1, 2, 3])), true);
+      // jshint -W053
+      eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
+      eq(S.Just(new Number(42)).equals(42), false);
+      // jshint +W053
     });
 
     it('provides a "filter" method', function() {
@@ -563,10 +568,15 @@ describe('either', function() {
       eq(S.Left(42).equals(S.Left('42')), false);
       eq(S.Left(42).equals(S.Right(42)), false);
 
-      // SameValue semantics:
+      // Value-based equality:
       eq(S.Left(0).equals(S.Left(-0)), false);
       eq(S.Left(-0).equals(S.Left(0)), false);
       eq(S.Left(NaN).equals(S.Left(NaN)), true);
+      eq(S.Left([1, 2, 3]).equals(S.Left([1, 2, 3])), true);
+      // jshint -W053
+      eq(S.Left(new Number(42)).equals(S.Left(new Number(42))), true);
+      eq(S.Left(new Number(42)).equals(42), false);
+      // jshint +W053
     });
 
     it('provides a "map" method', function() {
@@ -703,10 +713,15 @@ describe('either', function() {
       eq(S.Right(42).equals(S.Right('42')), false);
       eq(S.Right(42).equals(S.Left(42)), false);
 
-      // SameValue semantics:
+      // Value-based equality:
       eq(S.Right(0).equals(S.Right(-0)), false);
       eq(S.Right(-0).equals(S.Right(0)), false);
       eq(S.Right(NaN).equals(S.Right(NaN)), true);
+      eq(S.Right([1, 2, 3]).equals(S.Right([1, 2, 3])), true);
+      // jshint -W053
+      eq(S.Right(new Number(42)).equals(S.Right(new Number(42))), true);
+      eq(S.Right(new Number(42)).equals(42), false);
+      // jshint +W053
     });
 
     it('provides a "map" method', function() {
