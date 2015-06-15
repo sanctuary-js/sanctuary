@@ -1223,7 +1223,14 @@
   //. fact represent a number in the base specified by the radix; Nothing
   //. otherwise.
   //.
+  //. This function is stricter than [`parseInt`][parseInt]: a string
+  //. is considered to represent an integer only if all its non-prefix
+  //. characters are members of the character set specified by the radix.
+  //.
   //. ```javascript
+  //. > S.parseInt(10, '-42')
+  //. Just(-42)
+  //.
   //. > S.parseInt(16, '0xFF')
   //. Just(255)
   //.
@@ -1231,8 +1238,22 @@
   //. Nothing()
   //. ```
   S.parseInt = def('parseInt', [Number, String], function(radix, s) {
-    var n = parseInt(s, radix);
-    return n === n ? Just(n) : Nothing();
+    if (radix < 2 || radix > 36) {
+      throw new RangeError('Radix not in [2 .. 36]');
+    }
+
+    var charset = R.take(radix, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+    return R.pipe(
+      Just,
+      R.filter(R.pipe(R.replace(/^[+-]/, ''),
+                      radix === 16 ? R.replace(/^0x/i, '') : R.identity,
+                      R.split(''),
+                      R.all(R.pipe(R.toUpper,
+                                   R.indexOf(_, charset),
+                                   R.gte(_, 0))))),
+      R.map(R.partialRight(parseInt, radix))
+    )(s);
   });
 
   //# parseJson :: String -> Maybe *
@@ -1280,3 +1301,4 @@
 //. [R.map]:        http://ramdajs.com/docs/#map
 //. [Ramda]:        http://ramdajs.com/
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
+//. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
