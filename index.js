@@ -79,6 +79,58 @@
 
   var _ = R.__;
 
+  //  placeholder :: a -> Boolean
+  var placeholder = function(x) {
+    return x != null && x['@@functional/placeholder'] === true;
+  };
+
+  /* istanbul ignore next */
+  var Any = function Any() {};
+
+  var arity = function(n, f) {
+    switch (n) {
+      case 0: return function() { return f.apply(this, arguments); };
+      case 1: return function(a) { return f.apply(this, arguments); };
+      case 2: return function(a, b) { return f.apply(this, arguments); };
+      case 3: return function(a, b, c) { return f.apply(this, arguments); };
+    }
+  };
+
+  var curry = function(name, typePairs, f) {
+    return arity(typePairs.length, function() {
+      var args = arguments;
+      var $typePairs = [];
+      for (var idx = 0; idx < args.length; idx += 1) {
+        var typePair = typePairs[idx];
+        if (placeholder(args[idx])) {
+          $typePairs.push(typePair);
+        } else if (typePair[1] !== Any && !R.is(typePair[1], args[idx])) {
+          throw new TypeError(R.join(' ', [
+            name,
+            'requires a value of type',
+            /^function (\w*)/.exec(typePair[1])[1],
+            'as its',
+            ['first', 'second', 'third'][typePair[0]],
+            'argument; received',
+            R.toString(args[idx])
+          ]));
+        }
+      }
+      $typePairs = R.concat($typePairs, typePairs.slice(args.length));
+      return $typePairs.length === 0 ?
+        f.apply(this, args) :
+        curry(name, $typePairs, function() {
+          var $args = Array.prototype.slice.call(arguments);
+          var val = function(x) { return placeholder(x) ? $args.shift() : x; };
+          return f.apply(this, R.concat(R.map(val, args), $args));
+        });
+    });
+  };
+
+  var def = function(name, types, f) {
+    return curry(name, R.zip(R.range(0, types.length), types), f);
+  };
+
   var extend = function(Child, Parent) {
     function Ctor() {
       this.constructor = Child;
@@ -97,6 +149,14 @@
   //  negativeZero :: a -> Boolean
   var negativeZero = R.identical(-0);
 
+  var self = function() { return this; };
+
+  var toString = function(name) {
+    return def(name + '#toString', [], function() {
+      return name + '(' + R.toString(this.value) + ')';
+    });
+  };
+
   //. ### Combinator
 
   //# K :: a -> b -> a
@@ -110,7 +170,7 @@
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
-  S.K = R.curry(function(x, y) {
+  S.K = def('K', [Any, Any], function(x, y) {
     return x;
   });
 
@@ -134,9 +194,9 @@
   //. > S.Maybe.empty()
   //. Nothing()
   //. ```
-  Maybe.empty = function() {
+  Maybe.empty = def('Maybe.empty', [], function() {
     return new Nothing();
-  };
+  });
 
   //# Maybe.of :: a -> Maybe a
   //.
@@ -146,9 +206,9 @@
   //. > S.Maybe.of(42)
   //. Just(42)
   //. ```
-  Maybe.of = function(x) {
+  Maybe.of = def('Maybe.of', [Any], function(x) {
     return new Just(x);
-  };
+  });
 
   //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
   //.
@@ -221,11 +281,11 @@
   //. > S.Just(42).empty()
   //. Nothing()
   //. ```
-  Maybe.prototype.empty = Maybe.empty;
+  Maybe.prototype.empty = def('Maybe#empty', [], Maybe.empty);
 
-  //# Maybe#equals :: Maybe a ~> Maybe a -> Boolean
+  //# Maybe#equals :: Maybe a ~> b -> Boolean
   //.
-  //. Takes a Maybe and returns `true` if:
+  //. Takes a value of any type and returns `true` if:
   //.
   //.   - it is a Nothing and `this` is a Nothing; or
   //.
@@ -235,6 +295,9 @@
   //. ```javascript
   //. > S.Nothing().equals(S.Nothing())
   //. true
+  //.
+  //. > S.Nothing().equals(null)
+  //. false
   //.
   //. > S.Just([1, 2, 3]).equals(S.Just([1, 2, 3]))
   //. true
@@ -258,9 +321,9 @@
   //. > S.Just(43).filter(function(n) { return n % 2 === 0; })
   //. Nothing()
   //. ```
-  Maybe.prototype.filter = function(pred) {
+  Maybe.prototype.filter = def('Maybe#filter', [Function], function(pred) {
     return filter(pred, this);
-  };
+  });
 
   //# Maybe#map :: Maybe a ~> (a -> b) -> Maybe b
   //.
@@ -284,7 +347,7 @@
   //. > S.Nothing().of(42)
   //. Just(42)
   //. ```
-  Maybe.prototype.of = Maybe.of;
+  Maybe.prototype.of = def('Maybe#of', [Any], Maybe.of);
 
   //# Maybe#toBoolean :: Maybe a ~> Boolean
   //.
@@ -333,39 +396,26 @@
   extend(Nothing, Maybe);
 
   //  Nothing#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
-  Nothing.prototype.ap = function(x) {
-    return this;
-  };
+  Nothing.prototype.ap = def('Nothing#ap', [Maybe], self);
 
   //  Nothing#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
-  Nothing.prototype.chain = function(f) {
-    return this;
-  };
+  Nothing.prototype.chain = def('Nothing#chain', [Function], self);
 
   //  Nothing#concat :: Maybe a ~> Maybe a -> Maybe a
-  Nothing.prototype.concat = function(maybe) {
-    return maybe;
-  };
+  Nothing.prototype.concat = def('Nothing#concat', [Maybe], R.identity);
 
-  //  Nothing#equals :: Maybe a ~> Maybe a -> Boolean
-  Nothing.prototype.equals = function(maybe) {
-    return maybe instanceof Nothing;
-  };
+  //  Nothing#equals :: Maybe a ~> b -> Boolean
+  Nothing.prototype.equals = def('Nothing#equals', [Any], R.is(Nothing));
 
   //  Nothing#map :: Maybe a ~> (a -> b) -> Maybe b
-  Nothing.prototype.map = function(f) {
-    return this;
-  };
+  Nothing.prototype.map = def('Nothing#map', [Function], self);
 
   //  Nothing#toBoolean :: Maybe a ~> Boolean
-  Nothing.prototype.toBoolean = function() {
-    return false;
-  };
+  Nothing.prototype.toBoolean = def('Nothing#toBoolean', [], R.always(false));
 
   //  Nothing#toString :: Maybe a ~> String
-  Nothing.prototype.toString = function() {
-    return 'Nothing()';
-  };
+  Nothing.prototype.toString = def('Nothing#toString', [],
+                                   R.always('Nothing()'));
 
   //# Just :: a -> Maybe a
   //.
@@ -387,39 +437,35 @@
   extend(Just, Maybe);
 
   //  Just#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
-  Just.prototype.ap = function(x) {
-    return x.map(this.value);
-  };
+  Just.prototype.ap = def('Just#ap', [Maybe], function(maybe) {
+    return maybe.map(this.value);
+  });
 
   //  Just#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
-  Just.prototype.chain = function(f) {
+  Just.prototype.chain = def('Just#chain', [Function], function(f) {
     return f(this.value);
-  };
+  });
 
   //  Just#concat :: Maybe a ~> Maybe a -> Maybe a
-  Just.prototype.concat = function(maybe) {
+  Just.prototype.concat = def('Just#concat', [Maybe], function(maybe) {
     return maybe instanceof Just ? Just(this.value.concat(maybe.value)) : this;
-  };
+  });
 
-  //  Just#equals :: Maybe a ~> Maybe a -> Boolean
-  Just.prototype.equals = function(maybe) {
-    return maybe instanceof Just && R.eqProps('value', maybe, this);
-  };
+  //  Just#equals :: Maybe a ~> b -> Boolean
+  Just.prototype.equals = def('Just#equals', [Any], function(x) {
+    return x instanceof Just && R.eqProps('value', x, this);
+  });
 
   //  Just#map :: Maybe a ~> (a -> b) -> Maybe b
-  Just.prototype.map = function(f) {
+  Just.prototype.map = def('Just#map', [Function], function(f) {
     return new Just(f(this.value));
-  };
+  });
 
   //  Just#toBoolean :: Maybe a ~> Boolean
-  Just.prototype.toBoolean = function() {
-    return true;
-  };
+  Just.prototype.toBoolean = def('Just#toBoolean', [], R.always(true));
 
   //  Just#toString :: Maybe a ~> String
-  Just.prototype.toString = function() {
-    return 'Just(' + R.toString(this.value) + ')';
-  };
+  Just.prototype.toString = toString('Just');
 
   //# fromMaybe :: a -> Maybe a -> a
   //.
@@ -433,15 +479,8 @@
   //. > S.fromMaybe(0, S.Nothing())
   //. 0
   //. ```
-  S.fromMaybe = R.curry(function(x, maybe) {
-    switch (true) {
-      case maybe instanceof Nothing:
-        return x;
-      case maybe instanceof Just:
-        return maybe.value;
-      default:
-        throw new TypeError('Pattern match failure');
-    }
+  S.fromMaybe = def('fromMaybe', [Any, Maybe], function(x, maybe) {
+    return maybe instanceof Just ? maybe.value : x;
   });
 
   //# toMaybe :: a? -> Maybe a
@@ -456,7 +495,8 @@
   //. > S.toMaybe(42)
   //. Just(42)
   //. ```
-  var toMaybe = S.toMaybe = R.ifElse(R.isNil, Nothing, Just);
+  var toMaybe = S.toMaybe =
+  def('toMaybe', [Any], R.ifElse(R.isNil, Nothing, Just));
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
@@ -472,7 +512,7 @@
   //. > S.encase(eval)('1 +')
   //. Nothing()
   //. ```
-  var encase = S.encase = R.curry(function(f) {
+  var encase = S.encase = def('encase', [Function], function(f) {
     return R.curryN(f.length, function() {
       try {
         return Just(f.apply(this, arguments));
@@ -503,9 +543,9 @@
   //. > S.Either.of(42)
   //. Right(42)
   //. ```
-  Either.of = function(x) {
+  Either.of = def('Either.of', [Any], function(x) {
     return new Right(x);
-  };
+  });
 
   //# Either#ap :: Either a (b -> c) ~> Either a b -> Either a c
   //.
@@ -574,9 +614,9 @@
   //. Right([1, 2, 3])
   //. ```
 
-  //# Either#equals :: Either a b ~> Either a b -> Boolean
+  //# Either#equals :: Either a b ~> c -> Boolean
   //.
-  //. Takes an Either and returns `true` if:
+  //. Takes a value of any type and returns `true` if:
   //.
   //.   - it is a Left and `this` is a Left, and their values are equal
   //.     according to [`R.equals`][R.equals]; or
@@ -589,6 +629,9 @@
   //. true
   //.
   //. > S.Right([1, 2, 3]).equals(S.Left([1, 2, 3]))
+  //. false
+  //.
+  //. > S.Right(42).equals(42)
   //. false
   //. ```
 
@@ -614,7 +657,7 @@
   //. > S.Left('Cannot divide by zero').of(42)
   //. Right(42)
   //. ```
-  Either.prototype.of = Either.of;
+  Either.prototype.of = def('Either#of', [Any], Either.of);
 
   //# Either#toBoolean :: Either a b ~> Boolean
   //.
@@ -666,39 +709,29 @@
   extend(Left, Either);
 
   //  Left#ap :: Either a (b -> c) ~> Either a b -> Either a c
-  Left.prototype.ap = function(x) {
-    return this;
-  };
+  Left.prototype.ap = def('Left#ap', [Either], self);
 
   //  Left#chain :: Either a b ~> (b -> Either a c) -> Either a c
-  Left.prototype.chain = function(f) {
-    return this;
-  };
+  Left.prototype.chain = def('Left#chain', [Function], self);
 
   //  Left#concat :: Either a b ~> Either a b -> Either a b
-  Left.prototype.concat = function(either) {
+  Left.prototype.concat = def('Left#concat', [Either], function(either) {
     return R.is(Left, either) ? Left(this.value.concat(either.value)) : either;
-  };
+  });
 
-  //  Left#equals :: Either a b ~> Either a b -> Boolean
-  Left.prototype.equals = function(either) {
-    return either instanceof Left && R.eqProps('value', either, this);
-  };
+  //  Left#equals :: Either a b ~> c -> Boolean
+  Left.prototype.equals = def('Left#equals', [Any], function(x) {
+    return x instanceof Left && R.eqProps('value', x, this);
+  });
 
   //  Left#map :: Either a b ~> (b -> c) -> Either a c
-  Left.prototype.map = function(f) {
-    return this;
-  };
+  Left.prototype.map = def('Left#map', [Function], self);
 
   //  Left#toBoolean :: Either a b ~> Boolean
-  Left.prototype.toBoolean = function() {
-    return false;
-  };
+  Left.prototype.toBoolean = def('Left#toBoolean', [], R.always(false));
 
   //  Left#toString :: Either a b ~> String
-  Left.prototype.toString = function() {
-    return 'Left(' + R.toString(this.value) + ')';
-  };
+  Left.prototype.toString = toString('Left');
 
   //# Right :: b -> Either a b
   //.
@@ -719,39 +752,35 @@
   extend(Right, Either);
 
   //  Right#ap :: Either a (b -> c) ~> Either a b -> Either a c
-  Right.prototype.ap = function(x) {
-    return x.map(this.value);
-  };
+  Right.prototype.ap = def('Right#ap', [Either], function(either) {
+    return either.map(this.value);
+  });
 
   //  Right#chain :: Either a b ~> (b -> Either a c) -> Either a c
-  Right.prototype.chain = function(f) {
+  Right.prototype.chain = def('Right#chain', [Function], function(f) {
     return f(this.value);
-  };
+  });
 
   //  Right#concat :: Either a b ~> Either a b -> Either a b
-  Right.prototype.concat = function(either) {
+  Right.prototype.concat = def('Right#concat', [Either], function(either) {
     return R.is(Right, either) ? Right(this.value.concat(either.value)) : this;
-  };
+  });
 
-  //  Right#equals :: Either a b ~> Either a b -> Boolean
-  Right.prototype.equals = function(either) {
-    return either instanceof Right && R.eqProps('value', either, this);
-  };
+  //  Right#equals :: Either a b ~> c -> Boolean
+  Right.prototype.equals = def('Right#equals', [Any], function(x) {
+    return x instanceof Right && R.eqProps('value', x, this);
+  });
 
   //  Right#map :: Either a b ~> (b -> c) -> Either a c
-  Right.prototype.map = function(f) {
+  Right.prototype.map = def('Right#map', [Function], function(f) {
     return new Right(f(this.value));
-  };
+  });
 
   //  Right#toBoolean :: Either a b ~> Boolean
-  Right.prototype.toBoolean = function() {
-    return true;
-  };
+  Right.prototype.toBoolean = def('Right#toBoolean', [], R.always(true));
 
   //  Right#toString :: Either a b ~> String
-  Right.prototype.toString = function() {
-    return 'Right(' + R.toString(this.value) + ')';
-  };
+  Right.prototype.toString = toString('Right');
 
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
@@ -767,15 +796,9 @@
   //. > S.either(R.toUpper, R.toString, S.Right(42))
   //. "42"
   //. ```
-  S.either = R.curry(function(l, r, either) {
-    switch (true) {
-      case either instanceof Left:
-        return l(either.value);
-      case either instanceof Right:
-        return r(either.value);
-      default:
-        throw new TypeError('Pattern match failure');
-    }
+  S.either =
+  def('either', [Function, Function, Either], function(l, r, either) {
+    return either instanceof Left ? l(either.value) : r(either.value);
   });
 
   //. ### Control
@@ -817,7 +840,7 @@
   //. > S.and(S.Nothing(), S.Just(3))
   //. Nothing()
   //. ```
-  S.and = R.curry(function(x, y) {
+  S.and = def('and', [Any, Any], function(x, y) {
     assertTypeMatch(x, y);
     return toBoolean(x) ? y : x;
   });
@@ -836,7 +859,7 @@
   //. > S.or(S.Nothing(), S.Just(3))
   //. Just(3)
   //. ```
-  var or = S.or = R.curry(function(x, y) {
+  var or = S.or = def('or', [Any, Any], function(x, y) {
     assertTypeMatch(x, y);
     return toBoolean(x) ? x : y;
   });
@@ -857,7 +880,7 @@
   //. > S.xor(S.Just(2), S.Just(3))
   //. Nothing()
   //. ```
-  S.xor = R.curry(function(x, y) {
+  S.xor = def('xor', [Any, Any], function(x, y) {
     assertTypeMatch(x, y);
     var xBool = toBoolean(x);
     var yBool = toBoolean(y);
@@ -895,7 +918,8 @@
   //. > S.slice(2, 6, 'banana')
   //. Just("nana")
   //. ```
-  var slice = S.slice = R.curry(function(start, end, xs) {
+  var slice = S.slice =
+  def('slice', [Number, Number, Any], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -921,7 +945,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = R.curry(function(n, xs) {
+  var at = S.at = def('at', [Number, Any], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -937,7 +961,7 @@
   //. > S.head([])
   //. Nothing()
   //. ```
-  S.head = at(0);
+  S.head = def('head', [Any], at(0));
 
   //# last :: [a] -> Maybe a
   //.
@@ -951,7 +975,7 @@
   //. > S.last([])
   //. Nothing()
   //. ```
-  S.last = at(-1);
+  S.last = def('last', [Any], at(-1));
 
   //# tail :: [a] -> Maybe [a]
   //.
@@ -966,7 +990,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = slice(1, -0);
+  S.tail = def('tail', [Any], slice(1, -0));
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -981,7 +1005,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = slice(0, -1);
+  S.init = def('init', [Any], slice(0, -1));
 
   //# take :: Number -> [a] -> Maybe [a]
   //.
@@ -1000,7 +1024,7 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = R.curry(function(n, xs) {
+  S.take = def('take', [Number, Any], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
@@ -1021,7 +1045,7 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = R.curry(function(n, xs) {
+  S.drop = def('drop', [Number, Any], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
@@ -1038,7 +1062,7 @@
   //. > S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
   //. Nothing()
   //. ```
-  S.find = R.curry(function(pred, xs) {
+  S.find = def('find', [Function, Any], function(pred, xs) {
     for (var idx = 0, len = xs.length; idx < len; idx += 1) {
       if (pred(xs[idx])) {
         return Just(xs[idx]);
@@ -1047,8 +1071,8 @@
     return Nothing();
   });
 
-  var sanctifyIndexOf = function(f) {
-    return R.curry(R.compose(R.ifElse(R.gte(_, 0), Just, Nothing), f));
+  var sanctifyIndexOf = function(name) {
+    return def(name, [Any, Any], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
   //# indexOf :: a -> [a] -> Maybe Number
@@ -1074,7 +1098,7 @@
   //. > S.indexOf('ax', 'banana')
   //. Nothing()
   //. ```
-  S.indexOf = sanctifyIndexOf(R.indexOf);
+  S.indexOf = sanctifyIndexOf('indexOf');
 
   //# lastIndexOf :: a -> [a] -> Maybe Number
   //.
@@ -1099,7 +1123,7 @@
   //. > S.lastIndexOf('ax', 'banana')
   //. Nothing()
   //. ```
-  S.lastIndexOf = sanctifyIndexOf(R.lastIndexOf);
+  S.lastIndexOf = sanctifyIndexOf('lastIndexOf');
 
   //# pluck :: String -> [{String: *}] -> [Maybe *]
   //.
@@ -1114,7 +1138,7 @@
   //. > S.pluck('x', [{x: 1}, {x: 2}, {x: undefined}])
   //. [Just(1), Just(2), Just(undefined)]
   //. ```
-  S.pluck = R.curry(function(key, xs) {
+  S.pluck = def('pluck', [String, Any], function(key, xs) {
     return R.map(get(key), xs);
   });
 
@@ -1133,7 +1157,9 @@
   //. > S.get('toString', {x: 1, y: 2})
   //. Nothing()
   //. ```
-  var get = S.get = R.ifElse(R.has, R.compose(Just, R.prop), Nothing);
+  var get = S.get =
+  def('get', [String, Any],
+      R.ifElse(R.has, R.compose(Just, R.prop), Nothing));
 
   //# gets :: [String] -> Object -> Maybe *
   //.
@@ -1148,7 +1174,7 @@
   //. > S.gets(['a', 'b', 'c'], {})
   //. Nothing()
   //. ```
-  S.gets = R.curry(function(keys, obj) {
+  S.gets = def('gets', [Any, Any], function(keys, obj) {
     return R.reduce(function(acc, key) {
       return R.chain(get(key), acc);
     }, Just(obj), keys);
@@ -1168,7 +1194,7 @@
   //. > S.parseDate('today')
   //. Nothing()
   //. ```
-  S.parseDate = R.curry(function(s) {
+  S.parseDate = def('parseDate', [String], function(s) {
     var d = new Date(s);
     return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
   });
@@ -1185,7 +1211,7 @@
   //. > S.parseFloat('foo.bar')
   //. Nothing()
   //. ```
-  S.parseFloat = R.curry(function(s) {
+  S.parseFloat = def('parseFloat', [String], function(s) {
     var n = parseFloat(s);
     return n === n ? Just(n) : Nothing();
   });
@@ -1204,7 +1230,7 @@
   //. > S.parseInt(16, '0xGG')
   //. Nothing()
   //. ```
-  S.parseInt = R.curry(function(radix, s) {
+  S.parseInt = def('parseInt', [Number, String], function(radix, s) {
     var n = parseInt(s, radix);
     return n === n ? Just(n) : Nothing();
   });
@@ -1222,9 +1248,9 @@
   //. > S.parseJson('[')
   //. Nothing()
   //. ```
-  S.parseJson = encase(function(s) {
+  S.parseJson = def('parseJson', [String], encase(function(s) {
     return JSON.parse(s);
-  });
+  }));
 
   //. ### RegExp
 
@@ -1242,7 +1268,9 @@
   //. > S.match(/(good)?bye/, 'bye')
   //. Just([Just("bye"), Nothing()])
   //. ```
-  S.match = R.curry(R.compose(R.map(R.map(toMaybe)), toMaybe, R.match));
+  S.match =
+  def('match', [RegExp, String],
+      R.compose(R.map(R.map(toMaybe)), toMaybe, R.match));
 
 }.call(this));
 

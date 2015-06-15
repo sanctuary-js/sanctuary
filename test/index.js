@@ -115,23 +115,39 @@ describe('maybe', function() {
       eq(S.Nothing().ap.length, 1);
       eq(S.Nothing().ap(S.Nothing()), S.Nothing());
       eq(S.Nothing().ap(S.Just(42)), S.Nothing());
+
+      assert.throws(function() { S.Nothing().ap([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Nothing#ap requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Nothing().chain.length, 1);
       eq(S.Nothing().chain(S.head), S.Nothing());
+
+      assert.throws(function() { S.Nothing().chain(null); },
+                    errorEq(TypeError,
+                            'Nothing#chain requires a value of type ' +
+                            'Function as its first argument; received null'));
     });
 
     it('provides a "concat" method', function() {
       eq(S.Nothing().concat.length, 1);
       eq(S.Nothing().concat(S.Nothing()), S.Nothing());
       eq(S.Nothing().concat(S.Just('foo')), S.Just('foo'));
+
+      assert.throws(function() { S.Nothing().concat([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Nothing#concat requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides an "equals" method', function() {
       eq(S.Nothing().equals.length, 1);
       eq(S.Nothing().equals(S.Nothing()), true);
       eq(S.Nothing().equals(S.Just(42)), false);
+      eq(S.Nothing().equals(null), false);
     });
 
     it('provides a "filter" method', function() {
@@ -148,11 +164,21 @@ describe('maybe', function() {
              .equals(m.filter(function(x) { return p(f(x)); }).map(f)));
       assert(m.map(f).filter(q)
              .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
+
+      assert.throws(function() { S.Nothing().filter([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Maybe#filter requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Nothing().map.length, 1);
       eq(S.Nothing().map(function() { return 42; }), S.Nothing());
+
+      assert.throws(function() { S.Nothing().map([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Nothing#map requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -275,17 +301,32 @@ describe('maybe', function() {
       eq(S.Just(R.inc).ap.length, 1);
       eq(S.Just(R.inc).ap(S.Nothing()), S.Nothing());
       eq(S.Just(R.inc).ap(S.Just(42)), S.Just(43));
+
+      assert.throws(function() { S.Just(R.inc).ap([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#ap requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Just([1, 2, 3]).chain.length, 1);
       eq(S.Just([1, 2, 3]).chain(S.head), S.Just(1));
+
+      assert.throws(function() { S.Just([1, 2, 3]).chain([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#chain requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "concat" method', function() {
       eq(S.Just('foo').concat.length, 1);
       eq(S.Just('foo').concat(S.Nothing()), S.Just('foo'));
       eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
+
+      assert.throws(function() { S.Just('foo').concat([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#concat requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides an "equals" method', function() {
@@ -293,6 +334,7 @@ describe('maybe', function() {
       eq(S.Just(42).equals(S.Just(42)), true);
       eq(S.Just(42).equals(S.Just(43)), false);
       eq(S.Just(42).equals(S.Nothing()), false);
+      eq(S.Just(42).equals(null), false);
 
       // Value-based equality:
       eq(S.Just(0).equals(S.Just(-0)), false);
@@ -321,11 +363,21 @@ describe('maybe', function() {
              .equals(m.filter(function(x) { return p(f(x)); }).map(f)));
       assert(m.map(f).filter(q)
              .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
+
+      assert.throws(function() { S.Just(42).filter([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Maybe#filter requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Just(42).map.length, 1);
       eq(S.Just(42).map(function(x) { return x / 2; }), S.Just(21));
+
+      assert.throws(function() { S.Just(42).map([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#map requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -431,17 +483,19 @@ describe('maybe', function() {
       eq(S.fromMaybe.length, 2);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.fromMaybe(0, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            'fromMaybe requires a value of type Maybe ' +
+                            'as its second argument; received [1, 2, 3]'));
+    });
+
     it('can be applied to a Nothing', function() {
       eq(S.fromMaybe(0, S.Nothing()), 0);
     });
 
     it('can be applied to a Just', function() {
       eq(S.fromMaybe(0, S.Just(42)), 42);
-    });
-
-    it('throws if applied to a value of any other type', function() {
-      assert.throws(function() { S.fromMaybe(0, []); },
-                    errorEq(TypeError, 'Pattern match failure'));
     });
 
     it('is curried', function() {
@@ -474,6 +528,13 @@ describe('maybe', function() {
     it('is a unary function', function() {
       eq(typeof S.encase, 'function');
       eq(S.encase.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encase([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'encase requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     //  factorial :: Number -> Number
@@ -549,17 +610,32 @@ describe('either', function() {
       eq(S.Left('abc').ap.length, 1);
       eq(S.Left('abc').ap(S.Left('xyz')), S.Left('abc'));
       eq(S.Left('abc').ap(S.Right(42)), S.Left('abc'));
+
+      assert.throws(function() { S.Left('abc').ap([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Left#ap requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Left('abc').chain.length, 1);
       eq(S.Left('abc').chain(squareRoot), S.Left('abc'));
+
+      assert.throws(function() { S.Left('abc').chain([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Left#chain requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "concat" method', function() {
       eq(S.Left('abc').concat.length, 1);
       eq(S.Left('abc').concat(S.Left('def')), S.Left('abcdef'));
       eq(S.Left('abc').concat(S.Right('xyz')), S.Right('xyz'));
+
+      assert.throws(function() { S.Left('abc').concat([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Left#concat requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides an "equals" method', function() {
@@ -567,6 +643,7 @@ describe('either', function() {
       eq(S.Left(42).equals(S.Left(42)), true);
       eq(S.Left(42).equals(S.Left('42')), false);
       eq(S.Left(42).equals(S.Right(42)), false);
+      eq(S.Left(42).equals(null), false);
 
       // Value-based equality:
       eq(S.Left(0).equals(S.Left(-0)), false);
@@ -582,6 +659,11 @@ describe('either', function() {
     it('provides a "map" method', function() {
       eq(S.Left('abc').map.length, 1);
       eq(S.Left('abc').map(square), S.Left('abc'));
+
+      assert.throws(function() { S.Left('abc').map([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Left#map requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -694,17 +776,32 @@ describe('either', function() {
       eq(S.Right(R.inc).ap.length, 1);
       eq(S.Right(R.inc).ap(S.Left('abc')), S.Left('abc'));
       eq(S.Right(R.inc).ap(S.Right(42)), S.Right(43));
+
+      assert.throws(function() { S.Right(R.inc).ap([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Right#ap requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Right(25).chain.length, 1);
       eq(S.Right(25).chain(squareRoot), S.Right(5));
+
+      assert.throws(function() { S.Right(25).chain([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Right#chain requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "concat" method', function() {
       eq(S.Right('abc').concat.length, 1);
       eq(S.Right('abc').concat(S.Left('xyz')), S.Right('abc'));
       eq(S.Right('abc').concat(S.Right('def')), S.Right('abcdef'));
+
+      assert.throws(function() { S.Right('abc').concat([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Right#concat requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides an "equals" method', function() {
@@ -712,6 +809,7 @@ describe('either', function() {
       eq(S.Right(42).equals(S.Right(42)), true);
       eq(S.Right(42).equals(S.Right('42')), false);
       eq(S.Right(42).equals(S.Left(42)), false);
+      eq(S.Right(42).equals(null), false);
 
       // Value-based equality:
       eq(S.Right(0).equals(S.Right(-0)), false);
@@ -727,6 +825,11 @@ describe('either', function() {
     it('provides a "map" method', function() {
       eq(S.Right(42).map.length, 1);
       eq(S.Right(42).map(square), S.Right(1764));
+
+      assert.throws(function() { S.Right(42).map([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Right#map requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -822,6 +925,38 @@ describe('either', function() {
       eq(S.either.length, 3);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.either([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.either(R.__, square)([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.either(R.length, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Function ' +
+                            'as its second argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.either(R.length)([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Function ' +
+                            'as its second argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.either(R.length, square, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Either ' +
+                            'as its third argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.either(R.length)(square)([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'either requires a value of type Either ' +
+                            'as its third argument; received [1, 2, 3]'));
+    });
+
     it('can be applied to a Left', function() {
       eq(S.either(R.length, square, S.Left('abc')), 3);
     });
@@ -830,15 +965,35 @@ describe('either', function() {
       eq(S.either(R.length, square, S.Right(42)), 1764);
     });
 
-    it('throws if applied to a value of any other type', function() {
-      assert.throws(function() { S.either(R.length, square, []); },
-                    errorEq(TypeError, 'Pattern match failure'));
-    });
-
     it('is curried', function() {
-      eq(S.either(R.length)(square)(S.Left('abc')), 3);
-      eq(S.either(R.length)(square, S.Left('abc')), 3);
-      eq(S.either(R.length, square)(S.Left('abc')), 3);
+      var f = R.length;
+      var g = square;
+      var x = S.Left('abc');
+      var _ = R.__;
+
+      eq(S.either(f)(g)(x), 3);
+      eq(S.either(f)(g, x), 3);
+      eq(S.either(f, g)(x), 3);
+      eq(S.either(f, g, x), 3);
+
+      eq(S.either(_, g, x)(f), 3);
+      eq(S.either(f, _, x)(g), 3);
+      eq(S.either(f, g, _)(x), 3);
+
+      eq(S.either(f, _, _)(g)(x), 3);
+      eq(S.either(_, g, _)(f)(x), 3);
+      eq(S.either(_, _, x)(f)(g), 3);
+
+      eq(S.either(f, _, _)(g, x), 3);
+      eq(S.either(_, g, _)(f, x), 3);
+      eq(S.either(_, _, x)(f, g), 3);
+
+      eq(S.either(f, _, _)(_, x)(g), 3);
+      eq(S.either(_, g, _)(_, x)(f), 3);
+      eq(S.either(_, _, x)(_, g)(f), 3);
+
+      eq(S.either(_, _, _)(_, _)(_)(f, g, x), 3);
+      eq(S.either(_, _, _)(f, _, _)(_, _)(g, _)(_)(x), 3);
     });
 
   });
@@ -1046,6 +1201,13 @@ describe('list', function() {
       eq(S.at.length, 2);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.at([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'at requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('returns Just the nth element of a list', function() {
       eq(S.at(1, ['foo', 'bar', 'baz']), S.Just('bar'));
     });
@@ -1067,6 +1229,23 @@ describe('list', function() {
   });
 
   describe('slice', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.slice, 'function');
+      eq(S.slice.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.slice([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'slice requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.slice(0, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            'slice requires a value of type Number ' +
+                            'as its second argument; received [1, 2, 3]'));
+    });
 
     it('returns a Nothing with a positive end index greater than start index', function() {
       eq(S.slice(6, 1, [1, 2, 3, 4, 5]), S.Nothing());
@@ -1121,6 +1300,10 @@ describe('list', function() {
       eq(S.slice(1, -3, 'ramda'), S.Just('a'));
       eq(S.slice(2, -3, 'ramda'), S.Just(''));
       eq(S.slice(3, -3, 'ramda'), S.Nothing());
+    });
+
+    it('is curried', function() {
+      eq(S.slice(1)(-1)(['a', 'b', 'c', 'd', 'e']), S.Just(['b', 'c', 'd']));
     });
 
   });
@@ -1195,6 +1378,18 @@ describe('list', function() {
 
   describe('take', function() {
 
+    it('is a binary function', function() {
+      eq(typeof S.take, 'function');
+      eq(S.take.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.take([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'take requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('returns a Nothing if n is greater than collection length', function() {
       eq(S.take(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
       eq(S.take(6, 'abcde'), S.Nothing());
@@ -1222,9 +1417,25 @@ describe('list', function() {
       eq(S.take(7, 'abcdefg'), S.Just('abcdefg'));
     });
 
+    it('is curried', function() {
+      eq(S.take(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c']));
+    });
+
   });
 
   describe('drop', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.drop, 'function');
+      eq(S.drop.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.drop([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'drop requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
 
     it('returns a Nothing if n is greater than collection length', function() {
       eq(S.drop(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
@@ -1253,6 +1464,10 @@ describe('list', function() {
       eq(S.drop(0, 'abcdefg'), S.Just('abcdefg'));
     });
 
+    it('is curried', function() {
+      eq(S.drop(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['d', 'e']));
+    });
+
   });
 
   describe('find', function() {
@@ -1260,6 +1475,13 @@ describe('list', function() {
     it('is a binary function', function() {
       eq(typeof S.find, 'function');
       eq(S.find.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.find([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'find requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('returns Just the first element satisfying the predicate', function() {
@@ -1280,6 +1502,11 @@ describe('list', function() {
 
   describe('indexOf', function() {
 
+    it('is a binary function', function() {
+      eq(typeof S.indexOf, 'function');
+      eq(S.indexOf.length, 2);
+    });
+
     it('returns a Nothing for an empty list', function() {
       eq(S.indexOf(10, []), S.Nothing());
     });
@@ -1297,9 +1524,18 @@ describe('list', function() {
       eq(S.indexOf('ax', 'banana'), S.Nothing());
     });
 
+    it('is curried', function() {
+      eq(S.indexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
+    });
+
   });
 
   describe('lastIndexOf', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.lastIndexOf, 'function');
+      eq(S.lastIndexOf.length, 2);
+    });
 
     it('returns a Nothing for an empty list', function() {
       eq(S.lastIndexOf('a', []), S.Nothing());
@@ -1318,9 +1554,25 @@ describe('list', function() {
       eq(S.lastIndexOf('ax', 'banana'), S.Nothing());
     });
 
+    it('is curried', function() {
+      eq(S.lastIndexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
+    });
+
   });
 
   describe('pluck', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.pluck, 'function');
+      eq(S.pluck.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.pluck([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'pluck requires a value of type String ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
 
     it('returns array of Justs for found keys', function() {
       var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
@@ -1343,6 +1595,11 @@ describe('list', function() {
          [S.Just(1), S.Just(undefined), S.Just(4), S.Nothing()]);
     });
 
+    it('is curried', function() {
+      var xs = [{x: 1}, {x: 2}, {x: 3}];
+      eq(S.pluck('x')(xs), [S.Just(1), S.Just(2), S.Just(3)]);
+    });
+
   });
 
 });
@@ -1356,6 +1613,13 @@ describe('object', function() {
       eq(S.get.length, 2);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.get([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'get requires a value of type String ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('returns a Maybe', function() {
       var obj = {x: 0, y: 42};
       eq(S.get('x', obj), S.Just(0));
@@ -1363,9 +1627,18 @@ describe('object', function() {
       eq(S.get('z', obj), S.Nothing());
     });
 
+    it('is curried', function() {
+      eq(S.get('x')({x: 42}), S.Just(42));
+    });
+
   });
 
   describe('gets', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.gets, 'function');
+      eq(S.gets.length, 2);
+    });
 
     it('returns a Maybe', function() {
       var obj = {x: {z: 0}, y: 42};
@@ -1373,6 +1646,10 @@ describe('object', function() {
       eq(S.gets(['y'], obj), S.Just(42));
       eq(S.gets(['z'], obj), S.Nothing());
       eq(S.gets(['x', 'z'], obj), S.Just(0));
+    });
+
+    it('is curried', function() {
+      eq(S.gets(['x'])({x: 42}), S.Just(42));
     });
 
   });
@@ -1386,6 +1663,13 @@ describe('parse', function() {
     it('is a unary function', function() {
       eq(typeof S.parseDate, 'function');
       eq(S.parseDate.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.parseDate([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'parseDate requires a value of type String ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just when applied to a valid date string', function() {
@@ -1406,6 +1690,13 @@ describe('parse', function() {
       eq(S.parseFloat.length, 1);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.parseFloat([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'parseFloat requires a value of type String ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('returns a Maybe', function() {
       eq(S.parseFloat('12.34'), S.Just(12.34));
       eq(S.parseFloat('xxx'), S.Nothing());
@@ -1418,6 +1709,18 @@ describe('parse', function() {
     it('is a binary function', function() {
       eq(typeof S.parseInt, 'function');
       eq(S.parseInt.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.parseInt('10'); },
+                    errorEq(TypeError,
+                            'parseInt requires a value of type Number ' +
+                            'as its first argument; received "10"'));
+
+      assert.throws(function() { S.parseInt(10, 42); },
+                    errorEq(TypeError,
+                            'parseInt requires a value of type String ' +
+                            'as its second argument; received 42'));
     });
 
     it('returns a Maybe', function() {
@@ -1439,6 +1742,13 @@ describe('parse', function() {
       eq(S.parseJson.length, 1);
     });
 
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.parseJson([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'parseJson requires a value of type String ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('returns a Just when applied to a valid JSON string', function() {
       eq(S.parseJson('["foo","bar"]'), S.Just(['foo', 'bar']));
     });
@@ -1454,6 +1764,23 @@ describe('parse', function() {
 describe('regexp', function() {
 
   describe('match', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.match, 'function');
+      eq(S.match.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.match([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'match requires a value of type RegExp ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.match(/(?:)/, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            'match requires a value of type String ' +
+                            'as its second argument; received [1, 2, 3]'));
+    });
 
     it('returns a Just containing an array of Justs', function() {
       eq(S.match(/abcd/, 'abcdefg'), S.Just([S.Just('abcd')]));
@@ -1473,6 +1800,10 @@ describe('regexp', function() {
 
     it('returns a Nothing() if no match', function() {
       eq(S.match(/zzz/, 'abcdefg'), S.Nothing());
+    });
+
+    it('is curried', function() {
+      eq(S.match(/x/)('xyz'), S.Just([S.Just('x')]));
     });
 
   });
