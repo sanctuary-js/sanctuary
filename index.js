@@ -195,7 +195,7 @@
   //. Nothing()
   //. ```
   Maybe.empty = def('Maybe.empty', [], function() {
-    return new Nothing();
+    return Nothing();
   });
 
   //# Maybe.of :: a -> Maybe a
@@ -207,7 +207,7 @@
   //. Just(42)
   //. ```
   Maybe.of = def('Maybe.of', [Any], function(x) {
-    return new Just(x);
+    return Just(x);
   });
 
   //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
@@ -458,7 +458,7 @@
 
   //  Just#map :: Maybe a ~> (a -> b) -> Maybe b
   Just.prototype.map = def('Just#map', [Function], function(f) {
-    return new Just(f(this.value));
+    return Just(f(this.value));
   });
 
   //  Just#toBoolean :: Maybe a ~> Boolean
@@ -544,7 +544,7 @@
   //. Right(42)
   //. ```
   Either.of = def('Either.of', [Any], function(x) {
-    return new Right(x);
+    return Right(x);
   });
 
   //# Either#ap :: Either a (b -> c) ~> Either a b -> Either a c
@@ -773,7 +773,7 @@
 
   //  Right#map :: Either a b ~> (b -> c) -> Either a c
   Right.prototype.map = def('Right#map', [Function], function(f) {
-    return new Right(f(this.value));
+    return Right(f(this.value));
   });
 
   //  Right#toBoolean :: Either a b ~> Boolean
