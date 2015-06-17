@@ -656,6 +656,16 @@ describe('either', function() {
       // jshint +W053
     });
 
+    it('provides an "extend" method', function() {
+      eq(S.Left('abc').extend.length, 1);
+      eq(S.Left('abc').extend(function(x) { return x / 2; }), S.Left('abc'));
+
+      assert.throws(function() { S.Left('abc').extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Left#extend requires a value of type Function' +
+                            ' as its first argument; received [1, 2, 3]'));
+    });
+
     it('provides a "map" method', function() {
       eq(S.Left('abc').map.length, 1);
       eq(S.Left('abc').map(square), S.Left('abc'));
@@ -820,6 +830,16 @@ describe('either', function() {
       eq(S.Right(new Number(42)).equals(S.Right(new Number(42))), true);
       eq(S.Right(new Number(42)).equals(42), false);
       // jshint +W053
+    });
+
+    it('provides an "extend" method', function() {
+      eq(S.Right(42).extend.length, 1);
+      eq(S.Right(42).extend(function(x) { return x / 2; }), S.Right(21));
+
+      assert.throws(function() { S.Right('abc').extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Right#extend requires a value of type Function' +
+                            ' as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "map" method', function() {

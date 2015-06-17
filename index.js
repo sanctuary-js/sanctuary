@@ -635,6 +635,23 @@
   //. false
   //. ```
 
+  //# Either#extend :: Either a b ~> (b -> b) -> Either a b
+  //.
+  //. Takes a function and returns `this` if `this` is a Left; otherwise it
+  //. returns a Right whose value is the result of applying the function to
+  //. this Right's value. `Either#extend` is a restricted form of
+  //. [`Either#map`](#Either.prototype.map): the function provided must
+  //. return a value of the same type as its input (`Either#map` does not
+  //. have this restriction).
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').extend(R.inc)
+  //. Left("Cannot divide by zero")
+  //.
+  //. > S.Right(42).extend(R.inc)
+  //. Right(43)
+  //. ```
+
   //# Either#map :: Either a b ~> (b -> c) -> Either a c
   //.
   //. Takes a function and returns `this` if `this` is a Left; otherwise it
@@ -645,8 +662,8 @@
   //. > S.Left('Cannot divide by zero').map(R.inc)
   //. Left("Cannot divide by zero")
   //.
-  //. > S.Right(42).map(R.inc)
-  //. Right(43)
+  //. > S.Right([1, 2, 3]).map(R.sum)
+  //. Right(6)
   //. ```
 
   //# Either#of :: Either a b ~> b -> Either a b
@@ -724,6 +741,9 @@
     return x instanceof Left && R.eqProps('value', x, this);
   });
 
+  //  Left#extend :: Either a b ~> (b -> b) -> Either a b
+  Left.prototype.extend = def('Left#extend', [Function], self);
+
   //  Left#map :: Either a b ~> (b -> c) -> Either a c
   Left.prototype.map = def('Left#map', [Function], self);
 
@@ -769,6 +789,11 @@
   //  Right#equals :: Either a b ~> c -> Boolean
   Right.prototype.equals = def('Right#equals', [Any], function(x) {
     return x instanceof Right && R.eqProps('value', x, this);
+  });
+
+  //  Right#extend :: Either a b ~> (b -> b) -> Either a b
+  Right.prototype.extend = def('Right#extend', [Function], function(f) {
+    return Right(f(this.value));
   });
 
   //  Right#map :: Either a b ~> (b -> c) -> Either a c
