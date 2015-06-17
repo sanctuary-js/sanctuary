@@ -150,6 +150,23 @@ describe('maybe', function() {
       eq(S.Nothing().equals(null), false);
     });
 
+    it('provides an "extend" method', function() {
+      eq(S.Nothing().extend.length, 1);
+      eq(S.Nothing().extend(function(x) { return x.value / 2; }), S.Nothing());
+
+      // associativity
+      var w = S.Nothing();
+      var f = function(x) { return x.value + 1; };
+      var g = function(x) { return x.value * x.value; };
+      eq(w.extend(g).extend(f),
+         w.extend(function(_w) { return f(_w.extend(g)); }));
+
+      assert.throws(function() { S.Nothing().extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Nothing#extend requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('provides a "filter" method', function() {
       eq(S.Nothing().filter.length, 1);
       eq(S.Nothing().filter(R.T), S.Nothing());
@@ -345,6 +362,23 @@ describe('maybe', function() {
       eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
       eq(S.Just(new Number(42)).equals(42), false);
       // jshint +W053
+    });
+
+    it('provides an "extend" method', function() {
+      eq(S.Just(42).extend.length, 1);
+      eq(S.Just(42).extend(function(x) { return x.value / 2; }), S.Just(21));
+
+      // associativity
+      var w = S.Just(42);
+      var f = function(x) { return x.value + 1; };
+      var g = function(x) { return x.value * x.value; };
+      eq(w.extend(g).extend(f),
+         w.extend(function(_w) { return f(_w.extend(g)); }));
+
+      assert.throws(function() { S.Just(42).extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#extend requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "filter" method', function() {
@@ -660,6 +694,13 @@ describe('either', function() {
       eq(S.Left('abc').extend.length, 1);
       eq(S.Left('abc').extend(function(x) { return x / 2; }), S.Left('abc'));
 
+      // associativity
+      var w = S.Left('abc');
+      var f = function(x) { return x.value + 1; };
+      var g = function(x) { return x.value * x.value; };
+      eq(w.extend(g).extend(f),
+         w.extend(function(_w) { return f(_w.extend(g)); }));
+
       assert.throws(function() { S.Left('abc').extend([1, 2, 3]); },
                     errorEq(TypeError,
                             'Left#extend requires a value of type Function' +
@@ -834,7 +875,14 @@ describe('either', function() {
 
     it('provides an "extend" method', function() {
       eq(S.Right(42).extend.length, 1);
-      eq(S.Right(42).extend(function(x) { return x / 2; }), S.Right(21));
+      eq(S.Right(42).extend(function(x) { return x.value / 2; }), S.Right(21));
+
+      // associativity
+      var w = S.Right(42);
+      var f = function(x) { return x.value + 1; };
+      var g = function(x) { return x.value * x.value; };
+      eq(w.extend(g).extend(f),
+         w.extend(function(_w) { return f(_w.extend(g)); }));
 
       assert.throws(function() { S.Right('abc').extend([1, 2, 3]); },
                     errorEq(TypeError,
