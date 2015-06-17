@@ -309,6 +309,23 @@
   //. false
   //. ```
 
+  //# Maybe#extend :: Maybe a ~> (a -> a) -> Maybe a
+  //.
+  //. Takes a function and returns `this` if `this` is a Nothing; otherwise
+  //. it returns a Just whose value is the result of applying the function to
+  //. this Just's value. `Maybe#extend` is a restricted form of
+  //. [`Maybe#map`](#Maybe.prototype.map): the function provided must
+  //. return a value of the same type as its input (`Maybe#map` does not
+  //. have this restriction).
+  //.
+  //. ```javascript
+  //. > S.Nothing().extend(R.inc)
+  //. Nothing()
+  //.
+  //. > S.Just(42).extend(R.inc)
+  //. Just(43)
+  //. ```
+
   //# Maybe#filter :: Maybe a ~> (a -> Boolean) -> Maybe a
   //.
   //. Takes a predicate and returns `this` if `this` is a Just whose value
@@ -335,8 +352,8 @@
   //. > S.Nothing().map(R.inc)
   //. Nothing()
   //.
-  //. > S.Just(42).map(R.inc)
-  //. Just(43)
+  //. > S.Just([1, 2, 3]).map(R.sum)
+  //. Just(6)
   //. ```
 
   //# Maybe#of :: Maybe a ~> b -> Maybe b
@@ -407,6 +424,9 @@
   //  Nothing#equals :: Maybe a ~> b -> Boolean
   Nothing.prototype.equals = def('Nothing#equals', [Any], R.is(Nothing));
 
+  //  Nothing#extend :: Maybe a ~> (a -> a) -> Maybe a
+  Nothing.prototype.extend = def('Nothing#extend', [Function], self);
+
   //  Nothing#map :: Maybe a ~> (a -> b) -> Maybe b
   Nothing.prototype.map = def('Nothing#map', [Function], self);
 
@@ -454,6 +474,11 @@
   //  Just#equals :: Maybe a ~> b -> Boolean
   Just.prototype.equals = def('Just#equals', [Any], function(x) {
     return x instanceof Just && R.eqProps('value', x, this);
+  });
+
+  //  Just#extend :: Maybe a ~> (a -> a) -> Maybe a
+  Just.prototype.extend = def('Just#extend', [Function], function(f) {
+    return Just(f(this.value));
   });
 
   //  Just#map :: Maybe a ~> (a -> b) -> Maybe b
