@@ -18,7 +18,6 @@
   "strict": false,
   "maxparams": 99,
   "maxdepth": 99,
-  "maxstatements": 99,
   "maxcomplexity": 99,
   "asi": false,
   "boss": false,

@@ -150,6 +150,16 @@ describe('maybe', function() {
       eq(S.Nothing().equals(null), false);
     });
 
+    it('provides an "extend" method', function() {
+      eq(S.Nothing().extend.length, 1);
+      eq(S.Nothing().extend(function() { return 42; }), S.Nothing());
+
+      assert.throws(function() { S.Nothing().extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Nothing#extend requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
     it('provides a "filter" method', function() {
       eq(S.Nothing().filter.length, 1);
       eq(S.Nothing().filter(R.T), S.Nothing());
@@ -345,6 +355,16 @@ describe('maybe', function() {
       eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
       eq(S.Just(new Number(42)).equals(42), false);
       // jshint +W053
+    });
+
+    it('provides an "extend" method', function() {
+      eq(S.Just(42).extend.length, 1);
+      eq(S.Just(42).extend(function(x) { return x / 2; }), S.Just(21));
+
+      assert.throws(function() { S.Just(42).extend([1, 2, 3]); },
+                    errorEq(TypeError,
+                            'Just#extend requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "filter" method', function() {
