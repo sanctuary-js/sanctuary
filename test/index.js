@@ -1376,6 +1376,56 @@ describe('list', function() {
 
   });
 
+  describe('extend', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.extend, 'function');
+      eq(S.extend.length, 2);
+    });
+
+    it('curries its arguments', function() {
+      eq(typeof S.extend([1, 2, 3]), 'function');
+      eq(S.extend([1, 2, 3]).length, 1);
+
+      eq(typeof S.extend(R.__, R.sum), 'function');
+      eq(S.extend(R.__, R.sum).length, 1);
+    });
+
+    it('returns an empty list if applied to an empty list', function() {
+      eq(S.extend([], R.sum), []);
+    });
+
+    it('throws an exception when not given a function', function() {
+      assert.throws(function() { S.extend([], 'function'); },
+                    errorEq(TypeError,
+                            'List#extend requires a value of type Function' +
+                            ' as its second argument; received "function"'));
+    });
+
+    it('dispatches to inbuilt method if it exists', function() {
+      var arr = [1, 2, 3];
+      arr.extend = function(f) {
+        return [f(this)];
+      };
+      eq(S.extend(arr, R.sum), [6]);
+    });
+
+    it('works as expected on Numbers', function() {
+      eq(S.extend([1, 2, 3], R.sum), [6, 5, 3]);
+    });
+
+    it('is associative', function() {
+      var w = [1, 2, 3];
+      var f = R.sum;
+      var g = function(l) {
+        return l[0] !== undefined ? l[0] : -1;
+      };
+      eq(S.extend(S.extend(w, g), f),
+         S.extend(w, function(_w) { return f(S.extend(_w, g)); }));
+    });
+
+  });
+
   describe('head', function() {
 
     it('is a unary function', function() {

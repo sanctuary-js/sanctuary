@@ -975,6 +975,31 @@
       Nothing();
   });
 
+  //# extend :: [a] -> ([a] -> a) -> [a]
+  //.
+  //. If the list has an extend method, then this dispatches to that.
+  //.
+  //. Takes a function that takes a list of `a`s and returns an `a` and
+  //. applies it to each slice of the list ending at the last element.
+  //.
+  //.
+  //. ```javascript
+  //. > S.extend([1, 2, 3], R.sum)
+  //. [6, 5, 3]
+  //. ```
+  S.extend =
+  def('List#extend', [Any, Function], function(list, f) {
+    if (typeof list.extend === 'function') {
+      return list.extend(f);
+    }
+
+    var result = [];
+    for (var idx = 0; idx < list.length; idx += 1) {
+      result.push(f(R.drop(idx, list)));
+    }
+    return result;
+  });
+
   //# at :: Number -> [a] -> Maybe a
   //.
   //. Takes an index and a list and returns Just the element of the list at
