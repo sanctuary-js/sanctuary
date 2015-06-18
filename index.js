@@ -181,7 +181,8 @@
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or a Nothing (with no value).
   //.
-  //. The Maybe type satisfies the [Monoid][] and [Monad][] specifications.
+  //. The Maybe type satisfies the [Monoid][], [Monad][], and [Extend][]
+  //. specifications.
   var Maybe = S.Maybe = function Maybe() {
     throw new Error('Cannot instantiate Maybe');
   };
@@ -309,20 +310,17 @@
   //. false
   //. ```
 
-  //# Maybe#extend :: Maybe a ~> (a -> a) -> Maybe a
+  //# Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   //.
   //. Takes a function and returns `this` if `this` is a Nothing; otherwise
   //. it returns a Just whose value is the result of applying the function to
-  //. this Just's value. `Maybe#extend` is a restricted form of
-  //. [`Maybe#map`](#Maybe.prototype.map): the function provided must
-  //. return a value of the same type as its input (`Maybe#map` does not
-  //. have this restriction).
+  //. `this`.
   //.
   //. ```javascript
-  //. > S.Nothing().extend(R.inc)
+  //. > S.Nothing().extend(function(x) { return x.value + 1; })
   //. Nothing()
   //.
-  //. > S.Just(42).extend(R.inc)
+  //. > S.Just(42).extend(function(x) { return x.value + 1; })
   //. Just(43)
   //. ```
 
@@ -424,7 +422,7 @@
   //  Nothing#equals :: Maybe a ~> b -> Boolean
   Nothing.prototype.equals = def('Nothing#equals', [Any], R.is(Nothing));
 
-  //  Nothing#extend :: Maybe a ~> (a -> a) -> Maybe a
+  //  Nothing#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   Nothing.prototype.extend = def('Nothing#extend', [Function], self);
 
   //  Nothing#map :: Maybe a ~> (a -> b) -> Maybe b
@@ -476,9 +474,9 @@
     return x instanceof Just && R.eqProps('value', x, this);
   });
 
-  //  Just#extend :: Maybe a ~> (a -> a) -> Maybe a
+  //  Just#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   Just.prototype.extend = def('Just#extend', [Function], function(f) {
-    return Just(f(this.value));
+    return Just(f(this));
   });
 
   //  Just#map :: Maybe a ~> (a -> b) -> Maybe b
@@ -555,7 +553,8 @@
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
   //. value is of type `b`.
   //.
-  //. The Either type satisfies the [Semigroup][] and [Monad][] specifications.
+  //. The Either type satisfies the [Semigroup][], [Monad][], and [Extend][]
+  //. specifications.
   var Either = S.Either = function Either() {
     throw new Error('Cannot instantiate Either');
   };
@@ -660,20 +659,17 @@
   //. false
   //. ```
 
-  //# Either#extend :: Either a b ~> (b -> b) -> Either a b
+  //# Either#extend :: Either a b ~> (Either a b -> b) -> Either a b
   //.
   //. Takes a function and returns `this` if `this` is a Left; otherwise it
   //. returns a Right whose value is the result of applying the function to
-  //. this Right's value. `Either#extend` is a restricted form of
-  //. [`Either#map`](#Either.prototype.map): the function provided must
-  //. return a value of the same type as its input (`Either#map` does not
-  //. have this restriction).
+  //. `this`.
   //.
   //. ```javascript
-  //. > S.Left('Cannot divide by zero').extend(R.inc)
+  //. > S.Left('Cannot divide by zero').extend(function(x) { return x.value + 1; })
   //. Left("Cannot divide by zero")
   //.
-  //. > S.Right(42).extend(R.inc)
+  //. > S.Right(42).extend(function(x) { return x.value + 1; })
   //. Right(43)
   //. ```
 
@@ -766,7 +762,7 @@
     return x instanceof Left && R.eqProps('value', x, this);
   });
 
-  //  Left#extend :: Either a b ~> (b -> b) -> Either a b
+  //  Left#extend :: Either a b ~> (Either a b -> b) -> Either a b
   Left.prototype.extend = def('Left#extend', [Function], self);
 
   //  Left#map :: Either a b ~> (b -> c) -> Either a c
@@ -816,9 +812,9 @@
     return x instanceof Right && R.eqProps('value', x, this);
   });
 
-  //  Right#extend :: Either a b ~> (b -> b) -> Either a b
+  //  Right#extend :: Either a b ~> (Either a b -> b) -> Either a b
   Right.prototype.extend = def('Right#extend', [Function], function(f) {
-    return Right(f(this.value));
+    return Right(f(this));
   });
 
   //  Right#map :: Either a b ~> (b -> c) -> Either a c
@@ -1345,6 +1341,7 @@
 
 }.call(this));
 
+//. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 //. [R.equals]:     http://ramdajs.com/docs/#equals
