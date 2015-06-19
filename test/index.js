@@ -1357,6 +1357,10 @@ describe('list', function() {
     it('accepts -0 as the position half a step beyond the last index', function() {
       eq(S.slice(-0, 5, [1, 2, 3, 4, 5]), S.Just([]));
       eq(S.slice(2, -0, [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
+      // jshint -W053
+      eq(S.slice(new Number(-0), 5, [1, 2, 3, 4, 5]), S.Just([]));
+      eq(S.slice(2, new Number(-0), [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
+      // jshint +W053
     });
 
     it('returns a Just with the whole list', function() {
@@ -1468,6 +1472,9 @@ describe('list', function() {
       eq(S.take(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
       eq(S.take(-0, 'abcdefg'), S.Nothing());
       eq(S.take(-1, 'abcde'), S.Nothing());
+      // jshint -W053
+      eq(S.take(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      // jshint +W053
     });
 
     it('returns an empty collection if n is 0', function() {
@@ -1515,6 +1522,9 @@ describe('list', function() {
       eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
       eq(S.drop(-3, 'abcde'), S.Nothing());
       eq(S.drop(-0, 'abcde'), S.Nothing());
+      // jshint -W053
+      eq(S.drop(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      // jshint +W053
     });
 
     it('returns an empty collection if n is equal to collection length', function() {

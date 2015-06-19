@@ -147,7 +147,8 @@
   };
 
   //  negativeZero :: a -> Boolean
-  var negativeZero = R.identical(-0);
+  var negativeZero = R.either(R.equals(-0),
+                              R.equals(new Number(-0)));  // jshint ignore:line
 
   var self = function() { return this; };
 
