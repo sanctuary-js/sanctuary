@@ -74,6 +74,7 @@ describe('combinator', function() {
     });
 
     it('is curried', function() {
+      eq(S.K(42).length, 1);
       eq(S.K(42)(null), 42);
     });
 
@@ -533,6 +534,7 @@ describe('maybe', function() {
     });
 
     it('is curried', function() {
+      eq(S.fromMaybe(0).length, 1);
       eq(S.fromMaybe(0)(S.Just(42)), 42);
     });
 
@@ -1039,6 +1041,9 @@ describe('either', function() {
       var x = S.Left('abc');
       var _ = R.__;
 
+      eq(S.either(f).length, 2);
+      eq(S.either(f)(g).length, 1);
+
       eq(S.either(f)(g)(x), 3);
       eq(S.either(f)(g, x), 3);
       eq(S.either(f, g)(x), 3);
@@ -1111,10 +1116,19 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.and([], S.Nothing()); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'and requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
 
       assert.throws(function() { S.and(S.Nothing(), foo); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'and requires its first and second arguments to ' +
+                            'be of the same type; Nothing() and {} are not'));
+
+      assert.throws(function() { S.and(R.__, S.Nothing())([]); },
+                    errorEq(TypeError,
+                            'and requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
@@ -1124,6 +1138,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
+      eq(S.and([]).length, 1);
       eq(S.and([])([42]), []);
     });
 
@@ -1170,10 +1185,19 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.or([], S.Nothing()); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'or requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
 
       assert.throws(function() { S.or(S.Nothing(), foo); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'or requires its first and second arguments to ' +
+                            'be of the same type; Nothing() and {} are not'));
+
+      assert.throws(function() { S.or(R.__, S.Nothing())([]); },
+                    errorEq(TypeError,
+                            'or requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
@@ -1183,6 +1207,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
+      eq(S.or([]).length, 1);
       eq(S.or([])([42]), [42]);
     });
 
@@ -1240,10 +1265,19 @@ describe('control', function() {
       var foo = new Foo();
 
       assert.throws(function() { S.xor([], S.Nothing()); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'xor requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
 
       assert.throws(function() { S.xor(S.Nothing(), foo); },
-                    errorEq(TypeError, 'Type mismatch'));
+                    errorEq(TypeError,
+                            'xor requires its first and second arguments to ' +
+                            'be of the same type; Nothing() and {} are not'));
+
+      assert.throws(function() { S.xor(R.__, S.Nothing())([]); },
+                    errorEq(TypeError,
+                            'xor requires its first and second arguments to ' +
+                            'be of the same type; [] and Nothing() are not'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
@@ -1253,6 +1287,7 @@ describe('control', function() {
     });
 
     it('is curried', function() {
+      eq(S.xor([]).length, 1);
       eq(S.xor([])([42]), [42]);
     });
 
@@ -1291,6 +1326,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.at(1).length, 1);
       eq(S.at(1)(['foo', 'bar', 'baz']), S.Just('bar'));
     });
 
@@ -1375,6 +1411,8 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.slice(1).length, 2);
+      eq(S.slice(1)(-1).length, 1);
       eq(S.slice(1)(-1)(['a', 'b', 'c', 'd', 'e']), S.Just(['b', 'c', 'd']));
     });
 
@@ -1493,6 +1531,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.take(3).length, 1);
       eq(S.take(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c']));
     });
 
@@ -1543,6 +1582,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.drop(3).length, 1);
       eq(S.drop(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['d', 'e']));
     });
 
@@ -1573,6 +1613,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.find(R.T).length, 1);
       eq(S.find(R.T)([null]), S.Just(null));
     });
 
@@ -1603,6 +1644,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.indexOf('c').length, 1);
       eq(S.indexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
     });
 
@@ -1633,6 +1675,7 @@ describe('list', function() {
     });
 
     it('is curried', function() {
+      eq(S.lastIndexOf('c').length, 1);
       eq(S.lastIndexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
     });
 
@@ -1675,6 +1718,7 @@ describe('list', function() {
 
     it('is curried', function() {
       var xs = [{x: 1}, {x: 2}, {x: 3}];
+      eq(S.pluck('x').length, 1);
       eq(S.pluck('x')(xs), [S.Just(1), S.Just(2), S.Just(3)]);
     });
 
@@ -1706,6 +1750,7 @@ describe('object', function() {
     });
 
     it('is curried', function() {
+      eq(S.get('x').length, 1);
       eq(S.get('x')({x: 42}), S.Just(42));
     });
 
@@ -1727,6 +1772,7 @@ describe('object', function() {
     });
 
     it('is curried', function() {
+      eq(S.gets(['x']).length, 1);
       eq(S.gets(['x'])({x: 42}), S.Just(42));
     });
 
@@ -1918,6 +1964,7 @@ describe('parse', function() {
     });
 
     it('is curried', function() {
+      eq(S.parseInt(10).length, 1);
       eq(S.parseInt(10)('42'), S.Just(42));
     });
 
@@ -1991,6 +2038,7 @@ describe('regexp', function() {
     });
 
     it('is curried', function() {
+      eq(S.match(/x/).length, 1);
       eq(S.match(/x/)('xyz'), S.Just([S.Just('x')]));
     });
 
