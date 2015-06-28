@@ -84,8 +84,24 @@
     return x != null && x['@@functional/placeholder'] === true;
   };
 
-  /* istanbul ignore next */
-  var Any = function Any() {};
+  var formatters = {
+    '{}': R.identity,
+    '{ord}': R.nth(_, ['first', 'second', 'third']),
+    '{repr}': R.toString,
+    '{type}': R.pipe(String, R.match(/^function (\w*)/), R.nth(1))
+  };
+
+  //  format :: (String, [*]) -> String
+  var format = function(template, values) {
+    var idx = -1;
+    return template.replace(/[{].*?[}]/g, function(match) {
+      return formatters[match](values[idx += 1]);
+    });
+  };
+
+  var a = {name: 'a'};
+  var b = {name: 'b'};
+  var c = {name: 'c'};
 
   var arity = function(n, f) {
     switch (n) {
@@ -96,39 +112,60 @@
     }
   };
 
-  var curry = function(name, typePairs, f) {
-    return arity(typePairs.length, function() {
-      var args = arguments;
-      var $typePairs = [];
-      for (var idx = 0; idx < args.length; idx += 1) {
-        var typePair = typePairs[idx];
-        if (placeholder(args[idx])) {
-          $typePairs.push(typePair);
-        } else if (typePair[1] !== Any && !R.is(typePair[1], args[idx])) {
-          throw new TypeError(R.join(' ', [
-            name,
-            'requires a value of type',
-            /^function (\w*)/.exec(typePair[1])[1],
-            'as its',
-            ['first', 'second', 'third'][typePair[0]],
-            'argument; received',
-            R.toString(args[idx])
-          ]));
+  //  curry :: (String, [Type], [*], Function) -> Function
+  var curry = function(name, types, _values, f) {
+    return arity(R.filter(placeholder, _values).length, function() {
+      var values = _values;  // Locally scoped variable to update.
+
+      //  The indexes of the parameters yet to be provided. For example,
+      //  ternary(R.__, 'bar') awaits its first and third parameters, so
+      //  paramIndexes would be [0, 2] in this case.
+      var paramIndexes = [];
+      for (var idx = 0; idx < values.length; idx += 1) {
+        if (placeholder(values[idx])) {
+          paramIndexes.push(idx);
         }
       }
-      $typePairs = R.concat($typePairs, typePairs.slice(args.length));
-      return $typePairs.length === 0 ?
-        f.apply(this, args) :
-        curry(name, $typePairs, function() {
-          var $args = Array.prototype.slice.call(arguments);
-          var val = function(x) { return placeholder(x) ? $args.shift() : x; };
-          return f.apply(this, R.concat(R.map(val, args), $args));
-        });
+
+      for (var argIndex = 0; argIndex < arguments.length; argIndex += 1) {
+        var arg = arguments[argIndex];
+        var paramIndex = paramIndexes[argIndex];
+        var type = types[paramIndex];
+
+        if (placeholder(arg)) {
+          continue;
+        } else if (type === a || type === b || type === c) {
+          for (idx = 0; idx < values.length; idx += 1) {
+            var val = values[idx];
+            if (types[idx] === type && !placeholder(val) &&
+                !(R.type(val) === R.type(arg) && val.type === arg.type)) {
+              throw new TypeError(format(
+                '{} requires its {ord} and {ord} arguments ' +
+                'to be of the same type; {repr} and {repr} are not',
+                paramIndex > idx ? [name, idx, paramIndex, val, arg]
+                                 : [name, paramIndex, idx, arg, val]
+              ));
+            }
+          }
+        } else if (!R.is(type, arg)) {
+          throw new TypeError(format(
+            '{} requires a value of type {type} as its {ord} argument; ' +
+            'received {repr}',
+            [name, type, paramIndex, arg]
+          ));
+        }
+        values = R.update(paramIndex, arg, values);
+      }
+
+      var args = R.reject(placeholder, values);
+      return args.length === values.length ? f.apply(this, args)
+                                           : curry(name, types, values, f);
     });
   };
 
   var def = function(name, types, f) {
-    return curry(name, R.zip(R.range(0, types.length), types), f);
+    var values = R.times(function() { return _; }, types.length);
+    return curry(name, types, values, f);
   };
 
   var extend = function(Child, Parent) {
@@ -171,7 +208,7 @@
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
-  S.K = def('K', [Any, Any], function(x, y) {
+  S.K = def('K', [a, b], function(x, y) {
     return x;
   });
 
@@ -208,7 +245,7 @@
   //. > S.Maybe.of(42)
   //. Just(42)
   //. ```
-  Maybe.of = def('Maybe.of', [Any], function(x) {
+  Maybe.of = def('Maybe.of', [a], function(x) {
     return Just(x);
   });
 
@@ -363,7 +400,7 @@
   //. > S.Nothing().of(42)
   //. Just(42)
   //. ```
-  Maybe.prototype.of = def('Maybe#of', [Any], Maybe.of);
+  Maybe.prototype.of = def('Maybe#of', [a], Maybe.of);
 
   //# Maybe#toBoolean :: Maybe a ~> Boolean
   //.
@@ -421,7 +458,7 @@
   Nothing.prototype.concat = def('Nothing#concat', [Maybe], R.identity);
 
   //  Nothing#equals :: Maybe a ~> b -> Boolean
-  Nothing.prototype.equals = def('Nothing#equals', [Any], R.is(Nothing));
+  Nothing.prototype.equals = def('Nothing#equals', [a], R.is(Nothing));
 
   //  Nothing#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   Nothing.prototype.extend = def('Nothing#extend', [Function], self);
@@ -471,7 +508,7 @@
   });
 
   //  Just#equals :: Maybe a ~> b -> Boolean
-  Just.prototype.equals = def('Just#equals', [Any], function(x) {
+  Just.prototype.equals = def('Just#equals', [a], function(x) {
     return x instanceof Just && R.eqProps('value', x, this);
   });
 
@@ -503,7 +540,7 @@
   //. > S.fromMaybe(0, S.Nothing())
   //. 0
   //. ```
-  S.fromMaybe = def('fromMaybe', [Any, Maybe], function(x, maybe) {
+  S.fromMaybe = def('fromMaybe', [a, Maybe], function(x, maybe) {
     return maybe instanceof Just ? maybe.value : x;
   });
 
@@ -520,7 +557,7 @@
   //. Just(42)
   //. ```
   var toMaybe = S.toMaybe =
-  def('toMaybe', [Any], R.ifElse(R.isNil, Nothing, Just));
+  def('toMaybe', [a], R.ifElse(R.isNil, Nothing, Just));
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
@@ -568,7 +605,7 @@
   //. > S.Either.of(42)
   //. Right(42)
   //. ```
-  Either.of = def('Either.of', [Any], function(x) {
+  Either.of = def('Either.of', [a], function(x) {
     return Right(x);
   });
 
@@ -696,7 +733,7 @@
   //. > S.Left('Cannot divide by zero').of(42)
   //. Right(42)
   //. ```
-  Either.prototype.of = def('Either#of', [Any], Either.of);
+  Either.prototype.of = def('Either#of', [a], Either.of);
 
   //# Either#toBoolean :: Either a b ~> Boolean
   //.
@@ -759,7 +796,7 @@
   });
 
   //  Left#equals :: Either a b ~> c -> Boolean
-  Left.prototype.equals = def('Left#equals', [Any], function(x) {
+  Left.prototype.equals = def('Left#equals', [a], function(x) {
     return x instanceof Left && R.eqProps('value', x, this);
   });
 
@@ -809,7 +846,7 @@
   });
 
   //  Right#equals :: Either a b ~> c -> Boolean
-  Right.prototype.equals = def('Right#equals', [Any], function(x) {
+  Right.prototype.equals = def('Right#equals', [a], function(x) {
     return x instanceof Right && R.eqProps('value', x, this);
   });
 
@@ -850,12 +887,6 @@
 
   //. ### Control
 
-  var assertTypeMatch = function(x, y) {
-    if (R.type(x) !== R.type(y) || x.type !== y.type) {
-      throw new TypeError('Type mismatch');
-    }
-  };
-
   //  toBoolean :: * -> Boolean
   var toBoolean = function(x) {
     if (R.is(Array, x))               return x.length > 0;
@@ -887,8 +918,7 @@
   //. > S.and(S.Nothing(), S.Just(3))
   //. Nothing()
   //. ```
-  S.and = def('and', [Any, Any], function(x, y) {
-    assertTypeMatch(x, y);
+  S.and = def('and', [a, a], function(x, y) {
     return toBoolean(x) ? y : x;
   });
 
@@ -906,8 +936,7 @@
   //. > S.or(S.Nothing(), S.Just(3))
   //. Just(3)
   //. ```
-  var or = S.or = def('or', [Any, Any], function(x, y) {
-    assertTypeMatch(x, y);
+  var or = S.or = def('or', [a, a], function(x, y) {
     return toBoolean(x) ? x : y;
   });
 
@@ -927,8 +956,7 @@
   //. > S.xor(S.Just(2), S.Just(3))
   //. Nothing()
   //. ```
-  S.xor = def('xor', [Any, Any], function(x, y) {
-    assertTypeMatch(x, y);
+  S.xor = def('xor', [a, a], function(x, y) {
     var xBool = toBoolean(x);
     var yBool = toBoolean(y);
     var xEmpty = empty(x);
@@ -966,7 +994,7 @@
   //. Just("nana")
   //. ```
   var slice = S.slice =
-  def('slice', [Number, Number, Any], function(start, end, xs) {
+  def('slice', [Number, Number, a], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -992,7 +1020,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = def('at', [Number, Any], function(n, xs) {
+  var at = S.at = def('at', [Number, a], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -1008,7 +1036,7 @@
   //. > S.head([])
   //. Nothing()
   //. ```
-  S.head = def('head', [Any], at(0));
+  S.head = def('head', [a], at(0));
 
   //# last :: [a] -> Maybe a
   //.
@@ -1022,7 +1050,7 @@
   //. > S.last([])
   //. Nothing()
   //. ```
-  S.last = def('last', [Any], at(-1));
+  S.last = def('last', [a], at(-1));
 
   //# tail :: [a] -> Maybe [a]
   //.
@@ -1037,7 +1065,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = def('tail', [Any], slice(1, -0));
+  S.tail = def('tail', [a], slice(1, -0));
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -1052,7 +1080,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = def('init', [Any], slice(0, -1));
+  S.init = def('init', [a], slice(0, -1));
 
   //# take :: Number -> [a] -> Maybe [a]
   //.
@@ -1071,7 +1099,7 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = def('take', [Number, Any], function(n, xs) {
+  S.take = def('take', [Number, a], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
@@ -1092,7 +1120,7 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = def('drop', [Number, Any], function(n, xs) {
+  S.drop = def('drop', [Number, a], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
@@ -1109,7 +1137,7 @@
   //. > S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
   //. Nothing()
   //. ```
-  S.find = def('find', [Function, Any], function(pred, xs) {
+  S.find = def('find', [Function, a], function(pred, xs) {
     for (var idx = 0, len = xs.length; idx < len; idx += 1) {
       if (pred(xs[idx])) {
         return Just(xs[idx]);
@@ -1119,7 +1147,7 @@
   });
 
   var sanctifyIndexOf = function(name) {
-    return def(name, [Any, Any], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
+    return def(name, [a, b], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
   //# indexOf :: a -> [a] -> Maybe Number
@@ -1185,7 +1213,7 @@
   //. > S.pluck('x', [{x: 1}, {x: 2}, {x: undefined}])
   //. [Just(1), Just(2), Just(undefined)]
   //. ```
-  S.pluck = def('pluck', [String, Any], function(key, xs) {
+  S.pluck = def('pluck', [String, a], function(key, xs) {
     return R.map(get(key), xs);
   });
 
@@ -1205,7 +1233,7 @@
   //. Nothing()
   //. ```
   var get = S.get =
-  def('get', [String, Any],
+  def('get', [String, a],
       R.ifElse(R.has, R.compose(Just, R.prop), Nothing));
 
   //# gets :: [String] -> Object -> Maybe *
@@ -1221,7 +1249,7 @@
   //. > S.gets(['a', 'b', 'c'], {})
   //. Nothing()
   //. ```
-  S.gets = def('gets', [Any, Any], function(keys, obj) {
+  S.gets = def('gets', [a, b], function(keys, obj) {
     return R.reduce(function(acc, key) {
       return R.chain(get(key), acc);
     }, Just(obj), keys);
