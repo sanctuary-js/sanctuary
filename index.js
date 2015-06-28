@@ -31,7 +31,7 @@
 //.
 //. Sanctuary uses Haskell-like type signatures to describe the types of
 //. values, including functions. `'foo'`, for example, has type `String`;
-//. `[1, 2, 3]` has type `[Number]`. The arrow (`->`) is used to express a
+//. `[1, 2, 3]` has type `[Int]`. The arrow (`->`) is used to express a
 //. function's type. `Math.abs`, for example, has type `Number -> Number`.
 //. That is, it takes an argument of type `Number` and returns a value of
 //. type `Number`.
@@ -58,6 +58,13 @@
 //. _When the `map` method is invoked on a value of type `Maybe a`
 //. (for any type `a`) with an argument of type `a -> b` (for any type `b`),
 //. it returns a value of type `Maybe b`._
+//.
+//. An exclamation mark (`!`) at the end of a type signature indicates
+//. a partial function: a function which is not defined for all possible
+//. arguments of the specified type. [`Int.div`](#Int.div), for example,
+//. is undefined for a divisor of zero. In Sanctuary, partial functions
+//. throw when given input for which the output is indeterminate, rather
+//. than return a failure value such as `NaN` or `undefined`.
 //.
 //. ## API
 
@@ -103,6 +110,9 @@
   var b = {name: 'b'};
   var c = {name: 'c'};
 
+  //  int :: a -> Boolean
+  var int = function(x) { return R.is(Number, x) && (x | 0) === Number(x); };
+
   var arity = function(n, f) {
     switch (n) {
       case 0: return function() { return f.apply(this, arguments); };
@@ -147,7 +157,7 @@
               ));
             }
           }
-        } else if (!R.is(type, arg)) {
+        } else if (!(type === Int ? int(arg) : R.is(type, arg))) {
           throw new TypeError(format(
             '{} requires a value of type {type} as its {ord} argument; ' +
             'received {repr}',
@@ -211,6 +221,239 @@
   S.K = def('K', [a, b], function(x, y) {
     return x;
   });
+
+  //. ### Int type
+  //.
+  //. The Int pseudotype represents integers in the range [-2^31 .. 2^31).
+  //. It is a pseudotype because each Int is represented by a Number value.
+  //. Sanctuary's run-time type checking asserts that a valid Number value
+  //. is provided wherever an Int value is required.
+
+  //# Int :: Number -> Int !
+  //.
+  //. Throws if its argument is not a valid Int value.
+  //.
+  //. ```javascript
+  //. > S.Int(42)
+  //. 42
+  //. ```
+  var Int = S.Int = function Int(x) {
+    if (!R.is(Number, x)) {
+      throw new TypeError('Int requires a value of type Number ' +
+                          'as its first argument; received ' + R.toString(x));
+    }
+    if ((x | 0) !== Number(x)) {
+      throw new TypeError('Int requires an integer in [-2^31 .. 2^31) ' +
+                          'as its first argument; received ' + R.toString(x));
+    }
+    return Number(x);
+  };
+
+  //# Int.add :: Int -> Int -> Int
+  //.
+  //. Returns the sum of its two arguments.
+  //.
+  //. ```javascript
+  //. > S.Int.add(1, 2)
+  //. 3
+  //. ```
+  Int.add = def('Int.add', [Int, Int], function(m, n) { return Int(m + n); });
+
+  //# Int.sub :: Int -> Int -> Int
+  //.
+  //. Returns the result of subtracting its second argument from its first
+  //. argument.
+  //.
+  //. ```javascript
+  //. > S.Int.sub(1, 2)
+  //. -1
+  //. ```
+  Int.sub = def('Int.sub', [Int, Int], function(m, n) { return Int(m - n); });
+
+  //# Int.mul :: Int -> Int -> Int
+  //.
+  //. Returns the product of its two arguments.
+  //.
+  //. ```javascript
+  //. > S.Int.mul(6, 7)
+  //. 42
+  //. ```
+  Int.mul = def('Int.mul', [Int, Int], function(m, n) { return Int(m * n); });
+
+  //# Int.quot :: Int -> Int -> Int !
+  //.
+  //. Returns the result of dividing its first argument by its second
+  //. argument, truncating towards zero.
+  //.
+  //. Throws if the divisor is zero.
+  //.
+  //. See also [`Int.div`](#Int.div).
+  //.
+  //. ```javascript
+  //. > S.Int.quot(42, 5)
+  //. 8
+  //.
+  //. > S.Int.quot(42, -5)
+  //. -8
+  //.
+  //. > S.Int.quot(-42, 5)
+  //. -8
+  //.
+  //. > S.Int.quot(-42, -5)
+  //. 8
+  //. ```
+  Int.quot = def('Int.quot', [Int, Int], function(m, n) {
+    if (Number(n) === 0) throw new Error('Cannot divide by zero');
+    return Int((m / n) | 0);
+  });
+
+  //# Int.rem :: Int -> Int -> Int !
+  //.
+  //. Integer remainder, satisfying:
+  //.
+  //.     Int.quot(x, y) * y + Int.rem(x, y) === x
+  //.
+  //. Throws if the divisor is zero.
+  //.
+  //. See also [`Int.mod`](#Int.mod).
+  //.
+  //. ```javascript
+  //. > S.Int.rem(42, 5)
+  //. 2
+  //.
+  //. > S.Int.rem(42, -5)
+  //. 2
+  //.
+  //. > S.Int.rem(-42, 5)
+  //. -2
+  //.
+  //. > S.Int.rem(-42, -5)
+  //. -2
+  //. ```
+  Int.rem = def('Int.rem', [Int, Int], function(m, n) {
+    if (Number(n) === 0) throw new Error('Cannot divide by zero');
+    return Int(m % n);
+  });
+
+  //# Int.div :: Int -> Int -> Int !
+  //.
+  //. Returns the result of dividing its first argument by its second
+  //. argument, truncating towards negative infinity.
+  //.
+  //. Throws if the divisor is zero.
+  //.
+  //. See also [`Int.quot`](#Int.quot).
+  //.
+  //. ```javascript
+  //. > S.Int.div(42, 5)
+  //. 8
+  //.
+  //. > S.Int.div(42, -5)
+  //. -9
+  //.
+  //. > S.Int.div(-42, 5)
+  //. -9
+  //.
+  //. > S.Int.div(-42, -5)
+  //. 8
+  //. ```
+  Int.div = def('Int.div', [Int, Int], function(m, n) {
+    if (Number(n) === 0) throw new Error('Cannot divide by zero');
+    return Int(Math.floor(m / n));
+  });
+
+  //# Int.mod :: Int -> Int -> Int !
+  //.
+  //. Integer modulus, satisfying:
+  //.
+  //.     Int.div(x, y) * y + Int.mod(x, y) === x
+  //.
+  //. Throws if the divisor is zero.
+  //.
+  //. See also [`Int.rem`](#Int.rem).
+  //.
+  //. ```javascript
+  //. > S.Int.mod(42, 5)
+  //. 2
+  //.
+  //. > S.Int.mod(42, -5)
+  //. -3
+  //.
+  //. > S.Int.mod(-42, 5)
+  //. 3
+  //.
+  //. > S.Int.mod(-42, -5)
+  //. -2
+  //. ```
+  Int.mod = def('Int.mod', [Int, Int], function(m, n) {
+    if (Number(n) === 0) throw new Error('Cannot divide by zero');
+    return Int((m % n + n) % n);
+  });
+
+  //# Int.and :: Int -> Int -> Int
+  //.
+  //. [Bitwise AND][&]. Returns an Int with a one at each bit position at
+  //. which both arguments have a one.
+  //.
+  //. ```javascript
+  //. > S.Int.and(parseInt('1100', 2), parseInt('1010', 2))
+  //. 8
+  //. ```
+  Int.and = def('Int.and', [Int, Int], function(m, n) { return Int(m & n); });
+
+  //# Int.or :: Int -> Int -> Int
+  //.
+  //. [Bitwise OR][|]. Returns an Int with a one at each bit position at
+  //. which at least one argument has a one.
+  //.
+  //. ```javascript
+  //. > S.Int.or(parseInt('1100', 2), parseInt('1010', 2))
+  //. 14
+  //. ```
+  Int.or = def('Int.or', [Int, Int], function(m, n) { return Int(m | n); });
+
+  //# Int.xor :: Int -> Int -> Int
+  //.
+  //. [Bitwise XOR][^]. Returns an Int with a one at each bit position at
+  //. which exactly one argument has a one.
+  //.
+  //. ```javascript
+  //. > S.Int.xor(parseInt('1100', 2), parseInt('1010', 2))
+  //. 6
+  //. ```
+  Int.xor = def('Int.xor', [Int, Int], function(m, n) { return Int(m ^ n); });
+
+  //# Int.not :: Int -> Int
+  //.
+  //. [Bitwise NOT][~], satisfying:
+  //.
+  //.     Int.not(x) === -(x + 1)
+  //.
+  //. ```javascript
+  //. > S.Int.not(42)
+  //. -43
+  //. ```
+  Int.not = def('Int.not', [Int], function(n) { return Int(~n); });
+
+  //# Int.even :: Int -> Boolean
+  //.
+  //. Returns `true` if its argument is even; `false` if it is odd.
+  //.
+  //. ```javascript
+  //. > S.Int.even(42)
+  //. true
+  //. ```
+  Int.even = def('Int.even', [Int], function(n) { return n % 2 === 0; });
+
+  //# Int.odd :: Int -> Boolean
+  //.
+  //. Returns `true` if its argument is odd; `false` if it is even.
+  //.
+  //. ```javascript
+  //. > S.Int.odd(42)
+  //. false
+  //. ```
+  Int.odd = def('Int.odd', [Int], function(n) { return n % 2 !== 0; });
 
   //. ### Maybe type
 
@@ -965,7 +1208,7 @@
 
   //. ### List
 
-  //# slice :: Number -> Number -> [a] -> Maybe [a]
+  //# slice :: Int -> Int -> [a] -> Maybe [a]
   //.
   //. Returns Just a list containing the elements from the supplied list
   //. from a beginning index (inclusive) to an end index (exclusive).
@@ -993,8 +1236,7 @@
   //. > S.slice(2, 6, 'banana')
   //. Just("nana")
   //. ```
-  var slice = S.slice =
-  def('slice', [Number, Number, a], function(start, end, xs) {
+  var slice = S.slice = def('slice', [Int, Int, a], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -1004,7 +1246,7 @@
       Nothing();
   });
 
-  //# at :: Number -> [a] -> Maybe a
+  //# at :: Int -> [a] -> Maybe a
   //.
   //. Takes an index and a list and returns Just the element of the list at
   //. the index if the index is within the list's bounds; Nothing otherwise.
@@ -1020,7 +1262,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = def('at', [Number, a], function(n, xs) {
+  var at = S.at = def('at', [Int, a], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -1082,7 +1324,7 @@
   //. ```
   S.init = def('init', [a], slice(0, -1));
 
-  //# take :: Number -> [a] -> Maybe [a]
+  //# take :: Int -> [a] -> Maybe [a]
   //.
   //. Returns Just the first N elements of the given collection if N is
   //. greater than or equal to zero and less than or equal to the length
@@ -1099,11 +1341,11 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = def('take', [Number, a], function(n, xs) {
+  S.take = def('take', [Int, a], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
-  //# drop :: Number -> [a] -> Maybe [a]
+  //# drop :: Int -> [a] -> Maybe [a]
   //.
   //. Returns Just all but the first N elements of the given collection
   //. if N is greater than or equal to zero and less than or equal to the
@@ -1120,7 +1362,7 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = def('drop', [Number, a], function(n, xs) {
+  S.drop = def('drop', [Int, a], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
@@ -1150,14 +1392,14 @@
     return def(name, [a, b], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
-  //# indexOf :: a -> [a] -> Maybe Number
+  //# indexOf :: a -> [a] -> Maybe Int
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the first occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
   //. Dispatches to its second argument's `indexOf` method if present.
-  //. As a result, `String -> String -> Maybe Number` is an alternative
+  //. As a result, `String -> String -> Maybe Int` is an alternative
   //. type signature.
   //.
   //. ```javascript
@@ -1175,15 +1417,15 @@
   //. ```
   S.indexOf = sanctifyIndexOf('indexOf');
 
-  //# lastIndexOf :: a -> [a] -> Maybe Number
+  //# lastIndexOf :: a -> [a] -> Maybe Int
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the last occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
   //. Dispatches to its second argument's `lastIndexOf` method if present.
-  //. As a result, `String -> String -> Maybe Number` is an alternative
-  //. type signature.
+  //. As a result, `String -> String -> Maybe Int` is an alternative type
+  //. signature.
   //.
   //. ```javascript
   //. > S.lastIndexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
@@ -1291,7 +1533,7 @@
     return n === n ? Just(n) : Nothing();
   });
 
-  //# parseInt :: Number -> String -> Maybe Number
+  //# parseInt :: Int -> String -> Maybe Int
   //.
   //. Takes a radix (an integer between 2 and 36 inclusive) and a string,
   //. and returns Just the number represented by the string if it does in
@@ -1312,7 +1554,7 @@
   //. > S.parseInt(16, '0xGG')
   //. Nothing()
   //. ```
-  S.parseInt = def('parseInt', [Number, String], function(radix, s) {
+  S.parseInt = def('parseInt', [Int, String], function(radix, s) {
     if (radix < 2 || radix > 36) {
       throw new RangeError('Radix not in [2 .. 36]');
     }
@@ -1327,7 +1569,8 @@
                       R.all(R.pipe(R.toUpper,
                                    R.indexOf(_, charset),
                                    R.gte(_, 0))))),
-      R.map(R.partialRight(parseInt, radix))
+      R.map(R.partialRight(parseInt, radix)),
+      R.filter(int)
     )(s);
   });
 
@@ -1378,3 +1621,7 @@
 //. [Ramda]:        http://ramdajs.com/
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
 //. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+//. [~]:            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_NOT
+//. [&]:            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_AND
+//. [|]:            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_OR
+//. [^]:            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_XOR

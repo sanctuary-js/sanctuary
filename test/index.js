@@ -1,6 +1,7 @@
 'use strict';
 
 /* global describe, it */
+/* jshint -W053 */
 
 var assert = require('assert');
 
@@ -17,6 +18,15 @@ var eq = function(actual, expected) {
 var errorEq = R.curry(function(type, message, error) {
   return error.constructor === type && error.message === message;
 });
+
+//  binary :: String -> Number
+var binary = function(s) { return parseInt(s, 2); };
+
+//  maxInt :: Int
+var maxInt = Math.pow(2, 31) - 1;
+
+//  minInt :: Int
+var minInt = -Math.pow(2, 31);
 
 //  parseHex :: String -> Either String Number
 var parseHex = function(s) {
@@ -76,6 +86,568 @@ describe('combinator', function() {
     it('is curried', function() {
       eq(S.K(42).length, 1);
       eq(S.K(42)(null), 42);
+    });
+
+  });
+
+});
+
+describe('int', function() {
+
+  describe('Int', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Int, 'function');
+      eq(S.Int.length, 1);
+    });
+
+    it('is equivalent to Number for integers in [-2^31 .. 2^31)', function() {
+      eq(S.Int(0), 0);
+      eq(S.Int(1), 1);
+      eq(S.Int(-0), -0);
+      eq(S.Int(-1), -1);
+      eq(S.Int(maxInt), maxInt);
+      eq(S.Int(minInt), minInt);
+      eq(S.Int(new Number(0)), 0);
+      eq(S.Int(new Number(1)), 1);
+      eq(S.Int(new Number(-0)), -0);
+      eq(S.Int(new Number(-1)), -1);
+      eq(S.Int(new Number(maxInt)), maxInt);
+      eq(S.Int(new Number(minInt)), minInt);
+    });
+
+    it('throws if applied to any other value', function() {
+      assert.throws(function() { S.Int('42'); },
+                    errorEq(TypeError,
+                            'Int requires a value of type Number ' +
+                            'as its first argument; received "42"'));
+
+      assert.throws(function() { S.Int(12.34); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received 12.34'));
+
+      assert.throws(function() { S.Int(maxInt + 1); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received 2147483648'));
+
+      assert.throws(function() { S.Int(minInt - 1); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received -2147483649'));
+
+      assert.throws(function() { S.Int(Infinity); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received Infinity'));
+
+      assert.throws(function() { S.Int(-Infinity); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received -Infinity'));
+
+      assert.throws(function() { S.Int(NaN); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) ' +
+                            'as its first argument; received NaN'));
+
+      assert.throws(function() { S.Int(new Number(NaN)); },
+                    errorEq(TypeError,
+                            'Int requires an integer in [-2^31 .. 2^31) as ' +
+                            'its first argument; received new Number(NaN)'));
+    });
+
+  });
+
+  describe('Int.add', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.add, 'function');
+      eq(S.Int.add.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.add(0.5); },
+                    errorEq(TypeError,
+                            'Int.add requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.add(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.add requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('can operate on numbers', function() {
+      eq(S.Int.add(1, 2), 3);
+    });
+
+    it('can operate on ints', function() {
+      eq(S.Int.add(1, 2), 3);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.add(1)(2), 3);
+    });
+
+  });
+
+  describe('Int.sub', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.sub, 'function');
+      eq(S.Int.sub.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.sub(0.5); },
+                    errorEq(TypeError,
+                            'Int.sub requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.sub(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.sub requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('can operate on numbers', function() {
+      eq(S.Int.sub(1, 2), -1);
+    });
+
+    it('can operate on ints', function() {
+      eq(S.Int.sub(1, 2), -1);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.sub(1)(2), -1);
+    });
+
+  });
+
+  describe('Int.mul', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.mul, 'function');
+      eq(S.Int.mul.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.mul(0.5); },
+                    errorEq(TypeError,
+                            'Int.mul requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.mul(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.mul requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('can operate on numbers', function() {
+      eq(S.Int.mul(6, 7), 42);
+    });
+
+    it('can operate on ints', function() {
+      eq(S.Int.mul(6, 7), 42);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.mul(6)(7), 42);
+    });
+
+  });
+
+  describe('Int.quot', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.quot, 'function');
+      eq(S.Int.quot.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.quot(0.5); },
+                    errorEq(TypeError,
+                            'Int.quot requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.quot(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.quot requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('throws if divisor is zero', function() {
+      assert.throws(function() { S.Int.quot(1, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.quot(1, -0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.quot(1, new Number(0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.quot(1, new Number(-0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+    });
+
+    it('performs integer division truncated towards 0', function() {
+      eq(S.Int.quot(42, 5), 8);
+      eq(S.Int.quot(42, -5), -8);
+      eq(S.Int.quot(-42, 5), -8);
+      eq(S.Int.quot(-42, -5), 8);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.quot(42)(5), 8);
+    });
+
+  });
+
+  describe('Int.rem', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.rem, 'function');
+      eq(S.Int.rem.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.rem(0.5); },
+                    errorEq(TypeError,
+                            'Int.rem requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.rem(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.rem requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('throws if divisor is zero', function() {
+      assert.throws(function() { S.Int.rem(1, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+    });
+
+    it('returns the remainder', function() {
+      eq(S.Int.rem(42, 5), 2);
+      eq(S.Int.rem(42, -5), 2);
+      eq(S.Int.rem(-42, 5), -2);
+      eq(S.Int.rem(-42, -5), -2);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.rem(42)(5), 2);
+    });
+
+  });
+
+  describe('Int.div', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.div, 'function');
+      eq(S.Int.div.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.div(0.5); },
+                    errorEq(TypeError,
+                            'Int.div requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.div(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.div requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('performs integer division truncated towards -Infinity', function() {
+      eq(S.Int.div(7, 2), 3);
+      eq(S.Int.div(7, -2), -4);
+      eq(S.Int.div(-7, 2), -4);
+      eq(S.Int.div(-7, -2), 3);
+      eq(S.Int.div(0, 1), 0);
+      eq(S.Int.div(-0, 1), -0);
+      eq(S.Int.div(7, new Number(2)), 3);
+      eq(S.Int.div(new Number(7), 2), 3);
+      eq(S.Int.div(new Number(7), new Number(2)), 3);
+    });
+
+    it('throws if divisor is zero', function() {
+      assert.throws(function() { S.Int.div(1, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(1, -0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(0, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(0, -0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(-0, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(-0, -0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(new Number(1), new Number(0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.div(new Number(1), new Number(-0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+    });
+
+    it('is curried', function() {
+      eq(S.Int.div(7)(2), 3);
+    });
+
+  });
+
+  describe('Int.mod', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.mod, 'function');
+      eq(S.Int.mod.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.mod(0.5); },
+                    errorEq(TypeError,
+                            'Int.mod requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.mod(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.mod requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('throws if divisor is zero', function() {
+      assert.throws(function() { S.Int.mod(1, 0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.mod(1, -0); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.mod(1, new Number(0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+
+      assert.throws(function() { S.Int.mod(1, new Number(-0)); },
+                    errorEq(Error, 'Cannot divide by zero'));
+    });
+
+    it('returns the modulus', function() {
+      eq(S.Int.mod(42, 5), 2);
+      eq(S.Int.mod(42, -5), -3);
+      eq(S.Int.mod(-42, 5), 3);
+      eq(S.Int.mod(-42, -5), -2);
+    });
+
+    it('is curried', function() {
+      eq(S.Int.mod(42)(5), 2);
+    });
+
+  });
+
+  describe('Int.and', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.and, 'function');
+      eq(S.Int.and.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.and(0.5); },
+                    errorEq(TypeError,
+                            'Int.and requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.and(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.and requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('returns the bitwise AND of its arguments', function() {
+      eq(S.Int.and(binary('1100'), binary('1010')), binary('1000'));
+    });
+
+    it('is curried', function() {
+      eq(S.Int.and(binary('1100'))(binary('1010')), binary('1000'));
+    });
+
+  });
+
+  describe('Int.or', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.or, 'function');
+      eq(S.Int.or.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.or(0.5); },
+                    errorEq(TypeError,
+                            'Int.or requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.or(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.or requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('returns the bitwise OR of its arguments', function() {
+      eq(S.Int.or(binary('1100'), binary('1010')), binary('1110'));
+    });
+
+    it('is curried', function() {
+      eq(S.Int.or(binary('1100'))(binary('1010')), binary('1110'));
+    });
+
+  });
+
+  describe('Int.xor', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.Int.xor, 'function');
+      eq(S.Int.xor.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.xor(0.5); },
+                    errorEq(TypeError,
+                            'Int.xor requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+
+      assert.throws(function() { S.Int.xor(0, 0.5); },
+                    errorEq(TypeError,
+                            'Int.xor requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
+    });
+
+    it('returns the bitwise XOR of its arguments', function() {
+      eq(S.Int.xor(binary('1100'), binary('1010')), binary('0110'));
+    });
+
+    it('is curried', function() {
+      eq(S.Int.xor(binary('1100'))(binary('1010')), binary('0110'));
+    });
+
+  });
+
+  describe('Int.not', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Int.not, 'function');
+      eq(S.Int.not.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.not(0.5); },
+                    errorEq(TypeError,
+                            'Int.not requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+    });
+
+    it('returns bitwise NOT of its argument', function() {
+      eq(S.Int.not(42), ~42);
+      eq(S.Int.not(42), -43);
+      eq(S.Int.not(-1), ~-1);
+      eq(S.Int.not(-1), 0);
+    });
+
+  });
+
+  describe('Int.even', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Int.even, 'function');
+      eq(S.Int.even.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.even(0.5); },
+                    errorEq(TypeError,
+                            'Int.even requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+    });
+
+    it('returns true if applied to an even integer', function() {
+      eq(S.Int.even(0), true);
+      eq(S.Int.even(-0), true);
+      eq(S.Int.even(2), true);
+      eq(S.Int.even(-2), true);
+      eq(S.Int.even(2147483646), true);
+      eq(S.Int.even(-2147483648), true);
+      eq(S.Int.even(new Number(-0)), true);
+    });
+
+    it('returns false if applied to an odd integer', function() {
+      eq(S.Int.even(1), false);
+      eq(S.Int.even(-1), false);
+      eq(S.Int.even(2147483647), false);
+      eq(S.Int.even(-2147483647), false);
+      eq(S.Int.even(new Number(-1)), false);
+    });
+
+  });
+
+  describe('Int.odd', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.Int.odd, 'function');
+      eq(S.Int.odd.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.Int.odd(0.5); },
+                    errorEq(TypeError,
+                            'Int.odd requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
+    });
+
+    it('returns true if applied to an odd value', function() {
+      eq(S.Int.odd(1), true);
+      eq(S.Int.odd(-1), true);
+      eq(S.Int.odd(2147483647), true);
+      eq(S.Int.odd(-2147483647), true);
+      eq(S.Int.odd(new Number(-1)), true);
+    });
+
+    it('returns false if applied to an even value', function() {
+      eq(S.Int.odd(0), false);
+      eq(S.Int.odd(-0), false);
+      eq(S.Int.odd(2), false);
+      eq(S.Int.odd(-2), false);
+      eq(S.Int.odd(2147483646), false);
+      eq(S.Int.odd(-2147483648), false);
+      eq(S.Int.odd(new Number(-0)), false);
+    });
+
+  });
+
+  describe('invariants', function() {
+
+    it('Int.quot(x, y) * y + Int.rem(x, y) === x', function() {
+      eq(S.Int.quot(42, 5) * 5 + S.Int.rem(42, 5), 42);
+      eq(S.Int.quot(42, -5) * -5 + S.Int.rem(42, -5), 42);
+      eq(S.Int.quot(-42, 5) * 5 + S.Int.rem(-42, 5), -42);
+      eq(S.Int.quot(-42, -5) * -5 + S.Int.rem(-42, -5), -42);
+    });
+
+    it('Int.div(x, y) * y + Int.mod(x, y) === x', function() {
+      eq(S.Int.div(42, 5) * 5 + S.Int.mod(42, 5), 42);
+      eq(S.Int.div(42, -5) * -5 + S.Int.mod(42, -5), 42);
+      eq(S.Int.div(-42, 5) * 5 + S.Int.mod(-42, 5), -42);
+      eq(S.Int.div(-42, -5) * -5 + S.Int.mod(-42, -5), -42);
+    });
+
+    it('Int.not(x) === -(x + 1)', function() {
+      eq(S.Int.not(42), -(42 + 1));
+      eq(S.Int.not(-42), -(-42 + 1));
     });
 
   });
@@ -359,10 +931,8 @@ describe('maybe', function() {
       eq(S.Just(-0).equals(S.Just(0)), false);
       eq(S.Just(NaN).equals(S.Just(NaN)), true);
       eq(S.Just([1, 2, 3]).equals(S.Just([1, 2, 3])), true);
-      // jshint -W053
       eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
       eq(S.Just(new Number(42)).equals(42), false);
-      // jshint +W053
     });
 
     it('provides an "extend" method', function() {
@@ -686,10 +1256,8 @@ describe('either', function() {
       eq(S.Left(-0).equals(S.Left(0)), false);
       eq(S.Left(NaN).equals(S.Left(NaN)), true);
       eq(S.Left([1, 2, 3]).equals(S.Left([1, 2, 3])), true);
-      // jshint -W053
       eq(S.Left(new Number(42)).equals(S.Left(new Number(42))), true);
       eq(S.Left(new Number(42)).equals(42), false);
-      // jshint +W053
     });
 
     it('provides an "extend" method', function() {
@@ -869,10 +1437,8 @@ describe('either', function() {
       eq(S.Right(-0).equals(S.Right(0)), false);
       eq(S.Right(NaN).equals(S.Right(NaN)), true);
       eq(S.Right([1, 2, 3]).equals(S.Right([1, 2, 3])), true);
-      // jshint -W053
       eq(S.Right(new Number(42)).equals(S.Right(new Number(42))), true);
       eq(S.Right(new Number(42)).equals(42), false);
-      // jshint +W053
     });
 
     it('provides an "extend" method', function() {
@@ -1305,10 +1871,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.at([1, 2, 3]); },
+      assert.throws(function() { S.at(0.5); },
                     errorEq(TypeError,
-                            'at requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            'at requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
     });
 
     it('returns Just the nth element of a list', function() {
@@ -1340,15 +1906,15 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.slice([1, 2, 3]); },
+      assert.throws(function() { S.slice(0.5); },
                     errorEq(TypeError,
-                            'slice requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            'slice requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
 
-      assert.throws(function() { S.slice(0, [1, 2, 3]); },
+      assert.throws(function() { S.slice(0, 0.5); },
                     errorEq(TypeError,
-                            'slice requires a value of type Number ' +
-                            'as its second argument; received [1, 2, 3]'));
+                            'slice requires a value of type Int ' +
+                            'as its second argument; received 0.5'));
     });
 
     it('returns a Nothing with a positive end index greater than start index', function() {
@@ -1393,10 +1959,8 @@ describe('list', function() {
     it('accepts -0 as the position half a step beyond the last index', function() {
       eq(S.slice(-0, 5, [1, 2, 3, 4, 5]), S.Just([]));
       eq(S.slice(2, -0, [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
-      // jshint -W053
       eq(S.slice(new Number(-0), 5, [1, 2, 3, 4, 5]), S.Just([]));
       eq(S.slice(2, new Number(-0), [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
-      // jshint +W053
     });
 
     it('returns a Just with the whole list', function() {
@@ -1494,10 +2058,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.take([1, 2, 3]); },
+      assert.throws(function() { S.take(0.5); },
                     errorEq(TypeError,
-                            'take requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            'take requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -1510,9 +2074,7 @@ describe('list', function() {
       eq(S.take(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
       eq(S.take(-0, 'abcdefg'), S.Nothing());
       eq(S.take(-1, 'abcde'), S.Nothing());
-      // jshint -W053
       eq(S.take(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-      // jshint +W053
     });
 
     it('returns an empty collection if n is 0', function() {
@@ -1545,10 +2107,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.drop([1, 2, 3]); },
+      assert.throws(function() { S.drop(0.5); },
                     errorEq(TypeError,
-                            'drop requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            'drop requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -1561,9 +2123,7 @@ describe('list', function() {
       eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
       eq(S.drop(-3, 'abcde'), S.Nothing());
       eq(S.drop(-0, 'abcde'), S.Nothing());
-      // jshint -W053
       eq(S.drop(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-      // jshint +W053
     });
 
     it('returns an empty collection if n is equal to collection length', function() {
@@ -1836,10 +2396,10 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseInt('10'); },
+      assert.throws(function() { S.parseInt(0.5); },
                     errorEq(TypeError,
-                            'parseInt requires a value of type Number ' +
-                            'as its first argument; received "10"'));
+                            'parseInt requires a value of type Int ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.parseInt(10, 42); },
                     errorEq(TypeError,
@@ -1961,6 +2521,17 @@ describe('parse', function() {
 
     it('returns a Nothing if one or more characters are invalid', function() {
       eq(S.parseInt(16, 'alice'), S.Nothing());  // parseInt('alice', 16) == 10
+    });
+
+    it('returns a Nothing if integer is not in [-2^31 .. 2^31)', function() {
+      eq(S.parseInt(2, '+01111111111111111111111111111111'), S.Just(maxInt));
+      eq(S.parseInt(2, '+10000000000000000000000000000000'), S.Nothing());
+      eq(S.parseInt(2, '-10000000000000000000000000000000'), S.Just(minInt));
+      eq(S.parseInt(2, '-10000000000000000000000000000001'), S.Nothing());
+      eq(S.parseInt(10, '+2147483647'), S.Just(maxInt));
+      eq(S.parseInt(10, '+2147483648'), S.Nothing());
+      eq(S.parseInt(10, '-2147483648'), S.Just(minInt));
+      eq(S.parseInt(10, '-2147483649'), S.Nothing());
     });
 
     it('is curried', function() {

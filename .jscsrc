@@ -1,6 +1,6 @@
 {
   "disallowEmptyBlocks": true,
-  "disallowImplicitTypeConversion": ["binary", "boolean", "numeric", "string"],
+  "disallowImplicitTypeConversion": ["boolean", "numeric", "string"],
   "disallowKeywordsOnNewLine": ["else", "catch", "finally"],
   "disallowMixedSpacesAndTabs": true,
   "disallowMultipleLineStrings": true,
