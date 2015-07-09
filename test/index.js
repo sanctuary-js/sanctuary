@@ -70,7 +70,7 @@ describe('classify', function() {
     it('type checks its arguments', function() {
       assert.throws(function() { S.is([1, 2, 3]); },
                     errorEq(TypeError,
-                            '‘is’ requires a value of type Type ' +
+                            '‘is’ requires a value of type TypeRep ' +
                             'as its first argument; received [1, 2, 3]'));
     });
 
@@ -1940,48 +1940,41 @@ describe('list', function() {
 
   describe('pluck', function() {
 
-    it('is a binary function', function() {
+    it('is a ternary function', function() {
       eq(typeof S.pluck, 'function');
-      eq(S.pluck.length, 2);
+      eq(S.pluck.length, 3);
     });
 
     it('type checks its arguments', function() {
       assert.throws(function() { S.pluck([1, 2, 3]); },
                     errorEq(TypeError,
-                            '‘pluck’ requires a value of type String ' +
+                            '‘pluck’ requires a value of type TypeRep ' +
                             'as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.pluck('x', null); },
+      assert.throws(function() { S.pluck(Number, [1, 2, 3]); },
                     errorEq(TypeError,
-                            'The second argument to ‘pluck’ ' +
+                            '‘pluck’ requires a value of type String ' +
+                            'as its second argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.pluck(Number, 'x', null); },
+                    errorEq(TypeError,
+                            'The third argument to ‘pluck’ ' +
                             'cannot be null or undefined'));
     });
 
-    it('returns array of Justs for found keys', function() {
-      var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
-      eq(S.pluck('a', xs), [S.Just(1), S.Just(2), S.Just(3)]);
-    });
-
-    it('returns array of Nothings for keys not found', function() {
-      var xs = [{a: 1, b: 3}, {a: 2, b: 4}, {a: 3, b: 5}];
-      eq(S.pluck('c', xs), [S.Nothing(), S.Nothing(), S.Nothing()]);
-    });
-
-    it('returns Just(undefined) for defined key with no value', function() {
-      var xs = [{a: 1, b: 3}, {a: void 0, b: 4}, {a: 3, b: 5}];
-      eq(S.pluck('a', xs), [S.Just(1), S.Just(undefined), S.Just(3)]);
-    });
-
-    it('returns an array of Maybes for various values', function() {
-      var xs = [{a: 1}, {a: void 0}, {a: 4}, {b: 1}];
-      eq(S.pluck('a', xs),
-         [S.Just(1), S.Just(undefined), S.Just(4), S.Nothing()]);
+    it('returns a list of satisfactory plucked values', function() {
+      var xs = [{x: '1'}, {x: 2}, {x: null}, {x: undefined}, {}];
+      eq(S.pluck(Number, 'x', []), []);
+      eq(S.pluck(Number, 'x', xs),
+         [S.Nothing(), S.Just(2), S.Nothing(), S.Nothing(), S.Nothing()]);
+      eq(S.pluck(Object, 'x', xs),
+         [S.Just('1'), S.Just(2), S.Nothing(), S.Nothing(), S.Nothing()]);
     });
 
     it('is curried', function() {
-      var xs = [{x: 1}, {x: 2}, {x: 3}];
-      eq(S.pluck('x').length, 1);
-      eq(S.pluck('x')(xs), [S.Just(1), S.Just(2), S.Just(3)]);
+      eq(S.pluck(Number).length, 2);
+      eq(S.pluck(Number)('x').length, 1);
+      eq(S.pluck(Number)('x')([{x: 42}]), [S.Just(42)]);
     });
 
   });
@@ -1992,67 +1985,83 @@ describe('object', function() {
 
   describe('get', function() {
 
-    it('is a binary function', function() {
+    it('is a ternary function', function() {
       eq(typeof S.get, 'function');
-      eq(S.get.length, 2);
+      eq(S.get.length, 3);
     });
 
     it('type checks its arguments', function() {
       assert.throws(function() { S.get([1, 2, 3]); },
                     errorEq(TypeError,
-                            '‘get’ requires a value of type String ' +
+                            '‘get’ requires a value of type TypeRep ' +
                             'as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.get('x', null); },
+      assert.throws(function() { S.get(Number, [1, 2, 3]); },
                     errorEq(TypeError,
-                            'The second argument to ‘get’ ' +
+                            '‘get’ requires a value of type String ' +
+                            'as its second argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.get(Number, 'x', null); },
+                    errorEq(TypeError,
+                            'The third argument to ‘get’ ' +
                             'cannot be null or undefined'));
     });
 
     it('returns a Maybe', function() {
       var obj = {x: 0, y: 42};
-      eq(S.get('x', obj), S.Just(0));
-      eq(S.get('y', obj), S.Just(42));
-      eq(S.get('z', obj), S.Nothing());
+      eq(S.get(Number, 'x', obj), S.Just(0));
+      eq(S.get(Number, 'y', obj), S.Just(42));
+      eq(S.get(Number, 'z', obj), S.Nothing());
+      eq(S.get(String, 'x', obj), S.Nothing());
+      eq(S.get(Object, 'x', obj), S.Just(0));
     });
 
     it('is curried', function() {
-      eq(S.get('x').length, 1);
-      eq(S.get('x')({x: 42}), S.Just(42));
+      eq(S.get(Number).length, 2);
+      eq(S.get(Number)('x').length, 1);
+      eq(S.get(Number)('x')({x: 42}), S.Just(42));
     });
 
   });
 
   describe('gets', function() {
 
-    it('is a binary function', function() {
+    it('is a ternary function', function() {
       eq(typeof S.gets, 'function');
-      eq(S.gets.length, 2);
+      eq(S.gets.length, 3);
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.gets(null); },
+      assert.throws(function() { S.gets([1, 2, 3]); },
                     errorEq(TypeError,
-                            'The first argument to ‘gets’ ' +
-                            'cannot be null or undefined'));
+                            '‘gets’ requires a value of type TypeRep ' +
+                            'as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.gets([], null); },
+      assert.throws(function() { S.gets(Number, null); },
                     errorEq(TypeError,
                             'The second argument to ‘gets’ ' +
+                            'cannot be null or undefined'));
+
+      assert.throws(function() { S.gets(Number, [], null); },
+                    errorEq(TypeError,
+                            'The third argument to ‘gets’ ' +
                             'cannot be null or undefined'));
     });
 
     it('returns a Maybe', function() {
       var obj = {x: {z: 0}, y: 42};
-      eq(S.gets([], obj), S.Just({x: {z: 0}, y: 42}));
-      eq(S.gets(['y'], obj), S.Just(42));
-      eq(S.gets(['z'], obj), S.Nothing());
-      eq(S.gets(['x', 'z'], obj), S.Just(0));
+      eq(S.gets(Number, ['x'], obj), S.Nothing());
+      eq(S.gets(Number, ['y'], obj), S.Just(42));
+      eq(S.gets(Number, ['z'], obj), S.Nothing());
+      eq(S.gets(Number, ['x', 'z'], obj), S.Just(0));
+      eq(S.gets(Number, [], obj), S.Nothing());
+      eq(S.gets(Object, [], obj), S.Just({x: {z: 0}, y: 42}));
     });
 
     it('is curried', function() {
-      eq(S.gets(['x']).length, 1);
-      eq(S.gets(['x'])({x: 42}), S.Just(42));
+      eq(S.gets(Number).length, 2);
+      eq(S.gets(Number)(['x']).length, 1);
+      eq(S.gets(Number)(['x'])({x: 42}), S.Just(42));
     });
 
   });
