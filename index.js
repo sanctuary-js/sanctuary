@@ -87,21 +87,28 @@
   var formatters = {
     '{}': R.identity,
     '{ord}': R.nth(_, ['first', 'second', 'third']),
+    '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
     '{type}': R.pipe(String, R.match(/^function (\w*)/), R.nth(1))
   };
 
-  //  format :: (String, [*]) -> String
-  var format = function(template, values) {
+  //  format :: String -> [*] -> String
+  var format = R.curry(function(template, values) {
     var idx = -1;
     return template.replace(/[{].*?[}]/g, function(match) {
       return formatters[match](values[idx += 1]);
     });
-  };
+  });
 
+  var Accessible = /* istanbul ignore next */ function Accessible() {};
+  var Type = /* istanbul ignore next */ function Type() {};
   var a = {name: 'a'};
   var b = {name: 'b'};
   var c = {name: 'c'};
+
+  var _is = function(type, x) {
+    return x != null && Object(x) instanceof type;
+  };
 
   var arity = function(n, f) {
     switch (n) {
@@ -140,16 +147,23 @@
             if (types[idx] === type && !placeholder(val) &&
                 !(R.type(val) === R.type(arg) && val.type === arg.type)) {
               throw new TypeError(format(
-                '{} requires its {ord} and {ord} arguments ' +
+                '{quote} requires its {ord} and {ord} arguments ' +
                 'to be of the same type; {repr} and {repr} are not',
                 paramIndex > idx ? [name, idx, paramIndex, val, arg]
                                  : [name, paramIndex, idx, arg, val]
               ));
             }
           }
-        } else if (!R.is(type, arg)) {
+        } else if (type === Accessible) {
+          if (arg == null) {
+            throw new TypeError(format(
+              'The {ord} argument to {quote} cannot be null or undefined',
+              [paramIndex, name]
+            ));
+          }
+        } else if (!_is(type === Type ? Function : type, arg)) {
           throw new TypeError(format(
-            '{} requires a value of type {type} as its {ord} argument; ' +
+            '{quote} requires a value of type {type} as its {ord} argument; ' +
             'received {repr}',
             [name, type, paramIndex, arg]
           ));
@@ -164,8 +178,7 @@
   };
 
   var def = function(name, types, f) {
-    var values = R.times(function() { return _; }, types.length);
-    return curry(name, types, values, f);
+    return curry(name, types, R.map(function() { return _; }, types), f);
   };
 
   var extend = function(Child, Parent) {
@@ -195,6 +208,31 @@
     });
   };
 
+  //. ### Classify
+
+  //# is :: Type -> a -> Boolean
+  //.
+  //. Takes a type and a value of any type and returns `true` if the given
+  //. value is of the specified type (either directly or via the prototype
+  //. chain); `false` otherwise.
+  //.
+  //. Boolean, number, string, and symbol [primitives][] are promoted to
+  //. their object equivalents. `42`, for example, is considered a Number
+  //. and an Object (whereas [`R.is`][R.is] considers it a Number but not
+  //. an Object).
+  //.
+  //. ```javascript
+  //. > S.is(Number, 42)
+  //. true
+  //.
+  //. > S.is(Object, 42)
+  //. true
+  //.
+  //. > S.is(String, 42)
+  //. false
+  //. ```
+  var is = S.is = def('is', [Type, a], _is);
+
   //. ### Combinator
 
   //# K :: a -> b -> a
@@ -205,6 +243,7 @@
   //. ```javascript
   //. > S.K('foo', 'bar')
   //. "foo"
+  //.
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
@@ -458,7 +497,7 @@
   Nothing.prototype.concat = def('Nothing#concat', [Maybe], R.identity);
 
   //  Nothing#equals :: Maybe a ~> b -> Boolean
-  Nothing.prototype.equals = def('Nothing#equals', [a], R.is(Nothing));
+  Nothing.prototype.equals = def('Nothing#equals', [a], is(Nothing));
 
   //  Nothing#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   Nothing.prototype.extend = def('Nothing#extend', [Function], self);
@@ -792,7 +831,7 @@
 
   //  Left#concat :: Either a b ~> Either a b -> Either a b
   Left.prototype.concat = def('Left#concat', [Either], function(either) {
-    return R.is(Left, either) ? Left(this.value.concat(either.value)) : either;
+    return is(Left, either) ? Left(this.value.concat(either.value)) : either;
   });
 
   //  Left#equals :: Either a b ~> c -> Boolean
@@ -842,7 +881,7 @@
 
   //  Right#concat :: Either a b ~> Either a b -> Either a b
   Right.prototype.concat = def('Right#concat', [Either], function(either) {
-    return R.is(Right, either) ? Right(this.value.concat(either.value)) : this;
+    return is(Right, either) ? Right(this.value.concat(either.value)) : this;
   });
 
   //  Right#equals :: Either a b ~> c -> Boolean
@@ -887,20 +926,22 @@
 
   //. ### Control
 
+  var methodMissing = format('{repr} does not have {} {quote} method');
+
   //  toBoolean :: * -> Boolean
   var toBoolean = function(x) {
-    if (R.is(Array, x))               return x.length > 0;
-    if (R.is(Boolean, x))             return x;
-    if (R.is(Function, x.toBoolean))  return x.toBoolean();
-    throw new TypeError(R.toString(x) + ' does not have a "toBoolean" method');
+    if (is(Array, x))               return x.length > 0;
+    if (is(Boolean, x))             return x;
+    if (is(Function, x.toBoolean))  return x.toBoolean();
+    throw new TypeError(methodMissing([x, 'a', 'toBoolean']));
   };
 
   //  empty :: a -> a
   var empty = function(x) {
-    if (R.is(Array, x))               return [];
-    if (R.is(Boolean, x))             return false;
-    if (R.is(Function, x.empty))      return x.empty();
-    throw new TypeError(R.toString(x) + ' does not have an "empty" method');
+    if (is(Array, x))               return [];
+    if (is(Boolean, x))             return false;
+    if (is(Function, x.empty))      return x.empty();
+    throw new TypeError(methodMissing([x, 'an', 'empty']));
   };
 
   //# and :: a -> a -> a
@@ -994,7 +1035,7 @@
   //. Just("nana")
   //. ```
   var slice = S.slice =
-  def('slice', [Number, Number, a], function(start, end, xs) {
+  def('slice', [Number, Number, Accessible], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -1020,7 +1061,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = def('at', [Number, a], function(n, xs) {
+  var at = S.at = def('at', [Number, Accessible], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -1036,7 +1077,7 @@
   //. > S.head([])
   //. Nothing()
   //. ```
-  S.head = def('head', [a], at(0));
+  S.head = def('head', [Accessible], at(0));
 
   //# last :: [a] -> Maybe a
   //.
@@ -1050,7 +1091,7 @@
   //. > S.last([])
   //. Nothing()
   //. ```
-  S.last = def('last', [a], at(-1));
+  S.last = def('last', [Accessible], at(-1));
 
   //# tail :: [a] -> Maybe [a]
   //.
@@ -1065,7 +1106,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = def('tail', [a], slice(1, -0));
+  S.tail = def('tail', [Accessible], slice(1, -0));
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -1080,7 +1121,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = def('init', [a], slice(0, -1));
+  S.init = def('init', [Accessible], slice(0, -1));
 
   //# take :: Number -> [a] -> Maybe [a]
   //.
@@ -1099,7 +1140,7 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = def('take', [Number, a], function(n, xs) {
+  S.take = def('take', [Number, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
@@ -1120,7 +1161,7 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = def('drop', [Number, a], function(n, xs) {
+  S.drop = def('drop', [Number, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
@@ -1137,7 +1178,7 @@
   //. > S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
   //. Nothing()
   //. ```
-  S.find = def('find', [Function, a], function(pred, xs) {
+  S.find = def('find', [Function, Accessible], function(pred, xs) {
     for (var idx = 0, len = xs.length; idx < len; idx += 1) {
       if (pred(xs[idx])) {
         return Just(xs[idx]);
@@ -1147,7 +1188,8 @@
   });
 
   var sanctifyIndexOf = function(name) {
-    return def(name, [a, b], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
+    return def(name, [a, Accessible],
+               R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
   //# indexOf :: a -> [a] -> Maybe Number
@@ -1213,7 +1255,7 @@
   //. > S.pluck('x', [{x: 1}, {x: 2}, {x: undefined}])
   //. [Just(1), Just(2), Just(undefined)]
   //. ```
-  S.pluck = def('pluck', [String, a], function(key, xs) {
+  S.pluck = def('pluck', [String, Accessible], function(key, xs) {
     return R.map(get(key), xs);
   });
 
@@ -1233,7 +1275,7 @@
   //. Nothing()
   //. ```
   var get = S.get =
-  def('get', [String, a],
+  def('get', [String, Accessible],
       R.ifElse(R.has, R.compose(Just, R.prop), Nothing));
 
   //# gets :: [String] -> Object -> Maybe *
@@ -1249,7 +1291,7 @@
   //. > S.gets(['a', 'b', 'c'], {})
   //. Nothing()
   //. ```
-  S.gets = def('gets', [a, b], function(keys, obj) {
+  S.gets = def('gets', [Accessible, Accessible], function(keys, obj) {
     return R.reduce(function(acc, key) {
       return R.chain(get(key), acc);
     }, Just(obj), keys);
@@ -1374,7 +1416,9 @@
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 //. [R.equals]:     http://ramdajs.com/docs/#equals
+//. [R.is]:         http://ramdajs.com/docs/#is
 //. [R.map]:        http://ramdajs.com/docs/#map
 //. [Ramda]:        http://ramdajs.com/
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
 //. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+//. [primitives]:   https://developer.mozilla.org/en-US/docs/Glossary/Primitive
