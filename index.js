@@ -1406,9 +1406,9 @@
   //. > S.match(/(good)?bye/, 'bye')
   //. Just([Just("bye"), Nothing()])
   //. ```
-  S.match =
-  def('match', [RegExp, String],
-      R.compose(R.map(R.map(toMaybe)), toMaybe, R.match));
+  S.match = def('match', [RegExp, String], function(pattern, s) {
+    return R.map(R.map(toMaybe), toMaybe(s.match(pattern)));
+  });
 
 }.call(this));
 
