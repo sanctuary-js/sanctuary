@@ -1652,6 +1652,55 @@ describe('list', function() {
 
   });
 
+  describe('takeLast', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.takeLast, 'function');
+      eq(S.takeLast.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.takeLast([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘takeLast’ requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.takeLast(0, null); },
+                    errorEq(TypeError,
+                            'The second argument to ‘takeLast’ ' +
+                            'cannot be null or undefined'));
+    });
+
+    it('returns a Nothing if n is negative', function() {
+      eq(S.takeLast(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.takeLast(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.takeLast(-0, 'abcde'), S.Nothing());
+      eq(S.takeLast(-1, 'abcde'), S.Nothing());
+      // jshint -W053
+      eq(S.takeLast(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      // jshint +W053
+    });
+
+    it('returns a Just with the last n elements for valid n; Nothing otherwise', function() {
+      eq(S.takeLast(4, ['a', 'b', 'c']), S.Nothing());
+      eq(S.takeLast(3, ['a', 'b', 'c']), S.Just(['a', 'b', 'c']));
+      eq(S.takeLast(2, ['a', 'b', 'c']), S.Just(['b', 'c']));
+      eq(S.takeLast(1, ['a', 'b', 'c']), S.Just(['c']));
+      eq(S.takeLast(0, ['a', 'b', 'c']), S.Just([]));
+      eq(S.takeLast(4, 'abc'), S.Nothing());
+      eq(S.takeLast(3, 'abc'), S.Just('abc'));
+      eq(S.takeLast(2, 'abc'), S.Just('bc'));
+      eq(S.takeLast(1, 'abc'), S.Just('c'));
+      eq(S.takeLast(0, 'abc'), S.Just(''));
+    });
+
+    it('is curried', function() {
+      eq(S.takeLast(3).length, 1);
+      eq(S.takeLast(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['c', 'd', 'e']));
+    });
+
+  });
+
   describe('drop', function() {
 
     it('is a binary function', function() {
@@ -1704,6 +1753,55 @@ describe('list', function() {
     it('is curried', function() {
       eq(S.drop(3).length, 1);
       eq(S.drop(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['d', 'e']));
+    });
+
+  });
+
+  describe('dropLast', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.dropLast, 'function');
+      eq(S.dropLast.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.dropLast([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘dropLast’ requires a value of type Number ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.dropLast(0, null); },
+                    errorEq(TypeError,
+                            'The second argument to ‘dropLast’ ' +
+                            'cannot be null or undefined'));
+    });
+
+    it('returns a Nothing if n is negative', function() {
+      eq(S.dropLast(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.dropLast(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      eq(S.dropLast(-3, 'abcde'), S.Nothing());
+      eq(S.dropLast(-0, 'abcde'), S.Nothing());
+      // jshint -W053
+      eq(S.dropLast(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+      // jshint +W053
+    });
+
+    it('returns a Just dropping the last n items for valid n; Nothing otherwise', function() {
+      eq(S.dropLast(4, ['a', 'b', 'c']), S.Nothing());
+      eq(S.dropLast(3, ['a', 'b', 'c']), S.Just([]));
+      eq(S.dropLast(2, ['a', 'b', 'c']), S.Just(['a']));
+      eq(S.dropLast(1, ['a', 'b', 'c']), S.Just(['a', 'b']));
+      eq(S.dropLast(0, ['a', 'b', 'c']), S.Just(['a', 'b', 'c']));
+      eq(S.dropLast(4, 'abc'), S.Nothing());
+      eq(S.dropLast(3, 'abc'), S.Just(''));
+      eq(S.dropLast(2, 'abc'), S.Just('a'));
+      eq(S.dropLast(1, 'abc'), S.Just('ab'));
+      eq(S.dropLast(0, 'abc'), S.Just('abc'));
+    });
+
+    it('is curried', function() {
+      eq(S.dropLast(3).length, 1);
+      eq(S.dropLast(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b']));
     });
 
   });
