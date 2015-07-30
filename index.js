@@ -1144,6 +1144,27 @@
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
+  //# takeLast :: Number -> [a] -> Maybe [a]
+  //.
+  //. Returns Just the last N elements of the given collection if N is
+  //. greater than or equal to zero and less than or equal to the length
+  //. of the collection; Nothing otherwise. Supports Array, String, and
+  //. any other collection type which provides a `slice` method.
+  //.
+  //. ```javascript
+  //. > S.takeLast(2, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["d", "e"])
+  //.
+  //. > S.takeLast(4, 'abcdefg')
+  //. Just("defg")
+  //.
+  //. > S.takeLast(4, ['a', 'b', 'c'])
+  //. Nothing()
+  //. ```
+  S.takeLast = def('takeLast', [Number, Accessible], function(n, xs) {
+    return n < 0 || negativeZero(n) ? Nothing() : slice(-n, -0, xs);
+  });
+
   //# drop :: Number -> [a] -> Maybe [a]
   //.
   //. Returns Just all but the first N elements of the given collection
@@ -1163,6 +1184,27 @@
   //. ```
   S.drop = def('drop', [Number, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
+  });
+
+  //# dropLast :: Number -> [a] -> Maybe [a]
+  //.
+  //. Returns Just all but the last N elements of the given collection
+  //. if N is greater than or equal to zero and less than or equal to the
+  //. length of the collection; Nothing otherwise. Supports Array, String,
+  //. and any other collection type which provides a `slice` method.
+  //.
+  //. ```javascript
+  //. > S.dropLast(2, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(["a", "b", "c"])
+  //.
+  //. > S.dropLast(4, 'abcdefg')
+  //. Just("abc")
+  //.
+  //. > S.dropLast(4, 'abc')
+  //. Nothing()
+  //. ```
+  S.dropLast = def('dropLast', [Number, Accessible], function(n, xs) {
+    return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
   });
 
   //# find :: (a -> Boolean) -> [a] -> Maybe a
