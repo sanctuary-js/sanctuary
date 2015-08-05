@@ -491,7 +491,7 @@
   Nothing.prototype.ap = def('Nothing#ap', [Maybe], self);
 
   //  Nothing#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
-  Nothing.prototype.chain = def('Nothing#chain', [Function], self);
+  Nothing.prototype.chain = def('Nothing#chain', [Function], function(f) { return f(this); });
 
   //  Nothing#concat :: Maybe a ~> Maybe a -> Maybe a
   Nothing.prototype.concat = def('Nothing#concat', [Maybe], R.identity);
