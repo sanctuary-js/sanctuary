@@ -271,6 +271,16 @@ describe('maybe', function() {
                             'Function as its first argument; received null'));
     });
 
+    it('provides a "reduce" method', function() {
+      eq(S.Nothing().reduce.length, 2);
+      eq(S.Nothing().reduce(function(a, b) { return a + b; }, 10), 10);
+
+      assert.throws(function() { S.Nothing().reduce(null); },
+                    errorEq(TypeError,
+                            '‘Nothing#reduce’ requires a value of type ' +
+                            'Function as its first argument; received null'));
+    });
+
     it('provides a "toBoolean" method', function() {
       eq(S.Nothing().toBoolean.length, 0);
       eq(S.Nothing().toBoolean(), false);
@@ -485,6 +495,16 @@ describe('maybe', function() {
                     errorEq(TypeError,
                             '‘Just#map’ requires a value of type Function ' +
                             'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('provides a "reduce" method', function() {
+      eq(S.Just(5).reduce.length, 2);
+      eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
+
+      assert.throws(function() { S.Just().reduce(null); },
+                    errorEq(TypeError,
+                            '‘Just#reduce’ requires a value of type ' +
+                            'Function as its first argument; received null'));
     });
 
     it('provides a "toBoolean" method', function() {
