@@ -258,8 +258,8 @@
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or a Nothing (with no value).
   //.
-  //. The Maybe type satisfies the [Monoid][], [Monad][], and [Extend][]
-  //. specifications.
+  //. The Maybe type satisfies the [Monoid][], [Monad][], [Foldable][], and
+  //. [Extend][] specifications.
   var Maybe = S.Maybe = function Maybe() {
     throw new Error('Cannot instantiate Maybe');
   };
@@ -441,6 +441,21 @@
   //. ```
   Maybe.prototype.of = def('Maybe#of', [a], Maybe.of);
 
+  //# Maybe#reduce :: Maybe a ~> (b -> a -> b) -> b -> b
+  //.
+  //. Takes a function and an initial value, returning:
+  //. * the initial value if `this` is a Nothing; otherwise
+  //. * the result of applying the function to the initial value and the value
+  //.   of this Just.
+  //.
+  //. ```javascript
+  //. > S.Nothing().reduce(R.add, 10)
+  //. 10
+  //.
+  //. > S.Just(5).reduce(R.add, 10)
+  //. 15
+  //. ```
+
   //# Maybe#toBoolean :: Maybe a ~> Boolean
   //.
   //. Returns `false` if `this` is a Nothing; `true` if `this` is a Just.
@@ -505,6 +520,10 @@
   //  Nothing#map :: Maybe a ~> (a -> b) -> Maybe b
   Nothing.prototype.map = def('Nothing#map', [Function], self);
 
+  //  Nothing#reduce :: Maybe a ~> (b -> a -> b) -> b -> b
+  Nothing.prototype.reduce =
+    def('Nothing#reduce', [Function, a], function(f, z) { return z; });
+
   //  Nothing#toBoolean :: Maybe a ~> Boolean
   Nothing.prototype.toBoolean = def('Nothing#toBoolean', [], R.always(false));
 
@@ -559,6 +578,11 @@
   //  Just#map :: Maybe a ~> (a -> b) -> Maybe b
   Just.prototype.map = def('Just#map', [Function], function(f) {
     return Just(f(this.value));
+  });
+
+  //  Just#reduce :: Maybe a ~> (b -> a -> b) -> b -> b
+  Just.prototype.reduce = def('Just#reduce', [Function, a], function(f, z) {
+    return f(z, this.value);
   });
 
   //  Just#toBoolean :: Maybe a ~> Boolean
