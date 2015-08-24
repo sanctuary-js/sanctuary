@@ -1397,10 +1397,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.at([1, 2, 3]); },
+      assert.throws(function() { S.at(0.5); },
                     errorEq(TypeError,
-                            '‘at’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘at’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.at(0, null); },
                     errorEq(TypeError,
@@ -1437,14 +1437,14 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.slice([1, 2, 3]); },
+      assert.throws(function() { S.slice(0.5); },
                     errorEq(TypeError,
-                            '‘slice’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘slice’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.slice(0, [1, 2, 3]); },
                     errorEq(TypeError,
-                            '‘slice’ requires a value of type Number ' +
+                            '‘slice’ requires a value of type Integer ' +
                             'as its second argument; received [1, 2, 3]'));
 
       assert.throws(function() { S.slice(0, 0, null); },
@@ -1624,10 +1624,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.take([1, 2, 3]); },
+      assert.throws(function() { S.take(0.5); },
                     errorEq(TypeError,
-                            '‘take’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘take’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.take(0, null); },
                     errorEq(TypeError,
@@ -1680,10 +1680,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.takeLast([1, 2, 3]); },
+      assert.throws(function() { S.takeLast(0.5); },
                     errorEq(TypeError,
-                            '‘takeLast’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘takeLast’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.takeLast(0, null); },
                     errorEq(TypeError,
@@ -1729,10 +1729,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.drop([1, 2, 3]); },
+      assert.throws(function() { S.drop(0.5); },
                     errorEq(TypeError,
-                            '‘drop’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘drop’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.drop(0, null); },
                     errorEq(TypeError,
@@ -1785,10 +1785,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.dropLast([1, 2, 3]); },
+      assert.throws(function() { S.dropLast(0.5); },
                     errorEq(TypeError,
-                            '‘dropLast’ requires a value of type Number ' +
-                            'as its first argument; received [1, 2, 3]'));
+                            '‘dropLast’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.dropLast(0, null); },
                     errorEq(TypeError,
@@ -2111,6 +2111,8 @@ describe('parse', function() {
 
     it('returns a Maybe', function() {
       eq(S.parseFloat('12.34'), S.Just(12.34));
+      eq(S.parseFloat('Infinity'), S.Just(Infinity));
+      eq(S.parseFloat('-Infinity'), S.Just(-Infinity));
       eq(S.parseFloat('xxx'), S.Nothing());
     });
 
@@ -2124,10 +2126,10 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseInt('10'); },
+      assert.throws(function() { S.parseInt(0.5); },
                     errorEq(TypeError,
-                            '‘parseInt’ requires a value of type Number ' +
-                            'as its first argument; received "10"'));
+                            '‘parseInt’ requires a value of type Integer ' +
+                            'as its first argument; received 0.5'));
 
       assert.throws(function() { S.parseInt(10, 42); },
                     errorEq(TypeError,
@@ -2248,7 +2250,17 @@ describe('parse', function() {
     });
 
     it('returns a Nothing if one or more characters are invalid', function() {
+      eq(S.parseInt(10, '12.34'), S.Nothing());  // parseInt('12.34', 10) == 12
       eq(S.parseInt(16, 'alice'), S.Nothing());  // parseInt('alice', 16) == 10
+    });
+
+    it('restricts to exactly representable range (-2^53 .. 2^53)', function() {
+      eq(S.parseInt(10,  '9007199254740991'), S.Just(9007199254740991));
+      eq(S.parseInt(10, '-9007199254740991'), S.Just(-9007199254740991));
+      eq(S.parseInt(10,  '9007199254740992'), S.Nothing());
+      eq(S.parseInt(10, '-9007199254740992'), S.Nothing());
+      eq(S.parseInt(10,  'Infinity'), S.Nothing());
+      eq(S.parseInt(10, '-Infinity'), S.Nothing());
     });
 
     it('is curried', function() {
