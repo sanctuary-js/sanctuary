@@ -1163,6 +1163,36 @@ describe('either', function() {
 
   });
 
+  describe('maybeToEither', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.either, 'function');
+      eq(S.maybeToEither.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.maybeToEither('left', 1); },
+                    errorEq(TypeError,
+                            '‘maybeToEither’ requires a value of type Maybe ' +
+                            'as its second argument; received 1'));
+    });
+
+    it('returns a Left of its first argument when the second is Nothing', function() {
+      eq(S.maybeToEither('error msg', S.Nothing()), S.Left('error msg'));
+    });
+
+    it('returns a Right of the value contained in the Just ' +
+       'when the second argument is a Just', function() {
+      eq(S.maybeToEither('error msg', S.Just(42)), S.Right(42));
+    });
+
+    it('is curried', function() {
+      eq(S.maybeToEither(0).length, 1);
+      eq(S.maybeToEither(0)(S.Just(42)), S.Right(42));
+    });
+
+  });
+
 });
 
 describe('control', function() {
