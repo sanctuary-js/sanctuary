@@ -972,6 +972,24 @@
     return either instanceof Left ? l(either.value) : r(either.value);
   });
 
+  //# maybeToEither :: a -> Maybe b -> Either a b
+  //.
+  //. Takes a value of any type and a Maybe, and returns an Either.
+  //. If the second argument is a Nothing, a Left containing the first
+  //. argument is returned. If the second argument is a Just, a Right
+  //. containing the Just's value is returned.
+  //.
+  //. ```javascript
+  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, 'xyz'))
+  //. Left("Expecting an integer")
+  //.
+  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, '42'))
+  //. Right(42)
+  //. ```
+  S.maybeToEither = def('maybeToEither', [a, Maybe], function(x, maybe) {
+    return maybe instanceof Nothing ? Left(x) : Right(maybe.value);
+  });
+
   //. ### Control
 
   var methodMissing = format('{repr} does not have {} {quote} method');
