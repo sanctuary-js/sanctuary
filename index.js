@@ -69,6 +69,13 @@
 //. Sanctuary uses the Accessible pseudotype to represent the set of values
 //. which support property access.
 //.
+//. ### Integer pseudotype
+//.
+//. The Integer pseudotype represents integers in the range (-2^53 .. 2^53).
+//. It is a pseudotype because each Integer is represented by a Number value.
+//. Sanctuary's run-time type checking asserts that a valid Number value is
+//. provided wherever an Integer value is required.
+//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -101,6 +108,9 @@
     this.sanctuary = S;
   }
 
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+  var MIN_SAFE_INTEGER = -MAX_SAFE_INTEGER;
+
   var _ = R.__;
 
   //  placeholder :: a -> Boolean
@@ -125,13 +135,25 @@
   });
 
   var Accessible = /* istanbul ignore next */ function Accessible() {};
+  var Integer = /* istanbul ignore next */ function Integer() {};
   var TypeRep = /* istanbul ignore next */ function TypeRep() {};
   var a = {name: 'a'};
   var b = {name: 'b'};
   var c = {name: 'c'};
 
   var _is = function(type, x) {
-    return x != null && (type === Accessible || Object(x) instanceof type);
+    if (x == null) return false;
+    switch (type) {
+      case Accessible:
+        return true;
+      case Integer:
+        return _is(Number, x) && Math.floor(x) === Number(x) &&
+               x >= MIN_SAFE_INTEGER && x <= MAX_SAFE_INTEGER;
+      case TypeRep:
+        return _is(Function, x);
+      default:
+        return Object(x) instanceof type;
+    }
   };
 
   var arity = function(n, f) {
@@ -185,7 +207,7 @@
               [paramIndex, name]
             ));
           }
-        } else if (!_is(type === TypeRep ? Function : type, arg)) {
+        } else if (!_is(type, arg)) {
           throw new TypeError(format(
             '{quote} requires a value of type {type} as its {ord} argument; ' +
             'received {repr}',
@@ -1072,7 +1094,7 @@
 
   //. ### List
 
-  //# slice :: Number -> Number -> [a] -> Maybe [a]
+  //# slice :: Integer -> Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just a list containing the elements from the supplied list
   //. from a beginning index (inclusive) to an end index (exclusive).
@@ -1101,7 +1123,7 @@
   //. Just("nana")
   //. ```
   var slice = S.slice =
-  def('slice', [Number, Number, Accessible], function(start, end, xs) {
+  def('slice', [Integer, Integer, Accessible], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -1111,7 +1133,7 @@
       Nothing();
   });
 
-  //# at :: Number -> [a] -> Maybe a
+  //# at :: Integer -> [a] -> Maybe a
   //.
   //. Takes an index and a list and returns Just the element of the list at
   //. the index if the index is within the list's bounds; Nothing otherwise.
@@ -1127,7 +1149,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = def('at', [Number, Accessible], function(n, xs) {
+  var at = S.at = def('at', [Integer, Accessible], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -1189,7 +1211,7 @@
   //. ```
   S.init = def('init', [Accessible], slice(0, -1));
 
-  //# take :: Number -> [a] -> Maybe [a]
+  //# take :: Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just the first N elements of the given collection if N is
   //. greater than or equal to zero and less than or equal to the length
@@ -1206,11 +1228,11 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = def('take', [Number, Accessible], function(n, xs) {
+  S.take = def('take', [Integer, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
-  //# takeLast :: Number -> [a] -> Maybe [a]
+  //# takeLast :: Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just the last N elements of the given collection if N is
   //. greater than or equal to zero and less than or equal to the length
@@ -1227,11 +1249,11 @@
   //. > S.takeLast(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.takeLast = def('takeLast', [Number, Accessible], function(n, xs) {
+  S.takeLast = def('takeLast', [Integer, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(-n, -0, xs);
   });
 
-  //# drop :: Number -> [a] -> Maybe [a]
+  //# drop :: Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just all but the first N elements of the given collection
   //. if N is greater than or equal to zero and less than or equal to the
@@ -1248,11 +1270,11 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = def('drop', [Number, Accessible], function(n, xs) {
+  S.drop = def('drop', [Integer, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
-  //# dropLast :: Number -> [a] -> Maybe [a]
+  //# dropLast :: Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just all but the last N elements of the given collection
   //. if N is greater than or equal to zero and less than or equal to the
@@ -1269,7 +1291,7 @@
   //. > S.dropLast(4, 'abc')
   //. Nothing()
   //. ```
-  S.dropLast = def('dropLast', [Number, Accessible], function(n, xs) {
+  S.dropLast = def('dropLast', [Integer, Accessible], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
   });
 
@@ -1300,14 +1322,14 @@
                R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
-  //# indexOf :: a -> [a] -> Maybe Number
+  //# indexOf :: a -> [a] -> Maybe Integer
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the first occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
   //. Dispatches to its second argument's `indexOf` method if present.
-  //. As a result, `String -> String -> Maybe Number` is an alternative
+  //. As a result, `String -> String -> Maybe Integer` is an alternative
   //. type signature.
   //.
   //. ```javascript
@@ -1325,14 +1347,14 @@
   //. ```
   S.indexOf = sanctifyIndexOf('indexOf');
 
-  //# lastIndexOf :: a -> [a] -> Maybe Number
+  //# lastIndexOf :: a -> [a] -> Maybe Integer
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the last occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
   //.
   //. Dispatches to its second argument's `lastIndexOf` method if present.
-  //. As a result, `String -> String -> Maybe Number` is an alternative
+  //. As a result, `String -> String -> Maybe Integer` is an alternative
   //. type signature.
   //.
   //. ```javascript
@@ -1459,7 +1481,7 @@
     return n === n ? Just(n) : Nothing();
   });
 
-  //# parseInt :: Number -> String -> Maybe Number
+  //# parseInt :: Integer -> String -> Maybe Integer
   //.
   //. Takes a radix (an integer between 2 and 36 inclusive) and a string,
   //. and returns Just the number represented by the string if it does in
@@ -1480,7 +1502,7 @@
   //. > S.parseInt(16, '0xGG')
   //. Nothing()
   //. ```
-  S.parseInt = def('parseInt', [Number, String], function(radix, s) {
+  S.parseInt = def('parseInt', [Integer, String], function(radix, s) {
     if (radix < 2 || radix > 36) {
       throw new RangeError('Radix not in [2 .. 36]');
     }
@@ -1495,7 +1517,8 @@
                       R.all(R.pipe(R.toUpper,
                                    R.indexOf(_, charset),
                                    R.gte(_, 0))))),
-      R.map(R.partialRight(parseInt, radix))
+      R.map(R.partialRight(parseInt, radix)),
+      R.filter(is(Integer))
     )(s);
   });
 
