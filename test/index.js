@@ -651,6 +651,41 @@ describe('maybe', function() {
 
   });
 
+  describe('maybe', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.maybe, 'function');
+      eq(S.maybe.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.maybe(0, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘maybe’ requires a value of type Function ' +
+                            'as its second argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.maybe(0, R.length, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘maybe’ requires a value of type Maybe ' +
+                            'as its third argument; received [1, 2, 3]'));
+    });
+
+    it('can be applied to a Nothing', function() {
+      eq(S.maybe(0, R.length, S.Nothing()), 0);
+    });
+
+    it('can be applied to a Just', function() {
+      eq(S.maybe(0, R.length, S.Just([1, 2, 3])), 3);
+    });
+
+    it('is curried', function() {
+      eq(S.maybe(NaN).length, 2);
+      eq(S.maybe(NaN)(square).length, 1);
+      eq(S.maybe(NaN)(square)(S.Just(5)), 25);
+    });
+
+  });
+
   describe('encase', function() {
 
     it('is a unary function', function() {

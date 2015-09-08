@@ -649,7 +649,8 @@
   //. > S.fromMaybe(0, S.Nothing())
   //. 0
   //. ```
-  S.fromMaybe = def('fromMaybe', [a, Maybe], function(x, maybe) {
+  var fromMaybe = S.fromMaybe =
+  def('fromMaybe', [a, Maybe], function(x, maybe) {
     return maybe instanceof Just ? maybe.value : x;
   });
 
@@ -667,6 +668,23 @@
   //. ```
   var toMaybe = S.toMaybe =
   def('toMaybe', [a], R.ifElse(R.isNil, Nothing, Just));
+
+  //# maybe :: b -> (a -> b) -> Maybe a -> b
+  //.
+  //. Takes a value of any type, a function, and a Maybe. If the Maybe is
+  //. a Just, the return value is the result of applying the function to
+  //. the Just's value. Otherwise, the first argument is returned.
+  //.
+  //. ```javascript
+  //. > S.maybe(0, R.length, S.Just('refuge'))
+  //. 6
+  //.
+  //. > S.maybe(0, R.length, S.Nothing())
+  //. 0
+  //. ```
+  S.maybe = def('maybe', [a, Function, Maybe], function(x, f, maybe) {
+    return fromMaybe(x, maybe.map(f));
+  });
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
