@@ -686,6 +686,30 @@ describe('maybe', function() {
 
   });
 
+  describe('catMaybes', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.catMaybes, 'function');
+      eq(S.catMaybes.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.catMaybes(null); },
+                    errorEq(TypeError,
+                            'The first argument to ‘catMaybes’ ' +
+                            'cannot be null or undefined'));
+    });
+
+    it('returns a list containing the value of each Just', function() {
+      eq(S.catMaybes([]), []);
+      eq(S.catMaybes([S.Nothing(), S.Nothing()]), []);
+      eq(S.catMaybes([S.Nothing(), S.Just('b')]), ['b']);
+      eq(S.catMaybes([S.Just('a'), S.Nothing()]), ['a']);
+      eq(S.catMaybes([S.Just('a'), S.Just('b')]), ['a', 'b']);
+    });
+
+  });
+
   describe('encase', function() {
 
     it('is a unary function', function() {
