@@ -710,6 +710,39 @@ describe('maybe', function() {
 
   });
 
+  describe('mapMaybe', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.mapMaybe, 'function');
+      eq(S.mapMaybe.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.mapMaybe([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘mapMaybe’ requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.mapMaybe(S.head, null); },
+                    errorEq(TypeError,
+                            'The second argument to ‘mapMaybe’ ' +
+                            'cannot be null or undefined'));
+    });
+
+    it('maps over a list to produce a list of successful results', function() {
+      eq(S.mapMaybe(S.head, []), []);
+      eq(S.mapMaybe(S.head, [[], [], []]), []);
+      eq(S.mapMaybe(S.head, [[1, 2], [3, 4], [5, 6]]), [1, 3, 5]);
+      eq(S.mapMaybe(S.head, [[1], [], [3], [], [5], []]), [1, 3, 5]);
+    });
+
+    it('is curried', function() {
+      eq(S.mapMaybe(S.head).length, 1);
+      eq(S.mapMaybe(S.head)(['foo', '', 'bar', '', 'baz']), ['f', 'b', 'b']);
+    });
+
+  });
+
   describe('encase', function() {
 
     it('is a unary function', function() {

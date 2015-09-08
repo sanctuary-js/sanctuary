@@ -695,7 +695,25 @@
   //. > S.catMaybes([S.Just('foo'), S.Nothing(), S.Just('baz')])
   //. ["foo", "baz"]
   //. ```
-  S.catMaybes = def('catMaybes', [Accessible], R.chain(maybe([], R.of)));
+  var catMaybes = S.catMaybes =
+  def('catMaybes', [Accessible], R.chain(maybe([], R.of)));
+
+  //# mapMaybe :: (a -> Maybe b) -> [a] -> [b]
+  //.
+  //. Takes a function and a list, applies the function to each element of
+  //. the list, and returns a list of "successful" results. If the result of
+  //. applying the function to an element of the list is a Nothing, the result
+  //. is discarded; if the result is a Just, the Just's value is included in
+  //. the output list.
+  //.
+  //. In general terms, `mapMaybe` filters a list while mapping over it.
+  //.
+  //. ```javascript
+  //. > S.mapMaybe(S.head, [[], [1, 2, 3], [], [4, 5, 6], []])
+  //. [1, 4]
+  //. ```
+  S.mapMaybe =
+  def('mapMaybe', [Function, Accessible], R.compose(catMaybes, R.map));
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
