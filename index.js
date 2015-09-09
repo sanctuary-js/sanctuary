@@ -76,6 +76,11 @@
 //. Sanctuary's run-time type checking asserts that a valid Number value is
 //. provided wherever an Integer value is required.
 //.
+//. ### List pseudotype
+//.
+//. The List pseudotype represents non-Function values with numeric `length`
+//. properties greater than or equal to zero, such as `[1, 2, 3]` and `'foo'`.
+//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -136,6 +141,7 @@
 
   var Accessible = /* istanbul ignore next */ function Accessible() {};
   var Integer = /* istanbul ignore next */ function Integer() {};
+  var List = /* istanbul ignore next */ function List() {};
   var TypeRep = /* istanbul ignore next */ function TypeRep() {};
   var a = {name: 'a'};
   var b = {name: 'b'};
@@ -149,6 +155,8 @@
       case Integer:
         return _is(Number, x) && Math.floor(x) === Number(x) &&
                x >= MIN_SAFE_INTEGER && x <= MAX_SAFE_INTEGER;
+      case List:
+        return !_is(Function, x) && _is(Number, x.length) && x.length >= 0;
       case TypeRep:
         return _is(Function, x);
       default:
@@ -696,7 +704,7 @@
   //. ["foo", "baz"]
   //. ```
   var catMaybes = S.catMaybes =
-  def('catMaybes', [Accessible], R.chain(maybe([], R.of)));
+  def('catMaybes', [List], R.chain(maybe([], R.of)));
 
   //# mapMaybe :: (a -> Maybe b) -> [a] -> [b]
   //.
@@ -712,8 +720,7 @@
   //. > S.mapMaybe(S.head, [[], [1, 2, 3], [], [4, 5, 6], []])
   //. [1, 4]
   //. ```
-  S.mapMaybe =
-  def('mapMaybe', [Function, Accessible], R.compose(catMaybes, R.map));
+  S.mapMaybe = def('mapMaybe', [Function, List], R.compose(catMaybes, R.map));
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
@@ -1170,7 +1177,7 @@
   //. Just("nana")
   //. ```
   var slice = S.slice =
-  def('slice', [Integer, Integer, Accessible], function(start, end, xs) {
+  def('slice', [Integer, Integer, List], function(start, end, xs) {
     var len = xs.length;
     var startIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
     var endIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
@@ -1196,7 +1203,7 @@
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just("d")
   //. ```
-  var at = S.at = def('at', [Integer, Accessible], function(n, xs) {
+  var at = S.at = def('at', [Integer, List], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
   });
 
@@ -1212,7 +1219,7 @@
   //. > S.head([])
   //. Nothing()
   //. ```
-  S.head = def('head', [Accessible], at(0));
+  S.head = def('head', [List], at(0));
 
   //# last :: [a] -> Maybe a
   //.
@@ -1226,7 +1233,7 @@
   //. > S.last([])
   //. Nothing()
   //. ```
-  S.last = def('last', [Accessible], at(-1));
+  S.last = def('last', [List], at(-1));
 
   //# tail :: [a] -> Maybe [a]
   //.
@@ -1241,7 +1248,7 @@
   //. > S.tail([])
   //. Nothing()
   //. ```
-  S.tail = def('tail', [Accessible], slice(1, -0));
+  S.tail = def('tail', [List], slice(1, -0));
 
   //# init :: [a] -> Maybe [a]
   //.
@@ -1256,7 +1263,7 @@
   //. > S.init([])
   //. Nothing()
   //. ```
-  S.init = def('init', [Accessible], slice(0, -1));
+  S.init = def('init', [List], slice(0, -1));
 
   //# take :: Integer -> [a] -> Maybe [a]
   //.
@@ -1275,7 +1282,7 @@
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.take = def('take', [Integer, Accessible], function(n, xs) {
+  S.take = def('take', [Integer, List], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
   });
 
@@ -1296,7 +1303,7 @@
   //. > S.takeLast(4, ['a', 'b', 'c'])
   //. Nothing()
   //. ```
-  S.takeLast = def('takeLast', [Integer, Accessible], function(n, xs) {
+  S.takeLast = def('takeLast', [Integer, List], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(-n, -0, xs);
   });
 
@@ -1317,7 +1324,7 @@
   //. > S.drop(4, 'abc')
   //. Nothing()
   //. ```
-  S.drop = def('drop', [Integer, Accessible], function(n, xs) {
+  S.drop = def('drop', [Integer, List], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
   });
 
@@ -1338,7 +1345,7 @@
   //. > S.dropLast(4, 'abc')
   //. Nothing()
   //. ```
-  S.dropLast = def('dropLast', [Integer, Accessible], function(n, xs) {
+  S.dropLast = def('dropLast', [Integer, List], function(n, xs) {
     return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
   });
 
@@ -1355,7 +1362,7 @@
   //. > S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
   //. Nothing()
   //. ```
-  S.find = def('find', [Function, Accessible], function(pred, xs) {
+  S.find = def('find', [Function, List], function(pred, xs) {
     for (var idx = 0, len = xs.length; idx < len; idx += 1) {
       if (pred(xs[idx])) {
         return Just(xs[idx]);
@@ -1365,8 +1372,7 @@
   });
 
   var sanctifyIndexOf = function(name) {
-    return def(name, [a, Accessible],
-               R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
+    return def(name, [a, List], R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
   //# indexOf :: a -> [a] -> Maybe Integer
@@ -1433,8 +1439,7 @@
   //. > S.pluck(Number, 'x', [{x: 1}, {x: 2}, {x: '3'}, {x: null}, {}])
   //. [Just(1), Just(2), Nothing(), Nothing(), Nothing()]
   //. ```
-  S.pluck =
-  def('pluck', [TypeRep, String, Accessible], function(type, key, xs) {
+  S.pluck = def('pluck', [TypeRep, String, List], function(type, key, xs) {
     return R.map(get(type, key), xs);
   });
 
@@ -1486,8 +1491,7 @@
   //. > S.gets(Number, ['a', 'b', 'c'], {})
   //. Nothing()
   //. ```
-  S.gets =
-  def('gets', [TypeRep, Accessible, Accessible], function(type, keys, obj) {
+  S.gets = def('gets', [TypeRep, List, Accessible], function(type, keys, obj) {
     var f = function(m, k) { return R.chain(get(Accessible, k), m); };
     return filter(is(type), R.reduce(f, Just(obj), keys));
   });
