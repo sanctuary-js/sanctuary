@@ -694,10 +694,10 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.catMaybes(null); },
+      assert.throws(function() { S.catMaybes({length: -1}); },
                     errorEq(TypeError,
-                            'The first argument to ‘catMaybes’ ' +
-                            'cannot be null or undefined'));
+                            '‘catMaybes’ requires a value of type List ' +
+                            'as its first argument; received {"length": -1}'));
     });
 
     it('returns a list containing the value of each Just', function() {
@@ -725,8 +725,8 @@ describe('maybe', function() {
 
       assert.throws(function() { S.mapMaybe(S.head, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘mapMaybe’ ' +
-                            'cannot be null or undefined'));
+                            '‘mapMaybe’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('maps over a list to produce a list of successful results', function() {
@@ -1526,8 +1526,8 @@ describe('list', function() {
 
       assert.throws(function() { S.at(0, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘at’ ' +
-                            'cannot be null or undefined'));
+                            '‘at’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns Just the nth element of a list', function() {
@@ -1569,10 +1569,10 @@ describe('list', function() {
                             '‘slice’ requires a value of type Integer ' +
                             'as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.slice(0, 0, null); },
+      assert.throws(function() { S.slice(0, 0, {length: -1}); },
                     errorEq(TypeError,
-                            'The third argument to ‘slice’ ' +
-                            'cannot be null or undefined'));
+                            '‘slice’ requires a value of type List ' +
+                            'as its third argument; received {"length": -1}'));
     });
 
     it('returns a Nothing with a positive end index greater than start index', function() {
@@ -1650,10 +1650,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.head(null); },
+      assert.throws(function() { S.head({length: -1}); },
                     errorEq(TypeError,
-                            'The first argument to ‘head’ ' +
-                            'cannot be null or undefined'));
+                            '‘head’ requires a value of type List ' +
+                            'as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -1674,10 +1674,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.last(null); },
+      assert.throws(function() { S.last({length: -1}); },
                     errorEq(TypeError,
-                            'The first argument to ‘last’ ' +
-                            'cannot be null or undefined'));
+                            '‘last’ requires a value of type List ' +
+                            'as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -1698,10 +1698,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.tail(null); },
+      assert.throws(function() { S.tail({length: -1}); },
                     errorEq(TypeError,
-                            'The first argument to ‘tail’ ' +
-                            'cannot be null or undefined'));
+                            '‘tail’ requires a value of type List ' +
+                            'as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -1722,10 +1722,10 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.init(null); },
+      assert.throws(function() { S.init({length: -1}); },
                     errorEq(TypeError,
-                            'The first argument to ‘init’ ' +
-                            'cannot be null or undefined'));
+                            '‘init’ requires a value of type List ' +
+                            'as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -1753,8 +1753,8 @@ describe('list', function() {
 
       assert.throws(function() { S.take(0, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘take’ ' +
-                            'cannot be null or undefined'));
+                            '‘take’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -1809,8 +1809,8 @@ describe('list', function() {
 
       assert.throws(function() { S.takeLast(0, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘takeLast’ ' +
-                            'cannot be null or undefined'));
+                            '‘takeLast’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -1858,8 +1858,8 @@ describe('list', function() {
 
       assert.throws(function() { S.drop(0, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘drop’ ' +
-                            'cannot be null or undefined'));
+                            '‘drop’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -1914,8 +1914,8 @@ describe('list', function() {
 
       assert.throws(function() { S.dropLast(0, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘dropLast’ ' +
-                            'cannot be null or undefined'));
+                            '‘dropLast’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -1963,8 +1963,8 @@ describe('list', function() {
 
       assert.throws(function() { S.find(R.T, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘find’ ' +
-                            'cannot be null or undefined'));
+                            '‘find’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns Just the first element satisfying the predicate', function() {
@@ -1994,8 +1994,8 @@ describe('list', function() {
     it('type checks its arguments', function() {
       assert.throws(function() { S.indexOf('x', null); },
                     errorEq(TypeError,
-                            'The second argument to ‘indexOf’ ' +
-                            'cannot be null or undefined'));
+                            '‘indexOf’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -2032,8 +2032,8 @@ describe('list', function() {
     it('type checks its arguments', function() {
       assert.throws(function() { S.lastIndexOf('x', null); },
                     errorEq(TypeError,
-                            'The second argument to ‘lastIndexOf’ ' +
-                            'cannot be null or undefined'));
+                            '‘lastIndexOf’ requires a value of type List ' +
+                            'as its second argument; received null'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -2078,10 +2078,10 @@ describe('list', function() {
                             '‘pluck’ requires a value of type String ' +
                             'as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.pluck(Number, 'x', null); },
+      assert.throws(function() { S.pluck(Number, 'x', {length: -1}); },
                     errorEq(TypeError,
-                            'The third argument to ‘pluck’ ' +
-                            'cannot be null or undefined'));
+                            '‘pluck’ requires a value of type List ' +
+                            'as its third argument; received {"length": -1}'));
     });
 
     it('returns a list of satisfactory plucked values', function() {
@@ -2161,8 +2161,8 @@ describe('object', function() {
 
       assert.throws(function() { S.gets(Number, null); },
                     errorEq(TypeError,
-                            'The second argument to ‘gets’ ' +
-                            'cannot be null or undefined'));
+                            '‘gets’ requires a value of type List ' +
+                            'as its second argument; received null'));
 
       assert.throws(function() { S.gets(Number, [], null); },
                     errorEq(TypeError,
