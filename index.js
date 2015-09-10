@@ -682,9 +682,20 @@
   //. > S.maybe(0, R.length, S.Nothing())
   //. 0
   //. ```
-  S.maybe = def('maybe', [a, Function, Maybe], function(x, f, maybe) {
+  var maybe = S.maybe =
+  def('maybe', [a, Function, Maybe], function(x, f, maybe) {
     return fromMaybe(x, maybe.map(f));
   });
+
+  //# catMaybes :: [Maybe a] -> [a]
+  //.
+  //. Takes a list of Maybes and returns a list containing each Just's value.
+  //.
+  //. ```javascript
+  //. > S.catMaybes([S.Just('foo'), S.Nothing(), S.Just('baz')])
+  //. ["foo", "baz"]
+  //. ```
+  S.catMaybes = def('catMaybes', [Accessible], R.chain(maybe([], R.of)));
 
   //# encase :: (* -> a) -> (* -> Maybe a)
   //.
