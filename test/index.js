@@ -1258,7 +1258,7 @@ describe('either', function() {
   describe('maybeToEither', function() {
 
     it('is a binary function', function() {
-      eq(typeof S.either, 'function');
+      eq(typeof S.maybeToEither, 'function');
       eq(S.maybeToEither.length, 2);
     });
 
