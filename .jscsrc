@@ -12,6 +12,7 @@
   "disallowSpacesInsideArrayBrackets": true,
   "disallowSpacesInsideObjectBrackets": true,
   "disallowSpacesInsideParentheses": true,
+  "disallowTrailingComma": true,
   "disallowTrailingWhitespace": true,
   "disallowYodaConditions": true,
   "requireCapitalizedConstructors": true,
