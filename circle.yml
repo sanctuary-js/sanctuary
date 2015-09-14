@@ -4,8 +4,12 @@ dependencies:
 
 machine:
   node:
-    version: 0.10.26
+    version: 0.10.34
 
 test:
   override:
-    - make test lint
+    - make lint
+    - make test
+    - nvm install 0.12.7
+    - nvm alias default 0.12.7
+    - make test
