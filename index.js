@@ -1515,6 +1515,40 @@
     return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
   });
 
+  //  requiredNonCapturingGroup :: [String] -> String
+  var requiredNonCapturingGroup = function(xs) {
+    return '(?:' + xs.join('|') + ')';
+  };
+
+  //  optionalNonCapturingGroup :: [String] -> String
+  var optionalNonCapturingGroup = function(xs) {
+    return requiredNonCapturingGroup(xs) + '?';
+  };
+
+  //  validFloatRepr :: String -> Boolean
+  var validFloatRepr = R.test(new RegExp(
+    '^' +                     // start-of-string anchor
+    '\\s*' +                  // any number of leading whitespace characters
+    '[+-]?' +                 // optional sign
+    requiredNonCapturingGroup([
+      'Infinity',             // "Infinity"
+      'NaN',                  // "NaN"
+      requiredNonCapturingGroup([
+        '[0-9]+',             // number
+        '[0-9]+[.][0-9]+',    // number with interior decimal point
+        '[0-9]+[.]',          // number with trailing decimal point
+        '[.][0-9]+'           // number with leading decimal point
+      ]) +
+      optionalNonCapturingGroup([
+        '[Ee]' +              // "E" or "e"
+        '[+-]?' +             // optional sign
+        '[0-9]+'              // exponent
+      ])
+    ]) +
+    '\\s*' +                  // any number of trailing whitespace characters
+    '$'                       // end-of-string anchor
+  ));
+
   //# parseFloat :: String -> Maybe Number
   //.
   //. Takes a string and returns Just the number represented by the string
@@ -1527,10 +1561,9 @@
   //. > S.parseFloat('foo.bar')
   //. Nothing()
   //. ```
-  S.parseFloat = def('parseFloat', [String], function(s) {
-    var n = parseFloat(s);
-    return n === n ? Just(n) : Nothing();
-  });
+  S.parseFloat =
+  def('parseFloat', [String],
+      R.pipe(Just, R.filter(validFloatRepr), R.map(parseFloat)));
 
   //# parseInt :: Integer -> String -> Maybe Integer
   //.
