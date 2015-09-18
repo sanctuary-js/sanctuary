@@ -2494,3 +2494,108 @@ describe('regexp', function() {
   });
 
 });
+
+describe('string', function() {
+
+  describe('words', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.words, 'function');
+      eq(S.words.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.words(['foo']); },
+                    errorEq(TypeError,
+                            '‘words’ requires a value of type String ' +
+                            'as its first argument; received ["foo"]'));
+    });
+
+    it('splits a string into a list of words', function() {
+      eq(S.words(''), []);
+      eq(S.words(' '), []);
+      eq(S.words(' \t\r\n'), []);
+      eq(S.words('foo bar baz'), ['foo', 'bar', 'baz']);
+      eq(S.words(' foo bar baz '), ['foo', 'bar', 'baz']);
+      eq(S.words('\tfoo\r\n\tbar\r\n\tbaz\r\n'), ['foo', 'bar', 'baz']);
+    });
+
+  });
+
+  describe('unwords', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.unwords, 'function');
+      eq(S.unwords.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.unwords(null); },
+                    errorEq(TypeError,
+                            '‘unwords’ requires a value of type List ' +
+                            'as its first argument; received null'));
+    });
+
+    it('joins -- with separating spaces -- a list of words', function() {
+      eq(S.unwords([]), '');
+      eq(S.unwords(['']), '');
+      eq(S.unwords(['', '']), ' ');
+      eq(S.unwords([' ']), ' ');
+      eq(S.unwords([' ', ' ']), '   ');
+      eq(S.unwords(['foo', 'bar', 'baz']), 'foo bar baz');
+      eq(S.unwords([' foo ', ' bar ', ' baz ']), ' foo   bar   baz ');
+    });
+
+  });
+
+  describe('lines', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.lines, 'function');
+      eq(S.lines.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.lines(['foo']); },
+                    errorEq(TypeError,
+                            '‘lines’ requires a value of type String ' +
+                            'as its first argument; received ["foo"]'));
+    });
+
+    it('splits a string into a list of lines', function() {
+      eq(S.lines(''), []);
+      eq(S.lines('\n'), ['']);
+      eq(S.lines('\n\n'), ['', '']);
+      eq(S.lines('foo\nbar\nbaz'), ['foo', 'bar', 'baz']);
+      eq(S.lines('foo\nbar\nbaz\n'), ['foo', 'bar', 'baz']);
+      eq(S.lines('\tfoo\r\n\tbar\r\n\tbaz\r\n'), ['\tfoo', '\tbar', '\tbaz']);
+    });
+
+  });
+
+  describe('unlines', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.unlines, 'function');
+      eq(S.unlines.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.unlines(null); },
+                    errorEq(TypeError,
+                            '‘unlines’ requires a value of type List ' +
+                            'as its first argument; received null'));
+    });
+
+    it('joins a list of lines after appending "\n" to each', function() {
+      eq(S.unlines([]), '');
+      eq(S.unlines(['']), '\n');
+      eq(S.unlines(['', '']), '\n\n');
+      eq(S.unlines(['\n']), '\n\n');
+      eq(S.unlines(['\n', '\n']), '\n\n\n\n');
+      eq(S.unlines(['foo', 'bar', 'baz']), 'foo\nbar\nbaz\n');
+    });
+
+  });
+
+});

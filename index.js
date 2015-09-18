@@ -1643,6 +1643,65 @@
     return R.map(R.map(toMaybe), toMaybe(s.match(pattern)));
   });
 
+  //. ### String
+
+  //# words :: String -> [String]
+  //.
+  //. Takes a string and returns the list of words the string contains
+  //. (words are delimited by whitespace characters).
+  //.
+  //. See also [`unwords`](#unwords).
+  //.
+  //. ```javascript
+  //. > S.words(' foo bar baz ')
+  //. ["foo", "bar", "baz"]
+  //. ```
+  S.words =
+  def('words', [String], R.compose(R.reject(R.isEmpty), R.split(/\s+/)));
+
+  //# unwords :: [String] -> String
+  //.
+  //. Takes a list of words and returns the result of joining the words
+  //. with separating spaces.
+  //.
+  //. See also [`words`](#words).
+  //.
+  //. ```javascript
+  //. > S.unwords(['foo', 'bar', 'baz'])
+  //. "foo bar baz"
+  //. ```
+  S.unwords = def('unwords', [List], R.join(' '));
+
+  //# lines :: String -> [String]
+  //.
+  //. Takes a string and returns the list of lines the string contains
+  //. (lines are delimited by newlines: `'\n'` or `'\r\n'` or `'\r'`).
+  //. The resulting strings do not contain newlines.
+  //.
+  //. See also [`unlines`](#unlines).
+  //.
+  //. ```javascript
+  //. > S.lines('foo\nbar\nbaz\n')
+  //. ["foo", "bar", "baz"]
+  //. ```
+  S.lines =
+  def('lines', [String],
+      R.compose(R.match(/^(?=[\s\S]).*/gm), R.replace(/\r\n?/g, '\n')));
+
+  //# unlines :: [String] -> String
+  //.
+  //. Takes a list of lines and returns the result of joining the lines
+  //. after appending a terminating line feed (`'\n'`) to each.
+  //.
+  //. See also [`lines`](#lines).
+  //.
+  //. ```javascript
+  //. > S.unlines(['foo', 'bar', 'baz'])
+  //. "foo\nbar\nbaz\n"
+  //. ```
+  S.unlines =
+  def('unlines', [List], R.compose(R.join(''), R.map(R.concat(_, '\n'))));
+
 }.call(this));
 
 //. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
