@@ -67,6 +67,33 @@ describe('invariants', function() {
     }
   });
 
+  it('exported functions throw if applied to too many arguments', function() {
+    assert.throws(function() { S.I(1, 2); },
+                  errorEq(TypeError,
+                          '‘I’ requires one argument; ' +
+                          'received two arguments'));
+
+    assert.throws(function() { S.K(1, 2, 3); },
+                  errorEq(TypeError,
+                          '‘K’ requires two arguments; ' +
+                          'received three arguments'));
+
+    assert.throws(function() { S.K(1)(2, 3); },
+                  errorEq(TypeError,
+                          '‘K’ requires two arguments; ' +
+                          'received three arguments'));
+
+    assert.throws(function() { S.K(1, 2, 3, 4, 5, 6, 7, 8, 9, 10); },
+                  errorEq(TypeError,
+                          '‘K’ requires two arguments; ' +
+                          'received ten arguments'));
+
+    assert.throws(function() { S.K(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11); },
+                  errorEq(TypeError,
+                          '‘K’ requires two arguments; ' +
+                          'received 11 arguments'));
+  });
+
 });
 
 describe('classify', function() {
