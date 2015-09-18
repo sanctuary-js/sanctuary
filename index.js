@@ -729,6 +729,8 @@
   //. applying `f` to the same arguments: if this succeeds, `g` returns Just
   //. the result; otherwise `g` returns Nothing.
   //.
+  //. See also [`encaseEither`](#encaseEither).
+  //.
   //. ```javascript
   //. > S.encase(eval)('1 + 1')
   //. Just(2)
@@ -1046,6 +1048,38 @@
   S.either =
   def('either', [Function, Function, Either], function(l, r, either) {
     return either instanceof Left ? l(either.value) : r(either.value);
+  });
+
+  //# encaseEither :: (Error -> a) -> (* -> b) -> (* -> Either a b)
+  //.
+  //. Takes two functions, `f` and `g`, the second of which may throw,
+  //. and returns a curried function of the same arity as `g` which will
+  //. not throw. The result of applying this function is determined by
+  //. applying `g` to the same arguments: if this succeeds, the return
+  //. value is a Right whose value is the result; otherwise the return
+  //. value is a Left whose value is the result of applying `f` to the
+  //. caught Error object.
+  //.
+  //. See also [`encase`](#encase).
+  //.
+  //. ```javascript
+  //. > S.encaseEither(R.identity, Array)(0)
+  //. Right([])
+  //.
+  //. > S.encaseEither(R.identity, Array)(-1)
+  //. Left(RangeError: Invalid array length)
+  //.
+  //. > S.encaseEither(R.prop('message'), Array)(-1)
+  //. Left("Invalid array length")
+  //. ```
+  S.encaseEither = def('encaseEither', [Function, Function], function(f, g) {
+    return R.curryN(g.length, function() {
+      try {
+        return Right(g.apply(this, arguments));
+      } catch (err) {
+        return Left(f(err));
+      }
+    });
   });
 
   //# maybeToEither :: a -> Maybe b -> Either a b

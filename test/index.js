@@ -13,10 +13,21 @@ var eq = function(actual, expected) {
   assert.strictEqual(R.toString(actual), R.toString(expected));
 };
 
-//  errorEq :: Function -> String -> Error -> Boolean
+//  errorEq :: TypeRep a -> String -> Error -> Boolean
 var errorEq = R.curry(function(type, message, error) {
   return error.constructor === type && error.message === message;
 });
+
+//  factorial :: Number -> Number !
+var factorial = function(n) {
+  if (n < 0) {
+    throw new Error('Cannot determine factorial of negative number');
+  } else if (n === 0) {
+    return 1;
+  } else {
+    return n * factorial(n - 1);
+  }
+};
 
 //  parseHex :: String -> Either String Number
 var parseHex = function(s) {
@@ -757,17 +768,6 @@ describe('maybe', function() {
                             'as its first argument; received [1, 2, 3]'));
     });
 
-    //  factorial :: Number -> Number
-    var factorial = function(n) {
-      if (n < 0) {
-        throw new Error('Cannot determine factorial of negative number');
-      } else if (n === 0) {
-        return 1;
-      } else {
-        return n * factorial(n - 1);
-      }
-    };
-
     it('returns a function which returns a Just on success', function() {
       eq(S.encase(factorial)(5), S.Just(120));
     });
@@ -779,6 +779,7 @@ describe('maybe', function() {
     it('can be applied to a function of arbitrary arity', function() {
       var f = S.encase(function(a, b, c, d, e) { return e; });
       eq(f(1, 2, 3, 4, 5), S.Just(5));
+      eq(f(1)(2)(3)(4)(5), S.Just(5));
     });
 
     it('returns a function of appropriate arity', function() {
@@ -1251,6 +1252,67 @@ describe('either', function() {
 
       eq(S.either(_, _, _)(_, _)(_)(f, g, x), 3);
       eq(S.either(_, _, _)(f, _, _)(_, _)(g, _)(_)(x), 3);
+    });
+
+  });
+
+  describe('encaseEither', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.encaseEither, 'function');
+      eq(S.encaseEither.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encaseEither(null); },
+                    errorEq(TypeError,
+                            '‘encaseEither’ requires a value of type ' +
+                            'Function as its first argument; received null'));
+
+      assert.throws(function() { S.encaseEither(R.identity, null); },
+                    errorEq(TypeError,
+                            '‘encaseEither’ requires a value of type ' +
+                            'Function as its second argument; received null'));
+    });
+
+    it('returns a function which returns a Right on success', function() {
+      eq(S.encaseEither(R.identity, factorial)(5), S.Right(120));
+    });
+
+    it('returns a function which returns a Left on failure', function() {
+      var result = S.encaseEither(R.identity, factorial)(-1);
+      assert(result instanceof S.Left);
+      assert(errorEq(Error,
+                     'Cannot determine factorial of negative number',
+                     result.value));
+    });
+
+    it('applies the first argument to the Error', function() {
+      eq(S.encaseEither(R.prop('message'), factorial)(-1),
+         S.Left('Cannot determine factorial of negative number'));
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      var f = S.encaseEither(R.identity,
+                             function(a, b, c, d, e) { return e; });
+      eq(f(1, 2, 3, 4, 5), S.Right(5));
+      eq(f(1)(2)(3)(4)(5), S.Right(5));
+    });
+
+    it('returns a function of appropriate arity', function() {
+      var f = S.encaseEither(R.identity,
+                             function(a, b, c, d, e) { return e; });
+      eq(f.length, 5);
+    });
+
+    it('preserves context', function() {
+      var f = S.encaseEither(R.identity, function() { return this; });
+      eq(f.call({foo: 42}), S.Right({foo: 42}));
+    });
+
+    it('is curried', function() {
+      eq(S.encaseEither(R.identity).length, 1);
+      eq(S.encaseEither(R.identity)(factorial)(5), S.Right(120));
     });
 
   });
