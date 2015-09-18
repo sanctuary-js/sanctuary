@@ -19,6 +19,7 @@
     "xyz": "0.5.x"
   },
   "files": [
+    "/LICENSE",
     "/README.md",
     "/index.js",
     "/package.json"

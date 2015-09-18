@@ -1,0 +1,41 @@
+{
+  "name": "sanctuary",
+  "version": "0.6.0",
+  "description": "Refuge from unsafe JavaScript",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/plaid/sanctuary.git"
+  },
+  "main": "index.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "adt",
+    "either",
+    "functional",
+    "maybe",
+    "ramda",
+    "safe",
+    "safety",
+    "types"
+  ],
+  "dependencies": {
+    "ramda": "0.17.x"
+  },
+  "ignore": [
+    "/.git/",
+    "/bower_components/",
+    "/coverage/",
+    "/node_modules/",
+    "/scripts/",
+    "/test/",
+    "/.*",
+    "/CONTRIBUTING.md",
+    "/Makefile",
+    "/circle.yml",
+    "/package.json"
+  ]
+}
