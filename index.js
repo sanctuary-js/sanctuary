@@ -289,6 +289,17 @@
 
   //. ### Combinator
 
+  //# I :: a -> a
+  //.
+  //. The I combinator. Returns its argument. Equivalent to Haskell's `id`
+  //. function.
+  //.
+  //. ```javascript
+  //. > S.I('foo')
+  //. "foo"
+  //. ```
+  S.I = def('I', [a], function(x) { return x; });
+
   //# K :: a -> b -> a
   //.
   //. The K combinator. Takes two values and returns the first. Equivalent to

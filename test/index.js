@@ -143,6 +143,19 @@ describe('classify', function() {
 
 describe('combinator', function() {
 
+  describe('I', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.I, 'function');
+      eq(S.I.length, 1);
+    });
+
+    it('returns its argument', function() {
+      eq(S.I([1, 2, 3]), [1, 2, 3]);
+    });
+
+  });
+
   describe('K', function() {
 
     it('is a binary function', function() {
