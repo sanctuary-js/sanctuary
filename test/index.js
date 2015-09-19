@@ -265,6 +265,10 @@ describe('maybe', function() {
                     errorEq(TypeError,
                             '‘Nothing#concat’ requires a value of type ' +
                             'Maybe as its first argument; received null'));
+
+      assert.throws(function() { S.Nothing().concat(S.Just(1)); },
+                    errorEq(TypeError,
+                            '1 does not have a ‘concat’ method'));
     });
 
     it('provides an "equals" method', function() {
@@ -478,6 +482,18 @@ describe('maybe', function() {
                     errorEq(TypeError,
                             '‘Just#concat’ requires a value of type Maybe ' +
                             'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.Just(1).concat(S.Just(0)); },
+                    errorEq(TypeError,
+                            '1 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
+                    errorEq(TypeError,
+                            '2 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
+                    errorEq(TypeError,
+                            '3 does not have a ‘concat’ method'));
     });
 
     it('provides an "equals" method', function() {
@@ -897,6 +913,30 @@ describe('either', function() {
                     errorEq(TypeError,
                             '‘Left#concat’ requires a value of type Either ' +
                             'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.Left(1).concat(S.Left(0)); },
+                    errorEq(TypeError,
+                            '1 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Left(2).concat(S.Right(0)); },
+                    errorEq(TypeError,
+                            '2 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
+                    errorEq(TypeError,
+                            '3 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
+                    errorEq(TypeError,
+                            '4 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
+                    errorEq(TypeError,
+                            '5 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
+                    errorEq(TypeError,
+                            '6 does not have a ‘concat’ method'));
     });
 
     it('provides an "equals" method', function() {
@@ -1080,6 +1120,30 @@ describe('either', function() {
                     errorEq(TypeError,
                             '‘Right#concat’ requires a value of type Either ' +
                             'as its first argument; received [1, 2, 3]'));
+
+      assert.throws(function() { S.Right(1).concat(S.Left(0)); },
+                    errorEq(TypeError,
+                            '1 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Right(2).concat(S.Right(0)); },
+                    errorEq(TypeError,
+                            '2 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
+                    errorEq(TypeError,
+                            '3 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
+                    errorEq(TypeError,
+                            '4 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
+                    errorEq(TypeError,
+                            '5 does not have a ‘concat’ method'));
+
+      assert.throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
+                    errorEq(TypeError,
+                            '6 does not have a ‘concat’ method'));
     });
 
     it('provides an "equals" method', function() {
