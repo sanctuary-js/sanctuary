@@ -9,6 +9,7 @@
   },
   "main": "index.js",
   "moduleType": [
+    "amd",
     "globals",
     "node"
   ],

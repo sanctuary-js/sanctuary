@@ -97,21 +97,26 @@
 //.
 //. ## API
 
-;(function() {
+/* global define, self */
+
+;(function(f) {
 
   'use strict';
 
-  var R;
-  var S = {};
-
   /* istanbul ignore else */
   if (typeof module !== 'undefined') {
-    R = require('ramda');
-    module.exports = S;
+    module.exports = f(require('ramda'));
+  } else if (typeof define === 'function' && define.amd != null) {
+    define(['ramda'], f);
   } else {
-    R = this.R;
-    this.sanctuary = S;
+    self.sanctuary = f(self.R);
   }
+
+}(function(R) {
+
+  'use strict';
+
+  var S = {};
 
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
   var MIN_SAFE_INTEGER = -MAX_SAFE_INTEGER;
@@ -1785,7 +1790,9 @@
   S.unlines =
   def('unlines', [List], R.compose(R.join(''), R.map(R.concat(_, '\n'))));
 
-}.call(this));
+  return S;
+
+}));
 
 //. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
