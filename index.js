@@ -348,6 +348,83 @@
     return x;
   });
 
+  //. ### Composition
+
+  //# compose :: (b -> c) -> (a -> b) -> a -> c
+  //.
+  //. Takes two functions assumed to be unary and a value of any type,
+  //. and returns the result of applying the first function to the result
+  //. of applying the second function to the given value.
+  //.
+  //. In general terms, `compose` performs right-to-left composition of two
+  //. unary functions.
+  //.
+  //. See also [`pipe`](#pipe).
+  //.
+  //. ```javascript
+  //. > S.compose(Math.sqrt, R.inc)(99)
+  //. 10
+  //. ```
+  var compose = S.compose =
+  def('compose', [Function, Function, a], function(f, g, x) {
+    return f(g(x));
+  });
+
+  //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
+  //.
+  //. Takes a list of functions assumed to be unary and a value of any type,
+  //. and returns the result of applying the sequence of transformations to
+  //. the initial value.
+  //.
+  //. In general terms, `pipe` performs left-to-right composition of a list
+  //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
+  //.
+  //. See also [`meld`](#meld).
+  //.
+  //. ```javascript
+  //. > S.pipe([R.inc, Math.sqrt, R.dec])(99)
+  //. 9
+  //. ```
+  S.pipe = def('pipe', [List, a], function(fs, x) {
+    return R.reduceRight(compose, I, fs)(x);
+  });
+
+  //# meld :: [** -> *] -> (* -> * -> ... -> *)
+  //.
+  //. Takes a list of non-nullary functions and returns a curried function
+  //. whose arity is one greater than the sum of the arities of the given
+  //. functions less the number of functions.
+  //.
+  //. The behaviour of `meld` is best conveyed diagrammatically. The following
+  //. diagram depicts the "melding" of binary functions `f` and `g`:
+  //.
+  //.               +-------+
+  //.     --- a --->|       |
+  //.               |   f   |                +-------+
+  //.     --- b --->|       |--- f(a, b) --->|       |
+  //.               +-------+                |   g   |
+  //.     --- c ---------------------------->|       |--- g(f(a, b), c) --->
+  //.                                        +-------+
+  //.
+  //. See also [`pipe`](#pipe).
+  //.
+  //. ```javascript
+  //. > S.meld([Math.pow, R.subtract])(3, 4, 5)
+  //. 76
+  //.
+  //. > S.meld([Math.pow, R.subtract])(3)(4)(5)
+  //. 76
+  //. ```
+  S.meld = def('meld', [List], function(fs) {
+    return R.curryN(1 + R.sum(R.map(R.length, fs)) - fs.length, function() {
+      var args = Array.prototype.slice.call(arguments);
+      for (var idx = 0; idx < fs.length; idx += 1) {
+        args.unshift(fs[idx].apply(this, args.splice(0, fs[idx].length)));
+      }
+      return args[0];
+    });
+  });
+
   //. ### Maybe type
 
   //# Maybe :: TypeRep Maybe
@@ -1745,7 +1822,7 @@
   //. ["foo", "bar", "baz"]
   //. ```
   S.words =
-  def('words', [String], R.compose(R.reject(R.isEmpty), R.split(/\s+/)));
+  def('words', [String], compose(R.reject(R.isEmpty), R.split(/\s+/)));
 
   //# unwords :: [String] -> String
   //.
@@ -1774,7 +1851,7 @@
   //. ```
   S.lines =
   def('lines', [String],
-      R.compose(R.match(/^(?=[\s\S]).*/gm), R.replace(/\r\n?/g, '\n')));
+      compose(R.match(/^(?=[\s\S]).*/gm), R.replace(/\r\n?/g, '\n')));
 
   //# unlines :: [String] -> String
   //.
@@ -1788,7 +1865,7 @@
   //. "foo\nbar\nbaz\n"
   //. ```
   S.unlines =
-  def('unlines', [List], R.compose(R.join(''), R.map(R.concat(_, '\n'))));
+  def('unlines', [List], compose(R.join(''), R.map(R.concat(_, '\n'))));
 
   return S;
 
