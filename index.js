@@ -262,6 +262,21 @@
     });
   };
 
+  var assertMethodExists = function(method, x) {
+    if (x == null || typeof x[method] !== 'function') {
+      throw new TypeError(format(
+        '{repr} does not have {} {quote} method',
+        [x, R.test(/^[aeiou]/i, method) ? 'an' : 'a', method]
+      ));
+    }
+  };
+
+  //  invoke :: String -> [*] -> Accessible -> *
+  var invoke = R.curry(function(method, args, x) {
+    assertMethodExists(method, x);
+    return x[method].apply(x, args);
+  });
+
   //  negativeZero :: a -> Boolean
   var negativeZero = R.either(R.equals(-0),
                               R.equals(new Number(-0)));  // jshint ignore:line
@@ -310,7 +325,7 @@
   //. > S.I('foo')
   //. "foo"
   //. ```
-  S.I = def('I', [a], function(x) { return x; });
+  var I = S.I = def('I', [a], function(x) { return x; });
 
   //# K :: a -> b -> a
   //.
@@ -324,7 +339,7 @@
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
-  S.K = def('K', [a, b], function(x, y) {
+  var K = S.K = def('K', [a, b], function(x, y) {
     return x;
   });
 
@@ -586,7 +601,12 @@
   Nothing.prototype.chain = def('Nothing#chain', [Function], self);
 
   //  Nothing#concat :: Maybe a ~> Maybe a -> Maybe a
-  Nothing.prototype.concat = def('Nothing#concat', [Maybe], R.identity);
+  Nothing.prototype.concat = def('Nothing#concat', [Maybe], function(maybe) {
+    if (maybe instanceof Just) {
+      assertMethodExists('concat', maybe.value);
+    }
+    return maybe;
+  });
 
   //  Nothing#equals :: Maybe a ~> b -> Boolean
   Nothing.prototype.equals = def('Nothing#equals', [a], is(Nothing));
@@ -639,7 +659,13 @@
 
   //  Just#concat :: Maybe a ~> Maybe a -> Maybe a
   Just.prototype.concat = def('Just#concat', [Maybe], function(maybe) {
-    return maybe instanceof Just ? Just(this.value.concat(maybe.value)) : this;
+    assertMethodExists('concat', this.value);
+    if (maybe instanceof Just) {
+      assertMethodExists('concat', maybe.value);
+      return Just(this.value.concat(maybe.value));
+    } else {
+      return this;
+    }
   });
 
   //  Just#equals :: Maybe a ~> b -> Boolean
@@ -980,6 +1006,8 @@
 
   //  Left#concat :: Either a b ~> Either a b -> Either a b
   Left.prototype.concat = def('Left#concat', [Either], function(either) {
+    assertMethodExists('concat', this.value);
+    assertMethodExists('concat', either.value);
     return is(Left, either) ? Left(this.value.concat(either.value)) : either;
   });
 
@@ -1030,6 +1058,8 @@
 
   //  Right#concat :: Either a b ~> Either a b -> Either a b
   Right.prototype.concat = def('Right#concat', [Either], function(either) {
+    assertMethodExists('concat', this.value);
+    assertMethodExists('concat', either.value);
     return is(Right, either) ? Right(this.value.concat(either.value)) : this;
   });
 
@@ -1125,23 +1155,19 @@
 
   //. ### Control
 
-  var methodMissing = format('{repr} does not have {} {quote} method');
-
   //  toBoolean :: * -> Boolean
-  var toBoolean = function(x) {
-    if (is(Array, x))               return x.length > 0;
-    if (is(Boolean, x))             return x;
-    if (is(Function, x.toBoolean))  return x.toBoolean();
-    throw new TypeError(methodMissing([x, 'a', 'toBoolean']));
-  };
+  var toBoolean = R.cond([
+    [is(Array),   R.complement(R.isEmpty)],
+    [is(Boolean), I],
+    [R.T,         invoke('toBoolean', [])]
+  ]);
 
   //  empty :: a -> a
-  var empty = function(x) {
-    if (is(Array, x))               return [];
-    if (is(Boolean, x))             return false;
-    if (is(Function, x.empty))      return x.empty();
-    throw new TypeError(methodMissing([x, 'an', 'empty']));
-  };
+  var empty = R.cond([
+    [is(Array),   function() { return []; }],
+    [is(Boolean), K(false)],
+    [R.T,         invoke('empty', [])]
+  ]);
 
   //# and :: a -> a -> a
   //.
@@ -1653,7 +1679,7 @@
     return R.pipe(
       Just,
       R.filter(R.pipe(R.replace(/^[+-]/, ''),
-                      radix === 16 ? R.replace(/^0x/i, '') : R.identity,
+                      radix === 16 ? R.replace(/^0x/i, '') : I,
                       R.split(''),
                       R.all(R.pipe(R.toUpper,
                                    R.indexOf(_, charset),
