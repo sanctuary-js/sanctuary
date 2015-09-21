@@ -125,6 +125,10 @@
 
   var formatters = {
     '{}': R.identity,
+    '{card}': R.ifElse(R.lte(_, 10),
+                       R.nth(_, ['zero', 'one', 'two', 'three', 'four', 'five',
+                                 'six', 'seven', 'eight', 'nine', 'ten']),
+                       String),
     '{ord}': R.nth(_, ['first', 'second', 'third']),
     '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
@@ -186,6 +190,14 @@
         if (placeholder(values[idx])) {
           paramIndexes.push(idx);
         }
+      }
+
+      if (arguments.length > paramIndexes.length) {
+        throw new TypeError(format(
+          '{quote} requires {card} {}; received {card} arguments',
+          [name, values.length, values.length === 1 ? 'argument' : 'arguments',
+           values.length + arguments.length - paramIndexes.length]
+        ));
       }
 
       for (var argIndex = 0; argIndex < arguments.length; argIndex += 1) {
