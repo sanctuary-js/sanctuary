@@ -10,8 +10,8 @@
 
 //. # Sanctuary
 //.
-//. Sanctuary is a small functional programming library inspired by Haskell
-//. and PureScript. It depends on and works nicely with [Ramda][]. Sanctuary
+//. Sanctuary is a functional programming library inspired by Haskell and
+//. PureScript. It depends on and works nicely with [Ramda][]. Sanctuary
 //. makes it possible to write safe code without null checks.
 //.
 //. In JavaScript it's trivial to introduce a possible run-time type error:
@@ -617,10 +617,12 @@
 
   //# Maybe#reduce :: Maybe a ~> (b -> a -> b) -> b -> b
   //.
-  //. Takes a function and an initial value, returning:
-  //. * the initial value if `this` is a Nothing; otherwise
-  //. * the result of applying the function to the initial value and the value
-  //.   of this Just.
+  //. Takes a function and an initial value of any type, and returns:
+  //.
+  //.   - the initial value if `this` is a Nothing; otherwise
+  //.
+  //.   - the result of applying the function to the initial value and this
+  //.     Just's value.
   //.
   //. ```javascript
   //. > S.Nothing().reduce(R.add, 10)
@@ -1872,6 +1874,7 @@
 }));
 
 //. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
+//. [Foldable]:     https://github.com/fantasyland/fantasy-land#foldable
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 //. [R.equals]:     http://ramdajs.com/docs/#equals
