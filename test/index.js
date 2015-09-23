@@ -2368,6 +2368,31 @@ describe('list', function() {
 
   });
 
+  describe('unfoldr', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.unfoldr, 'function');
+      eq(S.unfoldr.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.unfoldr(null); },
+                    errorEq(TypeError,
+                            '‘unfoldr’ requires a value of type Function ' +
+                            'as its first argument; received null'));
+    });
+
+    it('correctly unfolds a value into a list', function() {
+      var f = function(n) {
+        return n >= 5 ? S.Nothing() : S.Just([n, n + 1]);
+      };
+      eq(S.unfoldr(f, 5), []);
+      eq(S.unfoldr(f, 4), [4]);
+      eq(S.unfoldr(f, 1), [1, 2, 3, 4]);
+    });
+
+  });
+
 });
 
 describe('object', function() {
