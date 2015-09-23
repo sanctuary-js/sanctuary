@@ -252,6 +252,12 @@
     return curry(name, types, R.map(function() { return _; }, types), f);
   };
 
+  var compose2 = function(f, g) {
+    return function(x) {
+      return f(g(x));
+    };
+  };
+
   var extend = function(Child, Parent) {
     function Ctor() {
       this.constructor = Child;
@@ -386,7 +392,7 @@
   //. 9
   //. ```
   S.pipe = def('pipe', [List, a], function(fs, x) {
-    return R.reduceRight(compose, I, fs)(x);
+    return R.reduceRight(compose2, I, fs)(x);
   });
 
   //# meld :: [** -> *] -> (* -> * -> ... -> *)
