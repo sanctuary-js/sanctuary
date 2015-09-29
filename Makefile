@@ -44,10 +44,12 @@ setup:
 test:
 	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive
 	$(ISTANBUL) check-coverage --branches 100
+ifneq ($(shell node --version | sed 's/[.][^.]*$$//'),v0.10)
 	@<index.js \
 	    sed -n "/^[ ]*\/\/\. >/{N;p;}" \
 	  | sed -e "s:^[ ]*\/\/\. ::" \
 	        -e "s:^\([^>].*\):   '\1');:" \
 	        -e "s:^> \(.*\):eq(R.toString(\1),:" \
 	  | sed "1 s:^:var eq = require('assert').strictEqual, R = require('ramda'), S = require('./');:" \
-	  | node
+	  | node --harmony
+endif
