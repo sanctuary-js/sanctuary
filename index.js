@@ -574,10 +574,10 @@
   //. `this`.
   //.
   //. ```javascript
-  //. > S.Nothing().extend(function(x) { return x.value + 1; })
+  //. > S.Nothing().extend(x => x.value + 1)
   //. Nothing()
   //.
-  //. > S.Just(42).extend(function(x) { return x.value + 1; })
+  //. > S.Just(42).extend(x => x.value + 1)
   //. Just(43)
   //. ```
 
@@ -587,10 +587,10 @@
   //. satisfies the predicate; Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.Just(42).filter(function(n) { return n % 2 === 0; })
+  //. > S.Just(42).filter(n => n % 2 === 0)
   //. Just(42)
   //.
-  //. > S.Just(43).filter(function(n) { return n % 2 === 0; })
+  //. > S.Just(43).filter(n => n % 2 === 0)
   //. Nothing()
   //. ```
   Maybe.prototype.filter = def('Maybe#filter', [Function], function(pred) {
@@ -937,7 +937,7 @@
   //. it returns the result of applying the function to this Right's value.
   //.
   //. ```javascript
-  //. > void (sqrt = function(n) { return n < 0 ? S.Left('Cannot represent square root of negative number') : S.Right(Math.sqrt(n)); })
+  //. > void (sqrt = n => n < 0 ? S.Left('Cannot represent square root of negative number') : S.Right(Math.sqrt(n)))
   //. undefined
   //.
   //. > S.Left('Cannot divide by zero').chain(sqrt)
@@ -1008,10 +1008,10 @@
   //. `this`.
   //.
   //. ```javascript
-  //. > S.Left('Cannot divide by zero').extend(function(x) { return x.value + 1; })
+  //. > S.Left('Cannot divide by zero').extend(x => x.value + 1)
   //. Left("Cannot divide by zero")
   //.
-  //. > S.Right(42).extend(function(x) { return x.value + 1; })
+  //. > S.Right(42).extend(x => x.value + 1)
   //. Right(43)
   //. ```
 
@@ -1529,10 +1529,10 @@
   //. elements satisfies the predicate.
   //.
   //. ```javascript
-  //. > S.find(function(n) { return n < 0; }, [1, -2, 3, -4, 5])
+  //. > S.find(n => n < 0, [1, -2, 3, -4, 5])
   //. Just(-2)
   //.
-  //. > S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
+  //. > S.find(n => n < 0, [1, 2, 3, 4, 5])
   //. Nothing()
   //. ```
   S.find = def('find', [Function, List], function(pred, xs) {
