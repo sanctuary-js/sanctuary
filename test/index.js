@@ -3,6 +3,7 @@
 /* global describe, it */
 
 var assert = require('assert');
+var vm = require('vm');
 
 var R = require('ramda');
 
@@ -10,6 +11,7 @@ var S = require('..');
 
 
 var eq = function(actual, expected) {
+  assert.strictEqual(arguments.length, 2);
   assert.strictEqual(R.toString(actual), R.toString(expected));
 };
 
@@ -98,6 +100,54 @@ describe('invariants', function() {
 
 describe('classify', function() {
 
+  describe('type', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.type, 'function');
+      eq(S.type.length, 1);
+    });
+
+    it('operates on values of built-in types', function() {
+      eq(S.type((function() { return arguments; }())),
+                                      'Arguments');
+      eq(S.type([]),                  'Array');
+      eq(S.type(false),               'Boolean');
+      eq(S.type(new Date(0)),         'Date');
+      eq(S.type(new TypeError()),     'Error');
+      eq(S.type(function() {}),       'Function');
+      eq(S.type(null),                'Null');
+      eq(S.type(0),                   'Number');
+      eq(S.type(/(?:)/),              'RegExp');
+      eq(S.type(''),                  'String');
+      eq(S.type(undefined),           'Undefined');
+      // jshint -W053
+      eq(S.type(new Boolean(false)),  'Boolean');
+      eq(S.type(new Number(0)),       'Number');
+      eq(S.type(new String('')),      'String');
+      // jshint +W053
+    });
+
+    it('operates on values of Sanctuary types', function() {
+      eq(S.type(S.Left(42)),  'sanctuary/Either');
+      eq(S.type(S.Right(42)), 'sanctuary/Either');
+      eq(S.type(S.Nothing()), 'sanctuary/Maybe');
+      eq(S.type(S.Just(42)),  'sanctuary/Maybe');
+    });
+
+    it('operates on values of user-defined types', function() {
+      function Gizmo() {}
+      Gizmo.prototype['@@type'] = 'gadgets/Gizmo';
+
+      eq(S.type(new Gizmo()), 'gadgets/Gizmo');
+      eq(S.type({'@@type': 'foobar/FooBar'}), 'foobar/FooBar');
+    });
+
+    it('does not rely on constructor identity', function() {
+      eq(S.type(vm.runInNewContext('[1, 2, 3]')), 'Array');
+    });
+
+  });
+
   describe('is', function() {
 
     it('is a binary function', function() {
@@ -113,14 +163,17 @@ describe('classify', function() {
     });
 
     it('works for built-in type', function() {
-      // jshint -W053
       eq(S.is(Array,    []),                  true);
-      eq(S.is(Boolean,  new Boolean(false)),  true);
+      eq(S.is(Boolean,  false),               true);
       eq(S.is(Date,     new Date(0)),         true);
       eq(S.is(Function, function() {}),       true);
-      eq(S.is(Number,   new Number(0)),       true);
+      eq(S.is(Number,   0),                   true);
       eq(S.is(Object,   {}),                  true);
       eq(S.is(RegExp,   /(?:)/),              true);
+      eq(S.is(String,   ''),                  true);
+      // jshint -W053
+      eq(S.is(Boolean,  new Boolean(false)),  true);
+      eq(S.is(Number,   new Number(0)),       true);
       eq(S.is(String,   new String('')),      true);
       // jshint +W053
       eq(S.is(Array,    null),                false);
@@ -128,35 +181,21 @@ describe('classify', function() {
       eq(S.is(Array,    {}),                  false);
     });
 
-    it('promotes primitive to its object equivalent', function() {
-      eq(S.is(Boolean,  false),               true);
-      eq(S.is(Number,   0),                   true);
-      eq(S.is(String,   ''),                  true);
-    });
-
-    it('respects inheritance', function() {
-      eq(S.is(Object,   []),                  true);
-      eq(S.is(Object,   false),               true);
-      eq(S.is(Object,   new Date(0)),         true);
-      eq(S.is(Object,   function() {}),       true);
-      eq(S.is(Object,   0),                   true);
-      eq(S.is(Object,   /(?:)/),              true);
-      eq(S.is(Object,   ''),                  true);
-      eq(S.is(Error,    new TypeError()),     true);
-    });
-
     it('works for user-defined type', function() {
+      function FooBar() {}
+      FooBar.prototype['@@type'] = 'foobar/FooBar';
       function Foo() {}
+      Foo.prototype = new FooBar();
       function Bar() {}
-      Bar.prototype = new Foo();
+      Bar.prototype = new FooBar();
 
-      var foo = new Foo();
-      var bar = new Bar();
+      eq(S.is(FooBar, new Foo()), true);
+      eq(S.is(FooBar, new Bar()), true);
+    });
 
-      eq(S.is(Foo, foo), true);
-      eq(S.is(Bar, bar), true);
-      eq(S.is(Foo, bar), true);
-      eq(S.is(Bar, foo), false);
+    it('does not rely on constructor identity', function() {
+      eq(S.is(Array, vm.runInNewContext('[1, 2, 3]')), true);
+      eq(S.is(vm.runInNewContext('Array'), [1, 2, 3]), true);
     });
 
     it('is curried', function() {
@@ -331,9 +370,17 @@ describe('maybe', function() {
       assert(S.Nothing() instanceof S.Nothing);
     });
 
+    it('is a Nothing', function() {
+      eq(S.Nothing().isNothing, true);
+    });
+
+    it('is not a Just', function() {
+      eq(S.Nothing().isJust, false);
+    });
+
     it('is a subtype of Maybe', function() {
       assert(S.Nothing() instanceof S.Maybe);
-      eq(S.Nothing().type, S.Maybe);
+      eq(S.Nothing()['@@type'], 'sanctuary/Maybe');
     });
 
     it('provides an "ap" method', function() {
@@ -548,9 +595,17 @@ describe('maybe', function() {
       assert(S.Just(42) instanceof S.Just);
     });
 
+    it('is a Just', function() {
+      eq(S.Just(42).isJust, true);
+    });
+
+    it('is not a Nothing', function() {
+      eq(S.Just(42).isNothing, false);
+    });
+
     it('is a subtype of Maybe', function() {
       assert(S.Just(42) instanceof S.Maybe);
-      eq(S.Just(42).type, S.Maybe);
+      eq(S.Just(42)['@@type'], 'sanctuary/Maybe');
     });
 
     it('provides an "ap" method', function() {
@@ -771,6 +826,54 @@ describe('maybe', function() {
 
   });
 
+  describe('isNothing', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.isNothing, 'function');
+      eq(S.isNothing.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.isNothing([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘isNothing’ requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns true when applied to a Nothing', function() {
+      eq(S.isNothing(S.Nothing()), true);
+    });
+
+    it('returns false when applied to a Just', function() {
+      eq(S.isNothing(S.Just(42)), false);
+    });
+
+  });
+
+  describe('isJust', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.isJust, 'function');
+      eq(S.isJust.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.isJust([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘isJust’ requires a value of type Maybe ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns true when applied to a Just', function() {
+      eq(S.isJust(S.Just(42)), true);
+    });
+
+    it('returns false when applied to a Nothing', function() {
+      eq(S.isJust(S.Nothing()), false);
+    });
+
+  });
+
   describe('fromMaybe', function() {
 
     it('is a binary function', function() {
@@ -979,9 +1082,17 @@ describe('either', function() {
       assert(S.Left(42) instanceof S.Left);
     });
 
+    it('is a Left', function() {
+      eq(S.Left(42).isLeft, true);
+    });
+
+    it('is not a Right', function() {
+      eq(S.Left(42).isRight, false);
+    });
+
     it('is a subtype of Either', function() {
       assert(S.Left(42) instanceof S.Either);
-      eq(S.Left(42).type, S.Either);
+      eq(S.Left(42)['@@type'], 'sanctuary/Either');
     });
 
     it('provides an "ap" method', function() {
@@ -1186,9 +1297,17 @@ describe('either', function() {
       assert(S.Right(42) instanceof S.Right);
     });
 
+    it('is a Right', function() {
+      eq(S.Right(42).isRight, true);
+    });
+
+    it('is not a Left', function() {
+      eq(S.Right(42).isLeft, false);
+    });
+
     it('is a subtype of Either', function() {
       assert(S.Right(42) instanceof S.Either);
-      eq(S.Right(42).type, S.Either);
+      eq(S.Right(42)['@@type'], 'sanctuary/Either');
     });
 
     it('provides an "ap" method', function() {
@@ -1374,6 +1493,54 @@ describe('either', function() {
 
       // right identity
       assert(a.chain(a.of).equals(a));
+    });
+
+  });
+
+  describe('isLeft', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.isLeft, 'function');
+      eq(S.isLeft.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.isLeft([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘isLeft’ requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns true when applied to a Left', function() {
+      eq(S.isLeft(S.Left(42)), true);
+    });
+
+    it('returns false when applied to a Right', function() {
+      eq(S.isLeft(S.Right(42)), false);
+    });
+
+  });
+
+  describe('isRight', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.isRight, 'function');
+      eq(S.isRight.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.isRight([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘isRight’ requires a value of type Either ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns true when applied to a Right', function() {
+      eq(S.isRight(S.Right(42)), true);
+    });
+
+    it('returns false when applied to a Left', function() {
+      eq(S.isRight(S.Left(42)), false);
     });
 
   });
@@ -1592,19 +1759,10 @@ describe('control', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      function Foo() {}
-      Foo.prototype.type = Foo;
-      var foo = new Foo();
-
       assert.throws(function() { S.and([], false); },
                     errorEq(TypeError,
                             '‘and’ requires its first and second arguments ' +
                             'to be of the same type; [] and false are not'));
-
-      assert.throws(function() { S.and(false, foo); },
-                    errorEq(TypeError,
-                            '‘and’ requires its first and second arguments ' +
-                            'to be of the same type; false and {} are not'));
 
       assert.throws(function() { S.and(R.__, false)([]); },
                     errorEq(TypeError,
@@ -1661,19 +1819,10 @@ describe('control', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      function Foo() {}
-      Foo.prototype.type = Foo;
-      var foo = new Foo();
-
       assert.throws(function() { S.or([], false); },
                     errorEq(TypeError,
                             '‘or’ requires its first and second arguments ' +
                             'to be of the same type; [] and false are not'));
-
-      assert.throws(function() { S.or(false, foo); },
-                    errorEq(TypeError,
-                            '‘or’ requires its first and second arguments ' +
-                            'to be of the same type; false and {} are not'));
 
       assert.throws(function() { S.or(R.__, false)([]); },
                     errorEq(TypeError,
@@ -1741,19 +1890,10 @@ describe('control', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      function Foo() {}
-      Foo.prototype.type = Foo;
-      var foo = new Foo();
-
       assert.throws(function() { S.xor([], false); },
                     errorEq(TypeError,
                             '‘xor’ requires its first and second arguments ' +
                             'to be of the same type; [] and false are not'));
-
-      assert.throws(function() { S.xor(false, foo); },
-                    errorEq(TypeError,
-                            '‘xor’ requires its first and second arguments ' +
-                            'to be of the same type; false and {} are not'));
 
       assert.throws(function() { S.xor(R.__, false)([]); },
                     errorEq(TypeError,
@@ -2356,8 +2496,11 @@ describe('list', function() {
       eq(S.pluck(Number, 'x', []), []);
       eq(S.pluck(Number, 'x', xs),
          [S.Nothing(), S.Just(2), S.Nothing(), S.Nothing(), S.Nothing()]);
-      eq(S.pluck(Object, 'x', xs),
-         [S.Just('1'), S.Just(2), S.Nothing(), S.Nothing(), S.Nothing()]);
+    });
+
+    it('does not rely on constructor identity', function() {
+      eq(S.pluck(Array, 'x', [{x: vm.runInNewContext('[0]')}]), [S.Just([0])]);
+      eq(S.pluck(vm.runInNewContext('Array'), 'x', [{x: [0]}]), [S.Just([0])]);
     });
 
     it('is curried', function() {
@@ -2427,7 +2570,11 @@ describe('object', function() {
       eq(S.get(Number, 'y', obj), S.Just(42));
       eq(S.get(Number, 'z', obj), S.Nothing());
       eq(S.get(String, 'x', obj), S.Nothing());
-      eq(S.get(Object, 'x', obj), S.Just(0));
+    });
+
+    it('does not rely on constructor identity', function() {
+      eq(S.get(RegExp, 'x', {x: vm.runInNewContext('/.*/')}), S.Just(/.*/));
+      eq(S.get(vm.runInNewContext('RegExp'), 'x', {x: /.*/}), S.Just(/.*/));
     });
 
     it('is curried', function() {
@@ -2470,6 +2617,11 @@ describe('object', function() {
       eq(S.gets(Number, ['x', 'z'], obj), S.Just(0));
       eq(S.gets(Number, [], obj), S.Nothing());
       eq(S.gets(Object, [], obj), S.Just({x: {z: 0}, y: 42}));
+    });
+
+    it('does not rely on constructor identity', function() {
+      eq(S.gets(RegExp, ['x'], {x: vm.runInNewContext('/.*/')}), S.Just(/.*/));
+      eq(S.gets(vm.runInNewContext('RegExp'), ['x'], {x: /.*/}), S.Just(/.*/));
     });
 
     it('is curried', function() {

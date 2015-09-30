@@ -141,6 +141,9 @@
     return x != null && x['@@functional/placeholder'] === true;
   };
 
+  //  functionName :: TypeRep a -> String
+  var functionName = R.compose(R.nth(1), R.match(/^function (\w*)/), String);
+
   var formatters = {
     '{}': R.identity,
     '{card}': R.ifElse(R.lte(_, 10),
@@ -150,7 +153,7 @@
     '{ord}': R.nth(_, ['first', 'second', 'third']),
     '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
-    '{type}': R.pipe(String, R.match(/^function (\w*)/), R.nth(1))
+    '{type}': functionName
   };
 
   //  format :: String -> [*] -> String
@@ -170,23 +173,37 @@
   var b = {name: 'b'};
   var c = {name: 'c'};
 
+  //  _type :: a -> String
+  var _type = function(x) {
+    return x != null && R.type(x['@@type']) === 'String' ? x['@@type']
+                                                         : R.type(x);
+  };
+
+  //  _is :: (TypeRep a, b) -> Boolean
   var _is = function(type, x) {
-    if (x == null) return false;
-    switch (type) {
-      case Accessible:
-        return true;
-      case Integer:
-        return _is(Number, x) && Math.floor(x) === Number(x) &&
-               x >= MIN_SAFE_INTEGER && x <= MAX_SAFE_INTEGER;
-      case List:
-        return !_is(Function, x) && _is(Number, x.length) && x.length >= 0;
-      case RegexFlags:
-        return R.test(/^g?i?m?$/, x);
-      case TypeRep:
-        return _is(Function, x);
-      default:
-        return Object(x) instanceof type;
-    }
+    return (
+      x == null ?
+        false :
+      type === Accessible ?
+        true :
+      type === Integer ?
+        R.type(x) === 'Number' &&
+        Math.floor(x) === Number(x) &&
+        x >= MIN_SAFE_INTEGER &&
+        x <= MAX_SAFE_INTEGER :
+      type === List ?
+        R.type(x) !== 'Function' &&
+        R.type(x.length) === 'Number' &&
+        x.length >= 0 :
+      type === RegexFlags ?
+        R.test(/^g?i?m?$/, x) :
+      type === TypeRep ?
+        R.type(x) === 'Function' :
+      R.type(type.prototype['@@type']) === 'String' ?
+        x['@@type'] === type.prototype['@@type'] :
+      // else
+        R.type(x) === functionName(type)
+    );
   };
 
   var arity = function(n, f) {
@@ -198,7 +215,7 @@
     }
   };
 
-  //  curry :: (String, [TypeRep], [*], Function) -> Function
+  //  curry :: (String, [TypeRep *], [*], Function) -> Function
   var curry = function(name, types, _values, f) {
     return arity(R.filter(placeholder, _values).length, function() {
       var values = _values;  // Locally scoped variable to update.
@@ -232,7 +249,7 @@
           for (idx = 0; idx < values.length; idx += 1) {
             var val = values[idx];
             if (types[idx] === type && !placeholder(val) &&
-                !(R.type(val) === R.type(arg) && val.type === arg.type)) {
+                _type(val) !== _type(arg)) {
               throw new TypeError(format(
                 '{quote} requires its {ord} and {ord} arguments ' +
                 'to be of the same type; {repr} and {repr} are not',
@@ -318,23 +335,38 @@
 
   //. ### Classify
 
+  //# type :: a -> String
+  //.
+  //. Takes a value, `x`, of any type and returns its type identifier. If
+  //. `x` has a `'@@type'` property whose value is a string, `x['@@type']`
+  //. is the type identifier. Otherwise, the type identifier is the result
+  //. of applying [`R.type`][R.type] to `x`.
+  //.
+  //. `'@@type'` properties should use the form `'<package-name>/<type-name>'`,
+  //. where `<package-name>` is the name of the npm package in which the type
+  //. is defined.
+  //.
+  //. ```javascript
+  //. > S.type(S.Just(42))
+  //. 'sanctuary/Maybe'
+  //.
+  //. > S.type([1, 2, 3])
+  //. 'Array'
+  //. ```
+  S.type = def('type', [a], _type);
+
   //# is :: TypeRep a -> b -> Boolean
   //.
   //. Takes a [type representative](#type-representatives) and a value of
   //. any type and returns `true` if the given value is of the specified
-  //. type (either directly or via the prototype chain); `false` otherwise.
-  //.
-  //. Boolean, number, string, and symbol [primitives][] are promoted to
-  //. their object equivalents. `42`, for example, is considered a Number
-  //. and an Object (whereas [`R.is`][R.is] considers it a Number but not
-  //. an Object).
+  //. type; `false` otherwise. Subtyping is not respected.
   //.
   //. ```javascript
   //. > S.is(Number, 42)
   //. true
   //.
   //. > S.is(Object, 42)
-  //. true
+  //. false
   //.
   //. > S.is(String, 42)
   //. false
@@ -366,9 +398,7 @@
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
-  var K = S.K = def('K', [a, b], function(x, y) {
-    return x;
-  });
+  S.K = def('K', [a, b], function(x, y) { return x; });
 
   //. ### Composition
 
@@ -483,6 +513,35 @@
   Maybe.of = def('Maybe.of', [a], function(x) {
     return Just(x);
   });
+
+  //# Maybe#@@type :: String
+  //.
+  //. Maybe type identifier, `'sanctuary/Maybe'`.
+  Maybe.prototype['@@type'] = 'sanctuary/Maybe';
+
+  //# Maybe#isNothing :: Boolean
+  //.
+  //. `true` if `this` is a Nothing; `false` if `this` is a Just.
+  //.
+  //. ```javascript
+  //. > S.Nothing().isNothing
+  //. true
+  //.
+  //. > S.Just(42).isNothing
+  //. false
+  //. ```
+
+  //# Maybe#isJust :: Boolean
+  //.
+  //. `true` if `this` is a Just; `false` if `this` is a Nothing.
+  //.
+  //. ```javascript
+  //. > S.Just(42).isJust
+  //. true
+  //.
+  //. > S.Nothing().isJust
+  //. false
+  //. ```
 
   //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
   //.
@@ -678,12 +737,6 @@
   //. 'Just([1, 2, 3])'
   //. ```
 
-  //# Maybe#type :: TypeRep Maybe
-  //.
-  //. A reference to the Maybe type. Useful for determining whether two
-  //. values such as `S.Nothing()` and `S.Just(42)` are of the same type.
-  Maybe.prototype.type = Maybe;
-
   //# Nothing :: -> Maybe a
   //.
   //. Returns a Nothing. Though this is a constructor function the `new`
@@ -700,6 +753,12 @@
   };
   extend(Nothing, Maybe);
 
+  //  Nothing#isNothing :: Boolean
+  Nothing.prototype.isNothing = true;
+
+  //  Nothing#isJust :: Boolean
+  Nothing.prototype.isJust = false;
+
   //  Nothing#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
   Nothing.prototype.ap = def('Nothing#ap', [Maybe], self);
 
@@ -708,14 +767,16 @@
 
   //  Nothing#concat :: Maybe a ~> Maybe a -> Maybe a
   Nothing.prototype.concat = def('Nothing#concat', [Maybe], function(maybe) {
-    if (maybe instanceof Just) {
+    if (maybe.isJust) {
       assertMethodExists('concat', maybe.value);
     }
     return maybe;
   });
 
   //  Nothing#equals :: Maybe a ~> b -> Boolean
-  Nothing.prototype.equals = def('Nothing#equals', [a], is(Nothing));
+  Nothing.prototype.equals = def('Nothing#equals', [a], function(x) {
+    return _type(x) === 'sanctuary/Maybe' && x.isNothing;
+  });
 
   //  Nothing#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   Nothing.prototype.extend = def('Nothing#extend', [Function], self);
@@ -753,6 +814,12 @@
   };
   extend(Just, Maybe);
 
+  //  Just#isNothing :: Boolean
+  Just.prototype.isNothing = false;
+
+  //  Just#isJust :: Boolean
+  Just.prototype.isJust = true;
+
   //  Just#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
   Just.prototype.ap = def('Just#ap', [Maybe], function(maybe) {
     return maybe.map(this.value);
@@ -766,7 +833,7 @@
   //  Just#concat :: Maybe a ~> Maybe a -> Maybe a
   Just.prototype.concat = def('Just#concat', [Maybe], function(maybe) {
     assertMethodExists('concat', this.value);
-    if (maybe instanceof Just) {
+    if (maybe.isJust) {
       assertMethodExists('concat', maybe.value);
       return Just(this.value.concat(maybe.value));
     } else {
@@ -776,7 +843,8 @@
 
   //  Just#equals :: Maybe a ~> b -> Boolean
   Just.prototype.equals = def('Just#equals', [a], function(x) {
-    return x instanceof Just && R.eqProps('value', x, this);
+    return _type(x) === 'sanctuary/Maybe' && x.isJust &&
+           R.eqProps('value', x, this);
   });
 
   //  Just#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
@@ -800,6 +868,32 @@
   //  Just#toString :: Maybe a ~> String
   Just.prototype.toString = toString('Just');
 
+  //# isNothing :: Maybe a -> Boolean
+  //.
+  //. Returns `true` if the given Maybe is a Nothing; `false` if it is a Just.
+  //.
+  //. ```javascript
+  //. > S.isNothing(S.Nothing())
+  //. true
+  //.
+  //. > S.isNothing(S.Just(42))
+  //. false
+  //. ```
+  S.isNothing = def('isNothing', [Maybe], R.prop('isNothing'));
+
+  //# isJust :: Maybe a -> Boolean
+  //.
+  //. Returns `true` if the given Maybe is a Just; `false` if it is a Nothing.
+  //.
+  //. ```javascript
+  //. > S.isJust(S.Just(42))
+  //. true
+  //.
+  //. > S.isJust(S.Nothing())
+  //. false
+  //. ```
+  S.isJust = def('isJust', [Maybe], R.prop('isJust'));
+
   //# fromMaybe :: a -> Maybe a -> a
   //.
   //. Takes a default value and a Maybe, and returns the Maybe's value
@@ -814,7 +908,7 @@
   //. ```
   var fromMaybe = S.fromMaybe =
   def('fromMaybe', [a, Maybe], function(x, maybe) {
-    return maybe instanceof Just ? maybe.value : x;
+    return maybe.isJust ? maybe.value : x;
   });
 
   //# toMaybe :: a? -> Maybe a
@@ -928,6 +1022,35 @@
   Either.of = def('Either.of', [a], function(x) {
     return Right(x);
   });
+
+  //# Either#@@type :: String
+  //.
+  //. Either type identifier, `'sanctuary/Either'`.
+  Either.prototype['@@type'] = 'sanctuary/Either';
+
+  //# Either#isLeft :: Boolean
+  //.
+  //. `true` if `this` is a Left; `false` if `this` is a Right.
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').isLeft
+  //. true
+  //.
+  //. > S.Right(42).isLeft
+  //. false
+  //. ```
+
+  //# Either#isRight :: Boolean
+  //.
+  //. `true` if `this` is a Right; `false` if `this` is a Left.
+  //.
+  //. ```javascript
+  //. > S.Right(42).isRight
+  //. true
+  //.
+  //. > S.Left('Cannot divide by zero').isRight
+  //. false
+  //. ```
 
   //# Either#ap :: Either a (b -> c) ~> Either a b -> Either a c
   //.
@@ -1081,13 +1204,6 @@
   //. 'Right([1, 2, 3])'
   //. ```
 
-  //# Either#type :: TypeRep Either
-  //.
-  //. A reference to the Either type. Useful for determining whether two
-  //. values such as `S.Left('Cannot divide by zero')` and `S.Right(42)`
-  //. are of the same type.
-  Either.prototype.type = Either;
-
   //# Left :: a -> Either a b
   //.
   //. Takes a value of any type and returns a Left with the given value.
@@ -1106,6 +1222,12 @@
   };
   extend(Left, Either);
 
+  //  Left#isLeft :: Boolean
+  Left.prototype.isLeft = true;
+
+  //  Left#isRight :: Boolean
+  Left.prototype.isRight = false;
+
   //  Left#ap :: Either a (b -> c) ~> Either a b -> Either a c
   Left.prototype.ap = def('Left#ap', [Either], self);
 
@@ -1116,12 +1238,13 @@
   Left.prototype.concat = def('Left#concat', [Either], function(either) {
     assertMethodExists('concat', this.value);
     assertMethodExists('concat', either.value);
-    return is(Left, either) ? Left(this.value.concat(either.value)) : either;
+    return either.isLeft ? Left(this.value.concat(either.value)) : either;
   });
 
   //  Left#equals :: Either a b ~> c -> Boolean
   Left.prototype.equals = def('Left#equals', [a], function(x) {
-    return x instanceof Left && R.eqProps('value', x, this);
+    return _type(x) === 'sanctuary/Either' && x.isLeft &&
+           R.eqProps('value', x, this);
   });
 
   //  Left#extend :: Either a b ~> (Either a b -> b) -> Either a b
@@ -1154,6 +1277,12 @@
   };
   extend(Right, Either);
 
+  //  Right#isLeft :: Boolean
+  Right.prototype.isLeft = false;
+
+  //  Right#isRight :: Boolean
+  Right.prototype.isRight = true;
+
   //  Right#ap :: Either a (b -> c) ~> Either a b -> Either a c
   Right.prototype.ap = def('Right#ap', [Either], function(either) {
     return either.map(this.value);
@@ -1168,12 +1297,13 @@
   Right.prototype.concat = def('Right#concat', [Either], function(either) {
     assertMethodExists('concat', this.value);
     assertMethodExists('concat', either.value);
-    return is(Right, either) ? Right(this.value.concat(either.value)) : this;
+    return either.isRight ? Right(this.value.concat(either.value)) : this;
   });
 
   //  Right#equals :: Either a b ~> c -> Boolean
   Right.prototype.equals = def('Right#equals', [a], function(x) {
-    return x instanceof Right && R.eqProps('value', x, this);
+    return _type(x) === 'sanctuary/Either' && x.isRight &&
+           R.eqProps('value', x, this);
   });
 
   //  Right#extend :: Either a b ~> (Either a b -> b) -> Either a b
@@ -1192,6 +1322,32 @@
   //  Right#toString :: Either a b ~> String
   Right.prototype.toString = toString('Right');
 
+  //# isLeft :: Either a b -> Boolean
+  //.
+  //. Returns `true` if the given Either is a Left; `false` if it is a Right.
+  //.
+  //. ```javascript
+  //. > S.isLeft(S.Left('Cannot divide by zero'))
+  //. true
+  //.
+  //. > S.isLeft(S.Right(42))
+  //. false
+  //. ```
+  S.isLeft = def('isLeft', [Either], R.prop('isLeft'));
+
+  //# isRight :: Either a b -> Boolean
+  //.
+  //. Returns `true` if the given Either is a Right; `false` if it is a Left.
+  //.
+  //. ```javascript
+  //. > S.isRight(S.Right(42))
+  //. true
+  //.
+  //. > S.isRight(S.Left('Cannot divide by zero'))
+  //. false
+  //. ```
+  S.isRight = def('isRight', [Either], R.prop('isRight'));
+
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
   //. Takes two functions and an Either, and returns the result of
@@ -1208,7 +1364,7 @@
   //. ```
   S.either =
   def('either', [Function, Function, Either], function(l, r, either) {
-    return either instanceof Left ? l(either.value) : r(either.value);
+    return either.isLeft ? l(either.value) : r(either.value);
   });
 
   //# encaseEither :: (Error -> a) -> (* -> b) -> (* -> Either a b)
@@ -1258,24 +1414,28 @@
   //. Right(42)
   //. ```
   S.maybeToEither = def('maybeToEither', [a, Maybe], function(x, maybe) {
-    return maybe instanceof Nothing ? Left(x) : Right(maybe.value);
+    return maybe.isNothing ? Left(x) : Right(maybe.value);
   });
 
   //. ### Control
 
   //  toBoolean :: * -> Boolean
-  var toBoolean = R.cond([
-    [is(Array),   R.complement(R.isEmpty)],
-    [is(Boolean), I],
-    [R.T,         invoke('toBoolean', [])]
-  ]);
+  var toBoolean = function(x) {
+    switch (R.type(x)) {
+      case 'Array':     return x.length > 0;
+      case 'Boolean':   return x.valueOf();
+      default:          return invoke('toBoolean', [], x);
+    }
+  };
 
   //  empty :: a -> a
-  var empty = R.cond([
-    [is(Array),   function() { return []; }],
-    [is(Boolean), K(false)],
-    [R.T,         invoke('empty', [])]
-  ]);
+  var empty = function(x) {
+    switch (R.type(x)) {
+      case 'Array':     return [];
+      case 'Boolean':   return false;
+      default:          return invoke('empty', [], x);
+    }
+  };
 
   //# and :: a -> a -> a
   //.
@@ -1653,7 +1813,7 @@
   S.unfoldr = def('unfoldr', [Function, a], function(f, x) {
     var result = [];
     var m = f(x);
-    while (is(Just, m)) {
+    while (m.isJust) {
       result.push(m.value[0]);
       m = f(m.value[1]);
     }
@@ -1941,10 +2101,9 @@
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 //. [R.equals]:     http://ramdajs.com/docs/#equals
-//. [R.is]:         http://ramdajs.com/docs/#is
 //. [R.map]:        http://ramdajs.com/docs/#map
+//. [R.type]:       http://ramdajs.com/docs/#type
 //. [Ramda]:        http://ramdajs.com/
 //. [RegExp]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
 //. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
-//. [primitives]:   https://developer.mozilla.org/en-US/docs/Glossary/Primitive
