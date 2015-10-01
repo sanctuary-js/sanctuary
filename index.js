@@ -150,7 +150,7 @@
                        R.nth(_, ['zero', 'one', 'two', 'three', 'four', 'five',
                                  'six', 'seven', 'eight', 'nine', 'ten']),
                        String),
-    '{ord}': R.nth(_, ['first', 'second', 'third', 'fourth']),
+    '{ord}': R.nth(_, ['first', 'second', 'third', 'fourth', 'fifth']),
     '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
     '{type}': functionName
@@ -213,6 +213,7 @@
       case 2: return function(a, b) { return f.apply(this, arguments); };
       case 3: return function(a, b, c) { return f.apply(this, arguments); };
       case 4: return function(a, b, c, d) { return f.apply(this, arguments); };
+      case 5: return function(a, b, c, d, e) { return f.apply(this, arguments); };
     }
   };
 
@@ -988,30 +989,50 @@
   //. ```
   S.mapMaybe = def('mapMaybe', [Function, List], R.compose(catMaybes, R.map));
 
-  //# encase :: (* -> a) -> (* -> Maybe a)
+  //# encase :: (a -> b) -> a -> Maybe b
   //.
-  //. Takes a function `f` which may throw and returns a curried function
-  //. `g` which will not throw. The result of applying `g` is determined by
-  //. applying `f` to the same arguments: if this succeeds, `g` returns Just
-  //. the result; otherwise `g` returns Nothing.
+  //. Takes a unary function `f` which may throw and a value `x` of any type,
+  //. and applies `f` to `x` inside a `try` block. If an exception is caught,
+  //. the return value is a Nothing; otherwise the return value is Just the
+  //. result of applying `f` to `x`.
   //.
   //. See also [`encaseEither`](#encaseEither).
   //.
   //. ```javascript
-  //. > S.encase(eval)('1 + 1')
+  //. > S.encase(eval, '1 + 1')
   //. Just(2)
   //.
-  //. > S.encase(eval)('1 +')
+  //. > S.encase(eval, '1 +')
   //. Nothing()
   //. ```
-  var encase = S.encase = def('encase', [Function], function(f) {
-    return R.curryN(f.length, function() {
-      try {
-        return Just(f.apply(this, arguments));
-      } catch (err) {
-        return Nothing();
-      }
-    });
+  var encase = S.encase = def('encase', [Function, a], function(f, x) {
+    try {
+      return Just(f(x));
+    } catch (err) {
+      return Nothing();
+    }
+  });
+
+  //# encase2 :: (a -> b -> c) -> a -> b -> Maybe c
+  //.
+  //. Binary version of [`encase`](#encase).
+  S.encase2 = def('encase2', [Function, a, b], function(f, x, y) {
+    try {
+      return Just(f(x, y));
+    } catch (err) {
+      return Nothing();
+    }
+  });
+
+  //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
+  //.
+  //. Ternary version of [`encase`](#encase).
+  S.encase3 = def('encase3', [Function, a, b, c], function(f, x, y, z) {
+    try {
+      return Just(f(x, y, z));
+    } catch (err) {
+      return Nothing();
+    }
   });
 
   //. ### Either type
@@ -1400,36 +1421,57 @@
     return either.isLeft ? l(either.value) : r(either.value);
   });
 
-  //# encaseEither :: (Error -> a) -> (* -> b) -> (* -> Either a b)
+  //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
-  //. Takes two functions, `f` and `g`, the second of which may throw,
-  //. and returns a curried function of the same arity as `g` which will
-  //. not throw. The result of applying this function is determined by
-  //. applying `g` to the same arguments: if this succeeds, the return
-  //. value is a Right whose value is the result; otherwise the return
-  //. value is a Left whose value is the result of applying `f` to the
-  //. caught Error object.
+  //. Takes two unary functions, `f` and `g`, the second of which may throw,
+  //. and a value `x` of any type. Applies `g` to `x` inside a `try` block.
+  //. If an exception is caught, the return value is a Left containing the
+  //. result of applying `f` to the caught Error object; otherwise the return
+  //. value is a Right containing the result of applying `g` to `x`.
   //.
   //. See also [`encase`](#encase).
   //.
   //. ```javascript
-  //. > S.encaseEither(R.identity, Array)(0)
-  //. Right([])
+  //. > S.encaseEither(S.I, JSON.parse, '["foo","bar","baz"]')
+  //. Right(['foo', 'bar', 'baz'])
   //.
-  //. > S.encaseEither(R.identity, Array)(-1)
-  //. Left(new RangeError('Invalid array length'))
+  //. > S.encaseEither(S.I, JSON.parse, '[')
+  //. Left(new SyntaxError('Unexpected end of input'))
   //.
-  //. > S.encaseEither(R.prop('message'), Array)(-1)
-  //. Left('Invalid array length')
+  //. > S.encaseEither(R.prop('message'), JSON.parse, '[')
+  //. Left('Unexpected end of input')
   //. ```
-  S.encaseEither = def('encaseEither', [Function, Function], function(f, g) {
-    return R.curryN(g.length, function() {
-      try {
-        return Right(g.apply(this, arguments));
-      } catch (err) {
-        return Left(f(err));
-      }
-    });
+  S.encaseEither =
+  def('encaseEither', [Function, Function, a], function(f, g, x) {
+    try {
+      return Right(g(x));
+    } catch (err) {
+      return Left(f(err));
+    }
+  });
+
+  //# encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r
+  //.
+  //. Binary version of [`encaseEither`](#encaseEither).
+  S.encaseEither2 =
+  def('encaseEither2', [Function, Function, a, b], function(f, g, x, y) {
+    try {
+      return Right(g(x, y));
+    } catch (err) {
+      return Left(f(err));
+    }
+  });
+
+  //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
+  //.
+  //. Ternary version of [`encaseEither`](#encaseEither).
+  S.encaseEither3 =
+  def('encaseEither3', [Function, Function, a, b, c], function(f, g, x, y, z) {
+    try {
+      return Right(g(x, y, z));
+    } catch (err) {
+      return Left(f(err));
+    }
   });
 
   //# maybeToEither :: a -> Maybe b -> Either a b
@@ -2048,9 +2090,7 @@
   //. > S.parseJson('[')
   //. Nothing()
   //. ```
-  S.parseJson = def('parseJson', [String], encase(function(s) {
-    return JSON.parse(s);
-  }));
+  S.parseJson = def('parseJson', [String], encase(JSON.parse));
 
   //. ### RegExp
 
