@@ -81,6 +81,19 @@
 //. The List pseudotype represents non-Function values with numeric `length`
 //. properties greater than or equal to zero, such as `[1, 2, 3]` and `'foo'`.
 //.
+//. ### RegexFlags pseudotype
+//.
+//. The RegexFlags pseudotype represents the set of canonical [RegExp][] flags:
+//.
+//.   - `''`
+//.   - `'g'`
+//.   - `'i'`
+//.   - `'m'`
+//.   - `'gi'`
+//.   - `'gm'`
+//.   - `'im'`
+//.   - `'gim'`
+//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -151,6 +164,7 @@
   var Accessible = /* istanbul ignore next */ function Accessible() {};
   var Integer = /* istanbul ignore next */ function Integer() {};
   var List = /* istanbul ignore next */ function List() {};
+  var RegexFlags = /* istanbul ignore next */ function RegexFlags() {};
   var TypeRep = /* istanbul ignore next */ function TypeRep() {};
   var a = {name: 'a'};
   var b = {name: 'b'};
@@ -166,6 +180,8 @@
                x >= MIN_SAFE_INTEGER && x <= MAX_SAFE_INTEGER;
       case List:
         return !_is(Function, x) && _is(Number, x.length) && x.length >= 0;
+      case RegexFlags:
+        return R.test(/^g?i?m?$/, x);
       case TypeRep:
         return _is(Function, x);
       default:
@@ -1826,6 +1842,19 @@
 
   //. ### RegExp
 
+  //# regex :: RegexFlags -> String -> RegExp
+  //.
+  //. Takes a [RegexFlags](#regexflags-pseudotype) and a pattern, and returns
+  //. a RegExp.
+  //.
+  //. ```javascript
+  //. > S.regex('g', ':\\d+:')
+  //. /:\d+:/g
+  //. ```
+  S.regex = def('regex', [RegexFlags, String], function(flags, source) {
+    return new RegExp(source, flags);
+  });
+
   //# match :: RegExp -> String -> Maybe [Maybe String]
   //.
   //. Takes a pattern and a string, and returns Just a list of matches
@@ -1915,6 +1944,7 @@
 //. [R.is]:         http://ramdajs.com/docs/#is
 //. [R.map]:        http://ramdajs.com/docs/#map
 //. [Ramda]:        http://ramdajs.com/
+//. [RegExp]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
 //. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
 //. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [primitives]:   https://developer.mozilla.org/en-US/docs/Glossary/Primitive

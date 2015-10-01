@@ -2739,6 +2739,53 @@ describe('parse', function() {
 
 describe('regexp', function() {
 
+  describe('regex', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.regex, 'function');
+      eq(S.regex.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.regex('y'); },
+                    errorEq(TypeError,
+                            '‘regex’ requires a value of type RegexFlags ' +
+                            'as its first argument; received "y"'));
+
+      assert.throws(function() { S.regex('G'); },
+                    errorEq(TypeError,
+                            '‘regex’ requires a value of type RegexFlags ' +
+                            'as its first argument; received "G"'));
+
+      assert.throws(function() { S.regex('ig'); },
+                    errorEq(TypeError,
+                            '‘regex’ requires a value of type RegexFlags ' +
+                            'as its first argument; received "ig"'));
+
+      assert.throws(function() { S.regex('', /(?:)/); },
+                    errorEq(TypeError,
+                            '‘regex’ requires a value of type String ' +
+                            'as its second argument; received /(?:)/'));
+    });
+
+    it('returns a RegExp', function() {
+      eq(S.regex('', '\\d'), /\d/);
+      eq(S.regex('g', '\\d'), /\d/g);
+      eq(S.regex('i', '\\d'), /\d/i);
+      eq(S.regex('m', '\\d'), /\d/m);
+      eq(S.regex('gi', '\\d'), /\d/gi);
+      eq(S.regex('gm', '\\d'), /\d/gm);
+      eq(S.regex('im', '\\d'), /\d/im);
+      eq(S.regex('gim', '\\d'), /\d/gim);
+    });
+
+    it('is curried', function() {
+      eq(S.regex('').length, 1);
+      eq(S.regex('')('\\d'), /\d/);
+    });
+
+  });
+
   describe('match', function() {
 
     it('is a binary function', function() {
