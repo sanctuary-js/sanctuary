@@ -334,7 +334,7 @@
   //.
   //. ```javascript
   //. > S.I('foo')
-  //. "foo"
+  //. 'foo'
   //. ```
   var I = S.I = def('I', [a], function(x) { return x; });
 
@@ -345,7 +345,7 @@
   //.
   //. ```javascript
   //. > S.K('foo', 'bar')
-  //. "foo"
+  //. 'foo'
   //.
   //. > R.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
@@ -656,10 +656,10 @@
   //.
   //. ```javascript
   //. > S.Nothing().toString()
-  //. "Nothing()"
+  //. 'Nothing()'
   //.
   //. > S.Just([1, 2, 3]).toString()
-  //. "Just([1, 2, 3])"
+  //. 'Just([1, 2, 3])'
   //. ```
 
   //# Maybe#type :: TypeRep Maybe
@@ -840,7 +840,7 @@
   //.
   //. ```javascript
   //. > S.catMaybes([S.Just('foo'), S.Nothing(), S.Just('baz')])
-  //. ["foo", "baz"]
+  //. ['foo', 'baz']
   //. ```
   var catMaybes = S.catMaybes =
   def('catMaybes', [List], R.chain(maybe([], R.of)));
@@ -922,10 +922,10 @@
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero').ap(S.Right(42))
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //.
   //. > S.Right(R.inc).ap(S.Left('Cannot divide by zero'))
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //.
   //. > S.Right(R.inc).ap(S.Right(42))
   //. Right(43)
@@ -937,14 +937,16 @@
   //. it returns the result of applying the function to this Right's value.
   //.
   //. ```javascript
-  //. > void (sqrt = n => n < 0 ? S.Left('Cannot represent square root of negative number') : S.Right(Math.sqrt(n)))
-  //. undefined
+  //. > global.sqrt = n =>
+  //. .   n < 0 ? S.Left('Cannot represent square root of negative number')
+  //. .         : S.Right(Math.sqrt(n))
+  //. sqrt
   //.
   //. > S.Left('Cannot divide by zero').chain(sqrt)
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //.
   //. > S.Right(-1).chain(sqrt)
-  //. Left("Cannot represent square root of negative number")
+  //. Left('Cannot represent square root of negative number')
   //.
   //. > S.Right(25).chain(sqrt)
   //. Right(5)
@@ -968,7 +970,7 @@
   //.
   //. ```javascript
   //. > S.Left('abc').concat(S.Left('def'))
-  //. Left("abcdef")
+  //. Left('abcdef')
   //.
   //. > S.Right([1, 2, 3]).concat(S.Right([4, 5, 6]))
   //. Right([1, 2, 3, 4, 5, 6])
@@ -1009,7 +1011,7 @@
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero').extend(x => x.value + 1)
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //.
   //. > S.Right(42).extend(x => x.value + 1)
   //. Right(43)
@@ -1023,7 +1025,7 @@
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero').map(R.inc)
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //.
   //. > S.Right([1, 2, 3]).map(R.sum)
   //. Right(6)
@@ -1057,10 +1059,10 @@
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero').toString()
-  //. "Left(\\"Cannot divide by zero\\")"
+  //. 'Left("Cannot divide by zero")'
   //.
   //. > S.Right([1, 2, 3]).toString()
-  //. "Right([1, 2, 3])"
+  //. 'Right([1, 2, 3])'
   //. ```
 
   //# Either#type :: TypeRep Either
@@ -1078,7 +1080,7 @@
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero')
-  //. Left("Cannot divide by zero")
+  //. Left('Cannot divide by zero')
   //. ```
   var Left = S.Left = function Left(value) {
     if (!(this instanceof Left)) {
@@ -1183,10 +1185,10 @@
   //.
   //. ```javascript
   //. > S.either(R.toUpper, R.toString, S.Left('Cannot divide by zero'))
-  //. "CANNOT DIVIDE BY ZERO"
+  //. 'CANNOT DIVIDE BY ZERO'
   //.
   //. > S.either(R.toUpper, R.toString, S.Right(42))
-  //. "42"
+  //. '42'
   //. ```
   S.either =
   def('either', [Function, Function, Either], function(l, r, either) {
@@ -1210,10 +1212,10 @@
   //. Right([])
   //.
   //. > S.encaseEither(R.identity, Array)(-1)
-  //. Left(RangeError: Invalid array length)
+  //. Left(new RangeError('Invalid array length'))
   //.
   //. > S.encaseEither(R.prop('message'), Array)(-1)
-  //. Left("Invalid array length")
+  //. Left('Invalid array length')
   //. ```
   S.encaseEither = def('encaseEither', [Function, Function], function(f, g) {
     return R.curryN(g.length, function() {
@@ -1234,7 +1236,7 @@
   //.
   //. ```javascript
   //. > S.maybeToEither('Expecting an integer', S.parseInt(10, 'xyz'))
-  //. Left("Expecting an integer")
+  //. Left('Expecting an integer')
   //.
   //. > S.maybeToEither('Expecting an integer', S.parseInt(10, '42'))
   //. Right(42)
@@ -1335,19 +1337,19 @@
   //.
   //. ```javascript
   //. > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["b", "c"])
+  //. Just(['b', 'c'])
   //.
   //. > S.slice(-2, -0, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["d", "e"])
+  //. Just(['d', 'e'])
   //.
   //. > S.slice(2, -0, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["c", "d", "e"])
+  //. Just(['c', 'd', 'e'])
   //.
   //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing()
   //.
   //. > S.slice(2, 6, 'banana')
-  //. Just("nana")
+  //. Just('nana')
   //. ```
   var slice = S.slice =
   def('slice', [Integer, Integer, List], function(start, end, xs) {
@@ -1368,13 +1370,13 @@
   //.
   //. ```javascript
   //. > S.at(2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just("c")
+  //. Just('c')
   //.
   //. > S.at(5, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing()
   //.
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just("d")
+  //. Just('d')
   //. ```
   var at = S.at = def('at', [Integer, List], function(n, xs) {
     return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
@@ -1447,10 +1449,10 @@
   //.
   //. ```javascript
   //. > S.take(2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["a", "b"])
+  //. Just(['a', 'b'])
   //.
   //. > S.take(4, 'abcdefg')
-  //. Just("abcd")
+  //. Just('abcd')
   //.
   //. > S.take(4, ['a', 'b', 'c'])
   //. Nothing()
@@ -1468,10 +1470,10 @@
   //.
   //. ```javascript
   //. > S.takeLast(2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["d", "e"])
+  //. Just(['d', 'e'])
   //.
   //. > S.takeLast(4, 'abcdefg')
-  //. Just("defg")
+  //. Just('defg')
   //.
   //. > S.takeLast(4, ['a', 'b', 'c'])
   //. Nothing()
@@ -1489,10 +1491,10 @@
   //.
   //. ```javascript
   //. > S.drop(2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["c", "d", "e"])
+  //. Just(['c', 'd', 'e'])
   //.
   //. > S.drop(4, 'abcdefg')
-  //. Just("efg")
+  //. Just('efg')
   //.
   //. > S.drop(4, 'abc')
   //. Nothing()
@@ -1510,10 +1512,10 @@
   //.
   //. ```javascript
   //. > S.dropLast(2, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(["a", "b", "c"])
+  //. Just(['a', 'b', 'c'])
   //.
   //. > S.dropLast(4, 'abcdefg')
-  //. Just("abc")
+  //. Just('abc')
   //.
   //. > S.dropLast(4, 'abc')
   //. Nothing()
@@ -1704,7 +1706,7 @@
   //.
   //. ```javascript
   //. > S.parseDate('2011-01-19T17:40:00Z')
-  //. Just(new Date("2011-01-19T17:40:00.000Z"))
+  //. Just(new Date('2011-01-19T17:40:00.000Z'))
   //.
   //. > S.parseDate('today')
   //. Nothing()
@@ -1813,7 +1815,7 @@
   //.
   //. ```javascript
   //. > S.parseJson('["foo","bar","baz"]')
-  //. Just(["foo", "bar", "baz"])
+  //. Just(['foo', 'bar', 'baz'])
   //.
   //. > S.parseJson('[')
   //. Nothing()
@@ -1833,10 +1835,10 @@
   //.
   //. ```javascript
   //. > S.match(/(good)?bye/, 'goodbye')
-  //. Just([Just("goodbye"), Just("good")])
+  //. Just([Just('goodbye'), Just('good')])
   //.
   //. > S.match(/(good)?bye/, 'bye')
-  //. Just([Just("bye"), Nothing()])
+  //. Just([Just('bye'), Nothing()])
   //. ```
   S.match = def('match', [RegExp, String], function(pattern, s) {
     return R.map(R.map(toMaybe), toMaybe(s.match(pattern)));
@@ -1853,7 +1855,7 @@
   //.
   //. ```javascript
   //. > S.words(' foo bar baz ')
-  //. ["foo", "bar", "baz"]
+  //. ['foo', 'bar', 'baz']
   //. ```
   S.words =
   def('words', [String], compose(R.reject(R.isEmpty), R.split(/\s+/)));
@@ -1867,7 +1869,7 @@
   //.
   //. ```javascript
   //. > S.unwords(['foo', 'bar', 'baz'])
-  //. "foo bar baz"
+  //. 'foo bar baz'
   //. ```
   S.unwords = def('unwords', [List], R.join(' '));
 
@@ -1881,7 +1883,7 @@
   //.
   //. ```javascript
   //. > S.lines('foo\nbar\nbaz\n')
-  //. ["foo", "bar", "baz"]
+  //. ['foo', 'bar', 'baz']
   //. ```
   S.lines =
   def('lines', [String],
@@ -1896,7 +1898,7 @@
   //.
   //. ```javascript
   //. > S.unlines(['foo', 'bar', 'baz'])
-  //. "foo\nbar\nbaz\n"
+  //. 'foo\nbar\nbaz\n'
   //. ```
   S.unlines =
   def('unlines', [List], compose(R.join(''), R.map(R.concat(_, '\n'))));

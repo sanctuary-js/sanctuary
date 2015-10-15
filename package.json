@@ -11,6 +11,7 @@
     "ramda": "0.17.x"
   },
   "devDependencies": {
+    "doctest": "0.10.x",
     "istanbul": "0.3.x",
     "jscs": "1.10.x",
     "jshint": "2.5.x",
