@@ -2015,6 +2015,22 @@
     return new RegExp(source, flags);
   });
 
+  //# test :: RegExp -> String -> Boolean
+  //.
+  //. Takes a pattern and a string, and returns `true` if the pattern
+  //. matches the string; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.test(/^a/, 'abacus')
+  //. true
+  //.
+  //. > S.test(/^a/, 'banana')
+  //. false
+  //. ```
+  S.test = def('test', [RegExp, String], function(pattern, s) {
+    return pattern.test(s);
+  });
+
   //# match :: RegExp -> String -> Maybe [Maybe String]
   //.
   //. Takes a pattern and a string, and returns Just a list of matches

@@ -2938,6 +2938,40 @@ describe('regexp', function() {
 
   });
 
+  describe('test', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.test, 'function');
+      eq(S.test.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.test('^a'); },
+                    errorEq(TypeError,
+                            '‘test’ requires a value of type RegExp ' +
+                            'as its first argument; received "^a"'));
+
+      assert.throws(function() { S.test(/^a/, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘test’ requires a value of type String ' +
+                            'as its second argument; received [1, 2, 3]'));
+    });
+
+    it('returns true if pattern matches string', function() {
+      eq(S.test(/^a/, 'abacus'), true);
+    });
+
+    it('returns false if pattern does not match string', function() {
+      eq(S.test(/^a/, 'banana'), false);
+    });
+
+    it('is curried', function() {
+      eq(S.test(/^a/).length, 1);
+      eq(S.test(/^a/)('abacus'), true);
+    });
+
+  });
+
   describe('match', function() {
 
     it('is a binary function', function() {
