@@ -1500,7 +1500,7 @@
   //# both :: (a -> Boolean) -> (a -> Boolean) -> a -> Boolean
   //.
   //. Takes two unary predicates and a value of any type, and returns
-  //. true if the value satisfies both predicates; false otherwise.
+  //. `true` if the value satisfies both predicates; `false` otherwise.
   //.
   //. ```javascript
   //. > S.both(S.test(/a/), S.test(/b/), 'banana')
