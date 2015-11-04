@@ -1916,7 +1916,7 @@ describe('control', function() {
 
   describe('both', function() {
 
-    it('is a binary function', function() {
+    it('is a ternary function', function() {
       eq(typeof S.both, 'function');
       eq(S.both.length, 3);
     });
