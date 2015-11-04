@@ -1923,14 +1923,14 @@ describe('control', function() {
 
     it('type checks its arguments', function() {
       assert.throws(function() { S.both('string'); },
-          errorEq(TypeError,
-              '‘both’ requires a value of type Function as its ' +
-              'first argument; received "string"'));
+             errorEq(TypeError,
+                     '‘both’ requires a value of type Function as its ' +
+                     'first argument; received "string"'));
 
       assert.throws(function() { S.both(S.test(/^a/), 'string'); },
-          errorEq(TypeError,
-              '‘both’ requires a value of type Function as its ' +
-              'second argument; received "string"'));
+             errorEq(TypeError,
+                     '‘both’ requires a value of type Function as its ' +
+                     'second argument; received "string"'));
     });
 
     it('returns true when both predicates are satisfied', function() {
