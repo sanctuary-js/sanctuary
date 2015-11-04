@@ -1497,6 +1497,27 @@
     return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
+  //# both :: (a -> Boolean) -> (a -> Boolean) -> a -> Boolean
+  //.
+  //. Takes two unary functions that return a boolean and applies them
+  //. both to the supplied value, returning true iff both functions
+  //. evaluate to true.
+  //.
+  //. ```javascript
+  //.
+  //. > S.both(S.test(/^a/), S.test(/.*f$/), 'abcdef')
+  //. true
+  //.
+  //. > S.both(S.test(/^a/), S.test(/.*e$/), 'abcdef')
+  //. false
+  //.
+  //. > S.both(S.test(/^b/), S.test(/.*e$/), 'abcdef')
+  //. false
+  //. ```
+  S.both = def('both', [Function, Function, a], function(f, g, x) {
+    return f(x) && g(x);
+  });
+
   //. ### List
 
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]

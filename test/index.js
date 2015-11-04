@@ -1914,6 +1914,53 @@ describe('control', function() {
 
   });
 
+  describe('both', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.both, 'function');
+      eq(S.both.length, 3);
+    });
+
+    it('returns true when both predicates are satisfied', function() {
+      eq(S.both(S.test(/^a/), S.test(/.*f$/), 'abcdef'), true);
+    });
+
+    it('returns false when one predicate is satisfied', function() {
+      eq(S.both(S.test(/^a/), S.test(/.*f$/), 'abcde'), false);
+      eq(S.both(S.test(/^b/), S.test(/.*f$/), 'abcdef'), false);
+    });
+
+    it('returns false when no predicates are satisfied', function() {
+      eq(S.both(S.test(/^b/), S.test(/.*e$/), 'abcdef'), false);
+    });
+
+    it('short circuits if the first predicate is not satisfied', function() {
+      var evaluated = false;
+      var evaluate = function() { evaluated = true; };
+      eq(S.both(S.test(/^b/), evaluate, 'abcdef'), false);
+      eq(evaluated, false);
+    });
+
+    it('throws if not supplied a function', function() {
+      assert.throws(function() { S.both('string', S.test(/^a/), 'abcdef'); },
+          errorEq(TypeError,
+              '‘both’ requires a value of type Function as its ' +
+              'first argument; received "string"'));
+
+      assert.throws(function() { S.both(S.test(/.*f$/), 'string', 'abcdef'); },
+          errorEq(TypeError,
+              '‘both’ requires a value of type Function as its ' +
+              'second argument; received "string"'));
+    });
+
+    it('is curried', function() {
+      eq(S.both(S.test(/^a/), S.test(/.*f$/)).length, 1);
+      eq(S.both(S.test(/^a/)).length, 2);
+      eq(S.both(S.test(/^a/))(S.test(/.*f$/))('abcdef'), true);
+    });
+
+  });
+
 });
 
 describe('list', function() {
