@@ -1504,7 +1504,6 @@
   //. evaluate to true.
   //.
   //. ```javascript
-  //.
   //. > S.both(S.test(/^a/), S.test(/.*f$/), 'abcdef')
   //. true
   //.
