@@ -1497,6 +1497,25 @@
     return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
+  //# both :: (a -> Boolean) -> (a -> Boolean) -> a -> Boolean
+  //.
+  //. Takes two unary predicates and a value of any type, and returns
+  //. `true` if the value satisfies both predicates; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.both(S.test(/a/), S.test(/b/), 'banana')
+  //. true
+  //.
+  //. > S.both(S.test(/a/), S.test(/b/), 'insouciant')
+  //. false
+  //.
+  //. > S.both(S.test(/a/), S.test(/b/), 'serendipity')
+  //. false
+  //. ```
+  S.both = def('both', [Function, Function, a], function(f, g, x) {
+    return f(x) && g(x);
+  });
+
   //. ### List
 
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]
