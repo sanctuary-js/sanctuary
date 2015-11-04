@@ -1916,6 +1916,20 @@ describe('control', function() {
 
 });
 
+describe('number', function() {
+
+  it('returns a Just when the divisor is not 0', function() {
+    eq(S.divide(20, 5), S.Just(4));
+    eq(S.divide(21, 5), S.Just(4.2));
+  });
+
+  it('returns Nothing when the divisor is 0', function() {
+    eq(S.divide(20, 0), S.Nothing());
+    eq(S.divide(20, -0), S.Nothing());
+  });
+
+});
+
 describe('list', function() {
 
   describe('at', function() {
