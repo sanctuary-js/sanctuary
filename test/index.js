@@ -1940,6 +1940,53 @@ describe('control', function() {
 
   });
 
+  describe('oneOf', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.oneOf, 'function');
+      eq(S.oneOf.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.oneOf('string'); },
+        errorEq(TypeError,
+          '‘oneOf’ requires a value of type Function as its ' +
+          'first argument; received "string"'));
+
+      assert.throws(function() { S.oneOf(S.test(/^a/), 'string'); },
+        errorEq(TypeError,
+          '‘oneOf’ requires a value of type Function as its ' +
+          'second argument; received "string"'));
+    });
+
+    it('returns true when one predicate is satisfied', function() {
+      eq(S.oneOf(S.test(/a/), S.test(/b/), 'insouciant'), true);
+      eq(S.oneOf(S.test(/b/), S.test(/a/), 'insouciant'), true);
+    });
+
+    it('returns true when both predicates are satisfied', function() {
+      eq(S.oneOf(S.test(/a/), S.test(/b/), 'banana'), true);
+    });
+
+    it('returns false when no predicates are satisfied', function() {
+      eq(S.oneOf(S.test(/a/), S.test(/b/), 'serendipity'), false);
+    });
+
+    it('short-circuits if the first predicate is satisfied', function() {
+      var evaluated = false;
+      var evaluate = function() { evaluated = true; };
+      eq(S.oneOf(S.test(/^a/), evaluate, 'abcdef'), true);
+      eq(evaluated, false);
+    });
+
+    it('is curried', function() {
+      eq(S.oneOf(S.test(/a/)).length, 2);
+      eq(S.oneOf(S.test(/a/), S.test(/b/)).length, 1);
+      eq(S.oneOf(S.test(/a/))(S.test(/z/))('banana'), true);
+    });
+
+  });
+
 });
 
 describe('list', function() {

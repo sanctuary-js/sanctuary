@@ -1513,6 +1513,26 @@
     return !f(x);
   });
 
+  //# oneOf :: (a -> Boolean) -> (a -> Boolean) -> a -> Boolean
+  //.
+  //. Takes two unary predicates and a value of any type, and returns
+  //. `true` if the value satisfies one of the predicates; `false`
+  //. otherwise.
+  //.
+  //. ```javascript
+  //. > S.oneOf(S.test(/a/), S.test(/b/), 'insouciant')
+  //. true
+  //.
+  //. > S.oneOf(S.test(/a/), S.test(/b/), 'banana')
+  //. true
+  //.
+  //. > S.oneOf(S.test(/a/), S.test(/b/), 'serendipity')
+  //. false
+  //. ```
+  S.oneOf = def('oneOf', [Function, Function, a], function(f, g, x) {
+    return f(x) || g(x);
+  });
+
   //. ### List
 
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]
