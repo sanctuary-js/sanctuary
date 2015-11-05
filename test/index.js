@@ -1914,6 +1914,32 @@ describe('control', function() {
 
   });
 
+  describe('complement', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.complement, 'function');
+      eq(S.complement.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.complement('string'); },
+             errorEq(TypeError,
+                     '‘complement’ requires a value of type Function as its ' +
+                     'first argument; received "string"'));
+    });
+
+    it('inverts the return value of the supplied predicate', function() {
+      eq(S.complement(S.test(/a/), 'quiescent'), true);
+      eq(S.complement(S.test(/a/), 'fissiparous'), false);
+    });
+
+    it('is curried', function() {
+      eq(S.complement(S.test(/a/)).length, 1);
+      eq(S.complement(S.test(/a/))('quiescent'), true);
+    });
+
+  });
+
 });
 
 describe('list', function() {

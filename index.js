@@ -1497,6 +1497,22 @@
     return xBool !== yBool ? or(x, y) : xEmpty;
   });
 
+  //# complement :: (a -> Boolean) -> a -> Boolean
+  //.
+  //. Takes a unary predicate and a value of any type and inverts the
+  //. return value of the predicate when applied to the supplied value.
+  //.
+  //. ```javascript
+  //. > S.complement(S.test(/a/), 'quiescent')
+  //. true
+  //.
+  //. > S.complement(S.test(/a/), 'fissiparous')
+  //. false
+  //. ```
+  S.complement = def('complement', [Function, a], function(f, x) {
+    return !f(x);
+  });
+
   //. ### List
 
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]
