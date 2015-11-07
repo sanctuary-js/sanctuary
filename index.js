@@ -2035,6 +2035,23 @@
     return new RegExp(source, flags);
   });
 
+  //# regexEscape :: String -> String
+  //.
+  //. Takes a string which may contain regular expression metacharacters,
+  //. and returns a string with those metacharacters escaped.
+  //.
+  //. Properties:
+  //.
+  //.   - `forall s :: String. S.test(S.regex('', S.regexEscape(s)), s) = true`
+  //.
+  //. ```javascript
+  //. > S.regexEscape('-=*{XYZ}*=-')
+  //. '\\-=\\*\\{XYZ\\}\\*=\\-'
+  //. ```
+  S.regexEscape = def('regexEscape', [String], function(s) {
+    return s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  });
+
   //# test :: RegExp -> String -> Boolean
   //.
   //. Takes a pattern and a string, and returns `true` if the pattern
