@@ -478,6 +478,21 @@
     });
   });
 
+  //# converge :: (b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d
+  //.
+  //. Takes a binary function, two unary functions and a value of any type.
+  //. Applies the unary functions to the value and passes the transformed
+  //. values to the binary function as arguments.
+  //.
+  //. ```javascript
+  //. > S.converge(Math.pow, R.inc, R.dec, 4);
+  //. 125
+  //. ```
+  S.converge =
+  def('converge', [Function, Function, Function, a], function(f, g, h, x) {
+    return f(g(x), h(x));
+  });
+
   //. ### Maybe type
 
   //# Maybe :: TypeRep Maybe
