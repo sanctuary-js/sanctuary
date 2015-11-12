@@ -150,7 +150,7 @@
                        R.nth(_, ['zero', 'one', 'two', 'three', 'four', 'five',
                                  'six', 'seven', 'eight', 'nine', 'ten']),
                        String),
-    '{ord}': R.nth(_, ['first', 'second', 'third']),
+    '{ord}': R.nth(_, ['first', 'second', 'third', 'fourth']),
     '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
     '{type}': functionName
@@ -212,6 +212,7 @@
       case 1: return function(a) { return f.apply(this, arguments); };
       case 2: return function(a, b) { return f.apply(this, arguments); };
       case 3: return function(a, b, c) { return f.apply(this, arguments); };
+      case 4: return function(a, b, c, d) { return f.apply(this, arguments); };
     }
   };
 
@@ -1495,6 +1496,25 @@
     var yBool = toBoolean(y);
     var xEmpty = empty(x);
     return xBool !== yBool ? or(x, y) : xEmpty;
+  });
+
+  //# ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b
+  //.
+  //. Takes a unary predicate, a unary "if" function, a unary "else"
+  //. function, and a value of any type, and returns the result of
+  //. applying the "if" function to the value if the value satisfies
+  //. the predicate; the result of applying the "else" function to the
+  //. value otherwise.
+  //.
+  // ```javascript
+  //. > S.ifElse(x => x < 0, Math.abs, Math.sqrt, -1)
+  //. 1
+  //.
+  //. > S.ifElse(x => x < 0, Math.abs, Math.sqrt, 16)
+  //. 4
+  //. ```
+  S.ifElse = def('ifElse', [Function, Function, Function, a], function(pred, f, g, x) {
+    return pred(x) ? f(x) : g(x);
   });
 
   //. ### List

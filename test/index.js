@@ -1914,6 +1914,49 @@ describe('control', function() {
 
   });
 
+  describe('ifElse', function() {
+
+    var lt0 = function(x) { return x < 0; };
+
+    it('is a quaternary function', function() {
+      eq(typeof S.ifElse, 'function');
+      eq(S.ifElse.length, 4);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.ifElse('wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+
+      assert.throws(function() { S.ifElse(lt0, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its second argument; received "wrong"'));
+
+      assert.throws(function() { S.ifElse(lt0, Math.abs, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its third argument; received "wrong"'));
+    });
+
+    it('applies the first function when the predicate returns true', function() {
+      eq(S.ifElse(lt0, Math.abs, Math.sqrt, -1), 1);
+    });
+
+    it('applies the second function when the predicate returns false', function() {
+      eq(S.ifElse(lt0, Math.abs, Math.sqrt, 16), 4);
+    });
+
+    it('is curried', function() {
+      eq(S.ifElse(lt0).length, 3);
+      eq(S.ifElse(lt0)(Math.abs).length, 2);
+      eq(S.ifElse(lt0)(Math.abs)(Math.sqrt).length, 1);
+      eq(S.ifElse(lt0)(Math.abs)(Math.sqrt)(-1), 1);
+    });
+
+  });
+
 });
 
 describe('list', function() {
