@@ -5,6 +5,7 @@
 var assert = require('assert');
 var vm = require('vm');
 
+var jsc = require('jsverify');
 var R = require('ramda');
 
 var S = require('..');
@@ -2977,6 +2978,38 @@ describe('regexp', function() {
     it('is curried', function() {
       eq(S.regex('').length, 1);
       eq(S.regex('')('\\d'), /\d/);
+    });
+
+  });
+
+  describe('regexEscape', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.regexEscape, 'function');
+      eq(S.regexEscape.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.regexEscape(/(?:)/); },
+                    errorEq(TypeError,
+                            '‘regexEscape’ requires a value of type String ' +
+                            'as its first argument; received /(?:)/'));
+    });
+
+    it('escapes regular expression metacharacters', function() {
+      eq(S.regexEscape('-=*{XYZ}*=-'), '\\-=\\*\\{XYZ\\}\\*=\\-');
+    });
+
+    it('property: test(regex("", regexEscape(s)), s)', function() {
+      jsc.assert(jsc.forall(jsc.string, function(s) {
+        return S.test(S.regex('', S.regexEscape(s)), s);
+      }), {tests: 1000});
+    });
+
+    it('property: test(regex("", "^" + regexEscape(s) + "$"), s)', function() {
+      jsc.assert(jsc.forall(jsc.string, function(s) {
+        return S.test(S.regex('', '^' + S.regexEscape(s) + '$'), s);
+      }), {tests: 1000});
     });
 
   });

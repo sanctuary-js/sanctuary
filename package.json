@@ -15,6 +15,7 @@
     "istanbul": "0.3.x",
     "jscs": "1.10.x",
     "jshint": "2.5.x",
+    "jsverify": "0.7.x",
     "mocha": "2.x.x",
     "transcribe": "0.3.x",
     "xyz": "0.5.x"
