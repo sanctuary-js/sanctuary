@@ -540,8 +540,8 @@
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or a Nothing (with no value).
   //.
-  //. The Maybe type satisfies the [Monoid][], [Monad][], [Foldable][], and
-  //. [Extend][] specifications.
+  //. The Maybe type satisfies the [Monoid][], [Monad][], [Traversable][],
+  //. and [Extend][] specifications.
   var Maybe = S.Maybe = function Maybe() {
     if (arguments[0] !== sentinel) {
       throw new Error('Cannot instantiate Maybe');
@@ -829,6 +829,29 @@
          [$Maybe(a), $.Function, b, b],
          function(maybe, f, x) {
            return maybe.isJust ? f(x, maybe.value) : x;
+         });
+
+  //# Maybe#sequence :: Applicative f => Maybe (f a) ~> (a -> f a) -> f (Maybe a)
+  //.
+  //. Evaluates an applicative action contained within the Maybe, resulting in:
+  //.
+  //.   - a pure applicative of a Nothing if `this` is a Nothing; otherwise
+  //.
+  //.   - an applicative of Just the value of the evaluated action.
+  //.
+  //. ```javascript
+  //. > S.Nothing().sequence(S.Either.of)
+  //. Right(Nothing())
+  //.
+  //. > S.Just(Right(42)).sequence(S.Either.of)
+  //. Right(Just(42))
+  //. ```
+  Maybe.prototype.sequence =
+  method('Maybe#sequence',
+         {a: [Apply], b: [Apply]},
+         [$Maybe(a), $.Function, b],
+         function(maybe, of) {
+           return maybe.isJust ? R.map(Just, maybe.value) : of(maybe);
          });
 
   //# Maybe#toBoolean :: Maybe a ~> Boolean
@@ -2491,10 +2514,10 @@
 
 //. [Apply]:        https://github.com/fantasyland/fantasy-land#apply
 //. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
-//. [Foldable]:     https://github.com/fantasyland/fantasy-land#foldable
 //. [Functor]:      https://github.com/fantasyland/fantasy-land#functor
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
+//. [Traversable]:  https://github.com/fantasyland/fantasy-land#traversable
 //. [R.equals]:     http://ramdajs.com/docs/#equals
 //. [R.map]:        http://ramdajs.com/docs/#map
 //. [R.type]:       http://ramdajs.com/docs/#type
