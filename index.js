@@ -738,6 +738,22 @@
   //. 'Just([1, 2, 3])'
   //. ```
 
+  //# Maybe#inspect :: Maybe a ~> String
+  //.
+  //. Returns the string representation of the Maybe. This method is used by
+  //. `util.inspect` and the REPL to format a Maybe for display.
+  //.
+  //. See also [`Maybe#toString`](#Maybe.prototype.toString).
+  //.
+  //. ```javascript
+  //. > S.Nothing().inspect()
+  //. 'Nothing()'
+  //.
+  //. > S.Just([1, 2, 3]).inspect()
+  //. 'Just([1, 2, 3])'
+  //. ```
+  Maybe.prototype.inspect = function() { return this.toString(); };
+
   //# Nothing :: -> Maybe a
   //.
   //. Returns a Nothing. Though this is a constructor function the `new`
@@ -1204,6 +1220,22 @@
   //. > S.Right([1, 2, 3]).toString()
   //. 'Right([1, 2, 3])'
   //. ```
+
+  //# Either#inspect :: Either a b ~> String
+  //.
+  //. Returns the string representation of the Either. This method is used by
+  //. `util.inspect` and the REPL to format a Either for display.
+  //.
+  //. See also [`Either#toString`](#Either.prototype.toString).
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').inspect()
+  //. 'Left("Cannot divide by zero")'
+  //.
+  //. > S.Right([1, 2, 3]).inspect()
+  //. 'Right([1, 2, 3])'
+  //. ```
+  Either.prototype.inspect = function() { return this.toString(); };
 
   //# Left :: a -> Either a b
   //.
