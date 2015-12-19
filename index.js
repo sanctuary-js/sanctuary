@@ -402,6 +402,23 @@
   //. ```
   S.K = def('K', [a, b], function(x, y) { return x; });
 
+  //. ### Function
+
+  //# flip :: (a -> b -> c) -> b -> a -> c
+  //.
+  //. Takes a binary function and two values and returns the result of
+  //. applying the function - with its argument order reversed - to the
+  //. values. `flip` may also be applied to a Ramda-style curried
+  //. function with arity greater than two.
+  //.
+  //. ```javascript
+  //. > R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
+  //. [1, 4, 9, 16, 25]
+  //. ```
+  S.flip = def('flip', [Function, a, b], function(f, x, y) {
+    return f(y, x);
+  });
+
   //. ### Composition
 
   //# compose :: (b -> c) -> (a -> b) -> a -> c

@@ -264,6 +264,37 @@ describe('combinator', function() {
 
 });
 
+describe('function', function() {
+
+  describe('flip', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.flip, 'function');
+      eq(S.flip.length, 3);
+    });
+
+    it('throws if applied to values of different types', function() {
+      assert.throws(function() { S.flip('wrong'); },
+                    errorEq(TypeError,
+                            '‘flip’ requires a value of type Function as its ' +
+                            'first argument; received "wrong"'));
+    });
+
+    it("flips a function's argument order", function() {
+      eq(R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5]), [1, 4, 9, 16, 25]);
+      eq(S.flip(S.indexOf, ['a', 'b', 'c', 'd'], 'c'), S.Just(2));
+    });
+
+    it('is curried', function() {
+      eq(S.flip(S.indexOf).length, 2);
+      eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd']).length, 1);
+      eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd'])('c'), S.Just(2));
+    });
+
+  });
+
+});
+
 describe('composition', function() {
 
   describe('compose', function() {
