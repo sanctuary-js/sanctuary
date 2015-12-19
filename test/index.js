@@ -5,6 +5,7 @@
 var assert = require('assert');
 var vm = require('vm');
 
+var jsc = require('jsverify');
 var R = require('ramda');
 
 var S = require('..');
@@ -19,6 +20,16 @@ var eq = function(actual, expected) {
 var errorEq = R.curry(function(type, message, error) {
   return error.constructor === type && error.message === message;
 });
+
+//  area :: (Number, Number, Number) -> Number !
+var area = function(a, b, c) {
+  if (Math.max(a, b, c) < (a + b + c) / 2) {
+    var s = (a + b + c) / 2;
+    return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+  } else {
+    throw new Error('Impossible triangle');
+  }
+};
 
 //  factorial :: Number -> Number !
 var factorial = function(n) {
@@ -35,6 +46,15 @@ var factorial = function(n) {
 var parseHex = function(s) {
   var n = parseInt(s, 16);
   return n !== n ? S.Left('Invalid hexadecimal string') : S.Right(n);
+};
+
+//  rem :: (Number, Number) -> Number !
+var rem = function(x, y) {
+  if (y === 0) {
+    throw new Error('Cannot divide by zero');
+  } else {
+    return x % y;
+  }
 };
 
 //  square :: Number -> Number
@@ -238,6 +258,37 @@ describe('combinator', function() {
     it('is curried', function() {
       eq(S.K(42).length, 1);
       eq(S.K(42)(null), 42);
+    });
+
+  });
+
+});
+
+describe('function', function() {
+
+  describe('flip', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.flip, 'function');
+      eq(S.flip.length, 3);
+    });
+
+    it('throws if applied to values of different types', function() {
+      assert.throws(function() { S.flip('wrong'); },
+                    errorEq(TypeError,
+                            '‘flip’ requires a value of type Function as its ' +
+                            'first argument; received "wrong"'));
+    });
+
+    it("flips a function's argument order", function() {
+      eq(R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5]), [1, 4, 9, 16, 25]);
+      eq(S.flip(S.indexOf, ['a', 'b', 'c', 'd'], 'c'), S.Just(2));
+    });
+
+    it('is curried', function() {
+      eq(S.flip(S.indexOf).length, 2);
+      eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd']).length, 1);
+      eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd'])('c'), S.Just(2));
     });
 
   });
@@ -1016,9 +1067,9 @@ describe('maybe', function() {
 
   describe('encase', function() {
 
-    it('is a unary function', function() {
+    it('is a binary function', function() {
       eq(typeof S.encase, 'function');
-      eq(S.encase.length, 1);
+      eq(S.encase.length, 2);
     });
 
     it('type checks its arguments', function() {
@@ -1028,28 +1079,90 @@ describe('maybe', function() {
                             'as its first argument; received [1, 2, 3]'));
     });
 
-    it('returns a function which returns a Just on success', function() {
-      eq(S.encase(factorial)(5), S.Just(120));
+    it('returns a Just on success', function() {
+      eq(S.encase(factorial, 5), S.Just(120));
     });
 
-    it('returns a function which returns a Nothing on failure', function() {
-      eq(S.encase(factorial)(-1), S.Nothing());
+    it('returns a Nothing on failure', function() {
+      eq(S.encase(factorial, -1), S.Nothing());
     });
 
     it('can be applied to a function of arbitrary arity', function() {
-      var f = S.encase(function(a, b, c, d, e) { return e; });
-      eq(f(1, 2, 3, 4, 5), S.Just(5));
-      eq(f(1)(2)(3)(4)(5), S.Just(5));
+      eq(S.encase(function(a, b, c, d) { return a; }, 42), S.Just(42));
     });
 
-    it('returns a function of appropriate arity', function() {
-      var f = S.encase(function(a, b, c, d, e) { return e; });
-      eq(f.length, 5);
+    it('is curried', function() {
+      eq(S.encase(factorial).length, 1);
+      eq(S.encase(factorial)(5), S.Just(120));
     });
 
-    it('preserves context', function() {
-      var f = S.encase(function() { return this; });
-      eq(f.call({foo: 42}), S.Just({foo: 42}));
+  });
+
+  describe('encase2', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.encase2, 'function');
+      eq(S.encase2.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encase2([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘encase2’ requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns a Just on success', function() {
+      eq(S.encase2(rem, 42, 5), S.Just(2));
+    });
+
+    it('returns a Nothing on failure', function() {
+      eq(S.encase2(rem, 42, 0), S.Nothing());
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      eq(S.encase2(function(a, b, c, d) { return b; }, 0, 42), S.Just(42));
+    });
+
+    it('is curried', function() {
+      eq(S.encase2(rem).length, 2);
+      eq(S.encase2(rem)(42).length, 1);
+      eq(S.encase2(rem)(42)(5), S.Just(2));
+    });
+
+  });
+
+  describe('encase3', function() {
+
+    it('is a quaternary function', function() {
+      eq(typeof S.encase3, 'function');
+      eq(S.encase3.length, 4);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encase3([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘encase3’ requires a value of type Function ' +
+                            'as its first argument; received [1, 2, 3]'));
+    });
+
+    it('returns a Just on success', function() {
+      eq(S.encase3(area, 3, 4, 5), S.Just(6));
+    });
+
+    it('returns a Nothing on failure', function() {
+      eq(S.encase3(area, 2, 2, 5), S.Nothing());
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      eq(S.encase3(function(a, b, c, d) { return c; }, 0, 0, 42), S.Just(42));
+    });
+
+    it('is curried', function() {
+      eq(S.encase3(area).length, 3);
+      eq(S.encase3(area)(3).length, 2);
+      eq(S.encase3(area)(3)(4).length, 1);
+      eq(S.encase3(area)(3)(4)(5), S.Just(6));
     });
 
   });
@@ -1630,9 +1743,9 @@ describe('either', function() {
 
   describe('encaseEither', function() {
 
-    it('is a binary function', function() {
+    it('is a ternary function', function() {
       eq(typeof S.encaseEither, 'function');
-      eq(S.encaseEither.length, 2);
+      eq(S.encaseEither.length, 3);
     });
 
     it('type checks its arguments', function() {
@@ -1641,50 +1754,130 @@ describe('either', function() {
                             '‘encaseEither’ requires a value of type ' +
                             'Function as its first argument; received null'));
 
-      assert.throws(function() { S.encaseEither(R.identity, null); },
+      assert.throws(function() { S.encaseEither(S.I, null); },
                     errorEq(TypeError,
                             '‘encaseEither’ requires a value of type ' +
                             'Function as its second argument; received null'));
     });
 
-    it('returns a function which returns a Right on success', function() {
-      eq(S.encaseEither(R.identity, factorial)(5), S.Right(120));
+    it('returns a Right on success', function() {
+      eq(S.encaseEither(S.I, factorial, 5), S.Right(120));
     });
 
-    it('returns a function which returns a Left on failure', function() {
-      var result = S.encaseEither(R.identity, factorial)(-1);
-      assert(result instanceof S.Left);
-      assert(errorEq(Error,
-                     'Cannot determine factorial of negative number',
-                     result.value));
+    it('returns a Left on failure', function() {
+      eq(S.encaseEither(S.I, factorial, -1),
+         S.Left(new Error('Cannot determine factorial of negative number')));
     });
 
     it('applies the first argument to the Error', function() {
-      eq(S.encaseEither(R.prop('message'), factorial)(-1),
+      eq(S.encaseEither(R.prop('message'), factorial, -1),
          S.Left('Cannot determine factorial of negative number'));
     });
 
     it('can be applied to a function of arbitrary arity', function() {
-      var f = S.encaseEither(R.identity,
-                             function(a, b, c, d, e) { return e; });
-      eq(f(1, 2, 3, 4, 5), S.Right(5));
-      eq(f(1)(2)(3)(4)(5), S.Right(5));
-    });
-
-    it('returns a function of appropriate arity', function() {
-      var f = S.encaseEither(R.identity,
-                             function(a, b, c, d, e) { return e; });
-      eq(f.length, 5);
-    });
-
-    it('preserves context', function() {
-      var f = S.encaseEither(R.identity, function() { return this; });
-      eq(f.call({foo: 42}), S.Right({foo: 42}));
+      eq(S.encaseEither(S.I, function(a, b, c, d) { return a; }, 42),
+         S.Right(42));
     });
 
     it('is curried', function() {
-      eq(S.encaseEither(R.identity).length, 1);
-      eq(S.encaseEither(R.identity)(factorial)(5), S.Right(120));
+      eq(S.encaseEither(S.I).length, 2);
+      eq(S.encaseEither(S.I)(factorial).length, 1);
+      eq(S.encaseEither(S.I)(factorial)(5), S.Right(120));
+    });
+
+  });
+
+  describe('encaseEither2', function() {
+
+    it('is a quaternary function', function() {
+      eq(typeof S.encaseEither2, 'function');
+      eq(S.encaseEither2.length, 4);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encaseEither2(null); },
+                    errorEq(TypeError,
+                            '‘encaseEither2’ requires a value of type ' +
+                            'Function as its first argument; received null'));
+
+      assert.throws(function() { S.encaseEither2(S.I, null); },
+                    errorEq(TypeError,
+                            '‘encaseEither2’ requires a value of type ' +
+                            'Function as its second argument; received null'));
+    });
+
+    it('returns a Right on success', function() {
+      eq(S.encaseEither2(S.I, rem, 42, 5), S.Right(2));
+    });
+
+    it('returns a Left on failure', function() {
+      eq(S.encaseEither2(S.I, rem, 42, 0),
+         S.Left(new Error('Cannot divide by zero')));
+    });
+
+    it('applies the first argument to the Error', function() {
+      eq(S.encaseEither2(R.prop('message'), rem, 42, 0),
+         S.Left('Cannot divide by zero'));
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      eq(S.encaseEither2(S.I, function(a, b, c, d) { return b; }, 0, 42),
+         S.Right(42));
+    });
+
+    it('is curried', function() {
+      eq(S.encaseEither2(S.I).length, 3);
+      eq(S.encaseEither2(S.I)(rem).length, 2);
+      eq(S.encaseEither2(S.I)(rem)(42).length, 1);
+      eq(S.encaseEither2(S.I)(rem)(42)(5), S.Right(2));
+    });
+
+  });
+
+  describe('encaseEither3', function() {
+
+    it('is a quinary function', function() {
+      eq(typeof S.encaseEither3, 'function');
+      eq(S.encaseEither3.length, 5);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.encaseEither3(null); },
+                    errorEq(TypeError,
+                            '‘encaseEither3’ requires a value of type ' +
+                            'Function as its first argument; received null'));
+
+      assert.throws(function() { S.encaseEither3(S.I, null); },
+                    errorEq(TypeError,
+                            '‘encaseEither3’ requires a value of type ' +
+                            'Function as its second argument; received null'));
+    });
+
+    it('returns a Right on success', function() {
+      eq(S.encaseEither3(S.I, area, 3, 4, 5), S.Right(6));
+    });
+
+    it('returns a Left on failure', function() {
+      eq(S.encaseEither3(S.I, area, 2, 2, 5),
+         S.Left(new Error('Impossible triangle')));
+    });
+
+    it('applies the first argument to the Error', function() {
+      eq(S.encaseEither3(R.prop('message'), area, 2, 2, 5),
+         S.Left('Impossible triangle'));
+    });
+
+    it('can be applied to a function of arbitrary arity', function() {
+      eq(S.encaseEither3(S.I, function(a, b, c, d) { return c; }, 0, 0, 42),
+         S.Right(42));
+    });
+
+    it('is curried', function() {
+      eq(S.encaseEither3(S.I).length, 4);
+      eq(S.encaseEither3(S.I)(area).length, 3);
+      eq(S.encaseEither3(S.I)(area)(3).length, 2);
+      eq(S.encaseEither3(S.I)(area)(3)(4).length, 1);
+      eq(S.encaseEither3(S.I)(area)(3)(4)(5), S.Right(6));
     });
 
   });
@@ -1910,6 +2103,49 @@ describe('control', function() {
     it('is curried', function() {
       eq(S.xor([]).length, 1);
       eq(S.xor([])([42]), [42]);
+    });
+
+  });
+
+  describe('ifElse', function() {
+
+    var lt0 = function(x) { return x < 0; };
+
+    it('is a quaternary function', function() {
+      eq(typeof S.ifElse, 'function');
+      eq(S.ifElse.length, 4);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.ifElse('wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+
+      assert.throws(function() { S.ifElse(lt0, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its second argument; received "wrong"'));
+
+      assert.throws(function() { S.ifElse(lt0, Math.abs, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘ifElse’ requires a value of type Function ' +
+                            'as its third argument; received "wrong"'));
+    });
+
+    it('applies the first function when the predicate returns true', function() {
+      eq(S.ifElse(lt0, Math.abs, Math.sqrt, -1), 1);
+    });
+
+    it('applies the second function when the predicate returns false', function() {
+      eq(S.ifElse(lt0, Math.abs, Math.sqrt, 16), 4);
+    });
+
+    it('is curried', function() {
+      eq(S.ifElse(lt0).length, 3);
+      eq(S.ifElse(lt0)(Math.abs).length, 2);
+      eq(S.ifElse(lt0)(Math.abs)(Math.sqrt).length, 1);
+      eq(S.ifElse(lt0)(Math.abs)(Math.sqrt)(-1), 1);
     });
 
   });
@@ -2934,6 +3170,72 @@ describe('regexp', function() {
     it('is curried', function() {
       eq(S.regex('').length, 1);
       eq(S.regex('')('\\d'), /\d/);
+    });
+
+  });
+
+  describe('regexEscape', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.regexEscape, 'function');
+      eq(S.regexEscape.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.regexEscape(/(?:)/); },
+                    errorEq(TypeError,
+                            '‘regexEscape’ requires a value of type String ' +
+                            'as its first argument; received /(?:)/'));
+    });
+
+    it('escapes regular expression metacharacters', function() {
+      eq(S.regexEscape('-=*{XYZ}*=-'), '\\-=\\*\\{XYZ\\}\\*=\\-');
+    });
+
+    it('property: test(regex("", regexEscape(s)), s)', function() {
+      jsc.assert(jsc.forall(jsc.string, function(s) {
+        return S.test(S.regex('', S.regexEscape(s)), s);
+      }), {tests: 1000});
+    });
+
+    it('property: test(regex("", "^" + regexEscape(s) + "$"), s)', function() {
+      jsc.assert(jsc.forall(jsc.string, function(s) {
+        return S.test(S.regex('', '^' + S.regexEscape(s) + '$'), s);
+      }), {tests: 1000});
+    });
+
+  });
+
+  describe('test', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.test, 'function');
+      eq(S.test.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.test('^a'); },
+                    errorEq(TypeError,
+                            '‘test’ requires a value of type RegExp ' +
+                            'as its first argument; received "^a"'));
+
+      assert.throws(function() { S.test(/^a/, [1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘test’ requires a value of type String ' +
+                            'as its second argument; received [1, 2, 3]'));
+    });
+
+    it('returns true if pattern matches string', function() {
+      eq(S.test(/^a/, 'abacus'), true);
+    });
+
+    it('returns false if pattern does not match string', function() {
+      eq(S.test(/^a/, 'banana'), false);
+    });
+
+    it('is curried', function() {
+      eq(S.test(/^a/).length, 1);
+      eq(S.test(/^a/)('abacus'), true);
     });
 
   });

@@ -150,7 +150,7 @@
                        R.nth(_, ['zero', 'one', 'two', 'three', 'four', 'five',
                                  'six', 'seven', 'eight', 'nine', 'ten']),
                        String),
-    '{ord}': R.nth(_, ['first', 'second', 'third']),
+    '{ord}': R.nth(_, ['first', 'second', 'third', 'fourth', 'fifth']),
     '{quote}': function(s) { return '\u2018' + s + '\u2019'; },
     '{repr}': R.toString,
     '{type}': functionName
@@ -212,6 +212,8 @@
       case 1: return function(a) { return f.apply(this, arguments); };
       case 2: return function(a, b) { return f.apply(this, arguments); };
       case 3: return function(a, b, c) { return f.apply(this, arguments); };
+      case 4: return function(a, b, c, d) { return f.apply(this, arguments); };
+      case 5: return function(a, b, c, d, e) { return f.apply(this, arguments); };
     }
   };
 
@@ -399,6 +401,23 @@
   //. [42, 42, 42, 42, 42]
   //. ```
   S.K = def('K', [a, b], function(x, y) { return x; });
+
+  //. ### Function
+
+  //# flip :: (a -> b -> c) -> b -> a -> c
+  //.
+  //. Takes a binary function and two values and returns the result of
+  //. applying the function - with its argument order reversed - to the
+  //. values. `flip` may also be applied to functions with an arity
+  //. greater than two that have been appropriately curried.
+  //.
+  //. ```javascript
+  //. > R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
+  //. [1, 4, 9, 16, 25]
+  //. ```
+  S.flip = def('flip', [Function, a, b], function(f, x, y) {
+    return f(y, x);
+  });
 
   //. ### Composition
 
@@ -737,6 +756,22 @@
   //. 'Just([1, 2, 3])'
   //. ```
 
+  //# Maybe#inspect :: Maybe a ~> String
+  //.
+  //. Returns the string representation of the Maybe. This method is used by
+  //. `util.inspect` and the REPL to format a Maybe for display.
+  //.
+  //. See also [`Maybe#toString`](#Maybe.prototype.toString).
+  //.
+  //. ```javascript
+  //. > S.Nothing().inspect()
+  //. 'Nothing()'
+  //.
+  //. > S.Just([1, 2, 3]).inspect()
+  //. 'Just([1, 2, 3])'
+  //. ```
+  Maybe.prototype.inspect = function() { return this.toString(); };
+
   //# Nothing :: -> Maybe a
   //.
   //. Returns a Nothing. Though this is a constructor function the `new`
@@ -971,30 +1006,50 @@
   //. ```
   S.mapMaybe = def('mapMaybe', [Function, List], R.compose(catMaybes, R.map));
 
-  //# encase :: (* -> a) -> (* -> Maybe a)
+  //# encase :: (a -> b) -> a -> Maybe b
   //.
-  //. Takes a function `f` which may throw and returns a curried function
-  //. `g` which will not throw. The result of applying `g` is determined by
-  //. applying `f` to the same arguments: if this succeeds, `g` returns Just
-  //. the result; otherwise `g` returns Nothing.
+  //. Takes a unary function `f` which may throw and a value `x` of any type,
+  //. and applies `f` to `x` inside a `try` block. If an exception is caught,
+  //. the return value is a Nothing; otherwise the return value is Just the
+  //. result of applying `f` to `x`.
   //.
   //. See also [`encaseEither`](#encaseEither).
   //.
   //. ```javascript
-  //. > S.encase(eval)('1 + 1')
+  //. > S.encase(eval, '1 + 1')
   //. Just(2)
   //.
-  //. > S.encase(eval)('1 +')
+  //. > S.encase(eval, '1 +')
   //. Nothing()
   //. ```
-  var encase = S.encase = def('encase', [Function], function(f) {
-    return R.curryN(f.length, function() {
-      try {
-        return Just(f.apply(this, arguments));
-      } catch (err) {
-        return Nothing();
-      }
-    });
+  var encase = S.encase = def('encase', [Function, a], function(f, x) {
+    try {
+      return Just(f(x));
+    } catch (err) {
+      return Nothing();
+    }
+  });
+
+  //# encase2 :: (a -> b -> c) -> a -> b -> Maybe c
+  //.
+  //. Binary version of [`encase`](#encase).
+  S.encase2 = def('encase2', [Function, a, b], function(f, x, y) {
+    try {
+      return Just(f(x, y));
+    } catch (err) {
+      return Nothing();
+    }
+  });
+
+  //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
+  //.
+  //. Ternary version of [`encase`](#encase).
+  S.encase3 = def('encase3', [Function, a, b, c], function(f, x, y, z) {
+    try {
+      return Just(f(x, y, z));
+    } catch (err) {
+      return Nothing();
+    }
   });
 
   //. ### Either type
@@ -1204,6 +1259,22 @@
   //. 'Right([1, 2, 3])'
   //. ```
 
+  //# Either#inspect :: Either a b ~> String
+  //.
+  //. Returns the string representation of the Either. This method is used by
+  //. `util.inspect` and the REPL to format a Either for display.
+  //.
+  //. See also [`Either#toString`](#Either.prototype.toString).
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').inspect()
+  //. 'Left("Cannot divide by zero")'
+  //.
+  //. > S.Right([1, 2, 3]).inspect()
+  //. 'Right([1, 2, 3])'
+  //. ```
+  Either.prototype.inspect = function() { return this.toString(); };
+
   //# Left :: a -> Either a b
   //.
   //. Takes a value of any type and returns a Left with the given value.
@@ -1367,36 +1438,57 @@
     return either.isLeft ? l(either.value) : r(either.value);
   });
 
-  //# encaseEither :: (Error -> a) -> (* -> b) -> (* -> Either a b)
+  //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
-  //. Takes two functions, `f` and `g`, the second of which may throw,
-  //. and returns a curried function of the same arity as `g` which will
-  //. not throw. The result of applying this function is determined by
-  //. applying `g` to the same arguments: if this succeeds, the return
-  //. value is a Right whose value is the result; otherwise the return
-  //. value is a Left whose value is the result of applying `f` to the
-  //. caught Error object.
+  //. Takes two unary functions, `f` and `g`, the second of which may throw,
+  //. and a value `x` of any type. Applies `g` to `x` inside a `try` block.
+  //. If an exception is caught, the return value is a Left containing the
+  //. result of applying `f` to the caught Error object; otherwise the return
+  //. value is a Right containing the result of applying `g` to `x`.
   //.
   //. See also [`encase`](#encase).
   //.
   //. ```javascript
-  //. > S.encaseEither(R.identity, Array)(0)
-  //. Right([])
+  //. > S.encaseEither(S.I, JSON.parse, '["foo","bar","baz"]')
+  //. Right(['foo', 'bar', 'baz'])
   //.
-  //. > S.encaseEither(R.identity, Array)(-1)
-  //. Left(new RangeError('Invalid array length'))
+  //. > S.encaseEither(S.I, JSON.parse, '[')
+  //. Left(new SyntaxError('Unexpected end of input'))
   //.
-  //. > S.encaseEither(R.prop('message'), Array)(-1)
-  //. Left('Invalid array length')
+  //. > S.encaseEither(R.prop('message'), JSON.parse, '[')
+  //. Left('Unexpected end of input')
   //. ```
-  S.encaseEither = def('encaseEither', [Function, Function], function(f, g) {
-    return R.curryN(g.length, function() {
-      try {
-        return Right(g.apply(this, arguments));
-      } catch (err) {
-        return Left(f(err));
-      }
-    });
+  S.encaseEither =
+  def('encaseEither', [Function, Function, a], function(f, g, x) {
+    try {
+      return Right(g(x));
+    } catch (err) {
+      return Left(f(err));
+    }
+  });
+
+  //# encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r
+  //.
+  //. Binary version of [`encaseEither`](#encaseEither).
+  S.encaseEither2 =
+  def('encaseEither2', [Function, Function, a, b], function(f, g, x, y) {
+    try {
+      return Right(g(x, y));
+    } catch (err) {
+      return Left(f(err));
+    }
+  });
+
+  //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
+  //.
+  //. Ternary version of [`encaseEither`](#encaseEither).
+  S.encaseEither3 =
+  def('encaseEither3', [Function, Function, a, b, c], function(f, g, x, y, z) {
+    try {
+      return Right(g(x, y, z));
+    } catch (err) {
+      return Left(f(err));
+    }
   });
 
   //# maybeToEither :: a -> Maybe b -> Either a b
@@ -1495,6 +1587,25 @@
     var yBool = toBoolean(y);
     var xEmpty = empty(x);
     return xBool !== yBool ? or(x, y) : xEmpty;
+  });
+
+  //# ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b
+  //.
+  //. Takes a unary predicate, a unary "if" function, a unary "else"
+  //. function, and a value of any type, and returns the result of
+  //. applying the "if" function to the value if the value satisfies
+  //. the predicate; the result of applying the "else" function to the
+  //. value otherwise.
+  //.
+  // ```javascript
+  //. > S.ifElse(x => x < 0, Math.abs, Math.sqrt, -1)
+  //. 1
+  //.
+  //. > S.ifElse(x => x < 0, Math.abs, Math.sqrt, 16)
+  //. 4
+  //. ```
+  S.ifElse = def('ifElse', [Function, Function, Function, a], function(pred, f, g, x) {
+    return pred(x) ? f(x) : g(x);
   });
 
   //. ### List
@@ -1996,9 +2107,7 @@
   //. > S.parseJson('[')
   //. Nothing()
   //. ```
-  S.parseJson = def('parseJson', [String], encase(function(s) {
-    return JSON.parse(s);
-  }));
+  S.parseJson = def('parseJson', [String], encase(JSON.parse));
 
   //. ### RegExp
 
@@ -2013,6 +2122,39 @@
   //. ```
   S.regex = def('regex', [RegexFlags, String], function(flags, source) {
     return new RegExp(source, flags);
+  });
+
+  //# regexEscape :: String -> String
+  //.
+  //. Takes a string which may contain regular expression metacharacters,
+  //. and returns a string with those metacharacters escaped.
+  //.
+  //. Properties:
+  //.
+  //.   - `forall s :: String. S.test(S.regex('', S.regexEscape(s)), s) = true`
+  //.
+  //. ```javascript
+  //. > S.regexEscape('-=*{XYZ}*=-')
+  //. '\\-=\\*\\{XYZ\\}\\*=\\-'
+  //. ```
+  S.regexEscape = def('regexEscape', [String], function(s) {
+    return s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  });
+
+  //# test :: RegExp -> String -> Boolean
+  //.
+  //. Takes a pattern and a string, and returns `true` if the pattern
+  //. matches the string; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.test(/^a/, 'abacus')
+  //. true
+  //.
+  //. > S.test(/^a/, 'banana')
+  //. false
+  //. ```
+  S.test = def('test', [RegExp, String], function(pattern, s) {
+    return pattern.test(s);
   });
 
   //# match :: RegExp -> String -> Maybe [Maybe String]
