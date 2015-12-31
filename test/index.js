@@ -1916,6 +1916,31 @@ describe('either', function() {
 
 describe('control', function() {
 
+  describe('not', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.not, 'function');
+      eq(S.not.length, 1);
+    });
+
+    it('can be applied to Booleans', function() {
+      eq(S.not(false), true);
+      eq(S.not(true), false);
+      // jshint -W053
+      eq(S.not(new Boolean(false)), true);
+      eq(S.not(new Boolean(true)), false);
+      // jshint +W053
+    });
+
+    it('throws when applied to a non-Boolean value', function() {
+      assert.throws(function() { S.not(0); },
+                    errorEq(TypeError,
+                            '‘not’ requires a value of type Boolean ' +
+                            'as its first argument; received 0'));
+    });
+
+  });
+
   describe('and', function() {
 
     it('is a binary function', function() {

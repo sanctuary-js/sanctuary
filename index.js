@@ -1529,6 +1529,22 @@
     }
   };
 
+  //# not :: Boolean -> Boolean
+  //.
+  //. Takes a Boolean and returns the negation of that value
+  //. (`false` for `true`; `true` for `false`).
+  //.
+  //. ```javascript
+  //. > S.not(true)
+  //. false
+  //.
+  //. > S.not(false)
+  //. true
+  //. ```
+  S.not = def('not', [Boolean], function(x) {
+    return !x.valueOf();
+  });
+
   //# and :: a -> a -> a
   //.
   //. Takes two values of the same type and returns the second value
