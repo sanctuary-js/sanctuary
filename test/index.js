@@ -394,6 +394,49 @@ describe('composition', function() {
 
   });
 
+  describe('converge', function() {
+
+    it('is a quaternary function', function() {
+      eq(typeof S.converge, 'function');
+      eq(S.converge.length, 4);
+    });
+
+    it('it transforms the value and passes the results to the first function',
+       function() {
+       eq(S.converge(Math.pow, R.inc, R.dec, 4), 125);
+       eq(S.converge(S.and, S.head, S.at(2), ['a', 'b', 'c', 'd']),
+          S.Just('c'));
+       eq(S.converge(S.and, S.head, S.at(10), ['a', 'b', 'c', 'd']),
+          S.Nothing());
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.converge('wrong'); },
+                    errorEq(TypeError,
+                            '‘converge’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+
+      assert.throws(function() { S.converge(S.and, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘converge’ requires a value of type Function ' +
+                            'as its second argument; received "wrong"'));
+
+      assert.throws(function() { S.converge(S.and, S.head, 'wrong'); },
+                    errorEq(TypeError,
+                            '‘converge’ requires a value of type Function ' +
+                            'as its third argument; received "wrong"'));
+    });
+
+    it('is curried', function() {
+      eq(S.converge(S.and).length, 3);
+      eq(S.converge(S.and)(S.head).length, 2);
+      eq(S.converge(S.and)(S.head)(S.at(2)).length, 1);
+      eq(S.converge(S.and)(S.head)(S.at(2))(['a', 'b', 'c', 'd']),
+         S.Just('c'));
+    });
+
+  });
+
 });
 
 describe('maybe', function() {
