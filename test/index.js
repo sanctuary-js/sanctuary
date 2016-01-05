@@ -293,6 +293,87 @@ describe('function', function() {
 
   });
 
+  describe('lift', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.lift, 'function');
+      eq(S.lift.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.lift('wrong'); },
+                    errorEq(TypeError,
+                            '‘lift’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+    });
+
+    it('lifts a function into the context of Functors', function() {
+      eq(S.lift(R.multiply(2), S.Just(3)), S.Just(6));
+      eq(S.lift(R.multiply(2), S.Nothing()), S.Nothing());
+
+      eq(S.lift(R.multiply(2), S.Left(3)), S.Left(3));
+      eq(S.lift(R.multiply(2), S.Right(3)), S.Right(6));
+
+      eq(S.lift(R.multiply(2), [1, 2, 3]), [2, 4, 6]);
+      eq(S.lift(R.multiply(2), []), []);
+    });
+
+  });
+
+  describe('lift2', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.lift2, 'function');
+      eq(S.lift2.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.lift2('wrong'); },
+                    errorEq(TypeError,
+                            '‘lift2’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+    });
+
+    it('lifts a function into the context of Applys', function() {
+      eq(S.lift2(R.add, S.Just(3), S.Just(3)), S.Just(6));
+      eq(S.lift2(R.add, S.Nothing(), S.Just(3)), S.Nothing());
+
+      eq(S.lift2(R.add, S.Right(3), S.Left(4)), S.Left(4));
+      eq(S.lift2(R.add, S.Right(3), S.Right(4)), S.Right(7));
+
+      eq(S.lift2(R.add, [1, 2], [10, 20]), [11, 21, 12, 22]);
+      eq(S.lift2(R.add, [], [1, 2]), []);
+    });
+
+  });
+
+  describe('lift3', function() {
+
+    it('is a quaternary function', function() {
+      eq(typeof S.lift3, 'function');
+      eq(S.lift3.length, 4);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.lift3('wrong'); },
+                    errorEq(TypeError,
+                            '‘lift3’ requires a value of type Function ' +
+                            'as its first argument; received "wrong"'));
+    });
+
+    it('lifts a function into the context of Applys', function() {
+      eq(S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3])), S.Just(6));
+      eq(S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Nothing()), S.Nothing());
+
+      eq(S.lift3(R.reduce, S.Right(R.add), S.Right(0), S.Right([1, 2, 3])), S.Right(6));
+      eq(S.lift3(R.reduce, S.Right(R.add), S.Right(0), S.Left('WHOOPS')), S.Left('WHOOPS'));
+
+      eq(S.lift3(R.reduce, [R.add], [0], [[1, 2, 3]]), [6]);
+      eq(S.lift3(R.reduce, [R.add], [0], []), []);
+    });
+
+  });
+
 });
 
 describe('composition', function() {

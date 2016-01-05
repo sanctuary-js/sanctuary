@@ -419,6 +419,57 @@
     return f(y, x);
   });
 
+  //# lift :: Functor f => (a -> b) -> f a -> f b
+  //.
+  //. Promotes a unary function to a function which operates on a [Functor][].
+  //.
+  //. ```javascript
+  //. > S.lift(R.inc, S.Just(2))
+  //. S.Just(3)
+  //.
+  //. > S.lift(R.inc, S.Nothing())
+  //. S.Nothing()
+  //. ```
+  S.lift = def('lift', [Function, a], R.map);
+
+  //# lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
+  //.
+  //. Promotes a binary function to a function which operates on two
+  //. [Apply][]s.
+  //.
+  //. ```javascript
+  //. > S.lift2(R.add, S.Just(2), S.Just(3))
+  //. S.Just(5)
+  //.
+  //. > S.lift2(R.add, S.Just(2), S.Nothing())
+  //. S.Nothing()
+  //.
+  //. > S.lift2(S.and, S.Just(true), S.Just(true))
+  //. S.Just(true)
+  //.
+  //. > S.lift2(S.and, S.Just(true), S.Just(false))
+  //. S.Just(false)
+  //. ```
+  S.lift2 = def('lift2', [Function, a, b], function(f, x, y) {
+    return R.ap(R.map(f, x), y);
+  });
+
+  //# lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+  //.
+  //. Promotes a ternary function to a function which operates on three
+  //. [Apply][]s.
+  //.
+  //. ```javascript
+  //. > S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3]))
+  //. S.Just(6)
+  //.
+  //. > S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Nothing())
+  //. S.Nothing()
+  //. ```
+  S.lift3 = def('lift3', [Function, a, b, c], function(f, x, y, z) {
+    return R.ap(R.ap(R.map(f, x), y), z);
+  });
+
   //. ### Composition
 
   //# compose :: (b -> c) -> (a -> b) -> a -> c
@@ -2296,8 +2347,10 @@
 
 }));
 
+//. [Apply]:        https://github.com/fantasyland/fantasy-land#apply
 //. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
 //. [Foldable]:     https://github.com/fantasyland/fantasy-land#foldable
+//. [Functor]:      https://github.com/fantasyland/fantasy-land#functor
 //. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 //. [R.equals]:     http://ramdajs.com/docs/#equals
