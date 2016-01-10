@@ -2263,7 +2263,10 @@
   //. false
   //. ```
   S.test = def('test', [RegExp, String], function(pattern, s) {
-    return pattern.test(s);
+    var lastIndex = pattern.lastIndex;
+    var result = pattern.test(s);
+    pattern.lastIndex = lastIndex;
+    return result;
   });
 
   //# match :: RegExp -> String -> Maybe [Maybe String]
