@@ -3497,6 +3497,14 @@ describe('regexp', function() {
       eq(S.test(/^a/, 'banana'), false);
     });
 
+    it('is referentially transparent', function() {
+      var pattern = /x/g;
+      eq(pattern.lastIndex, 0);
+      eq(S.test(pattern, 'xyz'), true);
+      eq(pattern.lastIndex, 0);
+      eq(S.test(pattern, 'xyz'), true);
+    });
+
     it('is curried', function() {
       eq(S.test(/^a/).length, 1);
       eq(S.test(/^a/)('abacus'), true);
