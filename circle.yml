@@ -11,7 +11,6 @@ test:
     - make lint
     - make test
     - nvm install 0.12.7
-    - nvm alias default 0.12.7
-    - make test
-    - nvm use 4 && make test
-    - nvm use 5 && make test
+    - nvm use 0.12.7 && rm -r node_modules && make setup test
+    - nvm use 4 && rm -r node_modules && make setup test
+    - nvm use 5 && rm -r node_modules && make setup test

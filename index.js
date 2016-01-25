@@ -2310,7 +2310,7 @@
                           R.all(R.pipe(R.toUpper,
                                        R.indexOf(_, charset),
                                        R.gte(_, 0))))),
-          R.map(R.partialRight(parseInt, radix)),
+          R.map(R.partialRight(parseInt, [radix])),
           R.filter(Integer.test)
         )(s);
       });
