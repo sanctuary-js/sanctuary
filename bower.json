@@ -24,7 +24,8 @@
     "types"
   ],
   "dependencies": {
-    "ramda": "0.17.x"
+    "ramda": "0.19.x",
+    "sanctuary-def": "0.3.x"
   },
   "ignore": [
     "/.git/",
