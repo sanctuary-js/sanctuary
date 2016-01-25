@@ -49,6 +49,13 @@ _When the `map` method is invoked on a value of type `Maybe a`
 (for any type `a`) with an argument of type `a -> b` (for any type `b`),
 it returns a value of type `Maybe b`._
 
+Sanctuary supports type classes: constraints on type variables. Whereas
+`a -> a` implicitly supports every type, `Functor f => (a -> b) -> f a ->
+f b` requires that `f` be a type which satisfies the requirements of the
+Functor type class. Type-class constraints appear at the beginning of a
+type signature, separated from the rest of the signature by a fat arrow
+(`=>`).
+
 ### Accessible pseudotype
 
 What is the type of values which support property access? In other words,
@@ -89,23 +96,37 @@ For example:
 
 ### Classify
 
-<h4 name="is"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L305">is :: TypeRep a -> b -> Boolean</a></code></h4>
+<h4 name="type"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L286">type :: a -> String</a></code></h4>
+
+Takes a value, `x`, of any type and returns its type identifier. If
+`x` has a `'@@type'` property whose value is a string, `x['@@type']`
+is the type identifier. Otherwise, the type identifier is the result
+of applying [`R.type`][R.type] to `x`.
+
+`'@@type'` properties should use the form `'<package-name>/<type-name>'`,
+where `<package-name>` is the name of the npm package in which the type
+is defined.
+
+```javascript
+> S.type(S.Just(42))
+'sanctuary/Maybe'
+
+> S.type([1, 2, 3])
+'Array'
+```
+
+<h4 name="is"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L310">is :: TypeRep a -> b -> Boolean</a></code></h4>
 
 Takes a [type representative](#type-representatives) and a value of
 any type and returns `true` if the given value is of the specified
-type (either directly or via the prototype chain); `false` otherwise.
-
-Boolean, number, string, and symbol [primitives][] are promoted to
-their object equivalents. `42`, for example, is considered a Number
-and an Object (whereas [`R.is`][R.is] considers it a Number but not
-an Object).
+type; `false` otherwise. Subtyping is not respected.
 
 ```javascript
 > S.is(Number, 42)
 true
 
 > S.is(Object, 42)
-true
+false
 
 > S.is(String, 42)
 false
@@ -113,32 +134,90 @@ false
 
 ### Combinator
 
-<h4 name="I"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L330">I :: a -> a</a></code></h4>
+<h4 name="I"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L340">I :: a -> a</a></code></h4>
 
 The I combinator. Returns its argument. Equivalent to Haskell's `id`
 function.
 
 ```javascript
 > S.I('foo')
-"foo"
+'foo'
 ```
 
-<h4 name="K"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L341">K :: a -> b -> a</a></code></h4>
+<h4 name="K"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L355">K :: a -> b -> a</a></code></h4>
 
 The K combinator. Takes two values and returns the first. Equivalent to
 Haskell's `const` function.
 
 ```javascript
 > S.K('foo', 'bar')
-"foo"
+'foo'
 
 > R.map(S.K(42), R.range(0, 5))
 [42, 42, 42, 42, 42]
 ```
 
+### Function
+
+<h4 name="flip"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L375">flip :: (a -> b -> c) -> b -> a -> c</a></code></h4>
+
+Takes a binary function and two values and returns the result of
+applying the function - with its argument order reversed - to the
+values. `flip` may also be applied to a Ramda-style curried
+function with arity greater than two.
+
+```javascript
+> R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
+[1, 4, 9, 16, 25]
+```
+
+<h4 name="lift"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L392">lift :: Functor f => (a -> b) -> f a -> f b</a></code></h4>
+
+Promotes a unary function to a function which operates on a [Functor][].
+
+```javascript
+> S.lift(R.inc, S.Just(2))
+S.Just(3)
+
+> S.lift(R.inc, S.Nothing())
+S.Nothing()
+```
+
+<h4 name="lift2"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L409">lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c</a></code></h4>
+
+Promotes a binary function to a function which operates on two
+[Apply][]s.
+
+```javascript
+> S.lift2(R.add, S.Just(2), S.Just(3))
+S.Just(5)
+
+> S.lift2(R.add, S.Just(2), S.Nothing())
+S.Nothing()
+
+> S.lift2(S.and, S.Just(true), S.Just(true))
+S.Just(true)
+
+> S.lift2(S.and, S.Just(true), S.Just(false))
+S.Just(false)
+```
+
+<h4 name="lift3"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L433">lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d</a></code></h4>
+
+Promotes a ternary function to a function which operates on three
+[Apply][]s.
+
+```javascript
+> S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3]))
+S.Just(6)
+
+> S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Nothing())
+S.Nothing()
+```
+
 ### Composition
 
-<h4 name="compose"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L359">compose :: (b -> c) -> (a -> b) -> a -> c</a></code></h4>
+<h4 name="compose"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L453">compose :: (b -> c) -> (a -> b) -> a -> c</a></code></h4>
 
 Takes two functions assumed to be unary and a value of any type,
 and returns the result of applying the first function to the result
@@ -154,7 +233,7 @@ See also [`pipe`](#pipe).
 10
 ```
 
-<h4 name="pipe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L379">pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n</a></code></h4>
+<h4 name="pipe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L474">pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n</a></code></h4>
 
 Takes a list of functions assumed to be unary and a value of any type,
 and returns the result of applying the sequence of transformations to
@@ -170,7 +249,7 @@ See also [`meld`](#meld).
 9
 ```
 
-<h4 name="meld"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L398">meld :: [** -> *] -> (* -> * -> ... -> *)</a></code></h4>
+<h4 name="meld"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L495">meld :: [** -> *] -> (* -> * -> ... -> *)</a></code></h4>
 
 Takes a list of non-nullary functions and returns a curried function
 whose arity is one greater than the sum of the arities of the given
@@ -199,7 +278,7 @@ See also [`pipe`](#pipe).
 
 ### Maybe type
 
-<h4 name="Maybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L436">Maybe :: TypeRep Maybe</a></code></h4>
+<h4 name="Maybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L538">Maybe :: TypeRep Maybe</a></code></h4>
 
 The Maybe type represents optional values: a value of type `Maybe a` is
 either a Just whose value is of type `a` or a Nothing (with no value).
@@ -207,7 +286,7 @@ either a Just whose value is of type `a` or a Nothing (with no value).
 The Maybe type satisfies the [Monoid][], [Monad][], [Foldable][], and
 [Extend][] specifications.
 
-<h4 name="Maybe.empty"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L447">Maybe.empty :: -> Maybe a</a></code></h4>
+<h4 name="Maybe.empty"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L551">Maybe.empty :: -> Maybe a</a></code></h4>
 
 Returns a Nothing.
 
@@ -216,7 +295,7 @@ Returns a Nothing.
 Nothing()
 ```
 
-<h4 name="Maybe.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L459">Maybe.of :: a -> Maybe a</a></code></h4>
+<h4 name="Maybe.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L565">Maybe.of :: a -> Maybe a</a></code></h4>
 
 Takes a value of any type and returns a Just with the given value.
 
@@ -225,7 +304,35 @@ Takes a value of any type and returns a Just with the given value.
 Just(42)
 ```
 
-<h4 name="Maybe.prototype.ap"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L471">Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b</a></code></h4>
+<h4 name="Maybe.prototype.@@type"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L579">Maybe#@@type :: String</a></code></h4>
+
+Maybe type identifier, `'sanctuary/Maybe'`.
+
+<h4 name="Maybe.prototype.isNothing"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L584">Maybe#isNothing :: Boolean</a></code></h4>
+
+`true` if `this` is a Nothing; `false` if `this` is a Just.
+
+```javascript
+> S.Nothing().isNothing
+true
+
+> S.Just(42).isNothing
+false
+```
+
+<h4 name="Maybe.prototype.isJust"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L596">Maybe#isJust :: Boolean</a></code></h4>
+
+`true` if `this` is a Just; `false` if `this` is a Nothing.
+
+```javascript
+> S.Just(42).isJust
+true
+
+> S.Nothing().isJust
+false
+```
+
+<h4 name="Maybe.prototype.ap"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L608">Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b</a></code></h4>
 
 Takes a value of type `Maybe a` and returns a Nothing unless `this`
 is a Just *and* the argument is a Just, in which case it returns a
@@ -243,7 +350,7 @@ Nothing()
 Just(43)
 ```
 
-<h4 name="Maybe.prototype.chain"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L489">Maybe#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b</a></code></h4>
+<h4 name="Maybe.prototype.chain"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L631">Maybe#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Nothing; otherwise
 it returns the result of applying the function to this Just's value.
@@ -259,7 +366,7 @@ Nothing()
 Just(12.34)
 ```
 
-<h4 name="Maybe.prototype.concat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L505">Maybe#concat :: Maybe a ~> Maybe a -> Maybe a</a></code></h4>
+<h4 name="Maybe.prototype.concat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L652">Maybe#concat :: Semigroup a => Maybe a ~> Maybe a -> Maybe a</a></code></h4>
 
 Returns the result of concatenating two Maybe values of the same type.
 `a` must have a [Semigroup][] (indicated by the presence of a `concat`
@@ -288,7 +395,7 @@ Just([1, 2, 3])
 Just([1, 2, 3])
 ```
 
-<h4 name="Maybe.prototype.empty"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L534">Maybe#empty :: Maybe a ~> Maybe a</a></code></h4>
+<h4 name="Maybe.prototype.empty"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L689">Maybe#empty :: Maybe a ~> Maybe a</a></code></h4>
 
 Returns a Nothing.
 
@@ -297,7 +404,7 @@ Returns a Nothing.
 Nothing()
 ```
 
-<h4 name="Maybe.prototype.equals"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L544">Maybe#equals :: Maybe a ~> b -> Boolean</a></code></h4>
+<h4 name="Maybe.prototype.equals"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L703">Maybe#equals :: Maybe a ~> b -> Boolean</a></code></h4>
 
 Takes a value of any type and returns `true` if:
 
@@ -323,34 +430,34 @@ false
 false
 ```
 
-<h4 name="Maybe.prototype.extend"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L570">Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a</a></code></h4>
+<h4 name="Maybe.prototype.extend"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L738">Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Nothing; otherwise
 it returns a Just whose value is the result of applying the function to
 `this`.
 
 ```javascript
-> S.Nothing().extend(function(x) { return x.value + 1; })
+> S.Nothing().extend(x => x.value + 1)
 Nothing()
 
-> S.Just(42).extend(function(x) { return x.value + 1; })
+> S.Just(42).extend(x => x.value + 1)
 Just(43)
 ```
 
-<h4 name="Maybe.prototype.filter"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L584">Maybe#filter :: Maybe a ~> (a -> Boolean) -> Maybe a</a></code></h4>
+<h4 name="Maybe.prototype.filter"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L757">Maybe#filter :: Maybe a ~> (a -> Boolean) -> Maybe a</a></code></h4>
 
 Takes a predicate and returns `this` if `this` is a Just whose value
 satisfies the predicate; Nothing otherwise.
 
 ```javascript
-> S.Just(42).filter(function(n) { return n % 2 === 0; })
+> S.Just(42).filter(n => n % 2 === 0)
 Just(42)
 
-> S.Just(43).filter(function(n) { return n % 2 === 0; })
+> S.Just(43).filter(n => n % 2 === 0)
 Nothing()
 ```
 
-<h4 name="Maybe.prototype.map"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L600">Maybe#map :: Maybe a ~> (a -> b) -> Maybe b</a></code></h4>
+<h4 name="Maybe.prototype.map"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L775">Maybe#map :: Maybe a ~> (a -> b) -> Maybe b</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Nothing; otherwise
 it returns a Just whose value is the result of applying the function to
@@ -364,7 +471,7 @@ Nothing()
 Just(6)
 ```
 
-<h4 name="Maybe.prototype.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L614">Maybe#of :: Maybe a ~> b -> Maybe b</a></code></h4>
+<h4 name="Maybe.prototype.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L796">Maybe#of :: Maybe a ~> b -> Maybe b</a></code></h4>
 
 Takes a value of any type and returns a Just with the given value.
 
@@ -373,7 +480,7 @@ Takes a value of any type and returns a Just with the given value.
 Just(42)
 ```
 
-<h4 name="Maybe.prototype.reduce"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L624">Maybe#reduce :: Maybe a ~> (b -> a -> b) -> b -> b</a></code></h4>
+<h4 name="Maybe.prototype.reduce"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L810">Maybe#reduce :: Maybe a ~> (b -> a -> b) -> b -> b</a></code></h4>
 
 Takes a function and an initial value of any type, and returns:
 
@@ -390,7 +497,7 @@ Takes a function and an initial value of any type, and returns:
 15
 ```
 
-<h4 name="Maybe.prototype.toBoolean"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L641">Maybe#toBoolean :: Maybe a ~> Boolean</a></code></h4>
+<h4 name="Maybe.prototype.toBoolean"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L834">Maybe#toBoolean :: Maybe a ~> Boolean</a></code></h4>
 
 Returns `false` if `this` is a Nothing; `true` if `this` is a Just.
 
@@ -402,24 +509,34 @@ false
 true
 ```
 
-<h4 name="Maybe.prototype.toString"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L653">Maybe#toString :: Maybe a ~> String</a></code></h4>
+<h4 name="Maybe.prototype.toString"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L851">Maybe#toString :: Maybe a ~> String</a></code></h4>
 
 Returns the string representation of the Maybe.
 
 ```javascript
 > S.Nothing().toString()
-"Nothing()"
+'Nothing()'
 
 > S.Just([1, 2, 3]).toString()
-"Just([1, 2, 3])"
+'Just([1, 2, 3])'
 ```
 
-<h4 name="Maybe.prototype.type"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L665">Maybe#type :: TypeRep Maybe</a></code></h4>
+<h4 name="Maybe.prototype.inspect"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L871">Maybe#inspect :: Maybe a ~> String</a></code></h4>
 
-A reference to the Maybe type. Useful for determining whether two
-values such as `S.Nothing()` and `S.Just(42)` are of the same type.
+Returns the string representation of the Maybe. This method is used by
+`util.inspect` and the REPL to format a Maybe for display.
 
-<h4 name="Nothing"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L671">Nothing :: -> Maybe a</a></code></h4>
+See also [`Maybe#toString`](#Maybe.prototype.toString).
+
+```javascript
+> S.Nothing().inspect()
+'Nothing()'
+
+> S.Just([1, 2, 3]).inspect()
+'Just([1, 2, 3])'
+```
+
+<h4 name="Nothing"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L887">Nothing :: -> Maybe a</a></code></h4>
 
 Returns a Nothing. Though this is a constructor function the `new`
 keyword needn't be used.
@@ -429,7 +546,7 @@ keyword needn't be used.
 Nothing()
 ```
 
-<h4 name="Just"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L721">Just :: a -> Maybe a</a></code></h4>
+<h4 name="Just"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L903">Just :: a -> Maybe a</a></code></h4>
 
 Takes a value of any type and returns a Just with the given value.
 Though this is a constructor function the `new` keyword needn't be
@@ -440,7 +557,31 @@ used.
 Just(42)
 ```
 
-<h4 name="fromMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L787">fromMaybe :: a -> Maybe a -> a</a></code></h4>
+<h4 name="isNothing"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L921">isNothing :: Maybe a -> Boolean</a></code></h4>
+
+Returns `true` if the given Maybe is a Nothing; `false` if it is a Just.
+
+```javascript
+> S.isNothing(S.Nothing())
+true
+
+> S.isNothing(S.Just(42))
+false
+```
+
+<h4 name="isJust"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L938">isJust :: Maybe a -> Boolean</a></code></h4>
+
+Returns `true` if the given Maybe is a Just; `false` if it is a Nothing.
+
+```javascript
+> S.isJust(S.Just(42))
+true
+
+> S.isJust(S.Nothing())
+false
+```
+
+<h4 name="fromMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L955">fromMaybe :: a -> Maybe a -> a</a></code></h4>
 
 Takes a default value and a Maybe, and returns the Maybe's value
 if the Maybe is a Just; the default value otherwise.
@@ -453,7 +594,7 @@ if the Maybe is a Just; the default value otherwise.
 0
 ```
 
-<h4 name="toMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L804">toMaybe :: a? -> Maybe a</a></code></h4>
+<h4 name="toMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L973">toMaybe :: a? -> Maybe a</a></code></h4>
 
 Takes a value and returns Nothing if the value is null or undefined;
 Just the value otherwise.
@@ -466,7 +607,7 @@ Nothing()
 Just(42)
 ```
 
-<h4 name="maybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L819">maybe :: b -> (a -> b) -> Maybe a -> b</a></code></h4>
+<h4 name="maybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L991">maybe :: b -> (a -> b) -> Maybe a -> b</a></code></h4>
 
 Takes a value of any type, a function, and a Maybe. If the Maybe is
 a Just, the return value is the result of applying the function to
@@ -480,16 +621,16 @@ the Just's value. Otherwise, the first argument is returned.
 0
 ```
 
-<h4 name="catMaybes"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L837">catMaybes :: [Maybe a] -> [a]</a></code></h4>
+<h4 name="catMaybes"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1010">catMaybes :: [Maybe a] -> [a]</a></code></h4>
 
 Takes a list of Maybes and returns a list containing each Just's value.
 
 ```javascript
 > S.catMaybes([S.Just('foo'), S.Nothing(), S.Just('baz')])
-["foo", "baz"]
+['foo', 'baz']
 ```
 
-<h4 name="mapMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L848">mapMaybe :: (a -> Maybe b) -> [a] -> [b]</a></code></h4>
+<h4 name="mapMaybe"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1024">mapMaybe :: (a -> Maybe b) -> [a] -> [b]</a></code></h4>
 
 Takes a function and a list, applies the function to each element of
 the list, and returns a list of "successful" results. If the result of
@@ -504,26 +645,34 @@ In general terms, `mapMaybe` filters a list while mapping over it.
 [1, 4]
 ```
 
-<h4 name="encase"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L864">encase :: (* -> a) -> (* -> Maybe a)</a></code></h4>
+<h4 name="encase"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1044">encase :: (a -> b) -> a -> Maybe b</a></code></h4>
 
-Takes a function `f` which may throw and returns a curried function
-`g` which will not throw. The result of applying `g` is determined by
-applying `f` to the same arguments: if this succeeds, `g` returns Just
-the result; otherwise `g` returns Nothing.
+Takes a unary function `f` which may throw and a value `x` of any type,
+and applies `f` to `x` inside a `try` block. If an exception is caught,
+the return value is a Nothing; otherwise the return value is Just the
+result of applying `f` to `x`.
 
 See also [`encaseEither`](#encaseEither).
 
 ```javascript
-> S.encase(eval)('1 + 1')
+> S.encase(eval, '1 + 1')
 Just(2)
 
-> S.encase(eval)('1 +')
+> S.encase(eval, '1 +')
 Nothing()
 ```
 
+<h4 name="encase2"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1072">encase2 :: (a -> b -> c) -> a -> b -> Maybe c</a></code></h4>
+
+Binary version of [`encase`](#encase).
+
+<h4 name="encase3"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1087">encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d</a></code></h4>
+
+Ternary version of [`encase`](#encase).
+
 ### Either type
 
-<h4 name="Either"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L892">Either :: TypeRep Either</a></code></h4>
+<h4 name="Either"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1104">Either :: TypeRep Either</a></code></h4>
 
 The Either type represents values with two possibilities: a value of type
 `Either a b` is either a Left whose value is of type `a` or a Right whose
@@ -532,7 +681,7 @@ value is of type `b`.
 The Either type satisfies the [Semigroup][], [Monad][], and [Extend][]
 specifications.
 
-<h4 name="Either.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L904">Either.of :: b -> Either a b</a></code></h4>
+<h4 name="Either.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1118">Either.of :: b -> Either a b</a></code></h4>
 
 Takes a value of any type and returns a Right with the given value.
 
@@ -541,7 +690,35 @@ Takes a value of any type and returns a Right with the given value.
 Right(42)
 ```
 
-<h4 name="Either.prototype.ap"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L916">Either#ap :: Either a (b -> c) ~> Either a b -> Either a c</a></code></h4>
+<h4 name="Either.prototype.@@type"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1132">Either#@@type :: String</a></code></h4>
+
+Either type identifier, `'sanctuary/Either'`.
+
+<h4 name="Either.prototype.isLeft"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1137">Either#isLeft :: Boolean</a></code></h4>
+
+`true` if `this` is a Left; `false` if `this` is a Right.
+
+```javascript
+> S.Left('Cannot divide by zero').isLeft
+true
+
+> S.Right(42).isLeft
+false
+```
+
+<h4 name="Either.prototype.isRight"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1149">Either#isRight :: Boolean</a></code></h4>
+
+`true` if `this` is a Right; `false` if `this` is a Left.
+
+```javascript
+> S.Right(42).isRight
+true
+
+> S.Left('Cannot divide by zero').isRight
+false
+```
+
+<h4 name="Either.prototype.ap"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1161">Either#ap :: Either a (b -> c) ~> Either a b -> Either a c</a></code></h4>
 
 Takes a value of type `Either a b` and returns a Left unless `this`
 is a Right *and* the argument is a Right, in which case it returns
@@ -550,35 +727,37 @@ the given Right's value.
 
 ```javascript
 > S.Left('Cannot divide by zero').ap(S.Right(42))
-Left("Cannot divide by zero")
+Left('Cannot divide by zero')
 
 > S.Right(R.inc).ap(S.Left('Cannot divide by zero'))
-Left("Cannot divide by zero")
+Left('Cannot divide by zero')
 
 > S.Right(R.inc).ap(S.Right(42))
 Right(43)
 ```
 
-<h4 name="Either.prototype.chain"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L934">Either#chain :: Either a b ~> (b -> Either a c) -> Either a c</a></code></h4>
+<h4 name="Either.prototype.chain"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1184">Either#chain :: Either a b ~> (b -> Either a c) -> Either a c</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Left; otherwise
 it returns the result of applying the function to this Right's value.
 
 ```javascript
-> void (sqrt = function(n) { return n < 0 ? S.Left('Cannot represent square root of negative number') : S.Right(Math.sqrt(n)); })
-undefined
+> global.sqrt = n =>
+.   n < 0 ? S.Left('Cannot represent square root of negative number')
+.         : S.Right(Math.sqrt(n))
+sqrt
 
 > S.Left('Cannot divide by zero').chain(sqrt)
-Left("Cannot divide by zero")
+Left('Cannot divide by zero')
 
 > S.Right(-1).chain(sqrt)
-Left("Cannot represent square root of negative number")
+Left('Cannot represent square root of negative number')
 
 > S.Right(25).chain(sqrt)
 Right(5)
 ```
 
-<h4 name="Either.prototype.concat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L953">Either#concat :: Either a b ~> Either a b -> Either a b</a></code></h4>
+<h4 name="Either.prototype.concat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1212">Either#concat :: (Semigroup a, Semigroup b) => Either a b ~> Either a b -> Either a b</a></code></h4>
 
 Returns the result of concatenating two Either values of the same type.
 `a` must have a [Semigroup][] (indicated by the presence of a `concat`
@@ -596,7 +775,7 @@ Otherwise, this method returns the Right.
 
 ```javascript
 > S.Left('abc').concat(S.Left('def'))
-Left("abcdef")
+Left('abcdef')
 
 > S.Right([1, 2, 3]).concat(S.Right([4, 5, 6]))
 Right([1, 2, 3, 4, 5, 6])
@@ -608,7 +787,7 @@ Right([1, 2, 3])
 Right([1, 2, 3])
 ```
 
-<h4 name="Either.prototype.equals"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L983">Either#equals :: Either a b ~> c -> Boolean</a></code></h4>
+<h4 name="Either.prototype.equals"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1251">Either#equals :: Either a b ~> c -> Boolean</a></code></h4>
 
 Takes a value of any type and returns `true` if:
 
@@ -629,21 +808,21 @@ false
 false
 ```
 
-<h4 name="Either.prototype.extend"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1004">Either#extend :: Either a b ~> (Either a b -> b) -> Either a b</a></code></h4>
+<h4 name="Either.prototype.extend"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1280">Either#extend :: Either a b ~> (Either a b -> b) -> Either a b</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Left; otherwise it
 returns a Right whose value is the result of applying the function to
 `this`.
 
 ```javascript
-> S.Left('Cannot divide by zero').extend(function(x) { return x.value + 1; })
-Left("Cannot divide by zero")
+> S.Left('Cannot divide by zero').extend(x => x.value + 1)
+Left('Cannot divide by zero')
 
-> S.Right(42).extend(function(x) { return x.value + 1; })
+> S.Right(42).extend(x => x.value + 1)
 Right(43)
 ```
 
-<h4 name="Either.prototype.map"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1018">Either#map :: Either a b ~> (b -> c) -> Either a c</a></code></h4>
+<h4 name="Either.prototype.map"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1301">Either#map :: Either a b ~> (b -> c) -> Either a c</a></code></h4>
 
 Takes a function and returns `this` if `this` is a Left; otherwise it
 returns a Right whose value is the result of applying the function to
@@ -651,13 +830,13 @@ this Right's value.
 
 ```javascript
 > S.Left('Cannot divide by zero').map(R.inc)
-Left("Cannot divide by zero")
+Left('Cannot divide by zero')
 
 > S.Right([1, 2, 3]).map(R.sum)
 Right(6)
 ```
 
-<h4 name="Either.prototype.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1032">Either#of :: Either a b ~> b -> Either a b</a></code></h4>
+<h4 name="Either.prototype.of"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1322">Either#of :: Either a b ~> c -> Either a c</a></code></h4>
 
 Takes a value of any type and returns a Right with the given value.
 
@@ -666,7 +845,7 @@ Takes a value of any type and returns a Right with the given value.
 Right(42)
 ```
 
-<h4 name="Either.prototype.toBoolean"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1042">Either#toBoolean :: Either a b ~> Boolean</a></code></h4>
+<h4 name="Either.prototype.toBoolean"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1336">Either#toBoolean :: Either a b ~> Boolean</a></code></h4>
 
 Returns `false` if `this` is a Left; `true` if `this` is a Right.
 
@@ -678,25 +857,34 @@ false
 true
 ```
 
-<h4 name="Either.prototype.toString"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1054">Either#toString :: Either a b ~> String</a></code></h4>
+<h4 name="Either.prototype.toString"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1353">Either#toString :: Either a b ~> String</a></code></h4>
 
 Returns the string representation of the Either.
 
 ```javascript
 > S.Left('Cannot divide by zero').toString()
-"Left(\\"Cannot divide by zero\\")"
+'Left("Cannot divide by zero")'
 
 > S.Right([1, 2, 3]).toString()
-"Right([1, 2, 3])"
+'Right([1, 2, 3])'
 ```
 
-<h4 name="Either.prototype.type"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1066">Either#type :: TypeRep Either</a></code></h4>
+<h4 name="Either.prototype.inspect"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1373">Either#inspect :: Either a b ~> String</a></code></h4>
 
-A reference to the Either type. Useful for determining whether two
-values such as `S.Left('Cannot divide by zero')` and `S.Right(42)`
-are of the same type.
+Returns the string representation of the Either. This method is used by
+`util.inspect` and the REPL to format a Either for display.
 
-<h4 name="Left"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1073">Left :: a -> Either a b</a></code></h4>
+See also [`Either#toString`](#Either.prototype.toString).
+
+```javascript
+> S.Left('Cannot divide by zero').inspect()
+'Left("Cannot divide by zero")'
+
+> S.Right([1, 2, 3]).inspect()
+'Right([1, 2, 3])'
+```
+
+<h4 name="Left"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1389">Left :: a -> Either a b</a></code></h4>
 
 Takes a value of any type and returns a Left with the given value.
 Though this is a constructor function the `new` keyword needn't be
@@ -704,10 +892,10 @@ used.
 
 ```javascript
 > S.Left('Cannot divide by zero')
-Left("Cannot divide by zero")
+Left('Cannot divide by zero')
 ```
 
-<h4 name="Right"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1121">Right :: b -> Either a b</a></code></h4>
+<h4 name="Right"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1407">Right :: b -> Either a b</a></code></h4>
 
 Takes a value of any type and returns a Right with the given value.
 Though this is a constructor function the `new` keyword needn't be
@@ -718,7 +906,31 @@ used.
 Right(42)
 ```
 
-<h4 name="either"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1177">either :: (a -> c) -> (b -> c) -> Either a b -> c</a></code></h4>
+<h4 name="isLeft"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1425">isLeft :: Either a b -> Boolean</a></code></h4>
+
+Returns `true` if the given Either is a Left; `false` if it is a Right.
+
+```javascript
+> S.isLeft(S.Left('Cannot divide by zero'))
+true
+
+> S.isLeft(S.Right(42))
+false
+```
+
+<h4 name="isRight"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1442">isRight :: Either a b -> Boolean</a></code></h4>
+
+Returns `true` if the given Either is a Right; `false` if it is a Left.
+
+```javascript
+> S.isRight(S.Right(42))
+true
+
+> S.isRight(S.Left('Cannot divide by zero'))
+false
+```
+
+<h4 name="either"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1459">either :: (a -> c) -> (b -> c) -> Either a b -> c</a></code></h4>
 
 Takes two functions and an Either, and returns the result of
 applying the first function to the Left's value, if the Either
@@ -727,36 +939,42 @@ Right's value, if the Either is a Right.
 
 ```javascript
 > S.either(R.toUpper, R.toString, S.Left('Cannot divide by zero'))
-"CANNOT DIVIDE BY ZERO"
+'CANNOT DIVIDE BY ZERO'
 
 > S.either(R.toUpper, R.toString, S.Right(42))
-"42"
+'42'
 ```
 
-<h4 name="encaseEither"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1196">encaseEither :: (Error -> a) -> (* -> b) -> (* -> Either a b)</a></code></h4>
+<h4 name="encaseEither"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1481">encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r</a></code></h4>
 
-Takes two functions, `f` and `g`, the second of which may throw,
-and returns a curried function of the same arity as `g` which will
-not throw. The result of applying this function is determined by
-applying `g` to the same arguments: if this succeeds, the return
-value is a Right whose value is the result; otherwise the return
-value is a Left whose value is the result of applying `f` to the
-caught Error object.
+Takes two unary functions, `f` and `g`, the second of which may throw,
+and a value `x` of any type. Applies `g` to `x` inside a `try` block.
+If an exception is caught, the return value is a Left containing the
+result of applying `f` to the caught Error object; otherwise the return
+value is a Right containing the result of applying `g` to `x`.
 
 See also [`encase`](#encase).
 
 ```javascript
-> S.encaseEither(R.identity, Array)(0)
-Right([])
+> S.encaseEither(S.I, JSON.parse, '["foo","bar","baz"]')
+Right(['foo', 'bar', 'baz'])
 
-> S.encaseEither(R.identity, Array)(-1)
-Left(RangeError: Invalid array length)
+> S.encaseEither(S.I, JSON.parse, '[')
+Left(new SyntaxError('Unexpected end of input'))
 
-> S.encaseEither(R.prop('message'), Array)(-1)
-Left("Invalid array length")
+> S.encaseEither(R.prop('message'), JSON.parse, '[')
+Left('Unexpected end of input')
 ```
 
-<h4 name="maybeToEither"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1228">maybeToEither :: a -> Maybe b -> Either a b</a></code></h4>
+<h4 name="encaseEither2"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1513">encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r</a></code></h4>
+
+Binary version of [`encaseEither`](#encaseEither).
+
+<h4 name="encaseEither3"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1528">encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r</a></code></h4>
+
+Ternary version of [`encaseEither`](#encaseEither).
+
+<h4 name="maybeToEither"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1543">maybeToEither :: a -> Maybe b -> Either a b</a></code></h4>
 
 Takes a value of any type and a Maybe, and returns an Either.
 If the second argument is a Nothing, a Left containing the first
@@ -765,15 +983,15 @@ containing the Just's value is returned.
 
 ```javascript
 > S.maybeToEither('Expecting an integer', S.parseInt(10, 'xyz'))
-Left("Expecting an integer")
+Left('Expecting an integer')
 
 > S.maybeToEither('Expecting an integer', S.parseInt(10, '42'))
 Right(42)
 ```
 
-### Control
+### Alternative
 
-<h4 name="and"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1262">and :: a -> a -> a</a></code></h4>
+<h4 name="and"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1593">and :: Alternative a => a -> a -> a</a></code></h4>
 
 Takes two values of the same type and returns the second value
 if the first is "true"; the first value otherwise. An array is
@@ -789,7 +1007,7 @@ Just(2)
 Nothing()
 ```
 
-<h4 name="or"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1281">or :: a -> a -> a</a></code></h4>
+<h4 name="or"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1614">or :: Alternative a => a -> a -> a</a></code></h4>
 
 Takes two values of the same type and returns the first value if it
 is "true"; the second value otherwise. An array is considered "true"
@@ -804,7 +1022,7 @@ Just(1)
 Just(3)
 ```
 
-<h4 name="xor"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1299">xor :: a -> a -> a</a></code></h4>
+<h4 name="xor"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1634">xor :: (Alternative a, Monoid a) => a -> a -> a</a></code></h4>
 
 Takes two values of the same type and returns the "true" value
 if one value is "true" and the other is "false"; otherwise it
@@ -821,9 +1039,70 @@ Just(1)
 Nothing()
 ```
 
+### Logic
+
+<h4 name="not"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1660">not :: Boolean -> Boolean</a></code></h4>
+
+Takes a Boolean and returns the negation of that value
+(`false` for `true`; `true` for `false`).
+
+```javascript
+> S.not(true)
+false
+
+> S.not(false)
+true
+```
+
+<h4 name="ifElse"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1678">ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b</a></code></h4>
+
+Takes a unary predicate, a unary "if" function, a unary "else"
+function, and a value of any type, and returns the result of
+applying the "if" function to the value if the value satisfies
+the predicate; the result of applying the "else" function to the
+value otherwise.
+
+```javascript
+> S.ifElse(x => x < 0, Math.abs, Math.sqrt, -1)
+1
+
+> S.ifElse(x => x < 0, Math.abs, Math.sqrt, 16)
+4
+```
+
+<h4 name="allPass"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1699">allPass :: [a -> Boolean] -> a -> Boolean</a></code></h4>
+
+Takes an array of unary predicates and a value of any type
+and returns `true` if all the predicates pass; `false` otherwise.
+None of the subsequent predicates will be evaluated after the
+first failed predicate.
+
+```javascript
+> S.allPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'quiessence')
+true
+
+> S.allPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'fissiparous')
+false
+```
+
+<h4 name="anyPass"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1724">anyPass :: [a -> Boolean] -> a -> Boolean</a></code></h4>
+
+Takes an array of unary predicates and a value of any type
+and returns `true` if any of the predicates pass; `false` otherwise.
+None of the subsequent predicates will be evaluated after the
+first passed predicate.
+
+```javascript
+> S.anyPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'incandescent')
+true
+
+> S.anyPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'empathy')
+false
+```
+
 ### List
 
-<h4 name="slice"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1324">slice :: Integer -> Integer -> [a] -> Maybe [a]</a></code></h4>
+<h4 name="slice"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1751">slice :: Integer -> Integer -> [a] -> Maybe [a]</a></code></h4>
 
 Returns Just a list containing the elements from the supplied list
 from a beginning index (inclusive) to an end index (exclusive).
@@ -837,22 +1116,22 @@ result, one may replace `[a]` with `String` in the type signature.
 
 ```javascript
 > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
-Just(["b", "c"])
+Just(['b', 'c'])
 
 > S.slice(-2, -0, ['a', 'b', 'c', 'd', 'e'])
-Just(["d", "e"])
+Just(['d', 'e'])
 
 > S.slice(2, -0, ['a', 'b', 'c', 'd', 'e'])
-Just(["c", "d", "e"])
+Just(['c', 'd', 'e'])
 
 > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
 Nothing()
 
 > S.slice(2, 6, 'banana')
-Just("nana")
+Just('nana')
 ```
 
-<h4 name="at"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1363">at :: Integer -> [a] -> Maybe a</a></code></h4>
+<h4 name="at"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1793">at :: Integer -> [a] -> Maybe a</a></code></h4>
 
 Takes an index and a list and returns Just the element of the list at
 the index if the index is within the list's bounds; Nothing otherwise.
@@ -860,16 +1139,16 @@ A negative index represents an offset from the length of the list.
 
 ```javascript
 > S.at(2, ['a', 'b', 'c', 'd', 'e'])
-Just("c")
+Just('c')
 
 > S.at(5, ['a', 'b', 'c', 'd', 'e'])
 Nothing()
 
 > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
-Just("d")
+Just('d')
 ```
 
-<h4 name="head"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1383">head :: [a] -> Maybe a</a></code></h4>
+<h4 name="head"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1817">head :: [a] -> Maybe a</a></code></h4>
 
 Takes a list and returns Just the first element of the list if the
 list contains at least one element; Nothing if the list is empty.
@@ -882,7 +1161,7 @@ Just(1)
 Nothing()
 ```
 
-<h4 name="last"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1397">last :: [a] -> Maybe a</a></code></h4>
+<h4 name="last"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1835">last :: [a] -> Maybe a</a></code></h4>
 
 Takes a list and returns Just the last element of the list if the
 list contains at least one element; Nothing if the list is empty.
@@ -895,7 +1174,7 @@ Just(3)
 Nothing()
 ```
 
-<h4 name="tail"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1411">tail :: [a] -> Maybe [a]</a></code></h4>
+<h4 name="tail"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1853">tail :: [a] -> Maybe [a]</a></code></h4>
 
 Takes a list and returns Just a list containing all but the first
 of the list's elements if the list contains at least one element;
@@ -909,7 +1188,7 @@ Just([2, 3])
 Nothing()
 ```
 
-<h4 name="init"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1426">init :: [a] -> Maybe [a]</a></code></h4>
+<h4 name="init"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1872">init :: [a] -> Maybe [a]</a></code></h4>
 
 Takes a list and returns Just a list containing all but the last
 of the list's elements if the list contains at least one element;
@@ -923,7 +1202,7 @@ Just([1, 2])
 Nothing()
 ```
 
-<h4 name="take"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1441">take :: Integer -> [a] -> Maybe [a]</a></code></h4>
+<h4 name="take"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1891">take :: Integer -> [a] -> Maybe [a]</a></code></h4>
 
 Returns Just the first N elements of the given collection if N is
 greater than or equal to zero and less than or equal to the length
@@ -932,16 +1211,16 @@ any other collection type which provides a `slice` method.
 
 ```javascript
 > S.take(2, ['a', 'b', 'c', 'd', 'e'])
-Just(["a", "b"])
+Just(['a', 'b'])
 
 > S.take(4, 'abcdefg')
-Just("abcd")
+Just('abcd')
 
 > S.take(4, ['a', 'b', 'c'])
 Nothing()
 ```
 
-<h4 name="takeLast"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1462">takeLast :: Integer -> [a] -> Maybe [a]</a></code></h4>
+<h4 name="takeLast"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1916">takeLast :: Integer -> [a] -> Maybe [a]</a></code></h4>
 
 Returns Just the last N elements of the given collection if N is
 greater than or equal to zero and less than or equal to the length
@@ -950,16 +1229,16 @@ any other collection type which provides a `slice` method.
 
 ```javascript
 > S.takeLast(2, ['a', 'b', 'c', 'd', 'e'])
-Just(["d", "e"])
+Just(['d', 'e'])
 
 > S.takeLast(4, 'abcdefg')
-Just("defg")
+Just('defg')
 
 > S.takeLast(4, ['a', 'b', 'c'])
 Nothing()
 ```
 
-<h4 name="drop"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1483">drop :: Integer -> [a] -> Maybe [a]</a></code></h4>
+<h4 name="drop"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1941">drop :: Integer -> [a] -> Maybe [a]</a></code></h4>
 
 Returns Just all but the first N elements of the given collection
 if N is greater than or equal to zero and less than or equal to the
@@ -968,16 +1247,16 @@ and any other collection type which provides a `slice` method.
 
 ```javascript
 > S.drop(2, ['a', 'b', 'c', 'd', 'e'])
-Just(["c", "d", "e"])
+Just(['c', 'd', 'e'])
 
 > S.drop(4, 'abcdefg')
-Just("efg")
+Just('efg')
 
 > S.drop(4, 'abc')
 Nothing()
 ```
 
-<h4 name="dropLast"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1504">dropLast :: Integer -> [a] -> Maybe [a]</a></code></h4>
+<h4 name="dropLast"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1966">dropLast :: Integer -> [a] -> Maybe [a]</a></code></h4>
 
 Returns Just all but the last N elements of the given collection
 if N is greater than or equal to zero and less than or equal to the
@@ -986,30 +1265,30 @@ and any other collection type which provides a `slice` method.
 
 ```javascript
 > S.dropLast(2, ['a', 'b', 'c', 'd', 'e'])
-Just(["a", "b", "c"])
+Just(['a', 'b', 'c'])
 
 > S.dropLast(4, 'abcdefg')
-Just("abc")
+Just('abc')
 
 > S.dropLast(4, 'abc')
 Nothing()
 ```
 
-<h4 name="find"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1525">find :: (a -> Boolean) -> [a] -> Maybe a</a></code></h4>
+<h4 name="find"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L1991">find :: (a -> Boolean) -> [a] -> Maybe a</a></code></h4>
 
 Takes a predicate and a list and returns Just the leftmost element of
 the list which satisfies the predicate; Nothing if none of the list's
 elements satisfies the predicate.
 
 ```javascript
-> S.find(function(n) { return n < 0; }, [1, -2, 3, -4, 5])
+> S.find(n => n < 0, [1, -2, 3, -4, 5])
 Just(-2)
 
-> S.find(function(n) { return n < 0; }, [1, 2, 3, 4, 5])
+> S.find(n => n < 0, [1, 2, 3, 4, 5])
 Nothing()
 ```
 
-<h4 name="indexOf"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1551">indexOf :: a -> [a] -> Maybe Integer</a></code></h4>
+<h4 name="indexOf"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2034">indexOf :: a -> [a] -> Maybe Integer</a></code></h4>
 
 Takes a value of any type and a list, and returns Just the index
 of the first occurrence of the value in the list, if applicable;
@@ -1033,7 +1312,7 @@ Just(1)
 Nothing()
 ```
 
-<h4 name="lastIndexOf"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1576">lastIndexOf :: a -> [a] -> Maybe Integer</a></code></h4>
+<h4 name="lastIndexOf"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2059">lastIndexOf :: a -> [a] -> Maybe Integer</a></code></h4>
 
 Takes a value of any type and a list, and returns Just the index
 of the last occurrence of the value in the list, if applicable;
@@ -1057,7 +1336,7 @@ Just(3)
 Nothing()
 ```
 
-<h4 name="pluck"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1601">pluck :: TypeRep a -> String -> [Accessible] -> [Maybe a]</a></code></h4>
+<h4 name="pluck"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2084">pluck :: Accessible a => TypeRep b -> String -> [a] -> [Maybe b]</a></code></h4>
 
 Takes a [type representative](#type-representatives), a property name,
 and a list of objects and returns a list of equal length. Each element
@@ -1072,9 +1351,26 @@ See also [`get`](#get).
 [Just(1), Just(2), Nothing(), Nothing(), Nothing()]
 ```
 
+<h4 name="unfoldr"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2104">unfoldr :: (b -> Maybe (a, b)) -> b -> [a]</a></code></h4>
+
+Takes a function and a seed value, and returns a list generated by
+applying the function repeatedly. The list is initially empty. The
+function is initially applied to the seed value. Each application
+of the function should result in either:
+
+  - a Nothing, in which case the list is returned; or
+
+  - Just a pair, in which case the first element is appended to
+    the list and the function is applied to the second element.
+
+```javascript
+> S.unfoldr(n => n < 5 ? S.Just([n, n + 1]) : S.Nothing(), 1)
+[1, 2, 3, 4]
+```
+
 ### Object
 
-<h4 name="get"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1621">get :: TypeRep a -> String -> Accessible -> Maybe a</a></code></h4>
+<h4 name="get"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2136">get :: Accessible a => TypeRep b -> String -> a -> Maybe b</a></code></h4>
 
 Takes a [type representative](#type-representatives), a property
 name, and an object and returns Just the value of the specified object
@@ -1097,7 +1393,7 @@ Nothing()
 Nothing()
 ```
 
-<h4 name="gets"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1648">gets :: TypeRep a -> [String] -> Accessible -> Maybe a</a></code></h4>
+<h4 name="gets"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2164">gets :: Accessible a => TypeRep b -> [String] -> a -> Maybe b</a></code></h4>
 
 Takes a [type representative](#type-representatives), a list of property
 names, and an object and returns Just the value at the path specified by
@@ -1119,20 +1415,20 @@ Nothing()
 
 ### Parse
 
-<h4 name="parseDate"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1674">parseDate :: String -> Maybe Date</a></code></h4>
+<h4 name="parseDate"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2200">parseDate :: String -> Maybe Date</a></code></h4>
 
 Takes a string and returns Just the date represented by the string
 if it does in fact represent a date; Nothing otherwise.
 
 ```javascript
 > S.parseDate('2011-01-19T17:40:00Z')
-Just(new Date("2011-01-19T17:40:00.000Z"))
+Just(new Date('2011-01-19T17:40:00.000Z'))
 
 > S.parseDate('today')
 Nothing()
 ```
 
-<h4 name="parseFloat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1725">parseFloat :: String -> Maybe Number</a></code></h4>
+<h4 name="parseFloat"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2255">parseFloat :: String -> Maybe Number</a></code></h4>
 
 Takes a string and returns Just the number represented by the string
 if it does in fact represent a number; Nothing otherwise.
@@ -1145,7 +1441,7 @@ Just(-123.45)
 Nothing()
 ```
 
-<h4 name="parseInt"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1741">parseInt :: Integer -> String -> Maybe Integer</a></code></h4>
+<h4 name="parseInt"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2273">parseInt :: Integer -> String -> Maybe Integer</a></code></h4>
 
 Takes a radix (an integer between 2 and 36 inclusive) and a string,
 and returns Just the number represented by the string if it does in
@@ -1167,7 +1463,7 @@ Just(255)
 Nothing()
 ```
 
-<h4 name="parseJson"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1782">parseJson :: String -> Maybe *</a></code></h4>
+<h4 name="parseJson"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2318">parseJson :: String -> Maybe Any</a></code></h4>
 
 Takes a string which may or may not be valid JSON, and returns Just
 the result of applying `JSON.parse` to the string if valid; Nothing
@@ -1175,7 +1471,7 @@ otherwise.
 
 ```javascript
 > S.parseJson('["foo","bar","baz"]')
-Just(["foo", "bar", "baz"])
+Just(['foo', 'bar', 'baz'])
 
 > S.parseJson('[')
 Nothing()
@@ -1183,7 +1479,43 @@ Nothing()
 
 ### RegExp
 
-<h4 name="match"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1801">match :: RegExp -> String -> Maybe [Maybe String]</a></code></h4>
+<h4 name="regex"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2339">regex :: RegexFlags -> String -> RegExp</a></code></h4>
+
+Takes a [RegexFlags][] and a pattern, and returns a RegExp.
+
+```javascript
+> S.regex('g', ':\\d+:')
+/:\d+:/g
+```
+
+<h4 name="regexEscape"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2353">regexEscape :: String -> String</a></code></h4>
+
+Takes a string which may contain regular expression metacharacters,
+and returns a string with those metacharacters escaped.
+
+Properties:
+
+  - `forall s :: String. S.test(S.regex('', S.regexEscape(s)), s) = true`
+
+```javascript
+> S.regexEscape('-=*{XYZ}*=-')
+'\\-=\\*\\{XYZ\\}\\*=\\-'
+```
+
+<h4 name="test"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2372">test :: RegExp -> String -> Boolean</a></code></h4>
+
+Takes a pattern and a string, and returns `true` if the pattern
+matches the string; `false` otherwise.
+
+```javascript
+> S.test(/^a/, 'abacus')
+true
+
+> S.test(/^a/, 'banana')
+false
+```
+
+<h4 name="match"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2395">match :: RegExp -> String -> Maybe [Maybe String]</a></code></h4>
 
 Takes a pattern and a string, and returns Just a list of matches
 if the pattern matches the string; Nothing otherwise. Each match
@@ -1192,15 +1524,15 @@ optional capturing group.
 
 ```javascript
 > S.match(/(good)?bye/, 'goodbye')
-Just([Just("goodbye"), Just("good")])
+Just([Just('goodbye'), Just('good')])
 
 > S.match(/(good)?bye/, 'bye')
-Just([Just("bye"), Nothing()])
+Just([Just('bye'), Nothing()])
 ```
 
 ### String
 
-<h4 name="words"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1821">words :: String -> [String]</a></code></h4>
+<h4 name="words"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2419">words :: String -> [String]</a></code></h4>
 
 Takes a string and returns the list of words the string contains
 (words are delimited by whitespace characters).
@@ -1209,10 +1541,10 @@ See also [`unwords`](#unwords).
 
 ```javascript
 > S.words(' foo bar baz ')
-["foo", "bar", "baz"]
+['foo', 'bar', 'baz']
 ```
 
-<h4 name="unwords"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1835">unwords :: [String] -> String</a></code></h4>
+<h4 name="unwords"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2436">unwords :: [String] -> String</a></code></h4>
 
 Takes a list of words and returns the result of joining the words
 with separating spaces.
@@ -1221,10 +1553,10 @@ See also [`words`](#words).
 
 ```javascript
 > S.unwords(['foo', 'bar', 'baz'])
-"foo bar baz"
+'foo bar baz'
 ```
 
-<h4 name="lines"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1848">lines :: String -> [String]</a></code></h4>
+<h4 name="lines"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2453">lines :: String -> [String]</a></code></h4>
 
 Takes a string and returns the list of lines the string contains
 (lines are delimited by newlines: `'\n'` or `'\r\n'` or `'\r'`).
@@ -1234,10 +1566,10 @@ See also [`unlines`](#unlines).
 
 ```javascript
 > S.lines('foo\nbar\nbaz\n')
-["foo", "bar", "baz"]
+['foo', 'bar', 'baz']
 ```
 
-<h4 name="unlines"><code><a href="https://github.com/plaid/sanctuary/blob/v0.7.1/index.js#L1864">unlines :: [String] -> String</a></code></h4>
+<h4 name="unlines"><code><a href="https://github.com/plaid/sanctuary/blob/v0.8.0/index.js#L2471">unlines :: [String] -> String</a></code></h4>
 
 Takes a list of lines and returns the result of joining the lines
 after appending a terminating line feed (`'\n'`) to each.
@@ -1246,17 +1578,20 @@ See also [`lines`](#lines).
 
 ```javascript
 > S.unlines(['foo', 'bar', 'baz'])
-"foo\nbar\nbaz\n"
+'foo\nbar\nbaz\n'
 ```
 
+[Apply]:        https://github.com/fantasyland/fantasy-land#apply
 [Extend]:       https://github.com/fantasyland/fantasy-land#extend
 [Foldable]:     https://github.com/fantasyland/fantasy-land#foldable
+[Functor]:      https://github.com/fantasyland/fantasy-land#functor
 [Monad]:        https://github.com/fantasyland/fantasy-land#monad
 [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
 [R.equals]:     http://ramdajs.com/docs/#equals
-[R.is]:         http://ramdajs.com/docs/#is
 [R.map]:        http://ramdajs.com/docs/#map
+[R.type]:       http://ramdajs.com/docs/#type
 [Ramda]:        http://ramdajs.com/
+[RegExp]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+[RegexFlags]:   https://github.com/plaid/sanctuary-def#regexflags
 [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
 [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
-[primitives]:   https://developer.mozilla.org/en-US/docs/Glossary/Primitive
