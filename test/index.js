@@ -525,7 +525,8 @@ describe('maybe', function() {
       assert.throws(function() { S.Nothing().concat(S.Just(1)); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -735,17 +736,20 @@ describe('maybe', function() {
       assert.throws(function() { S.Just(1).concat(S.Just(0)); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -979,8 +983,9 @@ describe('maybe', function() {
       assert.throws(function() { S.fromMaybe(0, [1, 2, 3]); },
                     errorEq(TypeError,
                             '‘fromMaybe’ expected a value of type ' +
-                            '(Maybe Number) or (Maybe Integer) ' +
-                            'as its second argument; received [1, 2, 3]'));
+                            '(Maybe Number) or (Maybe FiniteNumber) or ' +
+                            '(Maybe Integer) as its second argument; ' +
+                            'received [1, 2, 3]'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1272,32 +1277,38 @@ describe('either', function() {
       assert.throws(function() { S.Left(1).concat(S.Left(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Left(2).concat(S.Right(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1475,32 +1486,38 @@ describe('either', function() {
       assert.throws(function() { S.Right(1).concat(S.Left(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Right(2).concat(S.Right(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
 
       assert.throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and Integer do not'));
+                            'Semigroup; Number and FiniteNumber and Integer ' +
+                            'do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1991,7 +2008,7 @@ describe('alternative', function() {
       assert.throws(function() { S.and(0, 1); },
                     errorEq(TypeError,
                             '‘and’ requires ‘a’ to implement Alternative; ' +
-                            'Number and Integer do not'));
+                            'Number and FiniteNumber and Integer do not'));
     });
 
     it('is curried', function() {
@@ -2053,7 +2070,7 @@ describe('alternative', function() {
       assert.throws(function() { S.or(0, 1); },
                     errorEq(TypeError,
                             '‘or’ requires ‘a’ to implement Alternative; ' +
-                            'Number and Integer do not'));
+                            'Number and FiniteNumber and Integer do not'));
     });
 
     it('is curried', function() {
@@ -2108,12 +2125,14 @@ describe('alternative', function() {
                     errorEq(TypeError,
                             '‘xor’ requires ‘a’ to implement Alternative ' +
                             'and Monoid; (Either ??? Number) and ' +
+                            '(Either ??? FiniteNumber) and ' +
                             '(Either ??? Integer) do not'));
 
       assert.throws(function() { S.xor(S.Right(42), S.Right(43)); },
                     errorEq(TypeError,
                             '‘xor’ requires ‘a’ to implement Alternative ' +
                             'and Monoid; (Either ??? Number) and ' +
+                            '(Either ??? FiniteNumber) and ' +
                             '(Either ??? Integer) do not'));
     });
 
@@ -2134,7 +2153,8 @@ describe('alternative', function() {
       assert.throws(function() { S.xor(0, 1); },
                     errorEq(TypeError,
                             '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; Number and Integer do not'));
+                            'and Monoid; Number and FiniteNumber and Integer ' +
+                            'do not'));
     });
 
     it('is curried', function() {
@@ -3080,6 +3100,96 @@ describe('object', function() {
       eq(S.gets(Number).length, 2);
       eq(S.gets(Number)(['x']).length, 1);
       eq(S.gets(Number)(['x'])({x: 42}), S.Just(42));
+    });
+
+  });
+
+});
+
+describe('number', function() {
+
+  describe('add', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.add, 'function');
+      eq(S.add.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.add('xxx', 1); },
+                    errorEq(TypeError,
+                            '‘add’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received "xxx"'));
+
+      assert.throws(function() { S.add(1, 'xxx'); },
+                    errorEq(TypeError,
+                            '‘add’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received "xxx"'));
+
+      assert.throws(function() { S.add(1, Infinity); },
+                    errorEq(TypeError,
+                            '‘add’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received Infinity'));
+
+      assert.throws(function() { S.add(1, -Infinity); },
+                    errorEq(TypeError,
+                            '‘add’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received -Infinity'));
+    });
+
+    it('adds two numbers', function() {
+      eq(S.add(1, 1), 2);
+      eq(S.add(-1, -1), -2);
+      eq(S.add(1.5, 1), 2.5);
+      eq(S.add(-1.5, -1), -2.5);
+    });
+
+    it('is curried', function() {
+      eq(S.add(1).length, 1);
+      eq(S.add(1)(1), 2);
+    });
+
+  });
+
+  describe('sub', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.sub, 'function');
+      eq(S.sub.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.sub('xxx', 1); },
+                    errorEq(TypeError,
+                            '‘sub’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received "xxx"'));
+
+      assert.throws(function() { S.sub(1, 'xxx'); },
+                    errorEq(TypeError,
+                            '‘sub’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received "xxx"'));
+
+      assert.throws(function() { S.sub(1, Infinity); },
+                    errorEq(TypeError,
+                            '‘sub’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received Infinity'));
+
+      assert.throws(function() { S.sub(1, -Infinity); },
+                    errorEq(TypeError,
+                            '‘sub’ expected a value of type FiniteNumber ' +
+                            'as its second argument; received -Infinity'));
+    });
+
+    it('subtracts two numbers', function() {
+      eq(S.sub(1, 1), 0);
+      eq(S.sub(-1, -1), 0);
+      eq(S.sub(7.5, 2), 5.5);
+      eq(S.sub(-7.5, -2), -5.5);
+    });
+
+    it('is curried', function() {
+      eq(S.sub(1).length, 1);
+      eq(S.sub(1)(1), 0);
     });
 
   });
