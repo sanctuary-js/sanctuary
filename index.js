@@ -238,6 +238,7 @@
 
   //  env :: [Type]
   var env = $.env.concat([
+    $.FiniteNumber,
     $Either,
     Integer,
     List,
@@ -2194,6 +2195,36 @@
         }
         return filter(is(type), Just(x));
       });
+
+  //. ### Number
+
+  //# add :: FiniteNumber -> FiniteNumber -> FiniteNumber
+  //.
+  //. Returns the sum of two (finite) numbers.
+  //.
+  //. ```javascript
+  //. > S.add(1, 1)
+  //. 2
+  //. ```
+  S.add =
+  def('add',
+      {},
+      [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
+      function(a, b) { return a + b; });
+
+  //# sub :: FiniteNumber -> FiniteNumber -> FiniteNumber
+  //.
+  //. Returns the difference between two (finite) numbers.
+  //.
+  //. ```javascript
+  //. > S.sub(4, 2)
+  //. 2
+  //. ```
+  S.sub =
+  def('sub',
+      {},
+      [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
+      function(a, b) { return a - b; });
 
   //. ### Parse
 
