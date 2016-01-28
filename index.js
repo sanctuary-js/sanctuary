@@ -2447,6 +2447,38 @@
 
   //. ### String
 
+  //# toUpper :: String -> String
+  //.
+  //. Returns the upper-case equivalent of its argument.
+  //.
+  //. See also [`toLower`](#toLower).
+  //.
+  //. ```javascript
+  //. > S.toUpper('ABC def 123')
+  //. 'ABC DEF 123'
+  //. ```
+  S.toUpper =
+  def('toUpper',
+      {},
+      [$.String, $.String],
+      function(s) { return s.toUpperCase(); });
+
+  //# toLower :: String -> String
+  //.
+  //. Returns the lower-case equivalent of its argument.
+  //.
+  //. See also [`toUpper`](#toUpper).
+  //.
+  //. ```javascript
+  //. > S.toLower('ABC def 123')
+  //. 'abc def 123'
+  //. ```
+  S.toLower =
+  def('toLower',
+      {},
+      [$.String, $.String],
+      function(s) { return s.toLowerCase(); });
+
   //# words :: String -> [String]
   //.
   //. Takes a string and returns the list of words the string contains

@@ -3636,6 +3636,52 @@ describe('regexp', function() {
 
 describe('string', function() {
 
+  describe('toUpper', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.toUpper, 'function');
+      eq(S.toUpper.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.toUpper(true); },
+                    errorEq(TypeError,
+                            '‘toUpper’ expected a value of type String ' +
+                            'as its first argument; received true'));
+    });
+
+    it('returns the upper-case equivalent of its argument', function() {
+      eq(S.toUpper(''), '');
+      eq(S.toUpper('ABC def 123'), 'ABC DEF 123');
+      eq(S.toUpper(new String('')), '');
+      eq(S.toUpper(new String('ABC def 123')), 'ABC DEF 123');
+    });
+
+  });
+
+  describe('toLower', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.toLower, 'function');
+      eq(S.toLower.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.toLower(true); },
+                    errorEq(TypeError,
+                            '‘toLower’ expected a value of type String ' +
+                            'as its first argument; received true'));
+    });
+
+    it('returns the lower-case equivalent of its argument', function() {
+      eq(S.toLower(''), '');
+      eq(S.toLower('ABC def 123'), 'abc def 123');
+      eq(S.toLower(new String('')), '');
+      eq(S.toLower(new String('ABC def 123')), 'abc def 123');
+    });
+
+  });
+
   describe('words', function() {
 
     it('is a unary function', function() {
