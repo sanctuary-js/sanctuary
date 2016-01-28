@@ -3308,6 +3308,72 @@ describe('number', function() {
 
   });
 
+  describe('inc', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.inc, 'function');
+      eq(S.inc.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.inc('xxx'); },
+                    errorEq(TypeError,
+                            '‘inc’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received "xxx"'));
+
+      assert.throws(function() { S.inc(Infinity); },
+                    errorEq(TypeError,
+                            '‘inc’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received Infinity'));
+
+      assert.throws(function() { S.inc(-Infinity); },
+                    errorEq(TypeError,
+                            '‘inc’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received -Infinity'));
+    });
+
+    it('increments a number by one', function() {
+      eq(S.inc(1), 2);
+      eq(S.inc(-1), 0);
+      eq(S.inc(1.5), 2.5);
+      eq(S.inc(-1.5), -0.5);
+    });
+
+  });
+
+  describe('dec', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.dec, 'function');
+      eq(S.dec.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.dec('xxx'); },
+                    errorEq(TypeError,
+                            '‘dec’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received "xxx"'));
+
+      assert.throws(function() { S.dec(Infinity); },
+                    errorEq(TypeError,
+                            '‘dec’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received Infinity'));
+
+      assert.throws(function() { S.dec(-Infinity); },
+                    errorEq(TypeError,
+                            '‘dec’ expected a value of type FiniteNumber ' +
+                            'as its first argument; received -Infinity'));
+    });
+
+    it('decrements a number by one', function() {
+      eq(S.dec(2), 1);
+      eq(S.dec(-1), -2);
+      eq(S.dec(1.5), 0.5);
+      eq(S.dec(-1.5), -2.5);
+    });
+
+  });
+
 });
 
 describe('parse', function() {
