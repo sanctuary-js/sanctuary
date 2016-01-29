@@ -49,6 +49,9 @@ var parseHex = function(s) {
   return n !== n ? S.Left('Invalid hexadecimal string') : S.Right(n);
 };
 
+//  positive :: Number -> Boolean
+var positive = function(n) { return n > 0; };
+
 //  rem :: (Number, Number) -> Number !
 var rem = function(x, y) {
   if (y === 0) {
@@ -381,6 +384,9 @@ describe('function', function() {
 
       eq(S.lift(R.multiply(2), [1, 2, 3]), [2, 4, 6]);
       eq(S.lift(R.multiply(2), []), []);
+
+      eq(S.lift(S.not, S.even)(42), false);
+      eq(S.lift(S.not, S.even)(43), true);
     });
 
   });
@@ -408,6 +414,11 @@ describe('function', function() {
 
       eq(S.lift2(R.add, [1, 2], [10, 20]), [11, 21, 12, 22]);
       eq(S.lift2(R.add, [], [1, 2]), []);
+
+      eq(S.lift2(S.and, S.even, positive)(42), true);
+      eq(S.lift2(S.and, S.even, positive)(43), false);
+      eq(S.lift2(S.and, S.even, positive)(-42), false);
+      eq(S.lift2(S.and, S.even, positive)(-43), false);
     });
 
   });
@@ -435,6 +446,8 @@ describe('function', function() {
 
       eq(S.lift3(R.reduce, [R.add], [0], [[1, 2, 3]]), [6]);
       eq(S.lift3(R.reduce, [R.add], [0], []), []);
+
+      eq(S.lift3(R.curry(area), R.dec, S.I, R.inc)(4), 6);
     });
 
   });

@@ -146,7 +146,7 @@
   var Apply = $.TypeClass(
     'sanctuary/Apply',
     function(x) {
-      return _type(x) === 'Array' ||
+      return R.contains(_type(x), ['Array', 'Function']) ||
              Functor.test(x) && hasMethod('ap')(x);
     }
   );
@@ -155,7 +155,7 @@
   var Functor = $.TypeClass(
     'sanctuary/Functor',
     function(x) {
-      return _type(x) === 'Array' ||
+      return R.contains(_type(x), ['Array', 'Function']) ||
              hasMethod('map')(x);
     }
   );
