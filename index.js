@@ -193,7 +193,7 @@
   var r = $.TypeVariable('r');
 
   //  $Either :: Type -> Type -> Type
-  var $Either = $.BinaryType(
+  var $Either = S.EitherType = $.BinaryType(
     'sanctuary/Either',
     function(x) { return x != null && x['@@type'] === 'sanctuary/Either'; },
     function(either) { return either.isLeft ? [either.value] : []; },
@@ -215,7 +215,7 @@
   );
 
   //  $Maybe :: Type -> Type
-  var $Maybe = $.UnaryType(
+  var $Maybe = S.MaybeType = $.UnaryType(
     'sanctuary/Maybe',
     function(x) { return x != null && x['@@type'] === 'sanctuary/Maybe'; },
     function(maybe) { return maybe.isJust ? [maybe.value] : []; }
@@ -533,14 +533,20 @@
       });
 
   //. ### Maybe type
-
-  //# Maybe :: TypeRep Maybe
   //.
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or a Nothing (with no value).
   //.
   //. The Maybe type satisfies the [Monoid][], [Monad][], [Traversable][],
   //. and [Extend][] specifications.
+
+  //# MaybeType :: Type -> Type
+  //.
+  //. A [`UnaryType`][UnaryType] for use with [sanctuary-def][].
+
+  //# Maybe :: TypeRep Maybe
+  //.
+  //. The [type representative](#type-representatives) for the Maybe type.
   var Maybe = S.Maybe = function Maybe() {
     if (arguments[0] !== sentinel) {
       throw new Error('Cannot instantiate Maybe');
@@ -1122,8 +1128,6 @@
       });
 
   //. ### Either type
-
-  //# Either :: TypeRep Either
   //.
   //. The Either type represents values with two possibilities: a value of type
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
@@ -1131,6 +1135,14 @@
   //.
   //. The Either type satisfies the [Semigroup][], [Monad][], and [Extend][]
   //. specifications.
+
+  //# EitherType :: Type -> Type -> Type
+  //.
+  //. A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
+
+  //# Either :: TypeRep Either
+  //.
+  //. The [type representative](#type-representatives) for the Either type.
   var Either = S.Either = function Either() {
     if (arguments[0] !== sentinel) {
       throw new Error('Cannot instantiate Either');
@@ -2765,17 +2777,20 @@
 
 }));
 
-//. [Apply]:        https://github.com/fantasyland/fantasy-land#apply
-//. [Extend]:       https://github.com/fantasyland/fantasy-land#extend
-//. [Functor]:      https://github.com/fantasyland/fantasy-land#functor
-//. [Monad]:        https://github.com/fantasyland/fantasy-land#monad
-//. [Monoid]:       https://github.com/fantasyland/fantasy-land#monoid
-//. [Traversable]:  https://github.com/fantasyland/fantasy-land#traversable
-//. [R.equals]:     http://ramdajs.com/docs/#equals
-//. [R.map]:        http://ramdajs.com/docs/#map
-//. [R.type]:       http://ramdajs.com/docs/#type
-//. [Ramda]:        http://ramdajs.com/
-//. [RegExp]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
-//. [RegexFlags]:   https://github.com/plaid/sanctuary-def#regexflags
-//. [Semigroup]:    https://github.com/fantasyland/fantasy-land#semigroup
-//. [parseInt]:     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+//. [Apply]:          https://github.com/fantasyland/fantasy-land#apply
+//. [BinaryType]:     https://github.com/plaid/sanctuary-def#binarytype
+//. [Extend]:         https://github.com/fantasyland/fantasy-land#extend
+//. [Functor]:        https://github.com/fantasyland/fantasy-land#functor
+//. [Monad]:          https://github.com/fantasyland/fantasy-land#monad
+//. [Monoid]:         https://github.com/fantasyland/fantasy-land#monoid
+//. [R.equals]:       http://ramdajs.com/docs/#equals
+//. [R.map]:          http://ramdajs.com/docs/#map
+//. [R.type]:         http://ramdajs.com/docs/#type
+//. [Ramda]:          http://ramdajs.com/
+//. [RegExp]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+//. [RegexFlags]:     https://github.com/plaid/sanctuary-def#regexflags
+//. [Semigroup]:      https://github.com/fantasyland/fantasy-land#semigroup
+//. [Traversable]:    https://github.com/fantasyland/fantasy-land#traversable
+//. [UnaryType]:      https://github.com/plaid/sanctuary-def#unarytype
+//. [parseInt]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+//. [sanctuary-def]:  https://github.com/plaid/sanctuary-def

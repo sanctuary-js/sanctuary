@@ -8,6 +8,7 @@ var vm = require('vm');
 
 var jsc = require('jsverify');
 var R = require('ramda');
+var $ = require('sanctuary-def');
 
 var S = require('..');
 
@@ -556,6 +557,16 @@ describe('composition', function() {
 });
 
 describe('maybe', function() {
+
+  describe('MaybeType', function() {
+
+    it('has its type definition exported', function() {
+      eq(S.MaybeType($.Number).test(S.Nothing()), true);
+      eq(S.MaybeType($.Number).test(S.Just(1)), true);
+      eq(S.MaybeType($.Number).test('abc'), false);
+    });
+
+  });
 
   describe('Maybe', function() {
 
@@ -1350,6 +1361,16 @@ describe('maybe', function() {
 });
 
 describe('either', function() {
+
+  describe('EitherType', function() {
+
+    it('has its type definition exported', function() {
+      eq(S.EitherType($.String, $.Number).test(S.Left('Error')), true);
+      eq(S.EitherType($.String, $.Number).test(S.Right(1)), true);
+      eq(S.EitherType($.String, $.Number).test(1), false);
+    });
+
+  });
 
   describe('Either', function() {
 
