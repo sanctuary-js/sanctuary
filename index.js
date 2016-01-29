@@ -2249,6 +2249,34 @@
       [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
       function(a, b) { return a - b; });
 
+  //# inc :: FiniteNumber -> FiniteNumber
+  //.
+  //. Increments a (finite) number by one.
+  //.
+  //. ```javascript
+  //. > S.inc(1)
+  //. 2
+  //. ```
+  S.inc =
+  def('inc',
+      {},
+      [$.FiniteNumber, $.FiniteNumber],
+      function(a) { return a + 1; });
+
+  //# dec :: FiniteNumber -> FiniteNumber
+  //.
+  //. Decrements a (finite) number by one.
+  //.
+  //. ```javascript
+  //. > S.dec(2)
+  //. 1
+  //. ```
+  S.dec =
+  def('dec',
+      {},
+      [$.FiniteNumber, $.FiniteNumber],
+      function(a) { return a - 1; });
+
   //. ### Parse
 
   //# parseDate :: String -> Maybe Date
