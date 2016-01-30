@@ -239,6 +239,7 @@
   //  env :: [Type]
   var env = $.env.concat([
     $.FiniteNumber,
+    $.NonZeroFiniteNumber,
     $Either,
     Integer,
     List,
@@ -2276,6 +2277,35 @@
       {},
       [$.FiniteNumber, $.FiniteNumber],
       function(a) { return a - 1; });
+
+  //# mult :: FiniteNumber -> FiniteNumber -> FiniteNumber
+  //.
+  //. Returns the product of two (finite) numbers.
+  //.
+  //. ```javascript
+  //. > S.mult(4, 2)
+  //. 8
+  //. ```
+  S.mult =
+  def('mult',
+      {},
+      [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
+      function(a, b) { return a * b; });
+
+  //# div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber
+  //.
+  //. Returns the result of dividing its first argument (a finite number) by
+  //. its second argument (a non-zero finite number).
+  //.
+  //. ```javascript
+  //. > S.div(7, 2)
+  //. 3.5
+  //. ```
+  S.div =
+  def('div',
+      {},
+      [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber],
+      function(a, b) { return a / b; });
 
   //. ### Parse
 
