@@ -125,9 +125,6 @@
 
   var S = {};
 
-  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
-  var MIN_SAFE_INTEGER = -MAX_SAFE_INTEGER;
-
   var _ = R.__;
 
   var sentinel = {};
@@ -193,24 +190,13 @@
     function(either) { return either.isRight ? [either.value] : []; }
   );
 
-  //  Integer :: Type
-  var Integer = $.NullaryType(
-    'sanctuary/Integer',
-    function(x) {
-      return R.type(x) === 'Number' &&
-             Math.floor(x) === Number(x) &&
-             x >= MIN_SAFE_INTEGER &&
-             x <= MAX_SAFE_INTEGER;
-    }
-  );
-
   //  List :: Type -> Type
   var List = $.UnaryType(
     'sanctuary/List',
     function(x) {
       return x != null &&
              R.type(x) !== 'Function' &&
-             Integer.test(x.length) &&
+             $.Integer.test(x.length) &&
              x.length >= 0;
     },
     function(list) {
@@ -241,7 +227,7 @@
     $.FiniteNumber,
     $.NonZeroFiniteNumber,
     $Either,
-    Integer,
+    $.Integer,
     List,
     $Maybe,
     $.RegexFlags,
@@ -1805,7 +1791,7 @@
   var slice = S.slice =
   def('slice',
       {},
-      [Integer, Integer, List(a), $Maybe(List(a))],
+      [$.Integer, $.Integer, List(a), $Maybe(List(a))],
       function(start, end, xs) {
         var len = xs.length;
         var A = negativeZero(start) ? len : start < 0 ? start + len : start;
@@ -1835,7 +1821,7 @@
   var at = S.at =
   def('at',
       {},
-      [Integer, List(a), $Maybe(a)],
+      [$.Integer, List(a), $Maybe(a)],
       function(n, xs) {
         return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
       });
@@ -1934,7 +1920,7 @@
   S.take =
   def('take',
       {},
-      [Integer, List(a), $Maybe(List(a))],
+      [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
         return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
       });
@@ -1959,7 +1945,7 @@
   S.takeLast =
   def('takeLast',
       {},
-      [Integer, List(a), $Maybe(List(a))],
+      [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
         return n < 0 || negativeZero(n) ? Nothing() : slice(-n, -0, xs);
       });
@@ -1984,7 +1970,7 @@
   S.drop =
   def('drop',
       {},
-      [Integer, List(a), $Maybe(List(a))],
+      [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
         return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
       });
@@ -2009,7 +1995,7 @@
   S.dropLast =
   def('dropLast',
       {},
-      [Integer, List(a), $Maybe(List(a))],
+      [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
         return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
       });
@@ -2045,7 +2031,7 @@
     function(x) {
       return x != null &&
              typeof x !== 'function' &&
-             Integer.test(x.length) &&
+             $.Integer.test(x.length) &&
              x.length >= 0;
     }
   );
@@ -2053,7 +2039,7 @@
   var sanctifyIndexOf = function(name) {
     return def(name,
                {b: [ArrayLike]},
-               [a, b, $Maybe(Integer)],
+               [a, b, $Maybe($.Integer)],
                R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
@@ -2325,6 +2311,42 @@
       [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber],
       function(a, b) { return a / b; });
 
+  //. ### Integer
+
+  //# even :: Integer -> Boolean
+  //.
+  //. Returns `true` if the given integer is even; `false` if it is odd.
+  //.
+  //. ```javascript
+  //. > S.even(42)
+  //. true
+  //.
+  //. > S.even(99)
+  //. false
+  //. ```
+  S.even =
+  def('even',
+      {},
+      [$.Integer, $.Boolean],
+      function(n) { return n % 2 === 0; });
+
+  //# odd :: Integer -> Boolean
+  //.
+  //. Returns `true` if the given integer is odd; `false` if it is even.
+  //.
+  //. ```javascript
+  //. > S.odd(99)
+  //. true
+  //.
+  //. > S.odd(42)
+  //. false
+  //. ```
+  S.odd =
+  def('odd',
+      {},
+      [$.Integer, $.Boolean],
+      function(n) { return n % 2 !== 0; });
+
   //. ### Parse
 
   //# parseDate :: String -> Maybe Date
@@ -2424,7 +2446,7 @@
   S.parseInt =
   def('parseInt',
       {},
-      [Integer, $.String, $Maybe(Integer)],
+      [$.Integer, $.String, $Maybe($.Integer)],
       function(radix, s) {
         if (radix < 2 || radix > 36) {
           throw new RangeError('Radix not in [2 .. 36]');
@@ -2441,7 +2463,7 @@
                                        R.indexOf(_, charset),
                                        R.gte(_, 0))))),
           R.map(R.partialRight(parseInt, [radix])),
-          R.filter(Integer.test)
+          R.filter($.Integer.test)
         )(s);
       });
 
