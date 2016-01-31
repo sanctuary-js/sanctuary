@@ -25,7 +25,7 @@
 //. Sanctuary gives us a fighting chance of avoiding such errors. We might
 //. write:
 //.
-//.     R.map(S.toUpper, S.head(words))
+//.     S.map(S.toUpper, S.head(words))
 //.
 //. ## Types
 //.
@@ -36,9 +36,9 @@
 //. That is, it takes an argument of type `Number` and returns a value of
 //. type `Number`.
 //.
-//. [`R.map`][R.map] has type `(a -> b) -> [a] -> [b]`. That is, it takes
+//. [`S.map`](#map) has type `(a -> b) -> [a] -> [b]`. That is, it takes
 //. an argument of type `a -> b` and returns a value of type `[a] -> [b]`.
-//. `a` and `b` are type variables: applying `R.map` to a value of type
+//. `a` and `b` are type variables: applying `S.map` to a value of type
 //. `String -> Number` will give a value of type `[String] -> [Number]`.
 //.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
@@ -233,7 +233,8 @@
   var Functor = $.TypeClass(
     'sanctuary/Functor',
     function(x) {
-      return R.contains(_type(x), ['Array', 'Function']) ||
+      return R.contains(_type(x), ['Array', 'Object', 'Function']) ||
+             // $.test(env, $.StrMap, x) ||
              hasMethod('map')(x);
     }
   );
@@ -315,6 +316,7 @@
     $.Integer,
     $Maybe,
     $.RegexFlags,
+    // $.StrMap,
     TypeRep,
     $.ValidDate,
     $.ValidNumber
@@ -442,7 +444,7 @@
   //. > S.K('foo', 'bar')
   //. 'foo'
   //.
-  //. > R.map(S.K(42), R.range(0, 5))
+  //. > S.map(S.K(42), R.range(0, 5))
   //. [42, 42, 42, 42, 42]
   //. ```
   S.K =
@@ -540,7 +542,7 @@
   //. See also [`C`](#C).
   //.
   //. ```javascript
-  //. > R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
+  //. > S.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
   //. [1, 4, 9, 16, 25]
   //. ```
   S.flip =
@@ -548,6 +550,52 @@
       {},
       [$.Function, b, a, c],
       function(f, x, y) { return f(y, x); });
+
+  //# map :: Functor f => (a -> b) -> f a -> f b
+  //.
+  //. Takes a function and a [Functor][], applies the function to each of the
+  //. Functor's values, and returns a Functor of the same shape.
+  //.
+  //. ```javascript
+  //. > S.map(S.inc, [1, 2, 3])
+  //. [2, 3, 4]
+  //.
+  //. > S.map(S.inc, {a: 1, b: 2, c: 3})
+  //. {a: 2, b: 3, c: 4}
+  //.
+  //. > S.map(S.inc, S.Just(2))
+  //. S.Just(3)
+  //.
+  //. > S.map(S.not, S.odd)(2)
+  //. true
+  //. ```
+  var map = S.map =
+  def('map',
+      {a: [Functor], b: [Functor]},
+      [$.Function, a, b],
+      function(f, functor) {
+        var type = _type(functor);
+        var idx;
+        if (type === 'Array') {
+          var xs = [];
+          for (idx = 0; idx < functor.length; idx += 1) {
+            xs.push(f(functor[idx]));
+          }
+          return xs;
+        } else if (type === 'Function') {
+          return compose(f, functor);
+        } else if (hasMethod('map')(functor)) {
+          return functor.map(f);
+        } else {
+          var obj = {};
+          for (var key in functor) {
+            if (Object.prototype.hasOwnProperty.call(functor, key)) {
+              obj[key] = f(functor[key]);
+            }
+          }
+          return obj;
+        }
+      });
 
   //# lift :: Functor f => (a -> b) -> f a -> f b
   //.
@@ -564,7 +612,7 @@
   def('lift',
       {a: [Functor], b: [Functor]},
       [$.Function, a, b],
-      R.map);
+      map);
 
   //# lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
   //.
@@ -588,7 +636,7 @@
   def('lift2',
       {a: [Apply], b: [Apply], c: [Apply]},
       [$.Function, a, b, c],
-      function(f, x, y) { return R.ap(R.map(f, x), y); });
+      function(f, x, y) { return R.ap(map(f, x), y); });
 
   //# lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
   //.
@@ -606,7 +654,7 @@
   def('lift3',
       {a: [Apply], b: [Apply], c: [Apply], d: [Apply]},
       [$.Function, a, b, c, d],
-      function(f, x, y, z) { return R.ap(R.ap(R.map(f, x), y), z); });
+      function(f, x, y, z) { return R.ap(R.ap(map(f, x), y), z); });
 
   //. ### Composition
 
@@ -683,7 +731,7 @@
       {},
       [$.Array($.Function), $.Function],
       function(fs) {
-        var n = 1 + sum(R.map(R.length, fs)) - fs.length;
+        var n = 1 + sum(map(R.length, fs)) - fs.length;
         return R.curryN(n, function() {
           var args = Array.prototype.slice.call(arguments);
           for (var idx = 0; idx < fs.length; idx += 1) {
@@ -942,13 +990,16 @@
   //.
   //. Takes a function and returns `this` if `this` is a Nothing; otherwise
   //. it returns a Just whose value is the result of applying the function to
-  //. this Just's value.
+  //. this Just's value. This method is compatible with [`map`](#map).
   //.
   //. ```javascript
   //. > S.Nothing().map(S.inc)
   //. Nothing()
   //.
   //. > S.Just([1, 2, 3]).map(S.sum)
+  //. Just(6)
+  //.
+  //. > S.map(R.sum, S.Just([1, 2, 3]))
   //. Just(6)
   //. ```
   Maybe.prototype.map =
@@ -1017,7 +1068,7 @@
          {a: [Apply], b: [Apply]},
          [$Maybe(a), $.Function, b],
          function(maybe, of) {
-           return maybe.isJust ? R.map(Just, maybe.value) : of(maybe);
+           return maybe.isJust ? map(Just, maybe.value) : of(maybe);
          });
 
   //# Maybe#toBoolean :: Maybe a ~> Boolean
@@ -1253,7 +1304,7 @@
   def('mapMaybe',
       {},
       [$.Function, $.Array(a), $.Array(b)],
-      function(f, xs) { return justs(R.map(f, xs)); });
+      function(f, xs) { return justs(map(f, xs)); });
 
   //# encase :: (a -> b) -> a -> Maybe b
   //.
@@ -1560,13 +1611,16 @@
   //.
   //. Takes a function and returns `this` if `this` is a Left; otherwise it
   //. returns a Right whose value is the result of applying the function to
-  //. this Right's value.
+  //. this Right's value. This method is compatible with [`map`](#map).
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero').map(S.inc)
   //. Left('Cannot divide by zero')
   //.
   //. > S.Right([1, 2, 3]).map(S.sum)
+  //. Right(6)
+  //.
+  //. > S.map(R.sum, S.Right([1, 2, 3]))
   //. Right(6)
   //. ```
   Either.prototype.map =
@@ -2199,7 +2253,7 @@
       {},
       [$.Integer, List(a), $Maybe(a)],
       function(n, xs) {
-        return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
+        return map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
       });
 
   //# head :: [a] -> Maybe a
@@ -2524,7 +2578,7 @@
   def('pluck',
       {a: [Accessible]},
       [TypeRep, $.String, $.Array(a), $.Array($Maybe(b))],
-      function(type, key, xs) { return R.map(get(type, key), xs); });
+      function(type, key, xs) { return map(get(type, key), xs); });
 
   //# reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a
   //.
@@ -2994,7 +3048,7 @@
   def('parseFloat',
       {},
       [$.String, $Maybe($.Number)],
-      R.pipe(Just, R.filter(validFloatRepr), R.map(parseFloat)));
+      R.pipe(Just, R.filter(validFloatRepr), map(parseFloat)));
 
   //# parseInt :: Integer -> String -> Maybe Integer
   //.
@@ -3036,7 +3090,7 @@
                           R.all(R.pipe(toUpper,
                                        R.indexOf(_, charset),
                                        R.gte(_, 0))))),
-          R.map(R.partialRight(parseInt, [radix])),
+          map(R.partialRight(parseInt, [radix])),
           R.filter($.Integer.test)
         )(s);
       });
@@ -3260,7 +3314,7 @@
   def('unlines',
       {},
       [$.Array($.String), $.String],
-      compose(R.join(''), R.map(concat(_, '\n'))));
+      compose(R.join(''), map(concat(_, '\n'))));
 
   return S;
 
@@ -3285,7 +3339,6 @@
 //. [Monoid]:         https://github.com/fantasyland/fantasy-land#monoid
 //. [Nullable]:       https://github.com/sanctuary-js/sanctuary-def#nullable
 //. [R.equals]:       http://ramdajs.com/docs/#equals
-//. [R.map]:          http://ramdajs.com/docs/#map
 //. [R.type]:         http://ramdajs.com/docs/#type
 //. [Ramda]:          http://ramdajs.com/
 //. [RegExp]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
