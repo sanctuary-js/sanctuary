@@ -631,7 +631,7 @@ describe('maybe', function() {
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber ' +
                             'and NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'and ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -847,19 +847,21 @@ describe('maybe', function() {
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and Integer ' +
-                            'do not'));
+                            'and ValidNumber do not'));
 
       assert.throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
                     errorEq(TypeError,
                             '‘Maybe#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1099,8 +1101,8 @@ describe('maybe', function() {
                     errorEq(TypeError,
                             '‘fromMaybe’ expected a value of type ' +
                             '(Maybe Number) or (Maybe FiniteNumber) or ' +
-                            '(Maybe Integer) as its second argument; ' +
-                            'received [1, 2, 3]'));
+                            '(Maybe Integer) or (Maybe ValidNumber) ' +
+                            'as its second argument; received [1, 2, 3]'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1393,38 +1395,41 @@ describe('either', function() {
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'Integer do not'));
+                            'Integer and ValidNumber do not'));
 
       assert.throws(function() { S.Left(2).concat(S.Right(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'Integer do not'));
+                            'Integer and ValidNumber do not'));
 
       assert.throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1603,41 +1608,41 @@ describe('either', function() {
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'Integer do not'));
+                            'Integer and ValidNumber do not'));
 
       assert.throws(function() { S.Right(2).concat(S.Right(0)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'Integer do not'));
+                            'Integer and ValidNumber do not'));
 
       assert.throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘a’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
 
       assert.throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
                     errorEq(TypeError,
                             '‘Either#concat’ requires ‘b’ to implement ' +
                             'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer ' +
-                            'do not'));
+                            'NonZeroFiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -2128,7 +2133,8 @@ describe('alternative', function() {
       assert.throws(function() { S.and(0, 1); },
                     errorEq(TypeError,
                             '‘and’ requires ‘a’ to implement Alternative; ' +
-                            'Number and FiniteNumber and Integer do not'));
+                            'Number and FiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -2190,7 +2196,8 @@ describe('alternative', function() {
       assert.throws(function() { S.or(0, 1); },
                     errorEq(TypeError,
                             '‘or’ requires ‘a’ to implement Alternative; ' +
-                            'Number and FiniteNumber and Integer do not'));
+                            'Number and FiniteNumber and Integer and ' +
+                            'ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -2247,7 +2254,8 @@ describe('alternative', function() {
                             'and Monoid; (Either ??? Number) and ' +
                             '(Either ??? FiniteNumber) and ' +
                             '(Either ??? NonZeroFiniteNumber) and ' +
-                            '(Either ??? Integer) do not'));
+                            '(Either ??? Integer) and ' +
+                            '(Either ??? ValidNumber) do not'));
 
       assert.throws(function() { S.xor(S.Right(42), S.Right(43)); },
                     errorEq(TypeError,
@@ -2255,7 +2263,8 @@ describe('alternative', function() {
                             'and Monoid; (Either ??? Number) and ' +
                             '(Either ??? FiniteNumber) and ' +
                             '(Either ??? NonZeroFiniteNumber) and ' +
-                            '(Either ??? Integer) do not'));
+                            '(Either ??? Integer) and ' +
+                            '(Either ??? ValidNumber) do not'));
     });
 
     it('throws if applied to values of different types', function() {
@@ -2276,7 +2285,7 @@ describe('alternative', function() {
                     errorEq(TypeError,
                             '‘xor’ requires ‘a’ to implement Alternative ' +
                             'and Monoid; Number and FiniteNumber and Integer ' +
-                            'do not'));
+                            'and ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -3229,6 +3238,33 @@ describe('object', function() {
 });
 
 describe('number', function() {
+
+  describe('negate', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.negate, 'function');
+      eq(S.negate.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.negate(NaN); },
+                    errorEq(TypeError,
+                            '‘negate’ expected a value of type ValidNumber ' +
+                            'as its first argument; received NaN'));
+    });
+
+    it('negates its argument', function() {
+      eq(S.negate(0.5), -0.5);
+      eq(S.negate(-0.5), 0.5);
+      eq(S.negate(0), -0);
+      eq(S.negate(-0), 0);
+      eq(S.negate(new Number(0.5)), -0.5);
+      eq(S.negate(new Number(-0.5)), 0.5);
+      eq(S.negate(new Number(0)), -0);
+      eq(S.negate(new Number(-0)), 0);
+    });
+
+  });
 
   describe('add', function() {
 
