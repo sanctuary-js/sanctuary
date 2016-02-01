@@ -245,7 +245,8 @@
     List,
     $Maybe,
     $.RegexFlags,
-    TypeRep
+    TypeRep,
+    $.ValidNumber
   ]);
 
   var def = $.create(env);
@@ -2221,6 +2222,23 @@
       });
 
   //. ### Number
+
+  //# negate :: ValidNumber -> ValidNumber
+  //.
+  //. Negates its argument.
+  //.
+  //. ```javascript
+  //. > S.negate(12.5)
+  //. -12.5
+  //.
+  //. > S.negate(-42)
+  //. 42
+  //. ```
+  S.negate =
+  def('negate',
+      {},
+      [$.ValidNumber, $.ValidNumber],
+      function(n) { return -n; });
 
   //# add :: FiniteNumber -> FiniteNumber -> FiniteNumber
   //.
