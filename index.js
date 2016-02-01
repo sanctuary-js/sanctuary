@@ -397,10 +397,10 @@
   //.
   //. ```javascript
   //. > S.lift(R.inc, S.Just(2))
-  //. S.Just(3)
+  //. Just(3)
   //.
   //. > S.lift(R.inc, S.Nothing())
-  //. S.Nothing()
+  //. Nothing()
   //. ```
   S.lift =
   def('lift',
@@ -415,16 +415,16 @@
   //.
   //. ```javascript
   //. > S.lift2(R.add, S.Just(2), S.Just(3))
-  //. S.Just(5)
+  //. Just(5)
   //.
   //. > S.lift2(R.add, S.Just(2), S.Nothing())
-  //. S.Nothing()
+  //. Nothing()
   //.
   //. > S.lift2(S.and, S.Just(true), S.Just(true))
-  //. S.Just(true)
+  //. Just(true)
   //.
   //. > S.lift2(S.and, S.Just(true), S.Just(false))
-  //. S.Just(false)
+  //. Just(false)
   //. ```
   S.lift2 =
   def('lift2',
@@ -439,10 +439,10 @@
   //.
   //. ```javascript
   //. > S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3]))
-  //. S.Just(6)
+  //. Just(6)
   //.
   //. > S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Nothing())
-  //. S.Nothing()
+  //. Nothing()
   //. ```
   S.lift3 =
   def('lift3',
