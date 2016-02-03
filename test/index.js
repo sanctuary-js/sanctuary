@@ -1919,6 +1919,56 @@ describe('either', function() {
 
   });
 
+  describe('lefts', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.lefts, 'function');
+      eq(S.lefts.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.lefts([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘lefts’ expected a value of type ' +
+                            '(Array (Either a b)) as its first argument; ' +
+                            'received [1, 2, 3]'));
+    });
+
+    it('returns a list containing the value of each Left', function() {
+      eq(S.lefts([]), []);
+      eq(S.lefts([S.Right(2), S.Right(1)]), []);
+      eq(S.lefts([S.Right(2), S.Left('b')]), ['b']);
+      eq(S.lefts([S.Left('a'), S.Right(1)]), ['a']);
+      eq(S.lefts([S.Left('a'), S.Left('b')]), ['a', 'b']);
+    });
+
+  });
+
+  describe('rights', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.rights, 'function');
+      eq(S.rights.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.rights([1, 2, 3]); },
+                    errorEq(TypeError,
+                            '‘rights’ expected a value of type ' +
+                            '(Array (Either a b)) as its first argument; ' +
+                            'received [1, 2, 3]'));
+    });
+
+    it('returns a list containing the value of each Right', function() {
+      eq(S.rights([]), []);
+      eq(S.rights([S.Left('a'), S.Left('b')]), []);
+      eq(S.rights([S.Left('a'), S.Right(1)]), [1]);
+      eq(S.rights([S.Right(2), S.Left('b')]), [2]);
+      eq(S.rights([S.Right(2), S.Right(1)]), [2, 1]);
+    });
+
+  });
+
   describe('encaseEither', function() {
 
     it('is a ternary function', function() {
