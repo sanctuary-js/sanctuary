@@ -3575,6 +3575,94 @@ describe('number', function() {
 
   });
 
+  describe('min', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.min, 'function');
+      eq(S.min.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.min(/x/); },
+                    errorEq(TypeError,
+                            '‘min’ requires ‘a’ to implement Ord; ' +
+                            'RegExp does not'));
+
+      assert.throws(function() { S.min(NaN); },
+                    errorEq(TypeError,
+                            '‘min’ requires ‘a’ to implement Ord; ' +
+                            'Number does not'));
+    });
+
+    it('may be applied to (valid) numbers', function() {
+      eq(S.min(10, 2), 2);
+      eq(S.min(2, 10), 2);
+      eq(S.min(0.1, 0.01), 0.01);
+      eq(S.min(0.01, 0.1), 0.01);
+      eq(S.min(Infinity, -Infinity), -Infinity);
+      eq(S.min(-Infinity, Infinity), -Infinity);
+    });
+
+    it('may be applied to strings', function() {
+      eq(S.min('abc', 'xyz'), 'abc');
+      eq(S.min('xyz', 'abc'), 'abc');
+      eq(S.min('10', '2'), '10');
+      eq(S.min('2', '10'), '10');
+      eq(S.min('A', 'a'), 'A');
+      eq(S.min('a', 'A'), 'A');
+    });
+
+    it('is curried', function() {
+      eq(S.min(10).length, 1);
+      eq(S.min(10)(2), 2);
+    });
+
+  });
+
+  describe('max', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.max, 'function');
+      eq(S.max.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.max(/x/); },
+                    errorEq(TypeError,
+                            '‘max’ requires ‘a’ to implement Ord; ' +
+                            'RegExp does not'));
+
+      assert.throws(function() { S.max(NaN); },
+                    errorEq(TypeError,
+                            '‘max’ requires ‘a’ to implement Ord; ' +
+                            'Number does not'));
+    });
+
+    it('may be applied to (valid) numbers', function() {
+      eq(S.max(10, 2), 10);
+      eq(S.max(2, 10), 10);
+      eq(S.max(0.1, 0.01), 0.1);
+      eq(S.max(0.01, 0.1), 0.1);
+      eq(S.max(Infinity, -Infinity), Infinity);
+      eq(S.max(-Infinity, Infinity), Infinity);
+    });
+
+    it('may be applied to strings', function() {
+      eq(S.max('abc', 'xyz'), 'xyz');
+      eq(S.max('xyz', 'abc'), 'xyz');
+      eq(S.max('10', '2'), '2');
+      eq(S.max('2', '10'), '2');
+      eq(S.max('A', 'a'), 'a');
+      eq(S.max('a', 'A'), 'a');
+    });
+
+    it('is curried', function() {
+      eq(S.max(10).length, 1);
+      eq(S.max(10)(2), 10);
+    });
+
+  });
+
 });
 
 describe('integer', function() {

@@ -169,6 +169,16 @@
     }
   );
 
+  //  Ord :: TypeClass
+  var Ord = $.TypeClass(
+    'sanctuary/Ord',
+    function(x) {
+      var type = _type(x);
+      return type === 'Number' && $.ValidNumber.test(x) ||
+             type === 'String';
+    }
+  );
+
   //  Semigroup :: TypeClass
   var Semigroup = $.TypeClass(
     'sanctuary/Semigroup',
@@ -2346,6 +2356,52 @@
       {},
       [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber],
       function(a, b) { return a / b; });
+
+  //# min :: Ord a => a -> a -> a
+  //.
+  //. Returns the smaller of its two arguments.
+  //.
+  //. Strings are compared lexicographically. Specifically, the Unicode
+  //. code point value of each character in the first string is compared
+  //. to the value of the corresponding character in the second string.
+  //.
+  //. See also [`max`](#max).
+  //.
+  //. ```javascript
+  //. > S.min(10, 2)
+  //. 2
+  //.
+  //. > S.min('10', '2')
+  //. '10'
+  //. ```
+  S.min =
+  def('min',
+      {a: [Ord]},
+      [a, a, a],
+      function(x, y) { return x < y ? x : y; });
+
+  //# max :: Ord a => a -> a -> a
+  //.
+  //. Returns the larger of its two arguments.
+  //.
+  //. Strings are compared lexicographically. Specifically, the Unicode
+  //. code point value of each character in the first string is compared
+  //. to the value of the corresponding character in the second string.
+  //.
+  //. See also [`min`](#min).
+  //.
+  //. ```javascript
+  //. > S.max(10, 2)
+  //. 10
+  //.
+  //. > S.max('10', '2')
+  //. '2'
+  //. ```
+  S.max =
+  def('max',
+      {a: [Ord]},
+      [a, a, a],
+      function(x, y) { return x > y ? x : y; });
 
   //. ### Integer
 
