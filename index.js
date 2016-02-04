@@ -1490,6 +1490,42 @@
         return either.isLeft ? l(either.value) : r(either.value);
       });
 
+  //# lefts :: [Either a b] -> [a]
+  //.
+  //. Takes a list of Eithers and returns a list containing each Left's value.
+  //.
+  //. See also [`rights`](#rights).
+  //.
+  //. ```javascript
+  //. > S.lefts([S.Right(20), S.Left('foo'), S.Right(10), S.Left('bar')])
+  //. ['foo', 'bar']
+  //. ```
+  S.lefts =
+  def('lefts',
+      {},
+      [$.Array($Either(a, b)), $.Array(a)],
+      R.chain(function(either) {
+        return either.isLeft ? [either.value] : [];
+      }));
+
+  //# rights :: [Either a b] -> [b]
+  //.
+  //. Takes a list of Eithers and returns a list containing each Right's value.
+  //.
+  //. See also [`lefts`](#lefts).
+  //.
+  //. ```javascript
+  //. > S.rights([S.Right(20), S.Left('foo'), S.Right(10), S.Left('bar')])
+  //. [20, 10]
+  //. ```
+  S.rights =
+  def('rights',
+      {},
+      [$.Array($Either(a, b)), $.Array(b)],
+      R.chain(function(either) {
+        return either.isRight ? [either.value] : [];
+      }));
+
   //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
   //. Takes two unary functions, `f` and `g`, the second of which may throw,
