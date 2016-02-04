@@ -383,10 +383,10 @@
   //. Promotes a unary function to a function which operates on a [Functor][].
   //.
   //. ```javascript
-  //. > S.lift(R.inc, S.Just(2))
+  //. > S.lift(S.inc, S.Just(2))
   //. Just(3)
   //.
-  //. > S.lift(R.inc, S.Nothing())
+  //. > S.lift(S.inc, S.Nothing())
   //. Nothing()
   //. ```
   S.lift =
@@ -451,7 +451,7 @@
   //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
-  //. > S.compose(Math.sqrt, R.inc)(99)
+  //. > S.compose(Math.sqrt, S.inc)(99)
   //. 10
   //. ```
   var compose = S.compose =
@@ -472,7 +472,7 @@
   //. See also [`meld`](#meld).
   //.
   //. ```javascript
-  //. > S.pipe([R.inc, Math.sqrt, R.dec])(99)
+  //. > S.pipe([S.inc, Math.sqrt, S.dec])(99)
   //. 9
   //. ```
   S.pipe =
@@ -501,10 +501,10 @@
   //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
-  //. > S.meld([Math.pow, R.subtract])(3, 4, 5)
+  //. > S.meld([Math.pow, S.sub])(3, 4, 5)
   //. 76
   //.
-  //. > S.meld([Math.pow, R.subtract])(3)(4)(5)
+  //. > S.meld([Math.pow, S.sub])(3)(4)(5)
   //. 76
   //. ```
   S.meld =
@@ -605,10 +605,10 @@
   //. > S.Nothing().ap(S.Just(42))
   //. Nothing()
   //.
-  //. > S.Just(R.inc).ap(S.Nothing())
+  //. > S.Just(S.inc).ap(S.Nothing())
   //. Nothing()
   //.
-  //. > S.Just(R.inc).ap(S.Just(42))
+  //. > S.Just(S.inc).ap(S.Just(42))
   //. Just(43)
   //. ```
   Maybe.prototype.ap =
@@ -768,7 +768,7 @@
   //. this Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().map(R.inc)
+  //. > S.Nothing().map(S.inc)
   //. Nothing()
   //.
   //. > S.Just([1, 2, 3]).map(R.sum)
@@ -806,10 +806,10 @@
   //.     Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().reduce(R.add, 10)
+  //. > S.Nothing().reduce(S.add, 10)
   //. 10
   //.
-  //. > S.Just(5).reduce(R.add, 10)
+  //. > S.Just(5).reduce(S.add, 10)
   //. 15
   //. ```
   Maybe.prototype.reduce =
@@ -1181,10 +1181,10 @@
   //. > S.Left('Cannot divide by zero').ap(S.Right(42))
   //. Left('Cannot divide by zero')
   //.
-  //. > S.Right(R.inc).ap(S.Left('Cannot divide by zero'))
+  //. > S.Right(S.inc).ap(S.Left('Cannot divide by zero'))
   //. Left('Cannot divide by zero')
   //.
-  //. > S.Right(R.inc).ap(S.Right(42))
+  //. > S.Right(S.inc).ap(S.Right(42))
   //. Right(43)
   //. ```
   Either.prototype.ap =
@@ -1317,7 +1317,7 @@
   //. this Right's value.
   //.
   //. ```javascript
-  //. > S.Left('Cannot divide by zero').map(R.inc)
+  //. > S.Left('Cannot divide by zero').map(S.inc)
   //. Left('Cannot divide by zero')
   //.
   //. > S.Right([1, 2, 3]).map(R.sum)
@@ -1476,10 +1476,10 @@
   //. Right's value, if the Either is a Right.
   //.
   //. ```javascript
-  //. > S.either(R.toUpper, R.toString, S.Left('Cannot divide by zero'))
+  //. > S.either(S.toUpper, R.toString, S.Left('Cannot divide by zero'))
   //. 'CANNOT DIVIDE BY ZERO'
   //.
-  //. > S.either(R.toUpper, R.toString, S.Right(42))
+  //. > S.either(S.toUpper, R.toString, S.Right(42))
   //. '42'
   //. ```
   S.either =
