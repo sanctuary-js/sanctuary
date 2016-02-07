@@ -478,7 +478,7 @@
   S.pipe =
   def('pipe',
       {},
-      [List($.Function), a, b],
+      [$.Array($.Function), a, b],
       function(fs, x) { return R.reduceRight(compose2, I, fs)(x); });
 
   //# meld :: [** -> *] -> (* -> * -> ... -> *)
@@ -510,7 +510,7 @@
   S.meld =
   def('meld',
       {},
-      [List($.Function), $.Function],
+      [$.Array($.Function), $.Function],
       function(fs) {
         var n = 1 + R.sum(R.map(R.length, fs)) - fs.length;
         return R.curryN(n, function() {
