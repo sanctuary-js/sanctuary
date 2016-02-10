@@ -439,14 +439,14 @@ describe('function', function() {
     });
 
     it('lifts a function into the context of Applys', function() {
-      eq(S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3])), S.Just(6));
-      eq(S.lift3(R.reduce, S.Just(R.add), S.Just(0), S.Nothing()), S.Nothing());
+      eq(S.lift3(S.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3])), S.Just(6));
+      eq(S.lift3(S.reduce, S.Just(R.add), S.Just(0), S.Nothing()), S.Nothing());
 
-      eq(S.lift3(R.reduce, S.Right(R.add), S.Right(0), S.Right([1, 2, 3])), S.Right(6));
-      eq(S.lift3(R.reduce, S.Right(R.add), S.Right(0), S.Left('WHOOPS')), S.Left('WHOOPS'));
+      eq(S.lift3(S.reduce, S.Right(R.add), S.Right(0), S.Right([1, 2, 3])), S.Right(6));
+      eq(S.lift3(S.reduce, S.Right(R.add), S.Right(0), S.Left('WHOOPS')), S.Left('WHOOPS'));
 
-      eq(S.lift3(R.reduce, [R.add], [0], [[1, 2, 3]]), [6]);
-      eq(S.lift3(R.reduce, [R.add], [0], []), []);
+      eq(S.lift3(S.reduce, [R.add], [0], [[1, 2, 3]]), [6]);
+      eq(S.lift3(S.reduce, [R.add], [0], []), []);
 
       eq(S.lift3(R.curry(area), R.dec, S.I, R.inc)(4), 6);
     });
@@ -3193,6 +3193,40 @@ describe('list', function() {
       eq(S.pluck(Number).length, 2);
       eq(S.pluck(Number)('x').length, 1);
       eq(S.pluck(Number)('x')([{x: 42}]), [S.Just(42)]);
+    });
+
+  });
+
+  describe('reduce', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.reduce, 'function');
+      eq(S.reduce.length, 3);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.reduce('xxx'); },
+                    errorEq(TypeError,
+                            '‘reduce’ expected a value of type Function ' +
+                            'as its first argument; received "xxx"'));
+    });
+
+    it('folds over lists with the supplied accumulator', function() {
+      eq(S.reduce(S.add, 0, [1, 2, 3, 4, 5]), 15);
+      eq(S.reduce(S.add, 0, []), 0);
+      eq(S.reduce(S.lift2(S.add), S.Just(0),
+                  [S.Just(1), S.Just(2), S.Just(3), S.Just(4), S.Just(5)]),
+         S.Just(15));
+    });
+
+    it('dispatches to a "reduce" method if present', function() {
+      eq(S.reduce(S.add, 10, S.Just(5)), 15);
+    });
+
+    it('is curried', function() {
+      eq(S.reduce(S.add).length, 2);
+      eq(S.reduce(S.add)(0).length, 1);
+      eq(S.reduce(S.add)(0)([1, 2, 3, 4, 5]), 15);
     });
 
   });
