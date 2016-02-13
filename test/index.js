@@ -331,6 +331,25 @@ describe('combinator', function() {
 
   });
 
+  describe('A', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.A, 'function');
+      eq(S.A.length, 2);
+    });
+
+    it('A(f, x) is equivalent to f(x)', function() {
+      eq(S.A(R.inc, 1), 2);
+      eq(R.map(S.A(R.__, 100), [R.inc, Math.sqrt]), [101, 10]);
+    });
+
+    it('is curried', function() {
+      eq(S.A(R.inc).length, 1);
+      eq(S.A(R.inc)(1), 2);
+    });
+
+  });
+
 });
 
 describe('function', function() {

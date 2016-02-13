@@ -377,6 +377,24 @@
       [a, b, a],
       function(x, y) { return x; });
 
+  //# A :: (a -> b) -> a -> b
+  //.
+  //. The A combinator. Takes a function and a value, and returns the result of
+  //. applying the function to the value. Equivalent to Haskell's `($)` function.
+  //.
+  //. ```javascript
+  //. > S.A(R.inc, 1)
+  //. 2
+  //.
+  //. > R.map(S.A(R.__, 100), [R.inc, Math.sqrt])
+  //. [101, 10]
+  //. ```
+  S.A =
+  def('A',
+      {},
+      [$.Function, a, b],
+      function(f, x) { return f(x); });
+
   //. ### Function
 
   //# flip :: (a -> b -> c) -> b -> a -> c
