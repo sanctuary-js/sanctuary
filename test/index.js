@@ -350,6 +350,26 @@ describe('combinator', function() {
 
   });
 
+  describe('C', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.C, 'function');
+      eq(S.C.length, 3);
+    });
+
+    it('C(f, x, y) is equivalent to f(y)(x)', function() {
+      eq(S.C(R.concat, 'foo', 'bar'), 'barfoo');
+      eq(R.map(S.C(R.concat, '!'), ['BAM', 'POW', 'KA-POW']), ['BAM!', 'POW!', 'KA-POW!']);
+    });
+
+    it('is curried', function() {
+      eq(S.C(R.concat).length, 2);
+      eq(S.C(R.concat)('foo').length, 1);
+      eq(S.C(R.concat)('foo')('bar'), 'barfoo');
+    });
+
+  });
+
 });
 
 describe('function', function() {

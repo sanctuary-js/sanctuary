@@ -395,6 +395,29 @@
       [$.Function, a, b],
       function(f, x) { return f(x); });
 
+  //# C :: (a -> b -> c) -> b -> a -> c
+  //.
+  //. The C combinator. Takes a curried binary function and two values, and
+  //. returns the result of applying the function to the values in reverse.
+  //. Equivalent to Haskell's `flip` function.
+  //.
+  //. This function is very similar to [`flip`](#flip), except that its first
+  //. argument must be curried. This allows it to work with manually curried
+  //. functions.
+  //.
+  //. ```javascript
+  //. > S.C(R.concat, 'foo', 'bar')
+  //. 'barfoo'
+  //.
+  //. > R.filter(S.C(R.gt, 0), [-1, -2, 3, -4, 4, 2])
+  //. [3, 4, 2]
+  //. ```
+  S.C =
+  def('C',
+      {},
+      [$.Function, b, a, c],
+      function(f, x, y) { return f(y)(x); });
+
   //. ### Function
 
   //# flip :: (a -> b -> c) -> b -> a -> c
@@ -403,6 +426,8 @@
   //. applying the function - with its argument order reversed - to the
   //. values. `flip` may also be applied to a Ramda-style curried
   //. function with arity greater than two.
+  //.
+  //. See also [`C`](#C).
   //.
   //. ```javascript
   //. > R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
