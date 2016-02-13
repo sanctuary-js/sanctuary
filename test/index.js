@@ -145,6 +145,25 @@ var IdentityArb = function(arb) {
   return arb.smap(Identity, function(i) { return i.value; });
 };
 
+var runCompositionTests = function(compose) {
+
+  it('is a ternary function', function() {
+    eq(typeof compose, 'function');
+    eq(compose.length, 3);
+  });
+
+  it('composes two functions assumed to be unary', function() {
+    eq(compose(R.map(Math.sqrt), JSON.parse, '[1, 4, 9]'), [1, 2, 3]);
+  });
+
+  it('is curried', function() {
+    eq(compose(R.map(Math.sqrt)).length, 2);
+    eq(compose(R.map(Math.sqrt))(JSON.parse).length, 1);
+    eq(compose(R.map(Math.sqrt))(JSON.parse)('[1, 4, 9]'), [1, 2, 3]);
+  });
+
+};
+
 describe('invariants', function() {
 
   it('f() is equivalent to f for every "regular" function', function() {
@@ -370,6 +389,12 @@ describe('combinator', function() {
 
   });
 
+  describe('B', function() {
+
+    runCompositionTests(S.B);
+
+  });
+
 });
 
 describe('function', function() {
@@ -498,20 +523,7 @@ describe('composition', function() {
 
   describe('compose', function() {
 
-    it('is a ternary function', function() {
-      eq(typeof S.compose, 'function');
-      eq(S.compose.length, 3);
-    });
-
-    it('composes two functions assumed to be unary', function() {
-      eq(S.compose(R.map(Math.sqrt), JSON.parse, '[1, 4, 9]'), [1, 2, 3]);
-    });
-
-    it('is curried', function() {
-      eq(S.compose(R.map(Math.sqrt)).length, 2);
-      eq(S.compose(R.map(Math.sqrt))(JSON.parse).length, 1);
-      eq(S.compose(R.map(Math.sqrt))(JSON.parse)('[1, 4, 9]'), [1, 2, 3]);
-    });
+    runCompositionTests(S.compose);
 
   });
 

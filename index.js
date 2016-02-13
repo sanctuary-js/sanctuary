@@ -274,6 +274,10 @@
     };
   };
 
+  var compose3 = function(f, g, x) {
+    return f(g(x));
+  };
+
   var filter = function(pred, m) {
     return m.chain(function(x) {
       return pred(x) ? m.of(x) : m.empty();
@@ -418,6 +422,22 @@
       [$.Function, b, a, c],
       function(f, x, y) { return f(y)(x); });
 
+  //# B :: (b -> c) -> (a -> b) -> a -> c
+  //.
+  //. The B combinator. Takes two functions and a value, and returns the result
+  //. of applying the first function to the result of applying the second to the
+  //. value. Equivalent to [`compose`](#compose) and Haskell's `(.)` function.
+  //.
+  //. ```javascript
+  //. > S.B(Math.sqrt, S.inc, 99)
+  //. 10
+  //. ```
+  S.B =
+  def('B',
+      {},
+      [$.Function, $.Function, a, c],
+      compose3);
+
   //. ### Function
 
   //# flip :: (a -> b -> c) -> b -> a -> c
@@ -509,7 +529,7 @@
   //. In general terms, `compose` performs right-to-left composition of two
   //. unary functions.
   //.
-  //. See also [`pipe`](#pipe).
+  //. See also [`B`](#B) and [`pipe`](#pipe).
   //.
   //. ```javascript
   //. > S.compose(Math.sqrt, S.inc)(99)
@@ -519,7 +539,7 @@
   def('compose',
       {},
       [$.Function, $.Function, a, c],
-      function(f, g, x) { return f(g(x)); });
+      compose3);
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
