@@ -180,11 +180,7 @@
   //  Ord :: TypeClass
   var Ord = $.TypeClass(
     'sanctuary/Ord',
-    function(x) {
-      var type = _type(x);
-      return type === 'Number' && $.ValidNumber.test(x) ||
-             type === 'String';
-    }
+    R.anyPass([$.String.test, $.ValidDate.test, $.ValidNumber.test])
   );
 
   //  Semigroup :: TypeClass
@@ -250,6 +246,7 @@
     $Maybe,
     $.RegexFlags,
     TypeRep,
+    $.ValidDate,
     $.ValidNumber
   ]);
 
@@ -2505,6 +2502,9 @@
   //. > S.min(10, 2)
   //. 2
   //.
+  //. > S.min(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('1999-12-31')
+  //.
   //. > S.min('10', '2')
   //. '10'
   //. ```
@@ -2527,6 +2527,9 @@
   //. ```javascript
   //. > S.max(10, 2)
   //. 10
+  //.
+  //. > S.max(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('2000-01-01')
   //.
   //. > S.max('10', '2')
   //. '2'

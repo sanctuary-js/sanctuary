@@ -3717,6 +3717,11 @@ describe('number', function() {
                     errorEq(TypeError,
                             '‘min’ requires ‘a’ to implement Ord; ' +
                             'Number does not'));
+
+      assert.throws(function() { S.min(new Date('XXX')); },
+                    errorEq(TypeError,
+                            '‘min’ requires ‘a’ to implement Ord; ' +
+                            'Date does not'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3726,6 +3731,11 @@ describe('number', function() {
       eq(S.min(0.01, 0.1), 0.01);
       eq(S.min(Infinity, -Infinity), -Infinity);
       eq(S.min(-Infinity, Infinity), -Infinity);
+    });
+
+    it('may be applied to (valid) dates', function() {
+      eq(S.min(new Date(10), new Date(2)), new Date(2));
+      eq(S.min(new Date(2), new Date(10)), new Date(2));
     });
 
     it('may be applied to strings', function() {
@@ -3761,6 +3771,11 @@ describe('number', function() {
                     errorEq(TypeError,
                             '‘max’ requires ‘a’ to implement Ord; ' +
                             'Number does not'));
+
+      assert.throws(function() { S.max(new Date('XXX')); },
+                    errorEq(TypeError,
+                            '‘max’ requires ‘a’ to implement Ord; ' +
+                            'Date does not'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3770,6 +3785,11 @@ describe('number', function() {
       eq(S.max(0.01, 0.1), 0.1);
       eq(S.max(Infinity, -Infinity), Infinity);
       eq(S.max(-Infinity, Infinity), Infinity);
+    });
+
+    it('may be applied to (valid) dates', function() {
+      eq(S.max(new Date(10), new Date(2)), new Date(10));
+      eq(S.max(new Date(2), new Date(10)), new Date(10));
     });
 
     it('may be applied to strings', function() {
