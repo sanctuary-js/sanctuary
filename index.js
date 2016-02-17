@@ -1022,7 +1022,7 @@
   def('toMaybe',
       {},
       [$.Any, $Maybe(a)],
-      R.ifElse(R.isNil, Nothing, Just));
+      function(x) { return x == null ? Nothing() : Just(x); });
 
   //# maybe :: b -> (a -> b) -> Maybe a -> b
   //.
