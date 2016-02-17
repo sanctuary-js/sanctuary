@@ -102,6 +102,44 @@
 //.
 //. `Number` is the sole inhabitant of the TypeRep Number type.
 //.
+//. ## Type checking
+//.
+//. Sanctuary functions are defined via [sanctuary-def][] to provide run-time
+//. type checking. This is tremendously useful during development: type errors
+//. are reported immediately, avoiding circuitous stack traces (at best) and
+//. silent failures due to type coercion (at worst). For example:
+//.
+//. ```javascript
+//. S.inc('XXX');
+//. // ! TypeError: ‘inc’ expected a value of type FiniteNumber as its first argument; received "XXX"
+//. ```
+//.
+//. Compare this to the behaviour of Ramda's unchecked equivalent:
+//.
+//. ```javascript
+//. R.inc('XXX');
+//. // => '1XXX'
+//. ```
+//.
+//. There is a performance cost to run-time type checking. One may wish to
+//. disable type checking in certain contexts to avoid paying this cost.
+//. There are actually two versions of the Sanctuary module: one with type
+//. checking; one without. The latter is accessible via the `unchecked`
+//. property of the former.
+//.
+//. When application of `S.unchecked.<name>` honours the function's type
+//. signature the result will be the same as if `S.<name>` had been used
+//. instead. Otherwise, the behaviour is unspecified.
+//.
+//. In Node, one could use an environment variable to determine which version
+//. of the Sanctuary module to use:
+//.
+//. ```javascript
+//. const S = process.env.NODE_ENV === 'production' ?
+//.             require('sanctuary').unchecked :
+//.             require('sanctuary');
+//. ```
+//.
 //. ## API
 
 /* global define, self */
@@ -123,11 +161,34 @@
 
   'use strict';
 
-  var S = {};
-
   var _ = R.__;
 
   var sentinel = {};
+
+  //  _type :: a -> String
+  var _type = function(x) {
+    return x != null && R.type(x['@@type']) === 'String' ? x['@@type']
+                                                         : R.type(x);
+  };
+
+  //  compose2 :: ((b -> c), (a -> b)) -> a -> c
+  var compose2 = function(f, g) {
+    return function(x) {
+      return f(g(x));
+    };
+  };
+
+  //  compose3 :: ((b -> c), (a -> b), a) -> c
+  var compose3 = function(f, g, x) {
+    return f(g(x));
+  };
+
+  //  filter :: (Monad m, Monoid m) => ((a -> Boolean), m a) -> m a
+  var filter = function(pred, m) {
+    return m.chain(function(x) {
+      return pred(x) ? m.of(x) : m.empty();
+    });
+  };
 
   //  hasMethod :: String -> Any -> Boolean
   var hasMethod = function(name) {
@@ -135,6 +196,15 @@
       return x != null && typeof x[name] === 'function';
     };
   };
+
+  //  inspect :: -> String
+  var inspect = /* istanbul ignore next */ function() {
+    return this.toString();
+  };
+
+  //  negativeZero :: a -> Boolean
+  var negativeZero = R.either(R.equals(-0),
+                              R.equals(new Number(-0)));  // jshint ignore:line
 
   //  Accessible :: TypeClass
   var Accessible = $.TypeClass(
@@ -197,7 +267,7 @@
   var r = $.TypeVariable('r');
 
   //  $Either :: Type -> Type -> Type
-  var $Either = S.EitherType = $.BinaryType(
+  var $Either = $.BinaryType(
     'sanctuary/Either',
     function(x) { return x != null && x['@@type'] === 'sanctuary/Either'; },
     function(either) { return either.isLeft ? [either.value] : []; },
@@ -219,7 +289,7 @@
   );
 
   //  $Maybe :: Type -> Type
-  var $Maybe = S.MaybeType = $.UnaryType(
+  var $Maybe = $.UnaryType(
     'sanctuary/Maybe',
     function(x) { return x != null && x['@@type'] === 'sanctuary/Maybe'; },
     function(maybe) { return maybe.isJust ? [maybe.value] : []; }
@@ -250,7 +320,14 @@
     $.ValidNumber
   ]);
 
-  var def = $.create(env);
+  //  createSanctuary :: Boolean -> Module
+  var createSanctuary = function(checkTypes) {
+
+  //  To avoid excessive indentation this function's body is not indented.
+
+  var S = {EitherType: $Either, MaybeType: $Maybe};
+
+  var def = $.create(checkTypes, env);
 
   var method = function(name, constraints, types, _f) {
     var f = def(name, constraints, types, _f);
@@ -258,36 +335,6 @@
       return R.apply(f, R.prepend(this, arguments));
     });
   };
-
-  //  _type :: a -> String
-  var _type = function(x) {
-    return x != null && R.type(x['@@type']) === 'String' ? x['@@type']
-                                                         : R.type(x);
-  };
-
-  var compose2 = function(f, g) {
-    return function(x) {
-      return f(g(x));
-    };
-  };
-
-  var compose3 = function(f, g, x) {
-    return f(g(x));
-  };
-
-  var filter = function(pred, m) {
-    return m.chain(function(x) {
-      return pred(x) ? m.of(x) : m.empty();
-    });
-  };
-
-  var inspect = /* istanbul ignore next */ function() {
-    return this.toString();
-  };
-
-  //  negativeZero :: a -> Boolean
-  var negativeZero = R.either(R.equals(-0),
-                              R.equals(new Number(-0)));  // jshint ignore:line
 
   //. ### Classify
 
@@ -2898,6 +2945,14 @@
       [$.Array($.String), $.String],
       compose(R.join(''), R.map(R.concat(_, '\n'))));
 
+  return S;
+
+  };
+
+  //  Export two versions of the Sanctuary module: one with type checking;
+  //  one without.
+  var S       = createSanctuary(true);
+  S.unchecked = createSanctuary(false);
   return S;
 
 }));
