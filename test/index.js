@@ -145,6 +145,25 @@ var IdentityArb = function(arb) {
   return arb.smap(Identity, function(i) { return i.value; });
 };
 
+var runCompositionTests = function(compose) {
+
+  it('is a ternary function', function() {
+    eq(typeof compose, 'function');
+    eq(compose.length, 3);
+  });
+
+  it('composes two functions assumed to be unary', function() {
+    eq(compose(R.map(Math.sqrt), JSON.parse, '[1, 4, 9]'), [1, 2, 3]);
+  });
+
+  it('is curried', function() {
+    eq(compose(R.map(Math.sqrt)).length, 2);
+    eq(compose(R.map(Math.sqrt))(JSON.parse).length, 1);
+    eq(compose(R.map(Math.sqrt))(JSON.parse)('[1, 4, 9]'), [1, 2, 3]);
+  });
+
+};
+
 describe('invariants', function() {
 
   it('f() is equivalent to f for every "regular" function', function() {
@@ -331,6 +350,70 @@ describe('combinator', function() {
 
   });
 
+  describe('A', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.A, 'function');
+      eq(S.A.length, 2);
+    });
+
+    it('A(f, x) is equivalent to f(x)', function() {
+      eq(S.A(R.inc, 1), 2);
+      eq(R.map(S.A(R.__, 100), [R.inc, Math.sqrt]), [101, 10]);
+    });
+
+    it('is curried', function() {
+      eq(S.A(R.inc).length, 1);
+      eq(S.A(R.inc)(1), 2);
+    });
+
+  });
+
+  describe('C', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.C, 'function');
+      eq(S.C.length, 3);
+    });
+
+    it('C(f, x, y) is equivalent to f(y)(x)', function() {
+      eq(S.C(R.concat, 'foo', 'bar'), 'barfoo');
+      eq(R.map(S.C(R.concat, '!'), ['BAM', 'POW', 'KA-POW']), ['BAM!', 'POW!', 'KA-POW!']);
+    });
+
+    it('is curried', function() {
+      eq(S.C(R.concat).length, 2);
+      eq(S.C(R.concat)('foo').length, 1);
+      eq(S.C(R.concat)('foo')('bar'), 'barfoo');
+    });
+
+  });
+
+  describe('B', function() {
+
+    runCompositionTests(S.B);
+
+  });
+
+  describe('S', function() {
+
+    it('is a ternary function', function() {
+      eq(typeof S.C, 'function');
+      eq(S.C.length, 3);
+    });
+
+    it('S(f, g, x) is equivalent to f(x)(g(x))', function() {
+      eq(S.S(R.add, Math.sqrt, 100), 110);
+    });
+
+    it('is curried', function() {
+      eq(S.S(R.add).length, 2);
+      eq(S.S(R.add)(Math.sqrt).length, 1);
+      eq(S.S(R.add)(Math.sqrt)(100), 110);
+    });
+
+  });
+
 });
 
 describe('function', function() {
@@ -459,20 +542,7 @@ describe('composition', function() {
 
   describe('compose', function() {
 
-    it('is a ternary function', function() {
-      eq(typeof S.compose, 'function');
-      eq(S.compose.length, 3);
-    });
-
-    it('composes two functions assumed to be unary', function() {
-      eq(S.compose(R.map(Math.sqrt), JSON.parse, '[1, 4, 9]'), [1, 2, 3]);
-    });
-
-    it('is curried', function() {
-      eq(S.compose(R.map(Math.sqrt)).length, 2);
-      eq(S.compose(R.map(Math.sqrt))(JSON.parse).length, 1);
-      eq(S.compose(R.map(Math.sqrt))(JSON.parse)('[1, 4, 9]'), [1, 2, 3]);
-    });
+    runCompositionTests(S.compose);
 
   });
 

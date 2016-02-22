@@ -274,6 +274,10 @@
     };
   };
 
+  var compose3 = function(f, g, x) {
+    return f(g(x));
+  };
+
   var filter = function(pred, m) {
     return m.chain(function(x) {
       return pred(x) ? m.of(x) : m.empty();
@@ -377,6 +381,81 @@
       [a, b, a],
       function(x, y) { return x; });
 
+  //# A :: (a -> b) -> a -> b
+  //.
+  //. The A combinator. Takes a function and a value, and returns the result of
+  //. applying the function to the value. Equivalent to Haskell's `($)` function.
+  //.
+  //. ```javascript
+  //. > S.A(R.inc, 1)
+  //. 2
+  //.
+  //. > R.map(S.A(R.__, 100), [R.inc, Math.sqrt])
+  //. [101, 10]
+  //. ```
+  S.A =
+  def('A',
+      {},
+      [$.Function, a, b],
+      function(f, x) { return f(x); });
+
+  //# C :: (a -> b -> c) -> b -> a -> c
+  //.
+  //. The C combinator. Takes a curried binary function and two values, and
+  //. returns the result of applying the function to the values in reverse.
+  //. Equivalent to Haskell's `flip` function.
+  //.
+  //. This function is very similar to [`flip`](#flip), except that its first
+  //. argument must be curried. This allows it to work with manually curried
+  //. functions.
+  //.
+  //. ```javascript
+  //. > S.C(R.concat, 'foo', 'bar')
+  //. 'barfoo'
+  //.
+  //. > R.filter(S.C(R.gt, 0), [-1, -2, 3, -4, 4, 2])
+  //. [3, 4, 2]
+  //. ```
+  S.C =
+  def('C',
+      {},
+      [$.Function, b, a, c],
+      function(f, x, y) { return f(y)(x); });
+
+  //# B :: (b -> c) -> (a -> b) -> a -> c
+  //.
+  //. The B combinator. Takes two functions and a value, and returns the result
+  //. of applying the first function to the result of applying the second to the
+  //. value. Equivalent to [`compose`](#compose) and Haskell's `(.)` function.
+  //.
+  //. ```javascript
+  //. > S.B(Math.sqrt, S.inc, 99)
+  //. 10
+  //. ```
+  S.B =
+  def('B',
+      {},
+      [$.Function, $.Function, a, c],
+      compose3);
+
+  //# S :: (a -> b -> c) -> (a -> b) -> a -> c
+  //.
+  //. The S combinator. Takes a curried binary function, a unary function,
+  //. and a value, and returns the result of applying the binary function to:
+  //.
+  //.   - the value; and
+  //.   - the result of applying the unary function to the value.
+  //.
+  //. ```javascript
+  //. > S.S(R.add, Math.sqrt, 100)
+  //. 110
+  //. ```
+  S.S =
+  def('S',
+      {},
+      [$.Function, $.Function, a, c],
+      function(f, g, x) { return f(x)(g(x)); });
+
   //. ### Function
 
   //# flip :: (a -> b -> c) -> b -> a -> c
@@ -385,6 +464,8 @@
   //. applying the function - with its argument order reversed - to the
   //. values. `flip` may also be applied to a Ramda-style curried
   //. function with arity greater than two.
+  //.
+  //. See also [`C`](#C).
   //.
   //. ```javascript
   //. > R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
@@ -466,7 +547,7 @@
   //. In general terms, `compose` performs right-to-left composition of two
   //. unary functions.
   //.
-  //. See also [`pipe`](#pipe).
+  //. See also [`B`](#B) and [`pipe`](#pipe).
   //.
   //. ```javascript
   //. > S.compose(Math.sqrt, S.inc)(99)
@@ -476,7 +557,7 @@
   def('compose',
       {},
       [$.Function, $.Function, a, c],
-      function(f, g, x) { return f(g(x)); });
+      compose3);
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
