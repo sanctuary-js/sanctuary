@@ -221,6 +221,14 @@
     }
   );
 
+  //  Countable :: TypeClass
+  var Countable = $.TypeClass(
+    'sanctuary/Countable',
+    function(x) {
+      return x != null && x.length != null && $.Integer.test(x.length);
+    }
+  );
+
   //  Foldable :: TypeClass
   var Foldable = $.TypeClass(
     'sanctuary/Foldable',
@@ -1950,6 +1958,27 @@
       });
 
   //. ### List
+
+  //# length :: Semigroup a => a -> Int
+  //.
+  //. Returns the number of elements of any Countable: members of this
+  //. type class expose a `length` property of type Integer.
+  //.
+  //. ```javascript
+  //. > S.length([1, 2, 3, 4, 5])
+  //. 5
+  //.
+  //. > S.length('abcdef')
+  //. 6
+  //.
+  //. > S.length(function(a, b) { return a + b; })
+  //. 2
+  //. ```
+  S.length =
+  def('length',
+      {a: [Countable]},
+      [a, $.Integer],
+      function(x) { return x.length; });
 
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]
   //.
