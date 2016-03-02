@@ -981,7 +981,7 @@
   //. > S.Nothing().sequence(S.Either.of)
   //. Right(Nothing())
   //.
-  //. > S.Just(Right(42)).sequence(S.Either.of)
+  //. > S.Just(S.Right(42)).sequence(S.Either.of)
   //. Right(Just(42))
   //. ```
   Maybe.prototype.sequence =
@@ -2908,7 +2908,7 @@
   def('unwords',
       {},
       [$.Array($.String), $.String],
-      R.join(' '));
+      function(xs) { return xs.join(' '); });
 
   //# lines :: String -> [String]
   //.
