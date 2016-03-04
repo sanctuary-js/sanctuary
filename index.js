@@ -353,6 +353,22 @@
                function() { return R.apply(f, R.prepend(this, arguments)); });
   };
 
+  //  prop :: Accessible a => String -> a -> b
+  var prop =
+  def('prop',
+      {a: [Accessible]},
+      [$.String, a, b],
+      function(key, obj) {
+        var boxed = Object(obj);
+        if (key in boxed) {
+          return boxed[key];
+        } else {
+          throw new TypeError('‘prop’ expected object to have a property ' +
+                              'named ‘' + key + '’; ' +
+                              R.toString(obj) + ' does not');
+        }
+      });
+
   //. ### Classify
 
   //# type :: a -> String
@@ -1024,7 +1040,7 @@
   method('Maybe#toBoolean',
          {},
          [$Maybe(a), $.Boolean],
-         R.prop('isJust'));
+         prop('isJust'));
 
   //# Maybe#toString :: Maybe a ~> String
   //.
@@ -1111,7 +1127,7 @@
   def('isNothing',
       {},
       [$Maybe(a), $.Boolean],
-      R.prop('isNothing'));
+      prop('isNothing'));
 
   //# isJust :: Maybe a -> Boolean
   //.
@@ -1128,7 +1144,7 @@
   def('isJust',
       {},
       [$Maybe(a), $.Boolean],
-      R.prop('isJust'));
+      prop('isJust'));
 
   //# fromMaybe :: a -> Maybe a -> a
   //.
@@ -1532,7 +1548,7 @@
   method('Either#toBoolean',
          {},
          [$Either(a, b), $.Boolean],
-         R.prop('isRight'));
+         prop('isRight'));
 
   //# Either#toString :: Either a b ~> String
   //.
@@ -1621,7 +1637,7 @@
   def('isLeft',
       {},
       [$Either(a, b), $.Boolean],
-      R.prop('isLeft'));
+      prop('isLeft'));
 
   //# isRight :: Either a b -> Boolean
   //.
@@ -1638,7 +1654,7 @@
   def('isRight',
       {},
       [$Either(a, b), $.Boolean],
-      R.prop('isRight'));
+      prop('isRight'));
 
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
@@ -1715,7 +1731,7 @@
   //. > S.encaseEither(S.I, JSON.parse, '[')
   //. Left(new SyntaxError('Unexpected end of input'))
   //.
-  //. > S.encaseEither(R.prop('message'), JSON.parse, '[')
+  //. > S.encaseEither(S.prop('message'), JSON.parse, '[')
   //. Left('Unexpected end of input')
   //. ```
   S.encaseEither =
@@ -2407,6 +2423,20 @@
 
   //. ### Object
 
+  //# prop :: Accessible a => String -> a -> b
+  //.
+  //. Takes a property name and an object with known properties and returns
+  //. the value of the specified property. If for some reason the object
+  //. lacks the specified property, a type error is thrown.
+  //.
+  //. For accessing properties of uncertain objects, use [`get`](#get) instead.
+  //.
+  //. ```javascript
+  //. > S.prop('a', {a: 1, b: 2})
+  //. 1
+  //. ```
+  S.prop = prop;
+
   //# get :: Accessible a => TypeRep b -> String -> a -> Maybe b
   //.
   //. Takes a [type representative](#type-representatives), a property
@@ -2417,7 +2447,7 @@
   //. The `Object` type representative may be used as a catch-all since most
   //. values have `Object.prototype` in their prototype chains.
   //.
-  //. See also [`gets`](#gets).
+  //. See also [`gets`](#gets) and [`prop`](#prop).
   //.
   //. ```javascript
   //. > S.get(Number, 'x', {x: 1, y: 2})
