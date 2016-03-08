@@ -21,7 +21,7 @@
     "jshint": "2.5.x",
     "jsverify": "0.7.x",
     "mocha": "2.x.x",
-    "transcribe": "0.3.x",
+    "transcribe": "0.4.x",
     "xyz": "0.5.x"
   },
   "files": [
