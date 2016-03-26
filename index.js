@@ -149,7 +149,7 @@
   'use strict';
 
   /* istanbul ignore else */
-  if (typeof module !== 'undefined') {
+  if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = f(require('ramda'), require('sanctuary-def'));
   } else if (typeof define === 'function' && define.amd != null) {
     define(['ramda', 'sanctuary-def'], f);
