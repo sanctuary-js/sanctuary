@@ -111,7 +111,15 @@
 //.
 //. ```javascript
 //. S.inc('XXX');
-//. // ! TypeError: ‘inc’ expected a value of type FiniteNumber as its first argument; received "XXX"
+//. // ! TypeError: Invalid value
+//. //
+//. //   inc :: FiniteNumber -> FiniteNumber
+//. //          ^^^^^^^^^^^^
+//. //               1
+//. //
+//. //   1)  "XXX" :: String
+//. //
+//. //   The value at position 1 is not a member of ‘FiniteNumber’.
 //. ```
 //.
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
@@ -312,7 +320,6 @@
     $.NonZeroFiniteNumber,
     $Either,
     $.Integer,
-    List,
     $Maybe,
     $.RegexFlags,
     TypeRep,
@@ -329,11 +336,21 @@
 
   var def = $.create(checkTypes, env);
 
+  //  Note: Type checking of method arguments takes place once all arguments
+  //  have been provided (whereas function arguments are checked as early as
+  //  possible). This is not ideal, but provides two benefits:
+  //
+  //    - accurate type signatures in error messages (though "->" appears in
+  //      place of "~>"); and
+  //
+  //    - intuitive ordering (`a.m(b, c)` is checked in a-b-c order rather
+  //      than b-c-a order).
   var method = function(name, constraints, types, _f) {
     var f = def(name, constraints, types, _f);
-    return def(name, constraints, R.tail(types), function() {
-      return R.apply(f, R.prepend(this, arguments));
-    });
+    return def(name,
+               constraints,
+               R.repeat($.Any, types.length - 1),
+               function() { return R.apply(f, R.prepend(this, arguments)); });
   };
 
   //. ### Classify
@@ -1146,7 +1163,7 @@
   var toMaybe = S.toMaybe =
   def('toMaybe',
       {},
-      [$.Any, $Maybe(a)],
+      [a, $Maybe(a)],
       function(x) { return x == null ? Nothing() : Just(x); });
 
   //# maybe :: b -> (a -> b) -> Maybe a -> b
@@ -2839,7 +2856,8 @@
       {},
       [$.RegExp, $.String, $Maybe($.Array($Maybe($.String)))],
       function(pattern, s) {
-        return R.map(R.map(toMaybe), toMaybe(s.match(pattern)));
+        var match = s.match(pattern);
+        return match == null ? Nothing() : Just(R.map(toMaybe, match));
       });
 
   //. ### String
