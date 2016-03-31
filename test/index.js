@@ -355,13 +355,13 @@ describe('combinator', function() {
     });
 
     it('A(f, x) is equivalent to f(x)', function() {
-      eq(S.A(R.inc, 1), 2);
-      eq(R.map(S.A(R.__, 100), [R.inc, Math.sqrt]), [101, 10]);
+      eq(S.A(S.inc, 1), 2);
+      eq(R.map(S.A(R.__, 100), [S.inc, Math.sqrt]), [101, 10]);
     });
 
     it('is curried', function() {
-      eq(S.A(R.inc).length, 1);
-      eq(S.A(R.inc)(1), 2);
+      eq(S.A(S.inc).length, 1);
+      eq(S.A(S.inc)(1), 2);
     });
 
   });
@@ -400,13 +400,13 @@ describe('combinator', function() {
     });
 
     it('S(f, g, x) is equivalent to f(x)(g(x))', function() {
-      eq(S.S(R.add, Math.sqrt, 100), 110);
+      eq(S.S(S.add, Math.sqrt, 100), 110);
     });
 
     it('is curried', function() {
-      eq(S.S(R.add).length, 2);
-      eq(S.S(R.add)(Math.sqrt).length, 1);
-      eq(S.S(R.add)(Math.sqrt)(100), 110);
+      eq(S.S(S.add).length, 2);
+      eq(S.S(S.add)(Math.sqrt).length, 1);
+      eq(S.S(S.add)(Math.sqrt)(100), 110);
     });
 
   });
@@ -455,14 +455,14 @@ describe('function', function() {
     });
 
     it('lifts a function into the context of Functors', function() {
-      eq(S.lift(R.multiply(2), S.Just(3)), S.Just(6));
-      eq(S.lift(R.multiply(2), S.Nothing()), S.Nothing());
+      eq(S.lift(S.mult(2), S.Just(3)), S.Just(6));
+      eq(S.lift(S.mult(2), S.Nothing()), S.Nothing());
 
-      eq(S.lift(R.multiply(2), S.Left(3)), S.Left(3));
-      eq(S.lift(R.multiply(2), S.Right(3)), S.Right(6));
+      eq(S.lift(S.mult(2), S.Left(3)), S.Left(3));
+      eq(S.lift(S.mult(2), S.Right(3)), S.Right(6));
 
-      eq(S.lift(R.multiply(2), [1, 2, 3]), [2, 4, 6]);
-      eq(S.lift(R.multiply(2), []), []);
+      eq(S.lift(S.mult(2), [1, 2, 3]), [2, 4, 6]);
+      eq(S.lift(S.mult(2), []), []);
 
       eq(S.lift(S.not, S.even)(42), false);
       eq(S.lift(S.not, S.even)(43), true);
@@ -484,14 +484,14 @@ describe('function', function() {
     });
 
     it('lifts a function into the context of Applys', function() {
-      eq(S.lift2(R.add, S.Just(3), S.Just(3)), S.Just(6));
-      eq(S.lift2(R.add, S.Nothing(), S.Just(3)), S.Nothing());
+      eq(S.lift2(S.add, S.Just(3), S.Just(3)), S.Just(6));
+      eq(S.lift2(S.add, S.Nothing(), S.Just(3)), S.Nothing());
 
-      eq(S.lift2(R.add, S.Right(3), S.Left(4)), S.Left(4));
-      eq(S.lift2(R.add, S.Right(3), S.Right(4)), S.Right(7));
+      eq(S.lift2(S.add, S.Right(3), S.Left(4)), S.Left(4));
+      eq(S.lift2(S.add, S.Right(3), S.Right(4)), S.Right(7));
 
-      eq(S.lift2(R.add, [1, 2], [10, 20]), [11, 21, 12, 22]);
-      eq(S.lift2(R.add, [], [1, 2]), []);
+      eq(S.lift2(S.add, [1, 2], [10, 20]), [11, 21, 12, 22]);
+      eq(S.lift2(S.add, [], [1, 2]), []);
 
       eq(S.lift2(S.and, S.even, positive)(42), true);
       eq(S.lift2(S.and, S.even, positive)(43), false);
@@ -515,16 +515,16 @@ describe('function', function() {
     });
 
     it('lifts a function into the context of Applys', function() {
-      eq(S.lift3(S.reduce, S.Just(R.add), S.Just(0), S.Just([1, 2, 3])), S.Just(6));
-      eq(S.lift3(S.reduce, S.Just(R.add), S.Just(0), S.Nothing()), S.Nothing());
+      eq(S.lift3(S.reduce, S.Just(S.add), S.Just(0), S.Just([1, 2, 3])), S.Just(6));
+      eq(S.lift3(S.reduce, S.Just(S.add), S.Just(0), S.Nothing()), S.Nothing());
 
-      eq(S.lift3(S.reduce, S.Right(R.add), S.Right(0), S.Right([1, 2, 3])), S.Right(6));
-      eq(S.lift3(S.reduce, S.Right(R.add), S.Right(0), S.Left('WHOOPS')), S.Left('WHOOPS'));
+      eq(S.lift3(S.reduce, S.Right(S.add), S.Right(0), S.Right([1, 2, 3])), S.Right(6));
+      eq(S.lift3(S.reduce, S.Right(S.add), S.Right(0), S.Left('WHOOPS')), S.Left('WHOOPS'));
 
-      eq(S.lift3(S.reduce, [R.add], [0], [[1, 2, 3]]), [6]);
-      eq(S.lift3(S.reduce, [R.add], [0], []), []);
+      eq(S.lift3(S.reduce, [S.add], [0], [[1, 2, 3]]), [6]);
+      eq(S.lift3(S.reduce, [S.add], [0], []), []);
 
-      eq(S.lift3(R.curry(area), R.dec, S.I, R.inc)(4), 6);
+      eq(S.lift3(R.curry(area), S.dec, S.I, S.inc)(4), 6);
     });
 
   });
@@ -549,14 +549,14 @@ describe('composition', function() {
     it('composes a list of functions assumed to be unary', function() {
       eq(S.pipe([], '99'), '99');
       eq(S.pipe([parseInt], '99'), 99);
-      eq(S.pipe([parseInt, R.inc], '99'), 100);
-      eq(S.pipe([parseInt, R.inc, Math.sqrt], '99'), 10);
-      eq(S.pipe([parseInt, R.inc, Math.sqrt, R.dec], '99'), 9);
+      eq(S.pipe([parseInt, S.inc], '99'), 100);
+      eq(S.pipe([parseInt, S.inc, Math.sqrt], '99'), 10);
+      eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec], '99'), 9);
     });
 
     it('is curried', function() {
-      eq(S.pipe([parseInt, R.inc, Math.sqrt, R.dec]).length, 1);
-      eq(S.pipe([parseInt, R.inc, Math.sqrt, R.dec])('99'), 9);
+      eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec]).length, 1);
+      eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec])('99'), 9);
     });
 
   });
@@ -571,12 +571,12 @@ describe('composition', function() {
     it('composes a list of unary functions', function() {
       eq(S.meld([]).length, 1);
       eq(S.meld([])(99), 99);
-      eq(S.meld([R.inc]).length, 1);
-      eq(S.meld([R.inc])(99), 100);
-      eq(S.meld([R.inc, Math.sqrt]).length, 1);
-      eq(S.meld([R.inc, Math.sqrt])(99), 10);
-      eq(S.meld([R.inc, Math.sqrt, R.dec]).length, 1);
-      eq(S.meld([R.inc, Math.sqrt, R.dec])(99), 9);
+      eq(S.meld([S.inc]).length, 1);
+      eq(S.meld([S.inc])(99), 100);
+      eq(S.meld([S.inc, Math.sqrt]).length, 1);
+      eq(S.meld([S.inc, Math.sqrt])(99), 10);
+      eq(S.meld([S.inc, Math.sqrt, S.dec]).length, 1);
+      eq(S.meld([S.inc, Math.sqrt, S.dec])(99), 9);
     });
 
     it('melds a list of non-nullary functions of various arities', function() {
@@ -811,11 +811,11 @@ describe('maybe', function() {
 
     it('implements Functor', function() {
       var a = S.Nothing();
-      var f = R.inc;
+      var f = S.inc;
       var g = square;
 
       // identity
-      assert(a.map(R.identity).equals(a));
+      assert(a.map(S.I).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
@@ -839,11 +839,11 @@ describe('maybe', function() {
     it('implements Applicative', function() {
       var a = S.Nothing();
       var b = S.Nothing();
-      var f = R.inc;
+      var f = S.inc;
       var x = 7;
 
       // identity
-      assert(a.of(R.identity).ap(b).equals(b));
+      assert(a.of(S.I).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
@@ -887,11 +887,11 @@ describe('maybe', function() {
     });
 
     it('provides an "ap" method', function() {
-      eq(S.Just(R.inc).ap.length, 1);
-      eq(S.Just(R.inc).ap(S.Nothing()), S.Nothing());
-      eq(S.Just(R.inc).ap(S.Just(42)), S.Just(43));
+      eq(S.Just(S.inc).ap.length, 1);
+      eq(S.Just(S.inc).ap(S.Nothing()), S.Nothing());
+      eq(S.Just(S.inc).ap(S.Just(42)), S.Just(43));
 
-      throws(function() { S.Just(R.inc).ap([1, 2, 3]); },
+      throws(function() { S.Just(S.inc).ap([1, 2, 3]); },
              errorEq(TypeError,
                      '‘Maybe#ap’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
     });
@@ -1035,18 +1035,18 @@ describe('maybe', function() {
 
     it('implements Functor', function() {
       var a = S.Just(7);
-      var f = R.inc;
+      var f = S.inc;
       var g = square;
 
       // identity
-      assert(a.map(R.identity).equals(a));
+      assert(a.map(S.I).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
     });
 
     it('implements Apply', function() {
-      var a = S.Just(R.inc);
+      var a = S.Just(S.inc);
       var b = S.Just(square);
       var c = S.Just(7);
 
@@ -1062,12 +1062,12 @@ describe('maybe', function() {
 
     it('implements Applicative', function() {
       var a = S.Just(null);
-      var b = S.Just(R.inc);
-      var f = R.inc;
+      var b = S.Just(S.inc);
+      var f = S.inc;
       var x = 7;
 
       // identity
-      assert(a.of(R.identity).ap(b).equals(b));
+      assert(a.of(S.I).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
@@ -1527,11 +1527,11 @@ describe('either', function() {
 
     it('implements Functor', function() {
       var a = S.Left('Cannot divide by zero');
-      var f = R.inc;
+      var f = S.inc;
       var g = square;
 
       // identity
-      assert(a.map(R.identity).equals(a));
+      assert(a.map(S.I).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
@@ -1555,11 +1555,11 @@ describe('either', function() {
     it('implements Applicative', function() {
       var a = S.Left('Cannot divide by zero');
       var b = S.Left('Cannot divide by zero');
-      var f = R.inc;
+      var f = S.inc;
       var x = 7;
 
       // identity
-      assert(a.of(R.identity).ap(b).equals(b));
+      assert(a.of(S.I).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
@@ -1603,11 +1603,11 @@ describe('either', function() {
     });
 
     it('provides an "ap" method', function() {
-      eq(S.Right(R.inc).ap.length, 1);
-      eq(S.Right(R.inc).ap(S.Left('abc')), S.Left('abc'));
-      eq(S.Right(R.inc).ap(S.Right(42)), S.Right(43));
+      eq(S.Right(S.inc).ap.length, 1);
+      eq(S.Right(S.inc).ap(S.Left('abc')), S.Left('abc'));
+      eq(S.Right(S.inc).ap(S.Right(42)), S.Right(43));
 
-      throws(function() { S.Right(R.inc).ap([1, 2, 3]); },
+      throws(function() { S.Right(S.inc).ap([1, 2, 3]); },
              errorEq(TypeError,
                      '‘Either#ap’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
     });
@@ -1717,18 +1717,18 @@ describe('either', function() {
 
     it('implements Functor', function() {
       var a = S.Right(7);
-      var f = R.inc;
+      var f = S.inc;
       var g = square;
 
       // identity
-      assert(a.map(R.identity).equals(a));
+      assert(a.map(S.I).equals(a));
 
       // composition
       assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
     });
 
     it('implements Apply', function() {
-      var a = S.Right(R.inc);
+      var a = S.Right(S.inc);
       var b = S.Right(square);
       var c = S.Right(7);
 
@@ -1744,12 +1744,12 @@ describe('either', function() {
 
     it('implements Applicative', function() {
       var a = S.Right(null);
-      var b = S.Right(R.inc);
-      var f = R.inc;
+      var b = S.Right(S.inc);
+      var f = S.inc;
       var x = 7;
 
       // identity
-      assert(a.of(R.identity).ap(b).equals(b));
+      assert(a.of(S.I).ap(b).equals(b));
 
       // homomorphism
       assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));

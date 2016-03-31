@@ -25,7 +25,7 @@
 //. Sanctuary gives us a fighting chance of avoiding such errors. We might
 //. write:
 //.
-//.     R.map(R.toUpper, S.head(words))
+//.     R.map(S.toUpper, S.head(words))
 //.
 //. ## Types
 //.
@@ -118,7 +118,7 @@
 //.
 //. ```javascript
 //. R.inc('XXX');
-//. // => '1XXX'
+//. // => NaN
 //. ```
 //.
 //. There is a performance cost to run-time type checking. One may wish to
@@ -431,10 +431,10 @@
   //. applying the function to the value. Equivalent to Haskell's `($)` function.
   //.
   //. ```javascript
-  //. > S.A(R.inc, 1)
+  //. > S.A(S.inc, 1)
   //. 2
   //.
-  //. > R.map(S.A(R.__, 100), [R.inc, Math.sqrt])
+  //. > R.map(S.A(R.__, 100), [S.inc, Math.sqrt])
   //. [101, 10]
   //. ```
   S.A =
@@ -491,7 +491,7 @@
   //.   - the result of applying the unary function to the value.
   //.
   //. ```javascript
-  //. > S.S(R.add, Math.sqrt, 100)
+  //. > S.S(S.add, Math.sqrt, 100)
   //. 110
   //. ```
   S.S =
@@ -544,10 +544,10 @@
   //. [Apply][]s.
   //.
   //. ```javascript
-  //. > S.lift2(R.add, S.Just(2), S.Just(3))
+  //. > S.lift2(S.add, S.Just(2), S.Just(3))
   //. Just(5)
   //.
-  //. > S.lift2(R.add, S.Just(2), S.Nothing())
+  //. > S.lift2(S.add, S.Just(2), S.Nothing())
   //. Nothing()
   //.
   //. > S.lift2(S.and, S.Just(true), S.Just(true))
@@ -650,7 +650,7 @@
   //. > S.meld([Math.pow, S.sub])(3)(4)(5)
   //. 76
   //. ```
-  S.meld =
+  var meld = S.meld =
   def('meld',
       {},
       [$.Array($.Function), $.Function],
@@ -1200,7 +1200,7 @@
   def('mapMaybe',
       {},
       [$.Function, $.Array(a), $.Array(b)],
-      R.compose(catMaybes, R.map));
+      meld([R.map, catMaybes]));
 
   //# encase :: (a -> b) -> a -> Maybe b
   //.
@@ -2735,7 +2735,7 @@
           R.filter(R.pipe(R.replace(/^[+-]/, ''),
                           radix === 16 ? R.replace(/^0x/i, '') : I,
                           R.split(''),
-                          R.all(R.pipe(R.toUpper,
+                          R.all(R.pipe(toUpper,
                                        R.indexOf(_, charset),
                                        R.gte(_, 0))))),
           R.map(R.partialRight(parseInt, [radix])),
@@ -2854,7 +2854,7 @@
   //. > S.toUpper('ABC def 123')
   //. 'ABC DEF 123'
   //. ```
-  S.toUpper =
+  var toUpper = S.toUpper =
   def('toUpper',
       {},
       [$.String, $.String],
