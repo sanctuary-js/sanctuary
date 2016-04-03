@@ -13,6 +13,8 @@ var $ = require('sanctuary-def');
 var S = require('..');
 
 
+var throws = assert.throws;
+
 var eq = function(actual, expected) {
   assert.strictEqual(arguments.length, 2);
   assert.strictEqual(R.toString(actual), R.toString(expected));
@@ -187,25 +189,21 @@ describe('invariants', function() {
   });
 
   it('exported functions throw if applied to too many arguments', function() {
-    assert.throws(function() { S.I(1, 2); },
-                  errorEq(TypeError,
-                          '‘I’ requires one argument; ' +
-                          'received two arguments'));
+    throws(function() { S.I(1, 2); },
+           errorEq(TypeError,
+                   '‘I’ requires one argument; received two arguments'));
 
-    assert.throws(function() { S.K(1, 2, 3); },
-                  errorEq(TypeError,
-                          '‘K’ requires two arguments; ' +
-                          'received three arguments'));
+    throws(function() { S.K(1, 2, 3); },
+           errorEq(TypeError,
+                   '‘K’ requires two arguments; received three arguments'));
 
-    assert.throws(function() { S.K(1)(2, 3); },
-                  errorEq(TypeError,
-                          '‘K’ requires two arguments; ' +
-                          'received three arguments'));
+    throws(function() { S.K(1)(2, 3); },
+           errorEq(TypeError,
+                   '‘K’ requires two arguments; received three arguments'));
 
-    assert.throws(function() { S.K(1, 2, 3, 4, 5, 6, 7, 8, 9, 10); },
-                  errorEq(TypeError,
-                          '‘K’ requires two arguments; ' +
-                          'received 10 arguments'));
+    throws(function() { S.K(1, 2, 3, 4, 5, 6, 7, 8, 9, 10); },
+           errorEq(TypeError,
+                   '‘K’ requires two arguments; received 10 arguments'));
   });
 
 });
@@ -266,10 +264,9 @@ describe('classify', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.is([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘is’ expected a value of type TypeRep ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.is([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘is’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
     });
 
     it('works for built-in type', function() {
@@ -426,10 +423,9 @@ describe('function', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      assert.throws(function() { S.flip('wrong'); },
-                    errorEq(TypeError,
-                            '‘flip’ expected a value of type Function as its ' +
-                            'first argument; received "wrong"'));
+      throws(function() { S.flip('wrong'); },
+             errorEq(TypeError,
+                     '‘flip’ expected a value of type Function as its first argument; received "wrong"'));
     });
 
     it("flips a function's argument order", function() {
@@ -453,10 +449,9 @@ describe('function', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lift('wrong'); },
-                    errorEq(TypeError,
-                            '‘lift’ expected a value of type Function ' +
-                            'as its first argument; received "wrong"'));
+      throws(function() { S.lift('wrong'); },
+             errorEq(TypeError,
+                     '‘lift’ expected a value of type Function as its first argument; received "wrong"'));
     });
 
     it('lifts a function into the context of Functors', function() {
@@ -483,10 +478,9 @@ describe('function', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lift2('wrong'); },
-                    errorEq(TypeError,
-                            '‘lift2’ expected a value of type Function ' +
-                            'as its first argument; received "wrong"'));
+      throws(function() { S.lift2('wrong'); },
+             errorEq(TypeError,
+                     '‘lift2’ expected a value of type Function as its first argument; received "wrong"'));
     });
 
     it('lifts a function into the context of Applys', function() {
@@ -515,10 +509,9 @@ describe('function', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lift3('wrong'); },
-                    errorEq(TypeError,
-                            '‘lift3’ expected a value of type Function ' +
-                            'as its first argument; received "wrong"'));
+      throws(function() { S.lift3('wrong'); },
+             errorEq(TypeError,
+                     '‘lift3’ expected a value of type Function as its first argument; received "wrong"'));
     });
 
     it('lifts a function into the context of Applys', function() {
@@ -641,8 +634,8 @@ describe('maybe', function() {
   describe('Maybe', function() {
 
     it('throws if called', function() {
-      assert.throws(function() { S.Maybe(); },
-                    errorEq(Error, 'Cannot instantiate Maybe'));
+      throws(function() { S.Maybe(); },
+             errorEq(Error, 'Cannot instantiate Maybe'));
     });
 
     describe('Traversable laws', function() {
@@ -693,21 +686,18 @@ describe('maybe', function() {
       eq(S.Nothing().ap(S.Nothing()), S.Nothing());
       eq(S.Nothing().ap(S.Just(42)), S.Nothing());
 
-      assert.throws(function() { S.Nothing().ap([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Maybe#ap’ expected a value of type ' +
-                            '(Maybe a) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Nothing().ap([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Maybe#ap’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Nothing().chain.length, 1);
       eq(S.Nothing().chain(S.head), S.Nothing());
 
-      assert.throws(function() { S.Nothing().chain(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#chain’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Nothing().chain(null); },
+             errorEq(TypeError,
+                     '‘Maybe#chain’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "concat" method', function() {
@@ -715,17 +705,13 @@ describe('maybe', function() {
       eq(S.Nothing().concat(S.Nothing()), S.Nothing());
       eq(S.Nothing().concat(S.Just('foo')), S.Just('foo'));
 
-      assert.throws(function() { S.Nothing().concat(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ expected a value of type ' +
-                            '(Maybe a) as its first argument; received null'));
+      throws(function() { S.Nothing().concat(null); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ expected a value of type (Maybe a) as its first argument; received null'));
 
-      assert.throws(function() { S.Nothing().concat(S.Just(1)); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber ' +
-                            'and NonZeroFiniteNumber and Integer ' +
-                            'and ValidNumber do not'));
+      throws(function() { S.Nothing().concat(S.Just(1)); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -746,10 +732,9 @@ describe('maybe', function() {
       eq(w.extend(g).extend(f),
          w.extend(function(_w) { return f(_w.extend(g)); }));
 
-      assert.throws(function() { S.Nothing().extend(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#extend’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Nothing().extend(null); },
+             errorEq(TypeError,
+                     '‘Maybe#extend’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "filter" method', function() {
@@ -767,30 +752,27 @@ describe('maybe', function() {
       assert(m.map(f).filter(q)
              .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
 
-      assert.throws(function() { S.Nothing().filter(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#filter’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Nothing().filter(null); },
+             errorEq(TypeError,
+                     '‘Maybe#filter’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Nothing().map.length, 1);
       eq(S.Nothing().map(function() { return 42; }), S.Nothing());
 
-      assert.throws(function() { S.Nothing().map(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#map’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Nothing().map(null); },
+             errorEq(TypeError,
+                     '‘Maybe#map’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "reduce" method', function() {
       eq(S.Nothing().reduce.length, 2);
       eq(S.Nothing().reduce(function(a, b) { return a + b; }, 10), 10);
 
-      assert.throws(function() { S.Nothing().reduce(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#reduce’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Nothing().reduce(null); },
+             errorEq(TypeError,
+                     '‘Maybe#reduce’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "sequence" method', function() {
@@ -909,21 +891,18 @@ describe('maybe', function() {
       eq(S.Just(R.inc).ap(S.Nothing()), S.Nothing());
       eq(S.Just(R.inc).ap(S.Just(42)), S.Just(43));
 
-      assert.throws(function() { S.Just(R.inc).ap([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Maybe#ap’ expected a value of type (Maybe a) ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.Just(R.inc).ap([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Maybe#ap’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Just([1, 2, 3]).chain.length, 1);
       eq(S.Just([1, 2, 3]).chain(S.head), S.Just(1));
 
-      assert.throws(function() { S.Just([1, 2, 3]).chain([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Maybe#chain’ expected a value of type ' +
-                            'Function as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Just([1, 2, 3]).chain([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Maybe#chain’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "concat" method', function() {
@@ -931,31 +910,21 @@ describe('maybe', function() {
       eq(S.Just('foo').concat(S.Nothing()), S.Just('foo'));
       eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
 
-      assert.throws(function() { S.Just('foo').concat([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ expected a value of type ' +
-                            '(Maybe a) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Just('foo').concat([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.Just(1).concat(S.Just(0)); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and Integer ' +
-                            'and ValidNumber do not'));
+      throws(function() { S.Just(1).concat(S.Just(0)); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
-                    errorEq(TypeError,
-                            '‘Maybe#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
+             errorEq(TypeError,
+                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -985,10 +954,9 @@ describe('maybe', function() {
       eq(w.extend(g).extend(f),
          w.extend(function(_w) { return f(_w.extend(g)); }));
 
-      assert.throws(function() { S.Just(42).extend(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#extend’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Just(42).extend(null); },
+             errorEq(TypeError,
+                     '‘Maybe#extend’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "filter" method', function() {
@@ -1008,30 +976,27 @@ describe('maybe', function() {
       assert(m.map(f).filter(q)
              .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
 
-      assert.throws(function() { S.Just(42).filter(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#filter’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Just(42).filter(null); },
+             errorEq(TypeError,
+                     '‘Maybe#filter’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Just(42).map.length, 1);
       eq(S.Just(42).map(function(x) { return x / 2; }), S.Just(21));
 
-      assert.throws(function() { S.Just(42).map([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Maybe#map’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.Just(42).map([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Maybe#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "reduce" method', function() {
       eq(S.Just(5).reduce.length, 2);
       eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
 
-      assert.throws(function() { S.Just().reduce(null); },
-                    errorEq(TypeError,
-                            '‘Maybe#reduce’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Just().reduce(null); },
+             errorEq(TypeError,
+                     '‘Maybe#reduce’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "sequence" method', function() {
@@ -1143,10 +1108,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.isNothing([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘isNothing’ expected a value of type (Maybe a) ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.isNothing([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘isNothing’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns true when applied to a Nothing', function() {
@@ -1167,10 +1131,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.isJust([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘isJust’ expected a value of type (Maybe a) ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.isJust([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘isJust’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns true when applied to a Just', function() {
@@ -1191,12 +1154,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.fromMaybe(0, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘fromMaybe’ expected a value of type ' +
-                            '(Maybe Number) or (Maybe FiniteNumber) or ' +
-                            '(Maybe Integer) or (Maybe ValidNumber) ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.fromMaybe(0, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘fromMaybe’ expected a value of type (Maybe Number) or (Maybe FiniteNumber) or (Maybe Integer) or (Maybe ValidNumber) as its second argument; received [1, 2, 3]'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1241,15 +1201,13 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.maybe(0, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘maybe’ expected a value of type Function ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.maybe(0, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘maybe’ expected a value of type Function as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.maybe(0, R.length, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘maybe’ expected a value of type (Maybe a) ' +
-                            'as its third argument; received [1, 2, 3]'));
+      throws(function() { S.maybe(0, R.length, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘maybe’ expected a value of type (Maybe a) as its third argument; received [1, 2, 3]'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1276,11 +1234,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.catMaybes({length: 0}); },
-                    errorEq(TypeError,
-                            '‘catMaybes’ expected a value of type ' +
-                            '(Array (Maybe a)) as its first argument; ' +
-                            'received {"length": 0}'));
+      throws(function() { S.catMaybes({length: 0}); },
+             errorEq(TypeError,
+                     '‘catMaybes’ expected a value of type (Array (Maybe a)) as its first argument; received {"length": 0}'));
     });
 
     it('returns a list containing the value of each Just', function() {
@@ -1301,15 +1257,13 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.mapMaybe([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘mapMaybe’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.mapMaybe([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘mapMaybe’ expected a value of type Function as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.mapMaybe(S.head, null); },
-                    errorEq(TypeError,
-                            '‘mapMaybe’ expected a value of type (Array a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.mapMaybe(S.head, null); },
+             errorEq(TypeError,
+                     '‘mapMaybe’ expected a value of type (Array a) as its second argument; received null'));
     });
 
     it('maps over a list to produce a list of successful results', function() {
@@ -1334,10 +1288,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encase([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘encase’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.encase([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘encase’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just on success', function() {
@@ -1367,10 +1320,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encase2([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘encase2’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.encase2([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘encase2’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just on success', function() {
@@ -1401,10 +1353,9 @@ describe('maybe', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encase3([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘encase3’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.encase3([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘encase3’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just on success', function() {
@@ -1445,8 +1396,8 @@ describe('either', function() {
   describe('Either', function() {
 
     it('throws if called', function() {
-      assert.throws(function() { S.Either(); },
-                    errorEq(Error, 'Cannot instantiate Either'));
+      throws(function() { S.Either(); },
+             errorEq(Error, 'Cannot instantiate Either'));
     });
 
   });
@@ -1466,22 +1417,18 @@ describe('either', function() {
       eq(S.Left('abc').ap(S.Left('xyz')), S.Left('abc'));
       eq(S.Left('abc').ap(S.Right(42)), S.Left('abc'));
 
-      assert.throws(function() { S.Left('abc').ap([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#ap’ expected a value of type ' +
-                            '(Either a b) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Left('abc').ap([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#ap’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Left('abc').chain.length, 1);
       eq(S.Left('abc').chain(squareRoot), S.Left('abc'));
 
-      assert.throws(function() { S.Left('abc').chain([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#chain’ expected a value of type ' +
-                            'Function as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Left('abc').chain([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#chain’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "concat" method', function() {
@@ -1489,51 +1436,33 @@ describe('either', function() {
       eq(S.Left('abc').concat(S.Left('def')), S.Left('abcdef'));
       eq(S.Left('abc').concat(S.Right('xyz')), S.Right('xyz'));
 
-      assert.throws(function() { S.Left('abc').concat([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ expected a value of type ' +
-                            '(Either a b) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Left('abc').concat([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#concat’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.Left(1).concat(S.Left(0)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'Integer and ValidNumber do not'));
+      throws(function() { S.Left(1).concat(S.Left(0)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Left(2).concat(S.Right(0)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'Integer and ValidNumber do not'));
+      throws(function() { S.Left(2).concat(S.Right(0)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1563,20 +1492,18 @@ describe('either', function() {
       eq(w.extend(g).extend(f),
          w.extend(function(_w) { return f(_w.extend(g)); }));
 
-      assert.throws(function() { S.Left('abc').extend(null); },
-                    errorEq(TypeError,
-                            '‘Either#extend’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Left('abc').extend(null); },
+             errorEq(TypeError,
+                     '‘Either#extend’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Left('abc').map.length, 1);
       eq(S.Left('abc').map(square), S.Left('abc'));
 
-      assert.throws(function() { S.Left('abc').map([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#map’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.Left('abc').map([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -1680,21 +1607,18 @@ describe('either', function() {
       eq(S.Right(R.inc).ap(S.Left('abc')), S.Left('abc'));
       eq(S.Right(R.inc).ap(S.Right(42)), S.Right(43));
 
-      assert.throws(function() { S.Right(R.inc).ap([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#ap’ expected a value of type ' +
-                            '(Either a b) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Right(R.inc).ap([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#ap’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "chain" method', function() {
       eq(S.Right(25).chain.length, 1);
       eq(S.Right(25).chain(squareRoot), S.Right(5));
 
-      assert.throws(function() { S.Right(25).chain(null); },
-                    errorEq(TypeError,
-                            '‘Either#chain’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Right(25).chain(null); },
+             errorEq(TypeError,
+                     '‘Either#chain’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "concat" method', function() {
@@ -1702,51 +1626,33 @@ describe('either', function() {
       eq(S.Right('abc').concat(S.Left('xyz')), S.Right('abc'));
       eq(S.Right('abc').concat(S.Right('def')), S.Right('abcdef'));
 
-      assert.throws(function() { S.Right('abc').concat([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ expected a value of type ' +
-                            '(Either a b) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.Right('abc').concat([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#concat’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.Right(1).concat(S.Left(0)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'Integer and ValidNumber do not'));
+      throws(function() { S.Right(1).concat(S.Left(0)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Right(2).concat(S.Right(0)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'Integer and ValidNumber do not'));
+      throws(function() { S.Right(2).concat(S.Right(0)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘a’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
 
-      assert.throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
-                    errorEq(TypeError,
-                            '‘Either#concat’ requires ‘b’ to implement ' +
-                            'Semigroup; Number and FiniteNumber and ' +
-                            'NonZeroFiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
+             errorEq(TypeError,
+                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('provides an "equals" method', function() {
@@ -1776,20 +1682,18 @@ describe('either', function() {
       eq(w.extend(g).extend(f),
          w.extend(function(_w) { return f(_w.extend(g)); }));
 
-      assert.throws(function() { S.Right('abc').extend(null); },
-                    errorEq(TypeError,
-                            '‘Either#extend’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.Right('abc').extend(null); },
+             errorEq(TypeError,
+                     '‘Either#extend’ expected a value of type Function as its first argument; received null'));
     });
 
     it('provides a "map" method', function() {
       eq(S.Right(42).map.length, 1);
       eq(S.Right(42).map(square), S.Right(1764));
 
-      assert.throws(function() { S.Right(42).map([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘Either#map’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.Right(42).map([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘Either#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -1886,10 +1790,9 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.isLeft([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘isLeft’ expected a value of type (Either a b) ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.isLeft([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘isLeft’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns true when applied to a Left', function() {
@@ -1910,11 +1813,9 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.isRight([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘isRight’ expected a value of type ' +
-                            '(Either a b) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.isRight([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘isRight’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns true when applied to a Right', function() {
@@ -1935,35 +1836,29 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.either([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.either([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type Function as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.either(R.__, square)([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.either(R.__, square)([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type Function as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.either(R.length, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type Function ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.either(R.length, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type Function as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.either(R.length)([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type Function ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.either(R.length)([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type Function as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.either(R.length, square, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type (Either a b) ' +
-                            'as its third argument; received [1, 2, 3]'));
+      throws(function() { S.either(R.length, square, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type (Either a b) as its third argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.either(R.length)(square)([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘either’ expected a value of type (Either a b) ' +
-                            'as its third argument; received [1, 2, 3]'));
+      throws(function() { S.either(R.length)(square)([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘either’ expected a value of type (Either a b) as its third argument; received [1, 2, 3]'));
     });
 
     it('can be applied to a Left', function() {
@@ -2018,11 +1913,9 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lefts([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘lefts’ expected a value of type ' +
-                            '(Array (Either a b)) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.lefts([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘lefts’ expected a value of type (Array (Either a b)) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a list containing the value of each Left', function() {
@@ -2043,11 +1936,9 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.rights([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘rights’ expected a value of type ' +
-                            '(Array (Either a b)) as its first argument; ' +
-                            'received [1, 2, 3]'));
+      throws(function() { S.rights([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘rights’ expected a value of type (Array (Either a b)) as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a list containing the value of each Right', function() {
@@ -2068,15 +1959,13 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encaseEither(null); },
-                    errorEq(TypeError,
-                            '‘encaseEither’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.encaseEither(null); },
+             errorEq(TypeError,
+                     '‘encaseEither’ expected a value of type Function as its first argument; received null'));
 
-      assert.throws(function() { S.encaseEither(S.I, null); },
-                    errorEq(TypeError,
-                            '‘encaseEither’ expected a value of type ' +
-                            'Function as its second argument; received null'));
+      throws(function() { S.encaseEither(S.I, null); },
+             errorEq(TypeError,
+                     '‘encaseEither’ expected a value of type Function as its second argument; received null'));
     });
 
     it('returns a Right on success', function() {
@@ -2114,15 +2003,13 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encaseEither2(null); },
-                    errorEq(TypeError,
-                            '‘encaseEither2’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.encaseEither2(null); },
+             errorEq(TypeError,
+                     '‘encaseEither2’ expected a value of type Function as its first argument; received null'));
 
-      assert.throws(function() { S.encaseEither2(S.I, null); },
-                    errorEq(TypeError,
-                            '‘encaseEither2’ expected a value of type ' +
-                            'Function as its second argument; received null'));
+      throws(function() { S.encaseEither2(S.I, null); },
+             errorEq(TypeError,
+                     '‘encaseEither2’ expected a value of type Function as its second argument; received null'));
     });
 
     it('returns a Right on success', function() {
@@ -2161,15 +2048,13 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.encaseEither3(null); },
-                    errorEq(TypeError,
-                            '‘encaseEither3’ expected a value of type ' +
-                            'Function as its first argument; received null'));
+      throws(function() { S.encaseEither3(null); },
+             errorEq(TypeError,
+                     '‘encaseEither3’ expected a value of type Function as its first argument; received null'));
 
-      assert.throws(function() { S.encaseEither3(S.I, null); },
-                    errorEq(TypeError,
-                            '‘encaseEither3’ expected a value of type ' +
-                            'Function as its second argument; received null'));
+      throws(function() { S.encaseEither3(S.I, null); },
+             errorEq(TypeError,
+                     '‘encaseEither3’ expected a value of type Function as its second argument; received null'));
     });
 
     it('returns a Right on success', function() {
@@ -2209,18 +2094,16 @@ describe('either', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.maybeToEither('left', 1); },
-                    errorEq(TypeError,
-                            '‘maybeToEither’ expected a value of type ' +
-                            '(Maybe b) as its second argument; received 1'));
+      throws(function() { S.maybeToEither('left', 1); },
+             errorEq(TypeError,
+                     '‘maybeToEither’ expected a value of type (Maybe b) as its second argument; received 1'));
     });
 
     it('returns a Left of its first argument when the second is Nothing', function() {
       eq(S.maybeToEither('error msg', S.Nothing()), S.Left('error msg'));
     });
 
-    it('returns a Right of the value contained in the Just ' +
-       'when the second argument is a Just', function() {
+    it('returns a Right of the value contained in the Just when the second argument is a Just', function() {
       eq(S.maybeToEither('error msg', S.Just(42)), S.Right(42));
     });
 
@@ -2271,24 +2154,19 @@ describe('alternative', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      assert.throws(function() { S.and([], false); },
-                    errorEq(TypeError,
-                            '‘and’ expected a value of type (Array ???) or ' +
-                            '(List ???) as its second argument; ' +
-                            'received false'));
+      throws(function() { S.and([], false); },
+             errorEq(TypeError,
+                     '‘and’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
 
-      assert.throws(function() { S.and(R.__, false)([]); },
-                    errorEq(TypeError,
-                            '‘and’ expected a value of type Boolean ' +
-                            'as its first argument; received []'));
+      throws(function() { S.and(R.__, false)([]); },
+             errorEq(TypeError,
+                     '‘and’ expected a value of type Boolean as its first argument; received []'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
-      assert.throws(function() { S.and(0, 1); },
-                    errorEq(TypeError,
-                            '‘and’ requires ‘a’ to implement Alternative; ' +
-                            'Number and FiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.and(0, 1); },
+             errorEq(TypeError,
+                     '‘and’ requires ‘a’ to implement Alternative; Number and FiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -2334,24 +2212,19 @@ describe('alternative', function() {
     });
 
     it('throws if applied to values of different types', function() {
-      assert.throws(function() { S.or([], false); },
-                    errorEq(TypeError,
-                            '‘or’ expected a value of type (Array ???) or ' +
-                            '(List ???) as its second argument; ' +
-                            'received false'));
+      throws(function() { S.or([], false); },
+             errorEq(TypeError,
+                     '‘or’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
 
-      assert.throws(function() { S.or(R.__, false)([]); },
-                    errorEq(TypeError,
-                            '‘or’ expected a value of type Boolean ' +
-                            'as its first argument; received []'));
+      throws(function() { S.or(R.__, false)([]); },
+             errorEq(TypeError,
+                     '‘or’ expected a value of type Boolean as its first argument; received []'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
-      assert.throws(function() { S.or(0, 1); },
-                    errorEq(TypeError,
-                            '‘or’ requires ‘a’ to implement Alternative; ' +
-                            'Number and FiniteNumber and Integer and ' +
-                            'ValidNumber do not'));
+      throws(function() { S.or(0, 1); },
+             errorEq(TypeError,
+                     '‘or’ requires ‘a’ to implement Alternative; Number and FiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -2390,56 +2263,37 @@ describe('alternative', function() {
     });
 
     it('cannot be applied to eithers', function() {
-      assert.throws(function() { S.xor(S.Left('foo'), S.Left('bar')); },
-                    errorEq(TypeError,
-                            '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; (Either String ???) and ' +
-                            '(Either (List ???) ???) do not'));
+      throws(function() { S.xor(S.Left('foo'), S.Left('bar')); },
+             errorEq(TypeError,
+                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either String ???) and (Either (List ???) ???) do not'));
 
-      assert.throws(function() { S.xor(S.Left('foo'), S.Right(42)); },
-                    errorEq(TypeError,
-                            '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; (Either String ???) and ' +
-                            '(Either (List ???) ???) do not'));
+      throws(function() { S.xor(S.Left('foo'), S.Right(42)); },
+             errorEq(TypeError,
+                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either String ???) and (Either (List ???) ???) do not'));
 
-      assert.throws(function() { S.xor(S.Right(42), S.Left('foo')); },
-                    errorEq(TypeError,
-                            '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; (Either ??? Number) and ' +
-                            '(Either ??? FiniteNumber) and ' +
-                            '(Either ??? NonZeroFiniteNumber) and ' +
-                            '(Either ??? Integer) and ' +
-                            '(Either ??? ValidNumber) do not'));
+      throws(function() { S.xor(S.Right(42), S.Left('foo')); },
+             errorEq(TypeError,
+                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either ??? Number) and (Either ??? FiniteNumber) and (Either ??? NonZeroFiniteNumber) and (Either ??? Integer) and (Either ??? ValidNumber) do not'));
 
-      assert.throws(function() { S.xor(S.Right(42), S.Right(43)); },
-                    errorEq(TypeError,
-                            '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; (Either ??? Number) and ' +
-                            '(Either ??? FiniteNumber) and ' +
-                            '(Either ??? NonZeroFiniteNumber) and ' +
-                            '(Either ??? Integer) and ' +
-                            '(Either ??? ValidNumber) do not'));
+      throws(function() { S.xor(S.Right(42), S.Right(43)); },
+             errorEq(TypeError,
+                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either ??? Number) and (Either ??? FiniteNumber) and (Either ??? NonZeroFiniteNumber) and (Either ??? Integer) and (Either ??? ValidNumber) do not'));
     });
 
     it('throws if applied to values of different types', function() {
-      assert.throws(function() { S.xor([], false); },
-                    errorEq(TypeError,
-                            '‘xor’ expected a value of type (Array ???) or ' +
-                            '(List ???) as its second argument; ' +
-                            'received false'));
+      throws(function() { S.xor([], false); },
+             errorEq(TypeError,
+                     '‘xor’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
 
-      assert.throws(function() { S.xor(R.__, false)([]); },
-                    errorEq(TypeError,
-                            '‘xor’ expected a value of type Boolean ' +
-                            'as its first argument; received []'));
+      throws(function() { S.xor(R.__, false)([]); },
+             errorEq(TypeError,
+                     '‘xor’ expected a value of type Boolean as its first argument; received []'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
-      assert.throws(function() { S.xor(0, 1); },
-                    errorEq(TypeError,
-                            '‘xor’ requires ‘a’ to implement Alternative ' +
-                            'and Monoid; Number and FiniteNumber and Integer ' +
-                            'and ValidNumber do not'));
+      throws(function() { S.xor(0, 1); },
+             errorEq(TypeError,
+                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; Number and FiniteNumber and Integer and ValidNumber do not'));
     });
 
     it('is curried', function() {
@@ -2468,10 +2322,9 @@ describe('logic', function() {
     });
 
     it('throws when applied to a non-Boolean value', function() {
-      assert.throws(function() { S.not(0); },
-                    errorEq(TypeError,
-                            '‘not’ expected a value of type Boolean ' +
-                            'as its first argument; received 0'));
+      throws(function() { S.not(0); },
+             errorEq(TypeError,
+                     '‘not’ expected a value of type Boolean as its first argument; received 0'));
     });
 
   });
@@ -2486,20 +2339,17 @@ describe('logic', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.ifElse('wrong'); },
-                    errorEq(TypeError,
-                            '‘ifElse’ expected a value of type Function ' +
-                            'as its first argument; received "wrong"'));
+      throws(function() { S.ifElse('wrong'); },
+             errorEq(TypeError,
+                     '‘ifElse’ expected a value of type Function as its first argument; received "wrong"'));
 
-      assert.throws(function() { S.ifElse(lt0, 'wrong'); },
-                    errorEq(TypeError,
-                            '‘ifElse’ expected a value of type Function ' +
-                            'as its second argument; received "wrong"'));
+      throws(function() { S.ifElse(lt0, 'wrong'); },
+             errorEq(TypeError,
+                     '‘ifElse’ expected a value of type Function as its second argument; received "wrong"'));
 
-      assert.throws(function() { S.ifElse(lt0, Math.abs, 'wrong'); },
-                    errorEq(TypeError,
-                            '‘ifElse’ expected a value of type Function ' +
-                            'as its third argument; received "wrong"'));
+      throws(function() { S.ifElse(lt0, Math.abs, 'wrong'); },
+             errorEq(TypeError,
+                     '‘ifElse’ expected a value of type Function as its third argument; received "wrong"'));
     });
 
     it('applies the first function when the predicate returns true', function() {
@@ -2527,11 +2377,9 @@ describe('logic', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.allPass('wrong'); },
-                    errorEq(TypeError,
-                            '‘allPass’ expected a value of type ' +
-                            '(Array Function) as its first argument; ' +
-                            'received "wrong"'));
+      throws(function() { S.allPass('wrong'); },
+             errorEq(TypeError,
+                     '‘allPass’ expected a value of type (Array Function) as its first argument; received "wrong"'));
     });
 
     it('returns true when given an empty array of predicates', function() {
@@ -2607,11 +2455,9 @@ describe('logic', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.anyPass('wrong'); },
-                    errorEq(TypeError,
-                            '‘anyPass’ expected a value of type ' +
-                            '(Array Function) as its first argument; ' +
-                            'received "wrong"'));
+      throws(function() { S.anyPass('wrong'); },
+             errorEq(TypeError,
+                     '‘anyPass’ expected a value of type (Array Function) as its first argument; received "wrong"'));
     });
 
     it('returns false when given an empty array of predicates', function() {
@@ -2691,15 +2537,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.at(0.5); },
-                    errorEq(TypeError,
-                            '‘at’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.at(0.5); },
+             errorEq(TypeError,
+                     '‘at’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.at(0, null); },
-                    errorEq(TypeError,
-                            '‘at’ expected a value of type (List a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.at(0, null); },
+             errorEq(TypeError,
+                     '‘at’ expected a value of type (List a) as its second argument; received null'));
     });
 
     it('returns Just the nth element of a list', function() {
@@ -2731,20 +2575,17 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.slice(0.5); },
-                    errorEq(TypeError,
-                            '‘slice’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.slice(0.5); },
+             errorEq(TypeError,
+                     '‘slice’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.slice(0, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘slice’ expected a value of type Integer ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.slice(0, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘slice’ expected a value of type Integer as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.slice(0, 0, {length: -1}); },
-                    errorEq(TypeError,
-                            '‘slice’ expected a value of type (List a) ' +
-                            'as its third argument; received {"length": -1}'));
+      throws(function() { S.slice(0, 0, {length: -1}); },
+             errorEq(TypeError,
+                     '‘slice’ expected a value of type (List a) as its third argument; received {"length": -1}'));
     });
 
     it('returns a Nothing with a positive end index greater than start index', function() {
@@ -2820,10 +2661,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.head({length: -1}); },
-                    errorEq(TypeError,
-                            '‘head’ expected a value of type (List a) ' +
-                            'as its first argument; received {"length": -1}'));
+      throws(function() { S.head({length: -1}); },
+             errorEq(TypeError,
+                     '‘head’ expected a value of type (List a) as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2844,10 +2684,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.last({length: -1}); },
-                    errorEq(TypeError,
-                            '‘last’ expected a value of type (List a) ' +
-                            'as its first argument; received {"length": -1}'));
+      throws(function() { S.last({length: -1}); },
+             errorEq(TypeError,
+                     '‘last’ expected a value of type (List a) as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2868,10 +2707,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.tail({length: -1}); },
-                    errorEq(TypeError,
-                            '‘tail’ expected a value of type (List a) ' +
-                            'as its first argument; received {"length": -1}'));
+      throws(function() { S.tail({length: -1}); },
+             errorEq(TypeError,
+                     '‘tail’ expected a value of type (List a) as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2892,10 +2730,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.init({length: -1}); },
-                    errorEq(TypeError,
-                            '‘init’ expected a value of type (List a) ' +
-                            'as its first argument; received {"length": -1}'));
+      throws(function() { S.init({length: -1}); },
+             errorEq(TypeError,
+                     '‘init’ expected a value of type (List a) as its first argument; received {"length": -1}'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2916,15 +2753,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.take(0.5); },
-                    errorEq(TypeError,
-                            '‘take’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.take(0.5); },
+             errorEq(TypeError,
+                     '‘take’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.take(0, null); },
-                    errorEq(TypeError,
-                            '‘take’ expected a value of type (List a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.take(0, null); },
+             errorEq(TypeError,
+                     '‘take’ expected a value of type (List a) as its second argument; received null'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -2970,15 +2805,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.takeLast(0.5); },
-                    errorEq(TypeError,
-                            '‘takeLast’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.takeLast(0.5); },
+             errorEq(TypeError,
+                     '‘takeLast’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.takeLast(0, null); },
-                    errorEq(TypeError,
-                            '‘takeLast’ expected a value of type (List a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.takeLast(0, null); },
+             errorEq(TypeError,
+                     '‘takeLast’ expected a value of type (List a) as its second argument; received null'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -3017,15 +2850,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.drop(0.5); },
-                    errorEq(TypeError,
-                            '‘drop’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.drop(0.5); },
+             errorEq(TypeError,
+                     '‘drop’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.drop(0, null); },
-                    errorEq(TypeError,
-                            '‘drop’ expected a value of type (List a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.drop(0, null); },
+             errorEq(TypeError,
+                     '‘drop’ expected a value of type (List a) as its second argument; received null'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -3071,15 +2902,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.dropLast(0.5); },
-                    errorEq(TypeError,
-                            '‘dropLast’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.dropLast(0.5); },
+             errorEq(TypeError,
+                     '‘dropLast’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.dropLast(0, null); },
-                    errorEq(TypeError,
-                            '‘dropLast’ expected a value of type (List a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.dropLast(0, null); },
+             errorEq(TypeError,
+                     '‘dropLast’ expected a value of type (List a) as its second argument; received null'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -3118,15 +2947,13 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.find([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘find’ expected a value of type Function ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.find([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘find’ expected a value of type Function as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.find(R.T, null); },
-                    errorEq(TypeError,
-                            '‘find’ expected a value of type (Array a) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.find(R.T, null); },
+             errorEq(TypeError,
+                     '‘find’ expected a value of type (Array a) as its second argument; received null'));
     });
 
     it('returns Just the first element satisfying the predicate', function() {
@@ -3154,10 +2981,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.indexOf('x', null); },
-                    errorEq(TypeError,
-                            '‘indexOf’ requires ‘b’ to implement ' +
-                            'ArrayLike; Null does not'));
+      throws(function() { S.indexOf('x', null); },
+             errorEq(TypeError,
+                     '‘indexOf’ requires ‘b’ to implement ArrayLike; Null does not'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -3192,10 +3018,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lastIndexOf('x', null); },
-                    errorEq(TypeError,
-                            '‘lastIndexOf’ requires ‘b’ to implement ' +
-                            'ArrayLike; Null does not'));
+      throws(function() { S.lastIndexOf('x', null); },
+             errorEq(TypeError,
+                     '‘lastIndexOf’ requires ‘b’ to implement ArrayLike; Null does not'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -3230,21 +3055,17 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.pluck([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘pluck’ expected a value of type TypeRep ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.pluck([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘pluck’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.pluck(Number, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘pluck’ expected a value of type String ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.pluck(Number, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘pluck’ expected a value of type String as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.pluck(Number, 'x', {length: 0}); },
-                    errorEq(TypeError,
-                            '‘pluck’ expected a value of type ' +
-                            '(Array a) as its third argument; ' +
-                            'received {"length": 0}'));
+      throws(function() { S.pluck(Number, 'x', {length: 0}); },
+             errorEq(TypeError,
+                     '‘pluck’ expected a value of type (Array a) as its third argument; received {"length": 0}'));
     });
 
     it('returns a list of satisfactory plucked values', function() {
@@ -3275,10 +3096,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.reduce('xxx'); },
-                    errorEq(TypeError,
-                            '‘reduce’ expected a value of type Function ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.reduce('xxx'); },
+             errorEq(TypeError,
+                     '‘reduce’ expected a value of type Function as its first argument; received "xxx"'));
     });
 
     it('folds over lists with the supplied accumulator', function() {
@@ -3309,10 +3129,9 @@ describe('list', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.unfoldr(null); },
-                    errorEq(TypeError,
-                            '‘unfoldr’ expected a value of type Function ' +
-                            'as its first argument; received null'));
+      throws(function() { S.unfoldr(null); },
+             errorEq(TypeError,
+                     '‘unfoldr’ expected a value of type Function as its first argument; received null'));
     });
 
     it('correctly unfolds a value into a list', function() {
@@ -3338,20 +3157,17 @@ describe('object', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.get([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘get’ expected a value of type TypeRep ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.get([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘get’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.get(Number, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘get’ expected a value of type String ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.get(Number, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘get’ expected a value of type String as its second argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.get(Number, 'x', null); },
-                    errorEq(TypeError,
-                            '‘get’ requires ‘a’ to implement Accessible; ' +
-                            'Null does not'));
+      throws(function() { S.get(Number, 'x', null); },
+             errorEq(TypeError,
+                     '‘get’ requires ‘a’ to implement Accessible; Null does not'));
     });
 
     it('returns a Maybe', function() {
@@ -3383,20 +3199,17 @@ describe('object', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.gets([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘gets’ expected a value of type TypeRep ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.gets([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘gets’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.gets(Number, null); },
-                    errorEq(TypeError,
-                            '‘gets’ expected a value of type (Array String) ' +
-                            'as its second argument; received null'));
+      throws(function() { S.gets(Number, null); },
+             errorEq(TypeError,
+                     '‘gets’ expected a value of type (Array String) as its second argument; received null'));
 
-      assert.throws(function() { S.gets(Number, [], null); },
-                    errorEq(TypeError,
-                            '‘gets’ requires ‘a’ to implement Accessible; ' +
-                            'Null does not'));
+      throws(function() { S.gets(Number, [], null); },
+             errorEq(TypeError,
+                     '‘gets’ requires ‘a’ to implement Accessible; Null does not'));
     });
 
     it('returns a Maybe', function() {
@@ -3435,10 +3248,9 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.negate(NaN); },
-                    errorEq(TypeError,
-                            '‘negate’ expected a value of type ValidNumber ' +
-                            'as its first argument; received NaN'));
+      throws(function() { S.negate(NaN); },
+             errorEq(TypeError,
+                     '‘negate’ expected a value of type ValidNumber as its first argument; received NaN'));
     });
 
     it('negates its argument', function() {
@@ -3462,25 +3274,21 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.add('xxx', 1); },
-                    errorEq(TypeError,
-                            '‘add’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.add('xxx', 1); },
+             errorEq(TypeError,
+                     '‘add’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.add(1, 'xxx'); },
-                    errorEq(TypeError,
-                            '‘add’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received "xxx"'));
+      throws(function() { S.add(1, 'xxx'); },
+             errorEq(TypeError,
+                     '‘add’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
 
-      assert.throws(function() { S.add(1, Infinity); },
-                    errorEq(TypeError,
-                            '‘add’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received Infinity'));
+      throws(function() { S.add(1, Infinity); },
+             errorEq(TypeError,
+                     '‘add’ expected a value of type FiniteNumber as its second argument; received Infinity'));
 
-      assert.throws(function() { S.add(1, -Infinity); },
-                    errorEq(TypeError,
-                            '‘add’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received -Infinity'));
+      throws(function() { S.add(1, -Infinity); },
+             errorEq(TypeError,
+                     '‘add’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
     });
 
     it('adds two numbers', function() {
@@ -3505,25 +3313,21 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.sub('xxx', 1); },
-                    errorEq(TypeError,
-                            '‘sub’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.sub('xxx', 1); },
+             errorEq(TypeError,
+                     '‘sub’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.sub(1, 'xxx'); },
-                    errorEq(TypeError,
-                            '‘sub’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received "xxx"'));
+      throws(function() { S.sub(1, 'xxx'); },
+             errorEq(TypeError,
+                     '‘sub’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
 
-      assert.throws(function() { S.sub(1, Infinity); },
-                    errorEq(TypeError,
-                            '‘sub’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received Infinity'));
+      throws(function() { S.sub(1, Infinity); },
+             errorEq(TypeError,
+                     '‘sub’ expected a value of type FiniteNumber as its second argument; received Infinity'));
 
-      assert.throws(function() { S.sub(1, -Infinity); },
-                    errorEq(TypeError,
-                            '‘sub’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received -Infinity'));
+      throws(function() { S.sub(1, -Infinity); },
+             errorEq(TypeError,
+                     '‘sub’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
     });
 
     it('subtracts two numbers', function() {
@@ -3548,20 +3352,17 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.inc('xxx'); },
-                    errorEq(TypeError,
-                            '‘inc’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.inc('xxx'); },
+             errorEq(TypeError,
+                     '‘inc’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.inc(Infinity); },
-                    errorEq(TypeError,
-                            '‘inc’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received Infinity'));
+      throws(function() { S.inc(Infinity); },
+             errorEq(TypeError,
+                     '‘inc’ expected a value of type FiniteNumber as its first argument; received Infinity'));
 
-      assert.throws(function() { S.inc(-Infinity); },
-                    errorEq(TypeError,
-                            '‘inc’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received -Infinity'));
+      throws(function() { S.inc(-Infinity); },
+             errorEq(TypeError,
+                     '‘inc’ expected a value of type FiniteNumber as its first argument; received -Infinity'));
     });
 
     it('increments a number by one', function() {
@@ -3581,20 +3382,17 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.dec('xxx'); },
-                    errorEq(TypeError,
-                            '‘dec’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.dec('xxx'); },
+             errorEq(TypeError,
+                     '‘dec’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.dec(Infinity); },
-                    errorEq(TypeError,
-                            '‘dec’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received Infinity'));
+      throws(function() { S.dec(Infinity); },
+             errorEq(TypeError,
+                     '‘dec’ expected a value of type FiniteNumber as its first argument; received Infinity'));
 
-      assert.throws(function() { S.dec(-Infinity); },
-                    errorEq(TypeError,
-                            '‘dec’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received -Infinity'));
+      throws(function() { S.dec(-Infinity); },
+             errorEq(TypeError,
+                     '‘dec’ expected a value of type FiniteNumber as its first argument; received -Infinity'));
     });
 
     it('decrements a number by one', function() {
@@ -3614,25 +3412,21 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.mult('xxx', 2); },
-                    errorEq(TypeError,
-                            '‘mult’ expected a value of type FiniteNumber ' +
-                            'as its first argument; received "xxx"'));
+      throws(function() { S.mult('xxx', 2); },
+             errorEq(TypeError,
+                     '‘mult’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.mult(2, 'xxx'); },
-                    errorEq(TypeError,
-                            '‘mult’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received "xxx"'));
+      throws(function() { S.mult(2, 'xxx'); },
+             errorEq(TypeError,
+                     '‘mult’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
 
-      assert.throws(function() { S.mult(2, Infinity); },
-                    errorEq(TypeError,
-                            '‘mult’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received Infinity'));
+      throws(function() { S.mult(2, Infinity); },
+             errorEq(TypeError,
+                     '‘mult’ expected a value of type FiniteNumber as its second argument; received Infinity'));
 
-      assert.throws(function() { S.mult(2, -Infinity); },
-                    errorEq(TypeError,
-                            '‘mult’ expected a value of type FiniteNumber ' +
-                            'as its second argument; received -Infinity'));
+      throws(function() { S.mult(2, -Infinity); },
+             errorEq(TypeError,
+                     '‘mult’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
     });
 
     it('multiplies two numbers', function() {
@@ -3659,29 +3453,21 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.div('xxx', 1); },
-                    errorEq(TypeError,
-                            '‘div’ expected a value of type ' +
-                            'FiniteNumber as its first argument; ' +
-                            'received "xxx"'));
+      throws(function() { S.div('xxx', 1); },
+             errorEq(TypeError,
+                     '‘div’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
 
-      assert.throws(function() { S.div(1, 'xxx'); },
-                    errorEq(TypeError,
-                            '‘div’ expected a value of type ' +
-                            'NonZeroFiniteNumber as its second argument; ' +
-                            'received "xxx"'));
+      throws(function() { S.div(1, 'xxx'); },
+             errorEq(TypeError,
+                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received "xxx"'));
 
-      assert.throws(function() { S.div(1, 0); },
-                    errorEq(TypeError,
-                            '‘div’ expected a value of type ' +
-                            'NonZeroFiniteNumber as its second argument; ' +
-                            'received 0'));
+      throws(function() { S.div(1, 0); },
+             errorEq(TypeError,
+                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received 0'));
 
-      assert.throws(function() { S.div(1, -0); },
-                    errorEq(TypeError,
-                            '‘div’ expected a value of type ' +
-                            'NonZeroFiniteNumber as its second argument; ' +
-                            'received -0'));
+      throws(function() { S.div(1, -0); },
+             errorEq(TypeError,
+                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received -0'));
     });
 
     it('divides two numbers', function() {
@@ -3708,20 +3494,17 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.min(/x/); },
-                    errorEq(TypeError,
-                            '‘min’ requires ‘a’ to implement Ord; ' +
-                            'RegExp does not'));
+      throws(function() { S.min(/x/); },
+             errorEq(TypeError,
+                     '‘min’ requires ‘a’ to implement Ord; RegExp does not'));
 
-      assert.throws(function() { S.min(NaN); },
-                    errorEq(TypeError,
-                            '‘min’ requires ‘a’ to implement Ord; ' +
-                            'Number does not'));
+      throws(function() { S.min(NaN); },
+             errorEq(TypeError,
+                     '‘min’ requires ‘a’ to implement Ord; Number does not'));
 
-      assert.throws(function() { S.min(new Date('XXX')); },
-                    errorEq(TypeError,
-                            '‘min’ requires ‘a’ to implement Ord; ' +
-                            'Date does not'));
+      throws(function() { S.min(new Date('XXX')); },
+             errorEq(TypeError,
+                     '‘min’ requires ‘a’ to implement Ord; Date does not'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3762,20 +3545,17 @@ describe('number', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.max(/x/); },
-                    errorEq(TypeError,
-                            '‘max’ requires ‘a’ to implement Ord; ' +
-                            'RegExp does not'));
+      throws(function() { S.max(/x/); },
+             errorEq(TypeError,
+                     '‘max’ requires ‘a’ to implement Ord; RegExp does not'));
 
-      assert.throws(function() { S.max(NaN); },
-                    errorEq(TypeError,
-                            '‘max’ requires ‘a’ to implement Ord; ' +
-                            'Number does not'));
+      throws(function() { S.max(NaN); },
+             errorEq(TypeError,
+                     '‘max’ requires ‘a’ to implement Ord; Number does not'));
 
-      assert.throws(function() { S.max(new Date('XXX')); },
-                    errorEq(TypeError,
-                            '‘max’ requires ‘a’ to implement Ord; ' +
-                            'Date does not'));
+      throws(function() { S.max(new Date('XXX')); },
+             errorEq(TypeError,
+                     '‘max’ requires ‘a’ to implement Ord; Date does not'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3820,15 +3600,13 @@ describe('integer', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.even(0.5); },
-                    errorEq(TypeError,
-                            '‘even’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.even(0.5); },
+             errorEq(TypeError,
+                     '‘even’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.even(Infinity); },
-                    errorEq(TypeError,
-                            '‘even’ expected a value of type Integer ' +
-                            'as its first argument; received Infinity'));
+      throws(function() { S.even(Infinity); },
+             errorEq(TypeError,
+                     '‘even’ expected a value of type Integer as its first argument; received Infinity'));
     });
 
     it('returns true for even integer', function() {
@@ -3859,15 +3637,13 @@ describe('integer', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.odd(-0.5); },
-                    errorEq(TypeError,
-                            '‘odd’ expected a value of type Integer ' +
-                            'as its first argument; received -0.5'));
+      throws(function() { S.odd(-0.5); },
+             errorEq(TypeError,
+                     '‘odd’ expected a value of type Integer as its first argument; received -0.5'));
 
-      assert.throws(function() { S.odd(-Infinity); },
-                    errorEq(TypeError,
-                            '‘odd’ expected a value of type Integer ' +
-                            'as its first argument; received -Infinity'));
+      throws(function() { S.odd(-Infinity); },
+             errorEq(TypeError,
+                     '‘odd’ expected a value of type Integer as its first argument; received -Infinity'));
     });
 
     it('returns true for odd integer', function() {
@@ -3902,10 +3678,9 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseDate([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘parseDate’ expected a value of type String ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.parseDate([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘parseDate’ expected a value of type String as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just when applied to a valid date string', function() {
@@ -3927,10 +3702,9 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseFloat([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘parseFloat’ expected a value of type String ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.parseFloat([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘parseFloat’ expected a value of type String as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Maybe', function() {
@@ -3976,15 +3750,13 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseInt(0.5); },
-                    errorEq(TypeError,
-                            '‘parseInt’ expected a value of type Integer ' +
-                            'as its first argument; received 0.5'));
+      throws(function() { S.parseInt(0.5); },
+             errorEq(TypeError,
+                     '‘parseInt’ expected a value of type Integer as its first argument; received 0.5'));
 
-      assert.throws(function() { S.parseInt(10, 42); },
-                    errorEq(TypeError,
-                            '‘parseInt’ expected a value of type String ' +
-                            'as its second argument; received 42'));
+      throws(function() { S.parseInt(10, 42); },
+             errorEq(TypeError,
+                     '‘parseInt’ expected a value of type String as its second argument; received 42'));
     });
 
     it('returns a Maybe', function() {
@@ -4068,11 +3840,11 @@ describe('parse', function() {
     });
 
     it('throws if radix is not in [2 .. 36]', function() {
-      assert.throws(function() { S.parseInt(1, ''); },
-                    errorEq(RangeError, 'Radix not in [2 .. 36]'));
+      throws(function() { S.parseInt(1, ''); },
+             errorEq(RangeError, 'Radix not in [2 .. 36]'));
 
-      assert.throws(function() { S.parseInt(37, ''); },
-                    errorEq(RangeError, 'Radix not in [2 .. 36]'));
+      throws(function() { S.parseInt(37, ''); },
+             errorEq(RangeError, 'Radix not in [2 .. 36]'));
     });
 
     it('is not case-sensitive', function() {
@@ -4129,10 +3901,9 @@ describe('parse', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.parseJson([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘parseJson’ expected a value of type String ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.parseJson([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘parseJson’ expected a value of type String as its first argument; received [1, 2, 3]'));
     });
 
     it('returns a Just when applied to a valid JSON string', function() {
@@ -4157,37 +3928,28 @@ describe('regexp', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.regex('y'); },
-                    errorEq(TypeError,
-                            '‘regex’ expected a value of type ("" | "g" ' +
-                            '| "i" | "m" | "gi" | "gm" | "im" | "gim") ' +
-                            'as its first argument; received "y"'));
+      throws(function() { S.regex('y'); },
+             errorEq(TypeError,
+                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "y"'));
 
-      assert.throws(function() { S.regex('G'); },
-                    errorEq(TypeError,
-                            '‘regex’ expected a value of type ("" | "g" ' +
-                            '| "i" | "m" | "gi" | "gm" | "im" | "gim") ' +
-                            'as its first argument; received "G"'));
+      throws(function() { S.regex('G'); },
+             errorEq(TypeError,
+                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "G"'));
 
-      assert.throws(function() { S.regex('ig'); },
-                    errorEq(TypeError,
-                            '‘regex’ expected a value of type ("" | "g" ' +
-                            '| "i" | "m" | "gi" | "gm" | "im" | "gim") ' +
-                            'as its first argument; received "ig"'));
+      throws(function() { S.regex('ig'); },
+             errorEq(TypeError,
+                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "ig"'));
 
       function G() {}
       G.prototype.toString = R.always('g');
 
-      assert.throws(function() { S.regex(new G()); },
-                    errorEq(TypeError,
-                            '‘regex’ expected a value of type ("" | "g" ' +
-                            '| "i" | "m" | "gi" | "gm" | "im" | "gim") ' +
-                            'as its first argument; received g'));
+      throws(function() { S.regex(new G()); },
+             errorEq(TypeError,
+                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received g'));
 
-      assert.throws(function() { S.regex('', /(?:)/); },
-                    errorEq(TypeError,
-                            '‘regex’ expected a value of type String ' +
-                            'as its second argument; received /(?:)/'));
+      throws(function() { S.regex('', /(?:)/); },
+             errorEq(TypeError,
+                     '‘regex’ expected a value of type String as its second argument; received /(?:)/'));
     });
 
     it('returns a RegExp', function() {
@@ -4216,10 +3978,9 @@ describe('regexp', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.regexEscape(/(?:)/); },
-                    errorEq(TypeError,
-                            '‘regexEscape’ expected a value of type String ' +
-                            'as its first argument; received /(?:)/'));
+      throws(function() { S.regexEscape(/(?:)/); },
+             errorEq(TypeError,
+                     '‘regexEscape’ expected a value of type String as its first argument; received /(?:)/'));
     });
 
     it('escapes regular expression metacharacters', function() {
@@ -4248,15 +4009,13 @@ describe('regexp', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.test('^a'); },
-                    errorEq(TypeError,
-                            '‘test’ expected a value of type RegExp ' +
-                            'as its first argument; received "^a"'));
+      throws(function() { S.test('^a'); },
+             errorEq(TypeError,
+                     '‘test’ expected a value of type RegExp as its first argument; received "^a"'));
 
-      assert.throws(function() { S.test(/^a/, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘test’ expected a value of type String ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.test(/^a/, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘test’ expected a value of type String as its second argument; received [1, 2, 3]'));
     });
 
     it('returns true if pattern matches string', function() {
@@ -4290,15 +4049,13 @@ describe('regexp', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.match([1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘match’ expected a value of type RegExp ' +
-                            'as its first argument; received [1, 2, 3]'));
+      throws(function() { S.match([1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘match’ expected a value of type RegExp as its first argument; received [1, 2, 3]'));
 
-      assert.throws(function() { S.match(/(?:)/, [1, 2, 3]); },
-                    errorEq(TypeError,
-                            '‘match’ expected a value of type String ' +
-                            'as its second argument; received [1, 2, 3]'));
+      throws(function() { S.match(/(?:)/, [1, 2, 3]); },
+             errorEq(TypeError,
+                     '‘match’ expected a value of type String as its second argument; received [1, 2, 3]'));
     });
 
     it('returns a Just containing an array of Justs', function() {
@@ -4340,10 +4097,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.toUpper(true); },
-                    errorEq(TypeError,
-                            '‘toUpper’ expected a value of type String ' +
-                            'as its first argument; received true'));
+      throws(function() { S.toUpper(true); },
+             errorEq(TypeError,
+                     '‘toUpper’ expected a value of type String as its first argument; received true'));
     });
 
     it('returns the upper-case equivalent of its argument', function() {
@@ -4363,10 +4119,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.toLower(true); },
-                    errorEq(TypeError,
-                            '‘toLower’ expected a value of type String ' +
-                            'as its first argument; received true'));
+      throws(function() { S.toLower(true); },
+             errorEq(TypeError,
+                     '‘toLower’ expected a value of type String as its first argument; received true'));
     });
 
     it('returns the lower-case equivalent of its argument', function() {
@@ -4386,10 +4141,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.words(['foo']); },
-                    errorEq(TypeError,
-                            '‘words’ expected a value of type String ' +
-                            'as its first argument; received ["foo"]'));
+      throws(function() { S.words(['foo']); },
+             errorEq(TypeError,
+                     '‘words’ expected a value of type String as its first argument; received ["foo"]'));
     });
 
     it('splits a string into a list of words', function() {
@@ -4411,11 +4165,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.unwords(null); },
-                    errorEq(TypeError,
-                            '‘unwords’ expected a value of type ' +
-                            '(Array String) as its first argument; ' +
-                            'received null'));
+      throws(function() { S.unwords(null); },
+             errorEq(TypeError,
+                     '‘unwords’ expected a value of type (Array String) as its first argument; received null'));
     });
 
     it('joins -- with separating spaces -- a list of words', function() {
@@ -4438,10 +4190,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.lines(['foo']); },
-                    errorEq(TypeError,
-                            '‘lines’ expected a value of type String ' +
-                            'as its first argument; received ["foo"]'));
+      throws(function() { S.lines(['foo']); },
+             errorEq(TypeError,
+                     '‘lines’ expected a value of type String as its first argument; received ["foo"]'));
     });
 
     it('splits a string into a list of lines', function() {
@@ -4463,11 +4214,9 @@ describe('string', function() {
     });
 
     it('type checks its arguments', function() {
-      assert.throws(function() { S.unlines(null); },
-                    errorEq(TypeError,
-                            '‘unlines’ expected a value of type ' +
-                            '(Array String) as its first argument; ' +
-                            'received null'));
+      throws(function() { S.unlines(null); },
+             errorEq(TypeError,
+                     '‘unlines’ expected a value of type (Array String) as its first argument; received null'));
     });
 
     it('joins a list of lines after appending "\n" to each', function() {
