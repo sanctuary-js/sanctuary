@@ -386,7 +386,7 @@
         return x != null && (
           R.type(type.prototype['@@type']) === 'String' ?
             x['@@type'] === type.prototype['@@type'] :
-            R.type(x) === R.nth(1, R.match(/^function (\w*)/, String(type)))
+            R.type(x) === R.nth(1, R.match(/function (\w*)/, String(type)))
         );
       });
 
