@@ -11,7 +11,7 @@
     "test": "make test lint"
   },
   "dependencies": {
-    "ramda": "0.20.x",
+    "ramda": "0.21.x",
     "sanctuary-def": "0.4.x"
   },
   "devDependencies": {
