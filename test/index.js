@@ -384,14 +384,14 @@ describe('combinator', function() {
     });
 
     it('C(f, x, y) is equivalent to f(y)(x)', function() {
-      eq(S.C(R.concat, 'foo', 'bar'), 'barfoo');
-      eq(R.map(S.C(R.concat, '!'), ['BAM', 'POW', 'KA-POW']), ['BAM!', 'POW!', 'KA-POW!']);
+      eq(S.C(S.concat, 'foo', 'bar'), 'barfoo');
+      eq(R.map(S.C(S.concat, '!'), ['BAM', 'POW', 'KA-POW']), ['BAM!', 'POW!', 'KA-POW!']);
     });
 
     it('is curried', function() {
-      eq(S.C(R.concat).length, 2);
-      eq(S.C(R.concat)('foo').length, 1);
-      eq(S.C(R.concat)('foo')('bar'), 'barfoo');
+      eq(S.C(S.concat).length, 2);
+      eq(S.C(S.concat)('foo').length, 1);
+      eq(S.C(S.concat)('foo')('bar'), 'barfoo');
     });
 
   });
@@ -3207,6 +3207,76 @@ describe('logic', function() {
 
 describe('list', function() {
 
+  describe('concat', function() {
+
+    it('is a binary function', function() {
+      eq(typeof S.concat, 'function');
+      eq(S.concat.length, 2);
+    });
+
+    it('type checks its arguments', function() {
+      throws(function() { S.concat(/XXX/); },
+             errorEq(TypeError,
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'concat :: Semigroup a => a -> a -> a\n' +
+                     '          ^^^^^^^^^^^    ^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  /XXX/ :: RegExp\n' +
+                     '\n' +
+                     '‘concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+
+      throws(function() { S.concat('abc', [1, 2, 3]); },
+             errorEq(TypeError,
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'concat :: Semigroup a => a -> a -> a\n' +
+                     '                         ^    ^\n' +
+                     '                         1    2\n' +
+                     '\n' +
+                     '1)  "abc" :: String\n' +
+                     '\n' +
+                     '2)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
+    });
+
+    it('can be applied to homogeneous arrays', function() {
+      eq(S.concat([], []), []);
+      eq(S.concat([1, 2, 3], []), [1, 2, 3]);
+      eq(S.concat([], [4, 5, 6]), [4, 5, 6]);
+      eq(S.concat([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
+    });
+
+    it('can be applied to strings', function() {
+      eq(S.concat('', ''), '');
+      eq(S.concat('foo', ''), 'foo');
+      eq(S.concat('', 'bar'), 'bar');
+      eq(S.concat('foo', 'bar'), 'foobar');
+    });
+
+    it('can be applied to maybes', function() {
+      eq(S.concat(S.Nothing(), S.Nothing()), S.Nothing());
+      eq(S.concat(S.Just('foo'), S.Nothing()), S.Just('foo'));
+      eq(S.concat(S.Nothing(), S.Just('bar')), S.Just('bar'));
+      eq(S.concat(S.Just('foo'), S.Just('bar')), S.Just('foobar'));
+    });
+
+    it('can be applied to eithers', function() {
+      eq(S.concat(S.Left('abc'), S.Left('def')), S.Left('abcdef'));
+      eq(S.concat(S.Right([1, 2, 3]), S.Left('def')), S.Right([1, 2, 3]));
+      eq(S.concat(S.Left('abc'), S.Right([4, 5, 6])), S.Right([4, 5, 6]));
+      eq(S.concat(S.Right([1, 2, 3]), S.Right([4, 5, 6])), S.Right([1, 2, 3, 4, 5, 6]));
+    });
+
+    it('is curried', function() {
+      eq(S.concat([1, 2, 3]).length, 1);
+      eq(S.concat([1, 2, 3])([4, 5, 6]), [1, 2, 3, 4, 5, 6]);
+    });
+
+  });
+
   describe('at', function() {
 
     it('is a binary function', function() {
@@ -4649,7 +4719,7 @@ describe('number', function() {
                      '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
     });
 
-    it('may be applied to (valid) numbers', function() {
+    it('can be applied to (valid) numbers', function() {
       eq(S.min(10, 2), 2);
       eq(S.min(2, 10), 2);
       eq(S.min(0.1, 0.01), 0.01);
@@ -4658,12 +4728,12 @@ describe('number', function() {
       eq(S.min(-Infinity, Infinity), -Infinity);
     });
 
-    it('may be applied to (valid) dates', function() {
+    it('can be applied to (valid) dates', function() {
       eq(S.min(new Date(10), new Date(2)), new Date(2));
       eq(S.min(new Date(2), new Date(10)), new Date(2));
     });
 
-    it('may be applied to strings', function() {
+    it('can be applied to strings', function() {
       eq(S.min('abc', 'xyz'), 'abc');
       eq(S.min('xyz', 'abc'), 'abc');
       eq(S.min('10', '2'), '10');
@@ -4724,7 +4794,7 @@ describe('number', function() {
                      '‘max’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
     });
 
-    it('may be applied to (valid) numbers', function() {
+    it('can be applied to (valid) numbers', function() {
       eq(S.max(10, 2), 10);
       eq(S.max(2, 10), 10);
       eq(S.max(0.1, 0.01), 0.1);
@@ -4733,12 +4803,12 @@ describe('number', function() {
       eq(S.max(-Infinity, Infinity), Infinity);
     });
 
-    it('may be applied to (valid) dates', function() {
+    it('can be applied to (valid) dates', function() {
       eq(S.max(new Date(10), new Date(2)), new Date(10));
       eq(S.max(new Date(2), new Date(10)), new Date(10));
     });
 
-    it('may be applied to strings', function() {
+    it('can be applied to strings', function() {
       eq(S.max('abc', 'xyz'), 'xyz');
       eq(S.max('xyz', 'abc'), 'xyz');
       eq(S.max('10', '2'), '2');
