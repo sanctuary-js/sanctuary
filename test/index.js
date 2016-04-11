@@ -266,7 +266,15 @@ describe('classify', function() {
     it('type checks its arguments', function() {
       throws(function() { S.is([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘is’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'is :: TypeRep -> Any -> Boolean\n' +
+                     '      ^^^^^^^\n' +
+                     '         1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘TypeRep’.\n'));
     });
 
     it('works for built-in type', function() {
@@ -323,6 +331,8 @@ describe('combinator', function() {
 
     it('returns its argument', function() {
       eq(S.I([1, 2, 3]), [1, 2, 3]);
+      eq(S.I({'@@type': 'my-package/Foreign'}),
+         {'@@type': 'my-package/Foreign'});
     });
 
   });
@@ -425,7 +435,15 @@ describe('function', function() {
     it('throws if applied to values of different types', function() {
       throws(function() { S.flip('wrong'); },
              errorEq(TypeError,
-                     '‘flip’ expected a value of type Function as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'flip :: Function -> b -> a -> c\n' +
+                     '        ^^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it("flips a function's argument order", function() {
@@ -451,7 +469,15 @@ describe('function', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lift('wrong'); },
              errorEq(TypeError,
-                     '‘lift’ expected a value of type Function as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'lift :: (Functor a, Functor b) => Function -> a -> b\n' +
+                     '                                  ^^^^^^^^\n' +
+                     '                                     1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('lifts a function into the context of Functors', function() {
@@ -480,7 +506,15 @@ describe('function', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lift2('wrong'); },
              errorEq(TypeError,
-                     '‘lift2’ expected a value of type Function as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'lift2 :: (Apply a, Apply b, Apply c) => Function -> a -> b -> c\n' +
+                     '                                        ^^^^^^^^\n' +
+                     '                                           1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('lifts a function into the context of Applys', function() {
@@ -511,7 +545,15 @@ describe('function', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lift3('wrong'); },
              errorEq(TypeError,
-                     '‘lift3’ expected a value of type Function as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'lift3 :: (Apply a, Apply b, Apply c, Apply d) => Function -> a -> b -> c -> d\n' +
+                     '                                                 ^^^^^^^^\n' +
+                     '                                                    1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('lifts a function into the context of Applys', function() {
@@ -688,7 +730,15 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().ap([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Maybe#ap’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#ap :: Maybe Function -> Maybe a -> Maybe b\n' +
+                     '                              ^^^^^^^\n' +
+                     '                                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('provides a "chain" method', function() {
@@ -697,7 +747,15 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().chain(null); },
              errorEq(TypeError,
-                     '‘Maybe#chain’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#chain :: Maybe a -> Function -> Maybe b\n' +
+                     '                          ^^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "concat" method', function() {
@@ -707,11 +765,27 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().concat(null); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ expected a value of type (Maybe a) as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                                          ^^^^^^^\n' +
+                     '                                             1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
 
       throws(function() { S.Nothing().concat(S.Just(1)); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                ^^^^^^^^^^^                     ^\n' +
+                     '                                                1\n' +
+                     '\n' +
+                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('provides an "equals" method', function() {
@@ -734,7 +808,15 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().extend(null); },
              errorEq(TypeError,
-                     '‘Maybe#extend’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#extend :: Maybe a -> Function -> Maybe a\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "filter" method', function() {
@@ -754,7 +836,15 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().filter(null); },
              errorEq(TypeError,
-                     '‘Maybe#filter’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#filter :: Maybe a -> Function -> Maybe a\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "map" method', function() {
@@ -763,16 +853,32 @@ describe('maybe', function() {
 
       throws(function() { S.Nothing().map(null); },
              errorEq(TypeError,
-                     '‘Maybe#map’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#map :: Maybe a -> Function -> Maybe b\n' +
+                     '                        ^^^^^^^^\n' +
+                     '                           1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "reduce" method', function() {
       eq(S.Nothing().reduce.length, 2);
       eq(S.Nothing().reduce(function(a, b) { return a + b; }, 10), 10);
 
-      throws(function() { S.Nothing().reduce(null); },
+      throws(function() { S.Nothing().reduce(null, null); },
              errorEq(TypeError,
-                     '‘Maybe#reduce’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#reduce :: Maybe a -> Function -> b -> b\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "sequence" method', function() {
@@ -893,7 +999,15 @@ describe('maybe', function() {
 
       throws(function() { S.Just(S.inc).ap([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Maybe#ap’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#ap :: Maybe Function -> Maybe a -> Maybe b\n' +
+                     '                              ^^^^^^^\n' +
+                     '                                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('provides a "chain" method', function() {
@@ -902,7 +1016,15 @@ describe('maybe', function() {
 
       throws(function() { S.Just([1, 2, 3]).chain([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Maybe#chain’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#chain :: Maybe a -> Function -> Maybe b\n' +
+                     '                          ^^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "concat" method', function() {
@@ -912,19 +1034,51 @@ describe('maybe', function() {
 
       throws(function() { S.Just('foo').concat([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                                          ^^^^^^^\n' +
+                     '                                             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
 
       throws(function() { S.Just(1).concat(S.Just(0)); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                ^^^^^^^^^^^          ^\n' +
+                     '                                     1\n' +
+                     '\n' +
+                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                ^^^^^^^^^^^          ^\n' +
+                     '                                     1\n' +
+                     '\n' +
+                     '1)  2 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
              errorEq(TypeError,
-                     '‘Maybe#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                     '                ^^^^^^^^^^^                     ^\n' +
+                     '                                                1\n' +
+                     '\n' +
+                     '1)  3 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('provides an "equals" method', function() {
@@ -956,7 +1110,15 @@ describe('maybe', function() {
 
       throws(function() { S.Just(42).extend(null); },
              errorEq(TypeError,
-                     '‘Maybe#extend’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#extend :: Maybe a -> Function -> Maybe a\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "filter" method', function() {
@@ -978,7 +1140,15 @@ describe('maybe', function() {
 
       throws(function() { S.Just(42).filter(null); },
              errorEq(TypeError,
-                     '‘Maybe#filter’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#filter :: Maybe a -> Function -> Maybe a\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "map" method', function() {
@@ -987,16 +1157,32 @@ describe('maybe', function() {
 
       throws(function() { S.Just(42).map([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Maybe#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#map :: Maybe a -> Function -> Maybe b\n' +
+                     '                        ^^^^^^^^\n' +
+                     '                           1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "reduce" method', function() {
       eq(S.Just(5).reduce.length, 2);
       eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
 
-      throws(function() { S.Just().reduce(null); },
+      throws(function() { S.Just().reduce(null, null); },
              errorEq(TypeError,
-                     '‘Maybe#reduce’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Maybe#reduce :: Maybe a -> Function -> b -> b\n' +
+                     '                           ^^^^^^^^\n' +
+                     '                              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "sequence" method', function() {
@@ -1110,7 +1296,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.isNothing([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘isNothing’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'isNothing :: Maybe a -> Boolean\n' +
+                     '             ^^^^^^^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('returns true when applied to a Nothing', function() {
@@ -1133,7 +1327,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.isJust([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘isJust’ expected a value of type (Maybe a) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'isJust :: Maybe a -> Boolean\n' +
+                     '          ^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('returns true when applied to a Just', function() {
@@ -1156,7 +1358,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.fromMaybe(0, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘fromMaybe’ expected a value of type (Maybe Number) or (Maybe FiniteNumber) or (Maybe Integer) or (Maybe ValidNumber) as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'fromMaybe :: a -> Maybe a -> a\n' +
+                     '                  ^^^^^^^\n' +
+                     '                     1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1203,11 +1413,27 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.maybe(0, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘maybe’ expected a value of type Function as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'maybe :: b -> Function -> Maybe a -> b\n' +
+                     '              ^^^^^^^^\n' +
+                     '                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.maybe(0, R.length, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘maybe’ expected a value of type (Maybe a) as its third argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'maybe :: b -> Function -> Maybe a -> b\n' +
+                     '                          ^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
 
     it('can be applied to a Nothing', function() {
@@ -1236,7 +1462,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.catMaybes({length: 0}); },
              errorEq(TypeError,
-                     '‘catMaybes’ expected a value of type (Array (Maybe a)) as its first argument; received {"length": 0}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'catMaybes :: Array (Maybe a) -> Array a\n' +
+                     '             ^^^^^^^^^^^^^^^\n' +
+                     '                    1\n' +
+                     '\n' +
+                     '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array (Maybe a)’.\n'));
     });
 
     it('returns a list containing the value of each Just', function() {
@@ -1259,11 +1493,27 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.mapMaybe([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘mapMaybe’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mapMaybe :: Function -> Array a -> Array b\n' +
+                     '            ^^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.mapMaybe(S.head, null); },
              errorEq(TypeError,
-                     '‘mapMaybe’ expected a value of type (Array a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mapMaybe :: Function -> Array a -> Array b\n' +
+                     '                        ^^^^^^^\n' +
+                     '                           1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array a’.\n'));
     });
 
     it('maps over a list to produce a list of successful results', function() {
@@ -1290,7 +1540,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encase([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘encase’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encase :: Function -> a -> Maybe b\n' +
+                     '          ^^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Just on success', function() {
@@ -1322,7 +1580,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encase2([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘encase2’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encase2 :: Function -> a -> b -> Maybe c\n' +
+                     '           ^^^^^^^^\n' +
+                     '              1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Just on success', function() {
@@ -1355,7 +1621,15 @@ describe('maybe', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encase3([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘encase3’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encase3 :: Function -> a -> b -> c -> Maybe d\n' +
+                     '           ^^^^^^^^\n' +
+                     '              1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Just on success', function() {
@@ -1419,7 +1693,15 @@ describe('either', function() {
 
       throws(function() { S.Left('abc').ap([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#ap’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#ap :: Either a Function -> Either a b -> Either a c\n' +
+                     '                                  ^^^^^^^^^^\n' +
+                     '                                      1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('provides a "chain" method', function() {
@@ -1428,7 +1710,15 @@ describe('either', function() {
 
       throws(function() { S.Left('abc').chain([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#chain’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#chain :: Either a b -> Function -> Either a c\n' +
+                     '                              ^^^^^^^^\n' +
+                     '                                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "concat" method', function() {
@@ -1438,31 +1728,51 @@ describe('either', function() {
 
       throws(function() { S.Left('abc').concat([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#concat’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                                                             ^^^^^^^^^^\n' +
+                     '                                                                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
 
-      throws(function() { S.Left(1).concat(S.Left(0)); },
+      throws(function() { S.Left(/xxx/).concat(null); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                  ^^^^^^^^^^^                         ^\n' +
+                     '                                                      1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
-      throws(function() { S.Left(2).concat(S.Right(0)); },
+      throws(function() { S.Left([1, 2, 3]).concat(S.Left(/xxx/)); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                  ^^^^^^^^^^^                                       ^\n' +
+                     '                                                                    1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
-      throws(function() { S.Left(3).concat(S.Left([1, 2, 3])); },
+      throws(function() { S.Left([1, 2, 3]).concat(S.Right(/xxx/)); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Left(4).concat(S.Right([1, 2, 3])); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Left([1, 2, 3]).concat(S.Left(5)); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Left([1, 2, 3]).concat(S.Right(6)); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                               ^^^^^^^^^^^                            ^\n' +
+                     '                                                                      1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('provides an "equals" method', function() {
@@ -1494,7 +1804,15 @@ describe('either', function() {
 
       throws(function() { S.Left('abc').extend(null); },
              errorEq(TypeError,
-                     '‘Either#extend’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#extend :: Either a b -> Function -> Either a b\n' +
+                     '                               ^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "map" method', function() {
@@ -1503,7 +1821,15 @@ describe('either', function() {
 
       throws(function() { S.Left('abc').map([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#map :: Either a b -> Function -> Either a c\n' +
+                     '                            ^^^^^^^^\n' +
+                     '                               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -1609,7 +1935,15 @@ describe('either', function() {
 
       throws(function() { S.Right(S.inc).ap([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#ap’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#ap :: Either a Function -> Either a b -> Either a c\n' +
+                     '                                  ^^^^^^^^^^\n' +
+                     '                                      1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('provides a "chain" method', function() {
@@ -1618,7 +1952,15 @@ describe('either', function() {
 
       throws(function() { S.Right(25).chain(null); },
              errorEq(TypeError,
-                     '‘Either#chain’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#chain :: Either a b -> Function -> Either a c\n' +
+                     '                              ^^^^^^^^\n' +
+                     '                                 1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "concat" method', function() {
@@ -1628,31 +1970,51 @@ describe('either', function() {
 
       throws(function() { S.Right('abc').concat([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#concat’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                                                             ^^^^^^^^^^\n' +
+                     '                                                                 1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
 
-      throws(function() { S.Right(1).concat(S.Left(0)); },
+      throws(function() { S.Right(/xxx/).concat(null); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                               ^^^^^^^^^^^              ^\n' +
+                     '                                                        1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
-      throws(function() { S.Right(2).concat(S.Right(0)); },
+      throws(function() { S.Right([1, 2, 3]).concat(S.Left(/xxx/)); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                  ^^^^^^^^^^^                                       ^\n' +
+                     '                                                                    1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
-      throws(function() { S.Right(3).concat(S.Left([1, 2, 3])); },
+      throws(function() { S.Right([1, 2, 3]).concat(S.Right(/xxx/)); },
              errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Right(4).concat(S.Right([1, 2, 3])); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Right([1, 2, 3]).concat(S.Left(5)); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘a’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
-
-      throws(function() { S.Right([1, 2, 3]).concat(S.Right(6)); },
-             errorEq(TypeError,
-                     '‘Either#concat’ requires ‘b’ to implement Semigroup; Number and FiniteNumber and NonZeroFiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+                     '                               ^^^^^^^^^^^                            ^\n' +
+                     '                                                                      1\n' +
+                     '\n' +
+                     '1)  /xxx/ :: RegExp\n' +
+                     '\n' +
+                     '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('provides an "equals" method', function() {
@@ -1684,7 +2046,15 @@ describe('either', function() {
 
       throws(function() { S.Right('abc').extend(null); },
              errorEq(TypeError,
-                     '‘Either#extend’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#extend :: Either a b -> Function -> Either a b\n' +
+                     '                               ^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "map" method', function() {
@@ -1693,7 +2063,15 @@ describe('either', function() {
 
       throws(function() { S.Right(42).map([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘Either#map’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'Either#map :: Either a b -> Function -> Either a c\n' +
+                     '                            ^^^^^^^^\n' +
+                     '                               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('provides a "toBoolean" method', function() {
@@ -1792,7 +2170,15 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.isLeft([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘isLeft’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'isLeft :: Either a b -> Boolean\n' +
+                     '          ^^^^^^^^^^\n' +
+                     '              1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('returns true when applied to a Left', function() {
@@ -1815,7 +2201,15 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.isRight([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘isRight’ expected a value of type (Either a b) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'isRight :: Either a b -> Boolean\n' +
+                     '           ^^^^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('returns true when applied to a Right', function() {
@@ -1838,27 +2232,75 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.either([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '          ^^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.either(R.__, square)([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '          ^^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.either(R.length, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type Function as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '                      ^^^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.either(R.length)([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type Function as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '                      ^^^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.either(R.length, square, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type (Either a b) as its third argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '                                  ^^^^^^^^^^\n' +
+                     '                                      1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
 
       throws(function() { S.either(R.length)(square)([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘either’ expected a value of type (Either a b) as its third argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'either :: Function -> Function -> Either a b -> c\n' +
+                     '                                  ^^^^^^^^^^\n' +
+                     '                                      1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('can be applied to a Left', function() {
@@ -1915,7 +2357,15 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lefts([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘lefts’ expected a value of type (Array (Either a b)) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'lefts :: Array (Either a b) -> Array a\n' +
+                     '               ^^^^^^^^^^^^\n' +
+                     '                    1\n' +
+                     '\n' +
+                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('returns a list containing the value of each Left', function() {
@@ -1938,7 +2388,15 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.rights([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘rights’ expected a value of type (Array (Either a b)) as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'rights :: Array (Either a b) -> Array b\n' +
+                     '                ^^^^^^^^^^^^\n' +
+                     '                     1\n' +
+                     '\n' +
+                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
 
     it('returns a list containing the value of each Right', function() {
@@ -1961,11 +2419,27 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encaseEither(null); },
              errorEq(TypeError,
-                     '‘encaseEither’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither :: Function -> Function -> a -> Either l r\n' +
+                     '                ^^^^^^^^\n' +
+                     '                   1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.encaseEither(S.I, null); },
              errorEq(TypeError,
-                     '‘encaseEither’ expected a value of type Function as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither :: Function -> Function -> a -> Either l r\n' +
+                     '                            ^^^^^^^^\n' +
+                     '                               1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Right on success', function() {
@@ -2005,11 +2479,27 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encaseEither2(null); },
              errorEq(TypeError,
-                     '‘encaseEither2’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither2 :: Function -> Function -> a -> b -> Either l r\n' +
+                     '                 ^^^^^^^^\n' +
+                     '                    1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.encaseEither2(S.I, null); },
              errorEq(TypeError,
-                     '‘encaseEither2’ expected a value of type Function as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither2 :: Function -> Function -> a -> b -> Either l r\n' +
+                     '                             ^^^^^^^^\n' +
+                     '                                1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Right on success', function() {
@@ -2050,11 +2540,27 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.encaseEither3(null); },
              errorEq(TypeError,
-                     '‘encaseEither3’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither3 :: Function -> Function -> a -> b -> c -> Either l r\n' +
+                     '                 ^^^^^^^^\n' +
+                     '                    1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.encaseEither3(S.I, null); },
              errorEq(TypeError,
-                     '‘encaseEither3’ expected a value of type Function as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'encaseEither3 :: Function -> Function -> a -> b -> c -> Either l r\n' +
+                     '                             ^^^^^^^^\n' +
+                     '                                1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('returns a Right on success', function() {
@@ -2096,7 +2602,15 @@ describe('either', function() {
     it('type checks its arguments', function() {
       throws(function() { S.maybeToEither('left', 1); },
              errorEq(TypeError,
-                     '‘maybeToEither’ expected a value of type (Maybe b) as its second argument; received 1'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'maybeToEither :: a -> Maybe b -> Either a b\n' +
+                     '                      ^^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Maybe b’.\n'));
     });
 
     it('returns a Left of its first argument when the second is Nothing', function() {
@@ -2156,17 +2670,45 @@ describe('alternative', function() {
     it('throws if applied to values of different types', function() {
       throws(function() { S.and([], false); },
              errorEq(TypeError,
-                     '‘and’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'and :: Alternative a => a -> a -> a\n' +
+                     '                        ^    ^\n' +
+                     '                        1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
 
       throws(function() { S.and(R.__, false)([]); },
              errorEq(TypeError,
-                     '‘and’ expected a value of type Boolean as its first argument; received []'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'and :: Alternative a => a -> a -> a\n' +
+                     '                        ^    ^\n' +
+                     '                        1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       throws(function() { S.and(0, 1); },
              errorEq(TypeError,
-                     '‘and’ requires ‘a’ to implement Alternative; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'and :: Alternative a => a -> a -> a\n' +
+                     '       ^^^^^^^^^^^^^    ^\n' +
+                     '                        1\n' +
+                     '\n' +
+                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘and’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('is curried', function() {
@@ -2214,17 +2756,45 @@ describe('alternative', function() {
     it('throws if applied to values of different types', function() {
       throws(function() { S.or([], false); },
              errorEq(TypeError,
-                     '‘or’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'or :: Alternative a => a -> a -> a\n' +
+                     '                       ^    ^\n' +
+                     '                       1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
 
       throws(function() { S.or(R.__, false)([]); },
              errorEq(TypeError,
-                     '‘or’ expected a value of type Boolean as its first argument; received []'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'or :: Alternative a => a -> a -> a\n' +
+                     '                       ^    ^\n' +
+                     '                       1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       throws(function() { S.or(0, 1); },
              errorEq(TypeError,
-                     '‘or’ requires ‘a’ to implement Alternative; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'or :: Alternative a => a -> a -> a\n' +
+                     '      ^^^^^^^^^^^^^    ^\n' +
+                     '                       1\n' +
+                     '\n' +
+                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘or’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('is curried', function() {
@@ -2265,35 +2835,95 @@ describe('alternative', function() {
     it('cannot be applied to eithers', function() {
       throws(function() { S.xor(S.Left('foo'), S.Left('bar')); },
              errorEq(TypeError,
-                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either String ???) and (Either (List ???) ???) do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                       ^^^^^^^^     ^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  Left("foo") :: Either String ???\n' +
+                     '\n' +
+                     '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.xor(S.Left('foo'), S.Right(42)); },
              errorEq(TypeError,
-                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either String ???) and (Either (List ???) ???) do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                       ^^^^^^^^     ^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  Left("foo") :: Either String ???\n' +
+                     '\n' +
+                     '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.xor(S.Right(42), S.Left('foo')); },
              errorEq(TypeError,
-                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either ??? Number) and (Either ??? FiniteNumber) and (Either ??? NonZeroFiniteNumber) and (Either ??? Integer) and (Either ??? ValidNumber) do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                       ^^^^^^^^     ^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  Right(42) :: Either ??? Number, Either ??? FiniteNumber, Either ??? NonZeroFiniteNumber, Either ??? Integer, Either ??? ValidNumber\n' +
+                     '\n' +
+                     '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.xor(S.Right(42), S.Right(43)); },
              errorEq(TypeError,
-                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; (Either ??? Number) and (Either ??? FiniteNumber) and (Either ??? NonZeroFiniteNumber) and (Either ??? Integer) and (Either ??? ValidNumber) do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                       ^^^^^^^^     ^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  Right(42) :: Either ??? Number, Either ??? FiniteNumber, Either ??? NonZeroFiniteNumber, Either ??? Integer, Either ??? ValidNumber\n' +
+                     '\n' +
+                     '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('throws if applied to values of different types', function() {
       throws(function() { S.xor([], false); },
              errorEq(TypeError,
-                     '‘xor’ expected a value of type (Array ???) or (List ???) as its second argument; received false'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                                    ^    ^\n' +
+                     '                                    1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
 
       throws(function() { S.xor(R.__, false)([]); },
              errorEq(TypeError,
-                     '‘xor’ expected a value of type Boolean as its first argument; received []'));
+                     'Type-variable constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '                                    ^    ^\n' +
+                     '                                    1    2\n' +
+                     '\n' +
+                     '1)  [] :: Array ???\n' +
+                     '\n' +
+                     '2)  false :: Boolean\n' +
+                     '\n' +
+                     'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
     });
 
     it('throws if applied to values without a "toBoolean" method', function() {
       throws(function() { S.xor(0, 1); },
              errorEq(TypeError,
-                     '‘xor’ requires ‘a’ to implement Alternative and Monoid; Number and FiniteNumber and Integer and ValidNumber do not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'xor :: (Alternative a, Monoid a) => a -> a -> a\n' +
+                     '        ^^^^^^^^^^^^^               ^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     '‘xor’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('is curried', function() {
@@ -2324,7 +2954,15 @@ describe('logic', function() {
     it('throws when applied to a non-Boolean value', function() {
       throws(function() { S.not(0); },
              errorEq(TypeError,
-                     '‘not’ expected a value of type Boolean as its first argument; received 0'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'not :: Boolean -> Boolean\n' +
+                     '       ^^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Boolean’.\n'));
     });
 
   });
@@ -2341,15 +2979,39 @@ describe('logic', function() {
     it('type checks its arguments', function() {
       throws(function() { S.ifElse('wrong'); },
              errorEq(TypeError,
-                     '‘ifElse’ expected a value of type Function as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'ifElse :: Function -> Function -> Function -> a -> b\n' +
+                     '          ^^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.ifElse(lt0, 'wrong'); },
              errorEq(TypeError,
-                     '‘ifElse’ expected a value of type Function as its second argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'ifElse :: Function -> Function -> Function -> a -> b\n' +
+                     '                      ^^^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.ifElse(lt0, Math.abs, 'wrong'); },
              errorEq(TypeError,
-                     '‘ifElse’ expected a value of type Function as its third argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'ifElse :: Function -> Function -> Function -> a -> b\n' +
+                     '                                  ^^^^^^^^\n' +
+                     '                                     1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('applies the first function when the predicate returns true', function() {
@@ -2379,7 +3041,15 @@ describe('logic', function() {
     it('type checks its arguments', function() {
       throws(function() { S.allPass('wrong'); },
              errorEq(TypeError,
-                     '‘allPass’ expected a value of type (Array Function) as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'allPass :: Array Function -> a -> Boolean\n' +
+                     '           ^^^^^^^^^^^^^^\n' +
+                     '                 1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array Function’.\n'));
     });
 
     it('returns true when given an empty array of predicates', function() {
@@ -2457,7 +3127,15 @@ describe('logic', function() {
     it('type checks its arguments', function() {
       throws(function() { S.anyPass('wrong'); },
              errorEq(TypeError,
-                     '‘anyPass’ expected a value of type (Array Function) as its first argument; received "wrong"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'anyPass :: Array Function -> a -> Boolean\n' +
+                     '           ^^^^^^^^^^^^^^\n' +
+                     '                 1\n' +
+                     '\n' +
+                     '1)  "wrong" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array Function’.\n'));
     });
 
     it('returns false when given an empty array of predicates', function() {
@@ -2539,11 +3217,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.at(0.5); },
              errorEq(TypeError,
-                     '‘at’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'at :: Integer -> List a -> Maybe a\n' +
+                     '      ^^^^^^^\n' +
+                     '         1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.at(0, null); },
              errorEq(TypeError,
-                     '‘at’ expected a value of type (List a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'at :: Integer -> List a -> Maybe a\n' +
+                     '                 ^^^^^^\n' +
+                     '                   1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns Just the nth element of a list', function() {
@@ -2577,15 +3271,39 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.slice(0.5); },
              errorEq(TypeError,
-                     '‘slice’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'slice :: Integer -> Integer -> List a -> Maybe (List a)\n' +
+                     '         ^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.slice(0, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘slice’ expected a value of type Integer as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'slice :: Integer -> Integer -> List a -> Maybe (List a)\n' +
+                     '                    ^^^^^^^\n' +
+                     '                       1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.slice(0, 0, {length: -1}); },
              errorEq(TypeError,
-                     '‘slice’ expected a value of type (List a) as its third argument; received {"length": -1}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'slice :: Integer -> Integer -> List a -> Maybe (List a)\n' +
+                     '                               ^^^^^^\n' +
+                     '                                 1\n' +
+                     '\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing with a positive end index greater than start index', function() {
@@ -2663,7 +3381,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.head({length: -1}); },
              errorEq(TypeError,
-                     '‘head’ expected a value of type (List a) as its first argument; received {"length": -1}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'head :: List a -> Maybe a\n' +
+                     '        ^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2686,7 +3412,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.last({length: -1}); },
              errorEq(TypeError,
-                     '‘last’ expected a value of type (List a) as its first argument; received {"length": -1}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'last :: List a -> Maybe a\n' +
+                     '        ^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2709,7 +3443,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.tail({length: -1}); },
              errorEq(TypeError,
-                     '‘tail’ expected a value of type (List a) as its first argument; received {"length": -1}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'tail :: List a -> Maybe (List a)\n' +
+                     '        ^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2732,7 +3474,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.init({length: -1}); },
              errorEq(TypeError,
-                     '‘init’ expected a value of type (List a) as its first argument; received {"length": -1}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'init :: List a -> Maybe (List a)\n' +
+                     '        ^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if applied to empty list', function() {
@@ -2755,11 +3505,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.take(0.5); },
              errorEq(TypeError,
-                     '‘take’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'take :: Integer -> List a -> Maybe (List a)\n' +
+                     '        ^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.take(0, null); },
              errorEq(TypeError,
-                     '‘take’ expected a value of type (List a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'take :: Integer -> List a -> Maybe (List a)\n' +
+                     '                   ^^^^^^\n' +
+                     '                     1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -2807,11 +3573,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.takeLast(0.5); },
              errorEq(TypeError,
-                     '‘takeLast’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'takeLast :: Integer -> List a -> Maybe (List a)\n' +
+                     '            ^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.takeLast(0, null); },
              errorEq(TypeError,
-                     '‘takeLast’ expected a value of type (List a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'takeLast :: Integer -> List a -> Maybe (List a)\n' +
+                     '                       ^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -2852,11 +3634,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.drop(0.5); },
              errorEq(TypeError,
-                     '‘drop’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'drop :: Integer -> List a -> Maybe (List a)\n' +
+                     '        ^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.drop(0, null); },
              errorEq(TypeError,
-                     '‘drop’ expected a value of type (List a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'drop :: Integer -> List a -> Maybe (List a)\n' +
+                     '                   ^^^^^^\n' +
+                     '                     1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if n is greater than collection length', function() {
@@ -2904,11 +3702,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.dropLast(0.5); },
              errorEq(TypeError,
-                     '‘dropLast’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'dropLast :: Integer -> List a -> Maybe (List a)\n' +
+                     '            ^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.dropLast(0, null); },
              errorEq(TypeError,
-                     '‘dropLast’ expected a value of type (List a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'dropLast :: Integer -> List a -> Maybe (List a)\n' +
+                     '                       ^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘List a’.\n'));
     });
 
     it('returns a Nothing if n is negative', function() {
@@ -2949,11 +3763,27 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.find([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘find’ expected a value of type Function as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'find :: Function -> Array a -> Maybe a\n' +
+                     '        ^^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
 
       throws(function() { S.find(R.T, null); },
              errorEq(TypeError,
-                     '‘find’ expected a value of type (Array a) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'find :: Function -> Array a -> Maybe a\n' +
+                     '                    ^^^^^^^\n' +
+                     '                       1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array a’.\n'));
     });
 
     it('returns Just the first element satisfying the predicate', function() {
@@ -2983,7 +3813,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.indexOf('x', null); },
              errorEq(TypeError,
-                     '‘indexOf’ requires ‘b’ to implement ArrayLike; Null does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'indexOf :: ArrayLike b => a -> b -> Maybe Integer\n' +
+                     '           ^^^^^^^^^^^         ^\n' +
+                     '                               1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     '‘indexOf’ requires ‘b’ to satisfy the ArrayLike type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -3020,7 +3858,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lastIndexOf('x', null); },
              errorEq(TypeError,
-                     '‘lastIndexOf’ requires ‘b’ to implement ArrayLike; Null does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'lastIndexOf :: ArrayLike b => a -> b -> Maybe Integer\n' +
+                     '               ^^^^^^^^^^^         ^\n' +
+                     '                                   1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     '‘lastIndexOf’ requires ‘b’ to satisfy the ArrayLike type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('returns a Nothing for an empty list', function() {
@@ -3057,15 +3903,39 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.pluck([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘pluck’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+                     '                         ^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
       throws(function() { S.pluck(Number, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘pluck’ expected a value of type String as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+                     '                                    ^^^^^^\n' +
+                     '                                      1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
 
       throws(function() { S.pluck(Number, 'x', {length: 0}); },
              errorEq(TypeError,
-                     '‘pluck’ expected a value of type (Array a) as its third argument; received {"length": 0}'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+                     '                                              ^^^^^^^\n' +
+                     '                                                 1\n' +
+                     '\n' +
+                     '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array a’.\n'));
     });
 
     it('returns a list of satisfactory plucked values', function() {
@@ -3098,7 +3968,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.reduce('xxx'); },
              errorEq(TypeError,
-                     '‘reduce’ expected a value of type Function as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'reduce :: Foldable b => Function -> a -> b -> a\n' +
+                     '                        ^^^^^^^^\n' +
+                     '                           1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('folds over lists with the supplied accumulator', function() {
@@ -3131,7 +4009,15 @@ describe('list', function() {
     it('type checks its arguments', function() {
       throws(function() { S.unfoldr(null); },
              errorEq(TypeError,
-                     '‘unfoldr’ expected a value of type Function as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'unfoldr :: Function -> b -> Array a\n' +
+                     '           ^^^^^^^^\n' +
+                     '              1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Function’.\n'));
     });
 
     it('correctly unfolds a value into a list', function() {
@@ -3159,15 +4045,39 @@ describe('object', function() {
     it('type checks its arguments', function() {
       throws(function() { S.get([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘get’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'get :: Accessible a => TypeRep -> String -> a -> Maybe b\n' +
+                     '                       ^^^^^^^\n' +
+                     '                          1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
       throws(function() { S.get(Number, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘get’ expected a value of type String as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'get :: Accessible a => TypeRep -> String -> a -> Maybe b\n' +
+                     '                                  ^^^^^^\n' +
+                     '                                    1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
 
       throws(function() { S.get(Number, 'x', null); },
              errorEq(TypeError,
-                     '‘get’ requires ‘a’ to implement Accessible; Null does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'get :: Accessible a => TypeRep -> String -> a -> Maybe b\n' +
+                     '       ^^^^^^^^^^^^                         ^\n' +
+                     '                                            1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     '‘get’ requires ‘a’ to satisfy the Accessible type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('returns a Maybe', function() {
@@ -3201,15 +4111,39 @@ describe('object', function() {
     it('type checks its arguments', function() {
       throws(function() { S.gets([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘gets’ expected a value of type TypeRep as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'gets :: Accessible a => TypeRep -> Array String -> a -> Maybe b\n' +
+                     '                        ^^^^^^^\n' +
+                     '                           1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
       throws(function() { S.gets(Number, null); },
              errorEq(TypeError,
-                     '‘gets’ expected a value of type (Array String) as its second argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'gets :: Accessible a => TypeRep -> Array String -> a -> Maybe b\n' +
+                     '                                   ^^^^^^^^^^^^\n' +
+                     '                                        1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array String’.\n'));
 
       throws(function() { S.gets(Number, [], null); },
              errorEq(TypeError,
-                     '‘gets’ requires ‘a’ to implement Accessible; Null does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'gets :: Accessible a => TypeRep -> Array String -> a -> Maybe b\n' +
+                     '        ^^^^^^^^^^^^                               ^\n' +
+                     '                                                   1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     '‘gets’ requires ‘a’ to satisfy the Accessible type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('returns a Maybe', function() {
@@ -3250,7 +4184,15 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.negate(NaN); },
              errorEq(TypeError,
-                     '‘negate’ expected a value of type ValidNumber as its first argument; received NaN'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'negate :: ValidNumber -> ValidNumber\n' +
+                     '          ^^^^^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  NaN :: Number\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘ValidNumber’.\n'));
     });
 
     it('negates its argument', function() {
@@ -3276,19 +4218,51 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.add('xxx', 1); },
              errorEq(TypeError,
-                     '‘add’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'add :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.add(1, 'xxx'); },
              errorEq(TypeError,
-                     '‘add’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'add :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.add(1, Infinity); },
              errorEq(TypeError,
-                     '‘add’ expected a value of type FiniteNumber as its second argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'add :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.add(1, -Infinity); },
              errorEq(TypeError,
-                     '‘add’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'add :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
 
     it('adds two numbers', function() {
@@ -3315,19 +4289,51 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.sub('xxx', 1); },
              errorEq(TypeError,
-                     '‘sub’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'sub :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.sub(1, 'xxx'); },
              errorEq(TypeError,
-                     '‘sub’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'sub :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.sub(1, Infinity); },
              errorEq(TypeError,
-                     '‘sub’ expected a value of type FiniteNumber as its second argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'sub :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.sub(1, -Infinity); },
              errorEq(TypeError,
-                     '‘sub’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'sub :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^\n' +
+                     '                            1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
 
     it('subtracts two numbers', function() {
@@ -3354,15 +4360,39 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.inc('xxx'); },
              errorEq(TypeError,
-                     '‘inc’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'inc :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.inc(Infinity); },
              errorEq(TypeError,
-                     '‘inc’ expected a value of type FiniteNumber as its first argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'inc :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.inc(-Infinity); },
              errorEq(TypeError,
-                     '‘inc’ expected a value of type FiniteNumber as its first argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'inc :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
 
     it('increments a number by one', function() {
@@ -3384,15 +4414,39 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.dec('xxx'); },
              errorEq(TypeError,
-                     '‘dec’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'dec :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.dec(Infinity); },
              errorEq(TypeError,
-                     '‘dec’ expected a value of type FiniteNumber as its first argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'dec :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.dec(-Infinity); },
              errorEq(TypeError,
-                     '‘dec’ expected a value of type FiniteNumber as its first argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'dec :: FiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
 
     it('decrements a number by one', function() {
@@ -3414,19 +4468,51 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.mult('xxx', 2); },
              errorEq(TypeError,
-                     '‘mult’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mult :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '        ^^^^^^^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.mult(2, 'xxx'); },
              errorEq(TypeError,
-                     '‘mult’ expected a value of type FiniteNumber as its second argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mult :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                        ^^^^^^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.mult(2, Infinity); },
              errorEq(TypeError,
-                     '‘mult’ expected a value of type FiniteNumber as its second argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mult :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                        ^^^^^^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.mult(2, -Infinity); },
              errorEq(TypeError,
-                     '‘mult’ expected a value of type FiniteNumber as its second argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'mult :: FiniteNumber -> FiniteNumber -> FiniteNumber\n' +
+                     '                        ^^^^^^^^^^^^\n' +
+                     '                             1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
 
     it('multiplies two numbers', function() {
@@ -3455,19 +4541,51 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.div('xxx', 1); },
              errorEq(TypeError,
-                     '‘div’ expected a value of type FiniteNumber as its first argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber\n' +
+                     '       ^^^^^^^^^^^^\n' +
+                     '            1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
       throws(function() { S.div(1, 'xxx'); },
              errorEq(TypeError,
-                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received "xxx"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                1\n' +
+                     '\n' +
+                     '1)  "xxx" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘NonZeroFiniteNumber’.\n'));
 
       throws(function() { S.div(1, 0); },
              errorEq(TypeError,
-                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received 0'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                1\n' +
+                     '\n' +
+                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘NonZeroFiniteNumber’.\n'));
 
       throws(function() { S.div(1, -0); },
              errorEq(TypeError,
-                     '‘div’ expected a value of type NonZeroFiniteNumber as its second argument; received -0'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber\n' +
+                     '                       ^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                1\n' +
+                     '\n' +
+                     '1)  -0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘NonZeroFiniteNumber’.\n'));
     });
 
     it('divides two numbers', function() {
@@ -3496,15 +4614,39 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.min(/x/); },
              errorEq(TypeError,
-                     '‘min’ requires ‘a’ to implement Ord; RegExp does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'min :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  /x/ :: RegExp\n' +
+                     '\n' +
+                     '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.min(NaN); },
              errorEq(TypeError,
-                     '‘min’ requires ‘a’ to implement Ord; Number does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'min :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  NaN :: Number\n' +
+                     '\n' +
+                     '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.min(new Date('XXX')); },
              errorEq(TypeError,
-                     '‘min’ requires ‘a’ to implement Ord; Date does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'min :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  new Date(NaN) :: Date\n' +
+                     '\n' +
+                     '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3547,15 +4689,39 @@ describe('number', function() {
     it('type checks its arguments', function() {
       throws(function() { S.max(/x/); },
              errorEq(TypeError,
-                     '‘max’ requires ‘a’ to implement Ord; RegExp does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'max :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  /x/ :: RegExp\n' +
+                     '\n' +
+                     '‘max’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.max(NaN); },
              errorEq(TypeError,
-                     '‘max’ requires ‘a’ to implement Ord; Number does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'max :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  NaN :: Number\n' +
+                     '\n' +
+                     '‘max’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
 
       throws(function() { S.max(new Date('XXX')); },
              errorEq(TypeError,
-                     '‘max’ requires ‘a’ to implement Ord; Date does not'));
+                     'Type-class constraint violation\n' +
+                     '\n' +
+                     'max :: Ord a => a -> a -> a\n' +
+                     '       ^^^^^    ^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  new Date(NaN) :: Date\n' +
+                     '\n' +
+                     '‘max’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n'));
     });
 
     it('may be applied to (valid) numbers', function() {
@@ -3602,11 +4768,27 @@ describe('integer', function() {
     it('type checks its arguments', function() {
       throws(function() { S.even(0.5); },
              errorEq(TypeError,
-                     '‘even’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'even :: Integer -> Boolean\n' +
+                     '        ^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.even(Infinity); },
              errorEq(TypeError,
-                     '‘even’ expected a value of type Integer as its first argument; received Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'even :: Integer -> Boolean\n' +
+                     '        ^^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
     });
 
     it('returns true for even integer', function() {
@@ -3639,11 +4821,27 @@ describe('integer', function() {
     it('type checks its arguments', function() {
       throws(function() { S.odd(-0.5); },
              errorEq(TypeError,
-                     '‘odd’ expected a value of type Integer as its first argument; received -0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'odd :: Integer -> Boolean\n' +
+                     '       ^^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  -0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.odd(-Infinity); },
              errorEq(TypeError,
-                     '‘odd’ expected a value of type Integer as its first argument; received -Infinity'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'odd :: Integer -> Boolean\n' +
+                     '       ^^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
     });
 
     it('returns true for odd integer', function() {
@@ -3680,7 +4878,15 @@ describe('parse', function() {
     it('type checks its arguments', function() {
       throws(function() { S.parseDate([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘parseDate’ expected a value of type String as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'parseDate :: String -> Maybe Date\n' +
+                     '             ^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a Just when applied to a valid date string', function() {
@@ -3704,7 +4910,15 @@ describe('parse', function() {
     it('type checks its arguments', function() {
       throws(function() { S.parseFloat([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘parseFloat’ expected a value of type String as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'parseFloat :: String -> Maybe Number\n' +
+                     '              ^^^^^^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a Maybe', function() {
@@ -3752,11 +4966,27 @@ describe('parse', function() {
     it('type checks its arguments', function() {
       throws(function() { S.parseInt(0.5); },
              errorEq(TypeError,
-                     '‘parseInt’ expected a value of type Integer as its first argument; received 0.5'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'parseInt :: Integer -> String -> Maybe Integer\n' +
+                     '            ^^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Integer’.\n'));
 
       throws(function() { S.parseInt(10, 42); },
              errorEq(TypeError,
-                     '‘parseInt’ expected a value of type String as its second argument; received 42'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'parseInt :: Integer -> String -> Maybe Integer\n' +
+                     '                       ^^^^^^\n' +
+                     '                         1\n' +
+                     '\n' +
+                     '1)  42 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a Maybe', function() {
@@ -3903,7 +5133,15 @@ describe('parse', function() {
     it('type checks its arguments', function() {
       throws(function() { S.parseJson([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘parseJson’ expected a value of type String as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'parseJson :: String -> Maybe Any\n' +
+                     '             ^^^^^^\n' +
+                     '               1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a Just when applied to a valid JSON string', function() {
@@ -3930,26 +5168,66 @@ describe('regexp', function() {
     it('type checks its arguments', function() {
       throws(function() { S.regex('y'); },
              errorEq(TypeError,
-                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "y"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+                     '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  "y" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
 
       throws(function() { S.regex('G'); },
              errorEq(TypeError,
-                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "G"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+                     '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  "G" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
 
       throws(function() { S.regex('ig'); },
              errorEq(TypeError,
-                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received "ig"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+                     '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  "ig" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
 
       function G() {}
       G.prototype.toString = R.always('g');
 
       throws(function() { S.regex(new G()); },
              errorEq(TypeError,
-                     '‘regex’ expected a value of type ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") as its first argument; received g'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+                     '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+                     '                                  1\n' +
+                     '\n' +
+                     '1)  g :: Object, StrMap ???\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
 
       throws(function() { S.regex('', /(?:)/); },
              errorEq(TypeError,
-                     '‘regex’ expected a value of type String as its second argument; received /(?:)/'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+                     '                                                                ^^^^^^\n' +
+                     '                                                                  1\n' +
+                     '\n' +
+                     '1)  /(?:)/ :: RegExp\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a RegExp', function() {
@@ -3980,7 +5258,15 @@ describe('regexp', function() {
     it('type checks its arguments', function() {
       throws(function() { S.regexEscape(/(?:)/); },
              errorEq(TypeError,
-                     '‘regexEscape’ expected a value of type String as its first argument; received /(?:)/'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'regexEscape :: String -> String\n' +
+                     '               ^^^^^^\n' +
+                     '                 1\n' +
+                     '\n' +
+                     '1)  /(?:)/ :: RegExp\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('escapes regular expression metacharacters', function() {
@@ -4011,11 +5297,27 @@ describe('regexp', function() {
     it('type checks its arguments', function() {
       throws(function() { S.test('^a'); },
              errorEq(TypeError,
-                     '‘test’ expected a value of type RegExp as its first argument; received "^a"'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'test :: RegExp -> String -> Boolean\n' +
+                     '        ^^^^^^\n' +
+                     '          1\n' +
+                     '\n' +
+                     '1)  "^a" :: String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘RegExp’.\n'));
 
       throws(function() { S.test(/^a/, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘test’ expected a value of type String as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'test :: RegExp -> String -> Boolean\n' +
+                     '                  ^^^^^^\n' +
+                     '                    1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns true if pattern matches string', function() {
@@ -4051,11 +5353,27 @@ describe('regexp', function() {
     it('type checks its arguments', function() {
       throws(function() { S.match([1, 2, 3]); },
              errorEq(TypeError,
-                     '‘match’ expected a value of type RegExp as its first argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'match :: RegExp -> String -> Maybe (Array (Maybe String))\n' +
+                     '         ^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘RegExp’.\n'));
 
       throws(function() { S.match(/(?:)/, [1, 2, 3]); },
              errorEq(TypeError,
-                     '‘match’ expected a value of type String as its second argument; received [1, 2, 3]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'match :: RegExp -> String -> Maybe (Array (Maybe String))\n' +
+                     '                   ^^^^^^\n' +
+                     '                     1\n' +
+                     '\n' +
+                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns a Just containing an array of Justs', function() {
@@ -4099,7 +5417,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.toUpper(true); },
              errorEq(TypeError,
-                     '‘toUpper’ expected a value of type String as its first argument; received true'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'toUpper :: String -> String\n' +
+                     '           ^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  true :: Boolean\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns the upper-case equivalent of its argument', function() {
@@ -4121,7 +5447,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.toLower(true); },
              errorEq(TypeError,
-                     '‘toLower’ expected a value of type String as its first argument; received true'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'toLower :: String -> String\n' +
+                     '           ^^^^^^\n' +
+                     '             1\n' +
+                     '\n' +
+                     '1)  true :: Boolean\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('returns the lower-case equivalent of its argument', function() {
@@ -4143,7 +5477,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.words(['foo']); },
              errorEq(TypeError,
-                     '‘words’ expected a value of type String as its first argument; received ["foo"]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'words :: String -> Array String\n' +
+                     '         ^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  ["foo"] :: Array String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('splits a string into a list of words', function() {
@@ -4167,7 +5509,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.unwords(null); },
              errorEq(TypeError,
-                     '‘unwords’ expected a value of type (Array String) as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'unwords :: Array String -> String\n' +
+                     '           ^^^^^^^^^^^^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array String’.\n'));
     });
 
     it('joins -- with separating spaces -- a list of words', function() {
@@ -4192,7 +5542,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.lines(['foo']); },
              errorEq(TypeError,
-                     '‘lines’ expected a value of type String as its first argument; received ["foo"]'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'lines :: String -> Array String\n' +
+                     '         ^^^^^^\n' +
+                     '           1\n' +
+                     '\n' +
+                     '1)  ["foo"] :: Array String\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘String’.\n'));
     });
 
     it('splits a string into a list of lines', function() {
@@ -4216,7 +5574,15 @@ describe('string', function() {
     it('type checks its arguments', function() {
       throws(function() { S.unlines(null); },
              errorEq(TypeError,
-                     '‘unlines’ expected a value of type (Array String) as its first argument; received null'));
+                     'Invalid value\n' +
+                     '\n' +
+                     'unlines :: Array String -> String\n' +
+                     '           ^^^^^^^^^^^^\n' +
+                     '                1\n' +
+                     '\n' +
+                     '1)  null :: Null\n' +
+                     '\n' +
+                     'The value at position 1 is not a member of ‘Array String’.\n'));
     });
 
     it('joins a list of lines after appending "\n" to each', function() {

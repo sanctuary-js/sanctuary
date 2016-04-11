@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "ramda": "0.21.x",
-    "sanctuary-def": "0.4.x"
+    "sanctuary-def": "0.5.x"
   },
   "devDependencies": {
     "doctest": "0.10.x",

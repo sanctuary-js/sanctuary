@@ -15,7 +15,7 @@ README.md: index.js
 	  --heading-level 4 \
 	  --url 'https://github.com/plaid/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
 	  -- $^ \
-	| sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
+	| LC_ALL=C sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
 
 
 .PHONY: lint
