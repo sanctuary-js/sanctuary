@@ -3207,6 +3207,29 @@ describe('logic', function() {
 
 describe('list', function() {
 
+  describe('length', function() {
+
+    it('is a unary function', function() {
+      eq(typeof S.length, 'function');
+      eq(S.length.length, 1);
+    });
+
+    it('type checks its arguments', function() {
+      assert.throws(function() { S.length(1); },
+                    errorEq(TypeError,
+                            '‘length’ requires ‘a’ to implement Countable; ' +
+                            'Number and FiniteNumber and NonZeroFiniteNumber ' +
+                            'and Integer and ValidNumber do not'));
+    });
+
+    it('returns the length of a Countable', function() {
+      eq(S.length([1, 2, 3, 4, 5]), 5);
+      eq(S.length('abcdef'), 6);
+      eq(S.length(function(a, b) { return a + b; }), 2);
+    });
+
+  });
+
   describe('at', function() {
 
     it('is a binary function', function() {
