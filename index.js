@@ -2919,6 +2919,20 @@
       [$.String, $.String],
       function(s) { return s.toLowerCase(); });
 
+  //# trim :: String -> String
+  //.
+  //. Strips leading and trailing whitespace characters.
+  //.
+  //. ```javascript
+  //. > S.trim('\t\t foo bar \n')
+  //. 'foo bar'
+  //. ```
+  S.trim =
+  def('trim',
+      {},
+      [$.String, $.String],
+      R.trim);
+
   //# words :: String -> [String]
   //.
   //. Takes a string and returns the list of words the string contains
