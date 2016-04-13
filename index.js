@@ -2760,24 +2760,28 @@
         )(s);
       });
 
-  //# parseJson :: String -> Maybe Any
+  //# parseJson :: TypeRep a -> String -> Maybe a
   //.
-  //. Takes a string which may or may not be valid JSON, and returns Just
-  //. the result of applying `JSON.parse` to the string if valid; Nothing
-  //. otherwise.
+  //. Takes a [type representative](#type-representatives) and a string which
+  //. may or may not be valid JSON, and returns Just the result of applying
+  //. `JSON.parse` to the string *if* the result is of the specified type
+  //. (according to [`is`](#is)); Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.parseJson('["foo","bar","baz"]')
+  //. > S.parseJson(Array, '["foo","bar","baz"]')
   //. Just(['foo', 'bar', 'baz'])
   //.
-  //. > S.parseJson('[')
+  //. > S.parseJson(Array, '[')
+  //. Nothing()
+  //.
+  //. > S.parseJson(Object, '["foo","bar","baz"]')
   //. Nothing()
   //. ```
   S.parseJson =
   def('parseJson',
       {},
-      [$.String, $Maybe($.Any)],
-      encase(JSON.parse));
+      [TypeRep, $.String, $Maybe(a)],
+      function(type, s) { return filter(is(type), encase(JSON.parse, s)); });
 
   //. ### RegExp
 
