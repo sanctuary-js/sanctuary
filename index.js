@@ -471,7 +471,7 @@
   //. functions.
   //.
   //. ```javascript
-  //. > S.C(R.concat, 'foo', 'bar')
+  //. > S.C(S.concat, 'foo', 'bar')
   //. 'barfoo'
   //.
   //. > R.filter(S.C(R.gt, 0), [-1, -2, 3, -4, 4, 2])
@@ -1968,6 +1968,27 @@
 
   //. ### List
 
+  //# concat :: Semigroup a => a -> a -> a
+  //.
+  //. Concatenates two (homogeneous) arrays, two strings, or two values of any
+  //. other type which satisfies the [Semigroup][] specification.
+  //.
+  //. ```javascript
+  //. > S.concat([1, 2, 3], [4, 5, 6])
+  //. [1, 2, 3, 4, 5, 6]
+  //.
+  //. > S.concat('foo', 'bar')
+  //. 'foobar'
+  //.
+  //. > S.concat(S.Just('foo'), S.Just('bar'))
+  //. S.Just('foobar')
+  //. ```
+  var concat = S.concat =
+  def('concat',
+      {a: [Semigroup]},
+      [a, a, a],
+      function(x, y) { return x.concat(y); });
+
   //# slice :: Integer -> Integer -> [a] -> Maybe [a]
   //.
   //. Returns Just a list containing the elements from the supplied list
@@ -2965,7 +2986,7 @@
   def('unlines',
       {},
       [$.Array($.String), $.String],
-      compose(R.join(''), R.map(R.concat(_, '\n'))));
+      compose(R.join(''), R.map(concat(_, '\n'))));
 
   return S;
 
