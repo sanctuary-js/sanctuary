@@ -272,7 +272,7 @@ describe('classify', function() {
                      '      ^^^^^^^\n' +
                      '         1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘TypeRep’.\n'));
     });
@@ -736,7 +736,7 @@ describe('maybe', function() {
                      '                              ^^^^^^^\n' +
                      '                                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -783,7 +783,7 @@ describe('maybe', function() {
                      '                ^^^^^^^^^^^                     ^\n' +
                      '                                                1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
@@ -1005,7 +1005,7 @@ describe('maybe', function() {
                      '                              ^^^^^^^\n' +
                      '                                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -1022,7 +1022,7 @@ describe('maybe', function() {
                      '                          ^^^^^^^^\n' +
                      '                             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1040,7 +1040,7 @@ describe('maybe', function() {
                      '                                          ^^^^^^^\n' +
                      '                                             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
 
@@ -1052,7 +1052,7 @@ describe('maybe', function() {
                      '                ^^^^^^^^^^^          ^\n' +
                      '                                     1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
@@ -1064,7 +1064,7 @@ describe('maybe', function() {
                      '                ^^^^^^^^^^^          ^\n' +
                      '                                     1\n' +
                      '\n' +
-                     '1)  2 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  2 :: Number\n' +
                      '\n' +
                      '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
 
@@ -1076,7 +1076,7 @@ describe('maybe', function() {
                      '                ^^^^^^^^^^^                     ^\n' +
                      '                                                1\n' +
                      '\n' +
-                     '1)  3 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  3 :: Number\n' +
                      '\n' +
                      '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
     });
@@ -1163,7 +1163,7 @@ describe('maybe', function() {
                      '                        ^^^^^^^^\n' +
                      '                           1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1302,7 +1302,7 @@ describe('maybe', function() {
                      '             ^^^^^^^\n' +
                      '                1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -1333,7 +1333,7 @@ describe('maybe', function() {
                      '          ^^^^^^^\n' +
                      '             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -1364,7 +1364,7 @@ describe('maybe', function() {
                      '                  ^^^^^^^\n' +
                      '                     1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -1419,7 +1419,7 @@ describe('maybe', function() {
                      '              ^^^^^^^^\n' +
                      '                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -1431,7 +1431,7 @@ describe('maybe', function() {
                      '                          ^^^^^^^\n' +
                      '                             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe a’.\n'));
     });
@@ -1468,7 +1468,7 @@ describe('maybe', function() {
                      '             ^^^^^^^^^^^^^^^\n' +
                      '                    1\n' +
                      '\n' +
-                     '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": 0} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Array (Maybe a)’.\n'));
     });
@@ -1499,7 +1499,7 @@ describe('maybe', function() {
                      '            ^^^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -1546,7 +1546,7 @@ describe('maybe', function() {
                      '          ^^^^^^^^\n' +
                      '             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1586,7 +1586,7 @@ describe('maybe', function() {
                      '           ^^^^^^^^\n' +
                      '              1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1627,7 +1627,7 @@ describe('maybe', function() {
                      '           ^^^^^^^^\n' +
                      '              1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1699,7 +1699,7 @@ describe('either', function() {
                      '                                  ^^^^^^^^^^\n' +
                      '                                      1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -1716,7 +1716,7 @@ describe('either', function() {
                      '                              ^^^^^^^^\n' +
                      '                                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1734,7 +1734,7 @@ describe('either', function() {
                      '                                                             ^^^^^^^^^^\n' +
                      '                                                                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
 
@@ -1827,7 +1827,7 @@ describe('either', function() {
                      '                            ^^^^^^^^\n' +
                      '                               1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -1941,7 +1941,7 @@ describe('either', function() {
                      '                                  ^^^^^^^^^^\n' +
                      '                                      1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -1976,7 +1976,7 @@ describe('either', function() {
                      '                                                             ^^^^^^^^^^\n' +
                      '                                                                 1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
 
@@ -2069,7 +2069,7 @@ describe('either', function() {
                      '                            ^^^^^^^^\n' +
                      '                               1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
     });
@@ -2176,7 +2176,7 @@ describe('either', function() {
                      '          ^^^^^^^^^^\n' +
                      '              1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -2207,7 +2207,7 @@ describe('either', function() {
                      '           ^^^^^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -2238,7 +2238,7 @@ describe('either', function() {
                      '          ^^^^^^^^\n' +
                      '             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -2250,7 +2250,7 @@ describe('either', function() {
                      '          ^^^^^^^^\n' +
                      '             1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -2262,7 +2262,7 @@ describe('either', function() {
                      '                      ^^^^^^^^\n' +
                      '                         1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -2274,7 +2274,7 @@ describe('either', function() {
                      '                      ^^^^^^^^\n' +
                      '                         1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -2286,7 +2286,7 @@ describe('either', function() {
                      '                                  ^^^^^^^^^^\n' +
                      '                                      1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
 
@@ -2298,7 +2298,7 @@ describe('either', function() {
                      '                                  ^^^^^^^^^^\n' +
                      '                                      1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -2363,7 +2363,7 @@ describe('either', function() {
                      '               ^^^^^^^^^^^^\n' +
                      '                    1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -2394,7 +2394,7 @@ describe('either', function() {
                      '                ^^^^^^^^^^^^\n' +
                      '                     1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Either a b’.\n'));
     });
@@ -2608,7 +2608,7 @@ describe('either', function() {
                      '                      ^^^^^^^\n' +
                      '                         1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Maybe b’.\n'));
     });
@@ -2706,7 +2706,7 @@ describe('alternative', function() {
                      '       ^^^^^^^^^^^^^    ^\n' +
                      '                        1\n' +
                      '\n' +
-                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  0 :: Number\n' +
                      '\n' +
                      '‘and’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
@@ -2792,7 +2792,7 @@ describe('alternative', function() {
                      '      ^^^^^^^^^^^^^    ^\n' +
                      '                       1\n' +
                      '\n' +
-                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  0 :: Number\n' +
                      '\n' +
                      '‘or’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
@@ -2865,7 +2865,7 @@ describe('alternative', function() {
                      '                       ^^^^^^^^     ^\n' +
                      '                                    1\n' +
                      '\n' +
-                     '1)  Right(42) :: Either ??? Number, Either ??? FiniteNumber, Either ??? NonZeroFiniteNumber, Either ??? Integer, Either ??? ValidNumber\n' +
+                     '1)  Right(42) :: Either ??? Number\n' +
                      '\n' +
                      '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
 
@@ -2877,7 +2877,7 @@ describe('alternative', function() {
                      '                       ^^^^^^^^     ^\n' +
                      '                                    1\n' +
                      '\n' +
-                     '1)  Right(42) :: Either ??? Number, Either ??? FiniteNumber, Either ??? NonZeroFiniteNumber, Either ??? Integer, Either ??? ValidNumber\n' +
+                     '1)  Right(42) :: Either ??? Number\n' +
                      '\n' +
                      '‘xor’ requires ‘a’ to satisfy the Monoid type-class constraint; the value at position 1 does not.\n'));
     });
@@ -2921,7 +2921,7 @@ describe('alternative', function() {
                      '        ^^^^^^^^^^^^^               ^\n' +
                      '                                    1\n' +
                      '\n' +
-                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  0 :: Number\n' +
                      '\n' +
                      '‘xor’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
     });
@@ -2960,7 +2960,7 @@ describe('logic', function() {
                      '       ^^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  0 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Boolean’.\n'));
     });
@@ -3237,7 +3237,7 @@ describe('list', function() {
                      '\n' +
                      '1)  "abc" :: String\n' +
                      '\n' +
-                     '2)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '2)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
     });
@@ -3293,7 +3293,7 @@ describe('list', function() {
                      '      ^^^^^^^\n' +
                      '         1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3347,7 +3347,7 @@ describe('list', function() {
                      '         ^^^^^^^\n' +
                      '            1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3359,7 +3359,7 @@ describe('list', function() {
                      '                    ^^^^^^^\n' +
                      '                       1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3371,7 +3371,7 @@ describe('list', function() {
                      '                               ^^^^^^\n' +
                      '                                 1\n' +
                      '\n' +
-                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘List a’.\n'));
     });
@@ -3457,7 +3457,7 @@ describe('list', function() {
                      '        ^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘List a’.\n'));
     });
@@ -3488,7 +3488,7 @@ describe('list', function() {
                      '        ^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘List a’.\n'));
     });
@@ -3519,7 +3519,7 @@ describe('list', function() {
                      '        ^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘List a’.\n'));
     });
@@ -3550,7 +3550,7 @@ describe('list', function() {
                      '        ^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": -1} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘List a’.\n'));
     });
@@ -3581,7 +3581,7 @@ describe('list', function() {
                      '        ^^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3649,7 +3649,7 @@ describe('list', function() {
                      '            ^^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3710,7 +3710,7 @@ describe('list', function() {
                      '        ^^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3778,7 +3778,7 @@ describe('list', function() {
                      '            ^^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -3839,7 +3839,7 @@ describe('list', function() {
                      '        ^^^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Function’.\n'));
 
@@ -3979,7 +3979,7 @@ describe('list', function() {
                      '                         ^^^^^^^\n' +
                      '                            1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
@@ -3991,7 +3991,7 @@ describe('list', function() {
                      '                                    ^^^^^^\n' +
                      '                                      1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
 
@@ -4003,7 +4003,7 @@ describe('list', function() {
                      '                                              ^^^^^^^\n' +
                      '                                                 1\n' +
                      '\n' +
-                     '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+                     '1)  {"length": 0} :: Object, StrMap Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Array a’.\n'));
     });
@@ -4121,7 +4121,7 @@ describe('object', function() {
                      '                        ^^^^^^\n' +
                      '                          1\n' +
                      '\n' +
-                     '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  1 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
 
@@ -4191,7 +4191,7 @@ describe('object', function() {
                      '                       ^^^^^^^\n' +
                      '                          1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
@@ -4203,7 +4203,7 @@ describe('object', function() {
                      '                                  ^^^^^^\n' +
                      '                                    1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
 
@@ -4257,7 +4257,7 @@ describe('object', function() {
                      '                        ^^^^^^^\n' +
                      '                           1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘TypeRep’.\n'));
 
@@ -4388,7 +4388,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^\n' +
                      '                            1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
@@ -4400,7 +4400,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^\n' +
                      '                            1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
@@ -4459,7 +4459,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^\n' +
                      '                            1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
@@ -4471,7 +4471,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^\n' +
                      '                            1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
@@ -4518,7 +4518,7 @@ describe('number', function() {
                      '       ^^^^^^^^^^^^\n' +
                      '            1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
@@ -4530,7 +4530,7 @@ describe('number', function() {
                      '       ^^^^^^^^^^^^\n' +
                      '            1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
@@ -4572,7 +4572,7 @@ describe('number', function() {
                      '       ^^^^^^^^^^^^\n' +
                      '            1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
@@ -4584,7 +4584,7 @@ describe('number', function() {
                      '       ^^^^^^^^^^^^\n' +
                      '            1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
@@ -4638,7 +4638,7 @@ describe('number', function() {
                      '                        ^^^^^^^^^^^^\n' +
                      '                             1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
 
@@ -4650,7 +4650,7 @@ describe('number', function() {
                      '                        ^^^^^^^^^^^^\n' +
                      '                             1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘FiniteNumber’.\n'));
     });
@@ -4711,7 +4711,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^^^^^^^^\n' +
                      '                                1\n' +
                      '\n' +
-                     '1)  0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  0 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘NonZeroFiniteNumber’.\n'));
 
@@ -4723,7 +4723,7 @@ describe('number', function() {
                      '                       ^^^^^^^^^^^^^^^^^^^\n' +
                      '                                1\n' +
                      '\n' +
-                     '1)  -0 :: Number, FiniteNumber, Integer, ValidNumber\n' +
+                     '1)  -0 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘NonZeroFiniteNumber’.\n'));
     });
@@ -4914,7 +4914,7 @@ describe('integer', function() {
                      '        ^^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -4926,7 +4926,7 @@ describe('integer', function() {
                      '        ^^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  Infinity :: Number, ValidNumber\n' +
+                     '1)  Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
     });
@@ -4967,7 +4967,7 @@ describe('integer', function() {
                      '       ^^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  -0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  -0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -4979,7 +4979,7 @@ describe('integer', function() {
                      '       ^^^^^^^\n' +
                      '          1\n' +
                      '\n' +
-                     '1)  -Infinity :: Number, ValidNumber\n' +
+                     '1)  -Infinity :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
     });
@@ -5024,7 +5024,7 @@ describe('parse', function() {
                      '             ^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });
@@ -5056,7 +5056,7 @@ describe('parse', function() {
                      '              ^^^^^^\n' +
                      '                1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });
@@ -5112,7 +5112,7 @@ describe('parse', function() {
                      '            ^^^^^^^\n' +
                      '               1\n' +
                      '\n' +
-                     '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                     '1)  0.5 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘Integer’.\n'));
 
@@ -5124,7 +5124,7 @@ describe('parse', function() {
                      '                       ^^^^^^\n' +
                      '                         1\n' +
                      '\n' +
-                     '1)  42 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                     '1)  42 :: Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });
@@ -5291,7 +5291,7 @@ describe('parse', function() {
                      '                        ^^^^^^\n' +
                      '                          1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });
@@ -5471,7 +5471,7 @@ describe('regexp', function() {
                      '                  ^^^^^^\n' +
                      '                    1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });
@@ -5515,7 +5515,7 @@ describe('regexp', function() {
                      '         ^^^^^^\n' +
                      '           1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘RegExp’.\n'));
 
@@ -5527,7 +5527,7 @@ describe('regexp', function() {
                      '                   ^^^^^^\n' +
                      '                     1\n' +
                      '\n' +
-                     '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                     '1)  [1, 2, 3] :: Array Number\n' +
                      '\n' +
                      'The value at position 1 is not a member of ‘String’.\n'));
     });

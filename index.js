@@ -315,17 +315,7 @@
   );
 
   //  env :: [Type]
-  var env = $.env.concat([
-    $.FiniteNumber,
-    $.NonZeroFiniteNumber,
-    $Either,
-    $.Integer,
-    $Maybe,
-    $.RegexFlags,
-    TypeRep,
-    $.ValidDate,
-    $.ValidNumber
-  ]);
+  var env = $.env.concat([$Either, $Maybe, TypeRep]);
 
   //  createSanctuary :: Boolean -> Module
   var createSanctuary = function(checkTypes) {
