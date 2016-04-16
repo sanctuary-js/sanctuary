@@ -1201,16 +1201,19 @@
       [b, $.Function, $Maybe(a), b],
       function(x, f, maybe) { return fromMaybe(x, maybe.map(f)); });
 
-  //# catMaybes :: [Maybe a] -> [a]
+  //# justs :: [Maybe a] -> [a]
   //.
   //. Takes a list of Maybes and returns a list containing each Just's value.
+  //. Equivalent to Haskell's `catMaybes` function.
+  //.
+  //. See also [`lefts`](#lefts) and [`rights`](#rights).
   //.
   //. ```javascript
-  //. > S.catMaybes([S.Just('foo'), S.Nothing(), S.Just('baz')])
+  //. > S.justs([S.Just('foo'), S.Nothing(), S.Just('baz')])
   //. ['foo', 'baz']
   //. ```
-  var catMaybes = S.catMaybes =
-  def('catMaybes',
+  var justs = S.justs =
+  def('justs',
       {},
       [$.Array($Maybe(a)), $.Array(a)],
       R.chain(maybe([], R.of)));
@@ -1233,7 +1236,7 @@
   def('mapMaybe',
       {},
       [$.Function, $.Array(a), $.Array(b)],
-      meld([R.map, catMaybes]));
+      meld([R.map, justs]));
 
   //# encase :: (a -> b) -> a -> Maybe b
   //.
