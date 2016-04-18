@@ -530,7 +530,7 @@
 
   //. ### Function
 
-  //# flip :: (a -> b -> c) -> b -> a -> c
+  //# flip :: ((a, b) -> c) -> b -> a -> c
   //.
   //. Takes a binary function and two values and returns the result of
   //. applying the function - with its argument order reversed - to the
@@ -1286,31 +1286,69 @@
   //# encase2 :: (a -> b -> c) -> a -> b -> Maybe c
   //.
   //. Binary version of [`encase`](#encase).
+  //.
+  //. See also [`encase2_`](#encase2_).
   S.encase2 =
   def('encase2',
       {},
       [$.Function, a, b, $Maybe(c)],
       function(f, x, y) {
         try {
-          return Just(f(x, y));
+          return Just(f(x)(y));
         } catch (err) {
           return Nothing();
         }
       });
 
+  //# encase2_ :: ((a, b) -> c) -> a -> b -> Maybe c
+  //.
+  //. Version of [`encase2`](#encase2) accepting uncurried functions.
+  S.encase2_ =
+  def('encase2_',
+      {},
+      [$.Function, a, b, $Maybe(c)],
+      function(f_, x, y) {
+        var f = function(x) {
+          return function(y) {
+            return f_(x, y);
+          };
+        };
+        return S.encase2(f, x, y);
+      });
+
   //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
   //.
   //. Ternary version of [`encase`](#encase).
+  //.
+  //. See also [`encase3_`](#encase3_).
   S.encase3 =
   def('encase3',
       {},
       [$.Function, a, b, c, $Maybe(d)],
       function(f, x, y, z) {
         try {
-          return Just(f(x, y, z));
+          return Just(f(x)(y)(z));
         } catch (err) {
           return Nothing();
         }
+      });
+
+  //# encase3_ :: ((a, b, c) -> d) -> a -> b -> c -> Maybe d
+  //.
+  //. Version of [`encase3`](#encase3) accepting uncurried functions.
+  S.encase3_ =
+  def('encase3_',
+      {},
+      [$.Function, a, b, c, $Maybe(d)],
+      function(f_, x, y, z) {
+        var f = function(x) {
+          return function(y) {
+            return function(z) {
+              return f_(x, y, z);
+            };
+          };
+        };
+        return S.encase3(f, x, y, z);
       });
 
   //. ### Either type
@@ -1771,31 +1809,70 @@
   //# encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r
   //.
   //. Binary version of [`encaseEither`](#encaseEither).
+  //.
+  //. See also [`encaseEither2_`](#encaseEither2_).
   S.encaseEither2 =
   def('encaseEither2',
       {},
       [$.Function, $.Function, a, b, $Either(l, r)],
       function(f, g, x, y) {
         try {
-          return Right(g(x, y));
+          return Right(g(x)(y));
         } catch (err) {
           return Left(f(err));
         }
       });
 
+  //# encaseEither2_ :: (Error -> l) -> ((a, b) -> r) -> a -> b -> Either l r
+  //.
+  //. Version of [`encaseEither2`](#encaseEither2) accepting uncurried
+  //. functions.
+  S.encaseEither2_ =
+  def('encaseEither2_',
+      {},
+      [$.Function, $.Function, a, b, $Either(l, r)],
+      function(f, g_, x, y) {
+        var g = function(x) {
+          return function(y) {
+            return g_(x, y);
+          };
+        };
+        return S.encaseEither2(f, g, x, y);
+      });
+
   //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
   //.
   //. Ternary version of [`encaseEither`](#encaseEither).
+  //.
+  //. See also [`encaseEither3_`](#encaseEither3_).
   S.encaseEither3 =
   def('encaseEither3',
       {},
       [$.Function, $.Function, a, b, c, $Either(l, r)],
       function(f, g, x, y, z) {
         try {
-          return Right(g(x, y, z));
+          return Right(g(x)(y)(z));
         } catch (err) {
           return Left(f(err));
         }
+      });
+
+  //# encaseEither3_ :: (Error -> l) -> ((a, b, c) -> r) -> a -> b -> c -> Either l r
+  //.
+  //. Version of [`encaseEither3`](#encaseEither3) accepting uncurried functions.
+  S.encaseEither3_ =
+  def('encaseEither3',
+      {},
+      [$.Function, $.Function, a, b, c, $Either(l, r)],
+      function(f, g_, x, y, z) {
+        var g = function(x) {
+          return function(y) {
+            return function(z) {
+              return g_(x, y, z);
+            };
+          };
+        };
+        return S.encaseEither3(f, g, x, y, z);
       });
 
   //# maybeToEither :: a -> Maybe b -> Either a b
@@ -2392,23 +2469,39 @@
 
   //# reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a
   //.
-  //. Takes a binary function, an initial value, and a [Foldable][], and
-  //. applies the function to the initial value and the Foldable's first
+  //. Takes a curried binary function, an initial value, and a [Foldable][],
+  //. and applies the function to the initial value and the Foldable's first
   //. value, then applies the function to the result of the previous
   //. application and the Foldable's second value. Repeats this process
   //. until each of the Foldable's values has been used. Returns the initial
   //. value if the Foldable is empty; the result of the final application
   //. otherwise.
   //.
+  //. See also [`reduce_`](#reduce_).
+  //.
   //. ```javascript
   //. > S.reduce(S.add, 0, [1, 2, 3, 4, 5])
   //. 15
   //.
-  //. > S.reduce((xs, x) => [x].concat(xs), [], [1, 2, 3, 4, 5])
+  //. > S.reduce(xs => x => [x].concat(xs), [], [1, 2, 3, 4, 5])
   //. [5, 4, 3, 2, 1]
   //. ```
   S.reduce =
   def('reduce',
+      {b: [Foldable]},
+      [$.Function, a, b, a],
+      function(f_, initial, foldable) {
+        var f = function(a, b) {
+          return f_(a)(b);
+        };
+        return reduce_(f, initial, foldable);
+      });
+
+  //# reduce_ :: Foldable f => ((a, b) -> a) -> a -> f b -> a
+  //.
+  //. Version of [`reduce`](#reduce) accepting uncurried functions.
+  var reduce_ = S.reduce_ =
+  def('reduce_',
       {b: [Foldable]},
       [$.Function, a, b, a],
       function(f, initial, foldable) {

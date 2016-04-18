@@ -7,14 +7,18 @@ var R = require('ramda');
 var S = require('../index.js');
 
 
-//      area :: (Number, Number, Number) -> Number !
-exports.area = function(a, b, c) {
-  if (Math.max(a, b, c) < (a + b + c) / 2) {
-    var s = (a + b + c) / 2;
-    return Math.sqrt(s * (s - a) * (s - b) * (s - c));
-  } else {
-    throw new Error('Impossible triangle');
-  }
+//      area :: Number -> Number -> Number -> Number !
+exports.area = function(a) {
+  return function(b) {
+    return function(c) {
+      if (Math.max(a, b, c) < (a + b + c) / 2) {
+        var s = (a + b + c) / 2;
+        return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+      } else {
+        throw new Error('Impossible triangle');
+      }
+    };
+  };
 };
 
 var eq = exports.eq = function(actual, expected) {
@@ -44,13 +48,22 @@ exports.parseHex = function(s) {
   return n !== n ? S.Left('Invalid hexadecimal string') : S.Right(n);
 };
 
-//      rem :: (Number, Number) -> Number !
-exports.rem = function(x, y) {
-  if (y === 0) {
-    throw new Error('Cannot divide by zero');
-  } else {
-    return x % y;
-  }
+//      rem :: Number -> Number -> Number !
+exports.rem = function(x) {
+  return function(y) {
+    if (y === 0) {
+      throw new Error('Cannot divide by zero');
+    } else {
+      return x % y;
+    }
+  };
+};
+
+//      highArity :: a -> ((b, c, d) -> b)
+exports.highArity = function(a) {
+  return function(b, c, d) {
+    return b;
+  };
 };
 
 exports.runCompositionTests = function(compose) {
