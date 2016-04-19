@@ -1,7 +1,6 @@
 DOCTEST = node_modules/.bin/doctest --nodejs '--harmony' --module commonjs --prefix .
+ESLINT = node_modules/.bin/eslint
 ISTANBUL = node_modules/.bin/istanbul
-JSCS = node_modules/.bin/jscs
-JSHINT = node_modules/.bin/jshint
 NPM = npm
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:plaid/sanctuary.git --script scripts/prepublish
@@ -20,8 +19,7 @@ README.md: index.js
 
 .PHONY: lint
 lint:
-	$(JSHINT) -- index.js test/index.js
-	$(JSCS) -- index.js test/index.js
+	$(ESLINT) -- index.js test/index.js
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
 	| sort -u \
