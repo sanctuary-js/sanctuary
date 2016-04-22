@@ -8,7 +8,7 @@
     "url": "git://github.com/plaid/sanctuary.git"
   },
   "scripts": {
-    "test": "make test lint"
+    "test": "make lint test"
   },
   "dependencies": {
     "ramda": "0.21.x",

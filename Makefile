@@ -20,8 +20,8 @@ README.md: index.js
 
 .PHONY: lint
 lint:
-	$(JSHINT) -- index.js test/index.js
-	$(JSCS) -- index.js test/index.js
+	$(JSHINT) -- index.js test/*.js
+	$(JSCS) -- index.js test/*.js
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
 	| sort -u \
