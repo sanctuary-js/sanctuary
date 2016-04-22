@@ -6,6 +6,8 @@ NPM = npm
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:plaid/sanctuary.git --script scripts/prepublish
 
+TESTS = $(shell find test -name '*.js' | sort)
+
 
 .PHONY: all
 all: README.md
@@ -20,8 +22,8 @@ README.md: index.js
 
 .PHONY: lint
 lint:
-	$(JSHINT) -- index.js test/*.js
-	$(JSCS) -- index.js test/*.js
+	@$(JSHINT) -- index.js $(TESTS)
+	@$(JSCS) -- index.js $(TESTS)
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
 	| sort -u \

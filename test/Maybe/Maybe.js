@@ -4,8 +4,8 @@ var jsc = require('jsverify');
 var R = require('ramda');
 var throws = require('assert').throws;
 
-var errorEq = require('./utils').errorEq;
-var S = require('..');
+var errorEq = require('../utils').errorEq;
+var S = require('../..');
 
 
 //  Identity :: a -> Identity a

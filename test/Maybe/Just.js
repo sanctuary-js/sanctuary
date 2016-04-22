@@ -5,28 +5,28 @@ var throws = assert.throws;
 
 var R = require('ramda');
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var S = require('..');
-var square = require('./utils').square;
+var eq = require('../utils').eq;
+var errorEq = require('../utils').errorEq;
+var S = require('../..');
+var square = require('../utils').square;
 
 
-describe('Nothing', function() {
+describe('Just', function() {
 
   it('is a data constructor', function() {
-    eq(typeof S.Nothing, 'function');
-    eq(S.Nothing.length, 0);
-    eq(S.Nothing()['@@type'], 'sanctuary/Maybe');
-    eq(S.Nothing().isNothing, true);
-    eq(S.Nothing().isJust, false);
+    eq(typeof S.Just, 'function');
+    eq(S.Just.length, 1);
+    eq(S.Just(42)['@@type'], 'sanctuary/Maybe');
+    eq(S.Just(42).isNothing, false);
+    eq(S.Just(42).isJust, true);
   });
 
   it('provides an "ap" method', function() {
-    eq(S.Nothing().ap.length, 1);
-    eq(S.Nothing().ap(S.Nothing()), S.Nothing());
-    eq(S.Nothing().ap(S.Just(42)), S.Nothing());
+    eq(S.Just(S.inc).ap.length, 1);
+    eq(S.Just(S.inc).ap(S.Nothing()), S.Nothing());
+    eq(S.Just(S.inc).ap(S.Just(42)), S.Just(43));
 
-    throws(function() { S.Nothing().ap([1, 2, 3]); },
+    throws(function() { S.Just(S.inc).ap([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -40,10 +40,10 @@ describe('Nothing', function() {
   });
 
   it('provides a "chain" method', function() {
-    eq(S.Nothing().chain.length, 1);
-    eq(S.Nothing().chain(S.head), S.Nothing());
+    eq(S.Just([1, 2, 3]).chain.length, 1);
+    eq(S.Just([1, 2, 3]).chain(S.head), S.Just(1));
 
-    throws(function() { S.Nothing().chain(null); },
+    throws(function() { S.Just([1, 2, 3]).chain([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -51,17 +51,17 @@ describe('Nothing', function() {
                    '                          ^^^^^^^^\n' +
                    '                             1\n' +
                    '\n' +
-                   '1)  null :: Null\n' +
+                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
                    '\n' +
                    'The value at position 1 is not a member of ‘Function’.\n'));
-  });
+    });
 
   it('provides a "concat" method', function() {
-    eq(S.Nothing().concat.length, 1);
-    eq(S.Nothing().concat(S.Nothing()), S.Nothing());
-    eq(S.Nothing().concat(S.Just('foo')), S.Just('foo'));
+    eq(S.Just('foo').concat.length, 1);
+    eq(S.Just('foo').concat(S.Nothing()), S.Just('foo'));
+    eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
 
-    throws(function() { S.Nothing().concat(null); },
+    throws(function() { S.Just('foo').concat([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -69,11 +69,35 @@ describe('Nothing', function() {
                    '                                          ^^^^^^^\n' +
                    '                                             1\n' +
                    '\n' +
-                   '1)  null :: Null\n' +
+                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
                    '\n' +
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
 
-    throws(function() { S.Nothing().concat(S.Just(1)); },
+    throws(function() { S.Just(1).concat(S.Just(0)); },
+           errorEq(TypeError,
+                   'Type-class constraint violation\n' +
+                   '\n' +
+                   'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                   '                ^^^^^^^^^^^          ^\n' +
+                   '                                     1\n' +
+                   '\n' +
+                   '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                   '\n' +
+                   '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+
+    throws(function() { S.Just(2).concat(S.Just([1, 2, 3])); },
+           errorEq(TypeError,
+                   'Type-class constraint violation\n' +
+                   '\n' +
+                   'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+                   '                ^^^^^^^^^^^          ^\n' +
+                   '                                     1\n' +
+                   '\n' +
+                   '1)  2 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                   '\n' +
+                   '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+
+    throws(function() { S.Just([1, 2, 3]).concat(S.Just(3)); },
            errorEq(TypeError,
                    'Type-class constraint violation\n' +
                    '\n' +
@@ -81,30 +105,39 @@ describe('Nothing', function() {
                    '                ^^^^^^^^^^^                     ^\n' +
                    '                                                1\n' +
                    '\n' +
-                   '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+                   '1)  3 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
                    '\n' +
                    '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
-  });
+    });
 
   it('provides an "equals" method', function() {
-    eq(S.Nothing().equals.length, 1);
-    eq(S.Nothing().equals(S.Nothing()), true);
-    eq(S.Nothing().equals(S.Just(42)), false);
-    eq(S.Nothing().equals(null), false);
+    eq(S.Just(42).equals.length, 1);
+    eq(S.Just(42).equals(S.Just(42)), true);
+    eq(S.Just(42).equals(S.Just(43)), false);
+    eq(S.Just(42).equals(S.Nothing()), false);
+    eq(S.Just(42).equals(null), false);
+
+    // Value-based equality:
+    eq(S.Just(0).equals(S.Just(-0)), false);
+    eq(S.Just(-0).equals(S.Just(0)), false);
+    eq(S.Just(NaN).equals(S.Just(NaN)), true);
+    eq(S.Just([1, 2, 3]).equals(S.Just([1, 2, 3])), true);
+    eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
+    eq(S.Just(new Number(42)).equals(42), false);
   });
 
   it('provides an "extend" method', function() {
-    eq(S.Nothing().extend.length, 1);
-    eq(S.Nothing().extend(function(x) { return x.value / 2; }), S.Nothing());
+    eq(S.Just(42).extend.length, 1);
+    eq(S.Just(42).extend(function(x) { return x.value / 2; }), S.Just(21));
 
     // associativity
-    var w = S.Nothing();
+    var w = S.Just(42);
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
     eq(w.extend(g).extend(f),
        w.extend(function(_w) { return f(_w.extend(g)); }));
 
-    throws(function() { S.Nothing().extend(null); },
+    throws(function() { S.Just(42).extend(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -118,11 +151,13 @@ describe('Nothing', function() {
   });
 
   it('provides a "filter" method', function() {
-    eq(S.Nothing().filter.length, 1);
-    eq(S.Nothing().filter(R.T), S.Nothing());
-    eq(S.Nothing().filter(R.F), S.Nothing());
+    eq(S.Just(42).filter.length, 1);
+    eq(S.Just(42).filter(R.T), S.Just(42));
+    eq(S.Just(42).filter(R.F), S.Nothing());
+    eq(S.Just(42).filter(function(n) { return n > 0; }), S.Just(42));
+    eq(S.Just(42).filter(function(n) { return n < 0; }), S.Nothing());
 
-    var m = S.Nothing();
+    var m = S.Just(-5);
     var f = function(n) { return n * n; };
     var p = function(n) { return n < 0; };
     var q = function(n) { return n > 0; };
@@ -132,7 +167,7 @@ describe('Nothing', function() {
     assert(m.map(f).filter(q)
            .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
 
-    throws(function() { S.Nothing().filter(null); },
+    throws(function() { S.Just(42).filter(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -146,10 +181,10 @@ describe('Nothing', function() {
   });
 
   it('provides a "map" method', function() {
-    eq(S.Nothing().map.length, 1);
-    eq(S.Nothing().map(function() { return 42; }), S.Nothing());
+    eq(S.Just(42).map.length, 1);
+    eq(S.Just(42).map(function(x) { return x / 2; }), S.Just(21));
 
-    throws(function() { S.Nothing().map(null); },
+    throws(function() { S.Just(42).map([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -157,16 +192,16 @@ describe('Nothing', function() {
                    '                        ^^^^^^^^\n' +
                    '                           1\n' +
                    '\n' +
-                   '1)  null :: Null\n' +
+                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
                    '\n' +
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
   it('provides a "reduce" method', function() {
-    eq(S.Nothing().reduce.length, 2);
-    eq(S.Nothing().reduce(function(a, b) { return a + b; }, 10), 10);
+    eq(S.Just(5).reduce.length, 2);
+    eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
 
-    throws(function() { S.Nothing().reduce(null, null); },
+    throws(function() { S.Just().reduce(null, null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -180,31 +215,31 @@ describe('Nothing', function() {
   });
 
   it('provides a "sequence" method', function() {
-    eq(S.Nothing().sequence.length, 1);
-    eq(S.Nothing().sequence(S.Either.of), S.Right(S.Nothing()));
+    eq(S.Just(S.Right(42)).sequence.length, 1);
+    eq(S.Just(S.Right(42)).sequence(S.Either.of), S.Right(S.Just(42)));
   });
 
   it('provides a "toBoolean" method', function() {
-    eq(S.Nothing().toBoolean.length, 0);
-    eq(S.Nothing().toBoolean(), false);
+    eq(S.Just(42).toBoolean.length, 0);
+    eq(S.Just(42).toBoolean(), true);
   });
 
   it('provides a "toString" method', function() {
-    eq(S.Nothing().toString.length, 0);
-    eq(S.Nothing().toString(), 'Nothing()');
+    eq(S.Just([1, 2, 3]).toString.length, 0);
+    eq(S.Just([1, 2, 3]).toString(), 'Just([1, 2, 3])');
   });
 
   it('implements Semigroup', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
-    var c = S.Nothing();
+    var a = S.Just('foo');
+    var b = S.Just('bar');
+    var c = S.Just('baz');
 
     // associativity
     assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
   });
 
   it('implements Monoid', function() {
-    var a = S.Nothing();
+    var a = S.Just([1, 2, 3]);
 
     // left identity
     assert(a.empty().concat(a).equals(a));
@@ -214,7 +249,7 @@ describe('Nothing', function() {
   });
 
   it('implements Functor', function() {
-    var a = S.Nothing();
+    var a = S.Just(7);
     var f = S.inc;
     var g = square;
 
@@ -226,9 +261,9 @@ describe('Nothing', function() {
   });
 
   it('implements Apply', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
-    var c = S.Nothing();
+    var a = S.Just(S.inc);
+    var b = S.Just(square);
+    var c = S.Just(7);
 
     // composition
     assert(a.map(function(f) {
@@ -241,8 +276,8 @@ describe('Nothing', function() {
   });
 
   it('implements Applicative', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
+    var a = S.Just(null);
+    var b = S.Just(S.inc);
     var f = S.inc;
     var x = 7;
 
@@ -257,7 +292,7 @@ describe('Nothing', function() {
   });
 
   it('implements Chain', function() {
-    var a = S.Nothing();
+    var a = S.Just([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
     var f = S.head;
     var g = S.last;
 
@@ -267,7 +302,7 @@ describe('Nothing', function() {
   });
 
   it('implements Monad', function() {
-    var a = S.Nothing();
+    var a = S.Just(null);
     var f = S.head;
     var x = [1, 2, 3];
 
