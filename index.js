@@ -83,11 +83,6 @@
 //. Sanctuary's run-time type checking asserts that a valid Number value is
 //. provided wherever an Integer value is required.
 //.
-//. ### List pseudotype
-//.
-//. The List pseudotype represents non-Function values with numeric `length`
-//. properties greater than or equal to zero, such as `[1, 2, 3]` and `'foo'`.
-//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -314,7 +309,7 @@
     }
   );
 
-  //  env :: [Type]
+  //  env :: Array Type
   var env = $.env.concat([
     $.FiniteNumber,
     $.NonZeroFiniteNumber,
@@ -638,11 +633,11 @@
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
-  //. Takes a list of functions assumed to be unary and a value of any type,
+  //. Takes an array of functions assumed to be unary and a value of any type,
   //. and returns the result of applying the sequence of transformations to
   //. the initial value.
   //.
-  //. In general terms, `pipe` performs left-to-right composition of a list
+  //. In general terms, `pipe` performs left-to-right composition of an array
   //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
   //.
   //. See also [`meld`](#meld).
@@ -659,7 +654,7 @@
 
   //# meld :: [** -> *] -> (* -> * -> ... -> *)
   //.
-  //. Takes a list of non-nullary functions and returns a curried function
+  //. Takes an array of non-nullary functions and returns a curried function
   //. whose arity is one greater than the sum of the arities of the given
   //. functions less the number of functions.
   //.
@@ -1223,10 +1218,10 @@
       [b, $.Function, $Maybe(a), b],
       function(x, f, maybe) { return fromMaybe(x, maybe.map(f)); });
 
-  //# justs :: [Maybe a] -> [a]
+  //# justs :: Array (Maybe a) -> Array a
   //.
-  //. Takes a list of Maybes and returns a list containing each Just's value.
-  //. Equivalent to Haskell's `catMaybes` function.
+  //. Takes an array of Maybes and returns an array containing each Just's
+  //. value. Equivalent to Haskell's `catMaybes` function.
   //.
   //. See also [`lefts`](#lefts) and [`rights`](#rights).
   //.
@@ -1240,15 +1235,15 @@
       [$.Array($Maybe(a)), $.Array(a)],
       R.chain(maybe([], R.of)));
 
-  //# mapMaybe :: (a -> Maybe b) -> [a] -> [b]
+  //# mapMaybe :: (a -> Maybe b) -> Array a -> Array b
   //.
-  //. Takes a function and a list, applies the function to each element of
-  //. the list, and returns a list of "successful" results. If the result of
-  //. applying the function to an element of the list is a Nothing, the result
+  //. Takes a function and an array, applies the function to each element of
+  //. the array, and returns an array of "successful" results. If the result of
+  //. applying the function to an element of the array is a Nothing, the result
   //. is discarded; if the result is a Just, the Just's value is included in
-  //. the output list.
+  //. the output array.
   //.
-  //. In general terms, `mapMaybe` filters a list while mapping over it.
+  //. In general terms, `mapMaybe` filters an array while mapping over it.
   //.
   //. ```javascript
   //. > S.mapMaybe(S.head, [[], [1, 2, 3], [], [4, 5, 6], []])
@@ -1703,9 +1698,10 @@
         return either.isLeft ? l(either.value) : r(either.value);
       });
 
-  //# lefts :: [Either a b] -> [a]
+  //# lefts :: Array (Either a b) -> Array a
   //.
-  //. Takes a list of Eithers and returns a list containing each Left's value.
+  //. Takes an array of Eithers and returns an array containing each Left's
+  //. value.
   //.
   //. See also [`rights`](#rights).
   //.
@@ -1721,9 +1717,10 @@
         return either.isLeft ? [either.value] : [];
       }));
 
-  //# rights :: [Either a b] -> [b]
+  //# rights :: Array (Either a b) -> Array b
   //.
-  //. Takes a list of Eithers and returns a list containing each Right's value.
+  //. Takes an array of Eithers and returns an array containing each Right's
+  //. value.
   //.
   //. See also [`lefts`](#lefts).
   //.
@@ -1825,6 +1822,7 @@
 
   //. ### Alternative
 
+  //  Alternative :: TypeClass
   var Alternative = $.TypeClass(
     'Alternative',
     function(x) {
@@ -1957,7 +1955,7 @@
       [$.Function, $.Function, $.Function, a, b],
       function(pred, f, g, x) { return pred(x) ? f(x) : g(x); });
 
-  //# allPass :: [a -> Boolean] -> a -> Boolean
+  //# allPass :: Array (a -> Boolean) -> a -> Boolean
   //.
   //. Takes an array of unary predicates and a value of any type
   //. and returns `true` if all the predicates pass; `false` otherwise.
@@ -1982,7 +1980,7 @@
         return true;
       });
 
-  //# anyPass :: [a -> Boolean] -> a -> Boolean
+  //# anyPass :: Array (a -> Boolean) -> a -> Boolean
   //.
   //. Takes an array of unary predicates and a value of any type
   //. and returns `true` if any of the predicates pass; `false` otherwise.
@@ -2008,6 +2006,12 @@
       });
 
   //. ### List
+  //.
+  //. The List type represents non-Function values with integer `length`
+  //. properties greater than or equal to zero, such as `[1, 2, 3]` and
+  //. `'foo'`.
+  //.
+  //. `[a]` is the notation used to represent a List of values of type `a`.
 
   //# concat :: Semigroup a => a -> a -> a
   //.
@@ -2270,32 +2274,7 @@
         return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
       });
 
-  //# find :: (a -> Boolean) -> [a] -> Maybe a
-  //.
-  //. Takes a predicate and a list and returns Just the leftmost element of
-  //. the list which satisfies the predicate; Nothing if none of the list's
-  //. elements satisfies the predicate.
-  //.
-  //. ```javascript
-  //. > S.find(n => n < 0, [1, -2, 3, -4, 5])
-  //. Just(-2)
-  //.
-  //. > S.find(n => n < 0, [1, 2, 3, 4, 5])
-  //. Nothing()
-  //. ```
-  S.find =
-  def('find',
-      {},
-      [$.Function, $.Array(a), $Maybe(a)],
-      function(pred, xs) {
-        for (var idx = 0, len = xs.length; idx < len; idx += 1) {
-          if (pred(xs[idx])) {
-            return Just(xs[idx]);
-          }
-        }
-        return Nothing();
-      });
-
+  //  ArrayLike :: TypeClass
   var ArrayLike = $.TypeClass(
     'ArrayLike',
     function(x) {
@@ -2363,13 +2342,41 @@
   //. ```
   S.lastIndexOf = sanctifyIndexOf('lastIndexOf');
 
-  //# pluck :: Accessible a => TypeRep b -> String -> [a] -> [Maybe b]
+  //. ### Array
+
+  //# find :: (a -> Boolean) -> Array a -> Maybe a
+  //.
+  //. Takes a predicate and an array and returns Just the leftmost element of
+  //. the array which satisfies the predicate; Nothing if none of the array's
+  //. elements satisfies the predicate.
+  //.
+  //. ```javascript
+  //. > S.find(n => n < 0, [1, -2, 3, -4, 5])
+  //. Just(-2)
+  //.
+  //. > S.find(n => n < 0, [1, 2, 3, 4, 5])
+  //. Nothing()
+  //. ```
+  S.find =
+  def('find',
+      {},
+      [$.Function, $.Array(a), $Maybe(a)],
+      function(pred, xs) {
+        for (var idx = 0, len = xs.length; idx < len; idx += 1) {
+          if (pred(xs[idx])) {
+            return Just(xs[idx]);
+          }
+        }
+        return Nothing();
+      });
+
+  //# pluck :: Accessible a => TypeRep b -> String -> Array a -> Array (Maybe b)
   //.
   //. Takes a [type representative](#type-representatives), a property name,
-  //. and a list of objects and returns a list of equal length. Each element
-  //. of the output list is Just the value of the specified property of the
-  //. corresponding object if the value is of the specified type (according
-  //. to [`is`](#is)); Nothing otherwise.
+  //. and an array of objects and returns an array of equal length. Each
+  //. element of the output array is Just the value of the specified property
+  //. of the corresponding object if the value is of the specified type
+  //. (according to [`is`](#is)); Nothing otherwise.
   //.
   //. See also [`get`](#get).
   //.
@@ -2416,17 +2423,17 @@
         }
       });
 
-  //# unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+  //# unfoldr :: (b -> Maybe (a, b)) -> b -> Array a
   //.
-  //. Takes a function and a seed value, and returns a list generated by
-  //. applying the function repeatedly. The list is initially empty. The
+  //. Takes a function and a seed value, and returns an array generated by
+  //. applying the function repeatedly. The array is initially empty. The
   //. function is initially applied to the seed value. Each application
   //. of the function should result in either:
   //.
-  //.   - a Nothing, in which case the list is returned; or
+  //.   - a Nothing, in which case the array is returned; or
   //.
   //.   - Just a pair, in which case the first element is appended to
-  //.     the list and the function is applied to the second element.
+  //.     the array and the function is applied to the second element.
   //.
   //. ```javascript
   //. > S.unfoldr(n => n < 5 ? S.Just([n, n + 1]) : S.Nothing(), 1)
@@ -2490,12 +2497,12 @@
       [TypeRep, $.String, a, $Maybe(b)],
       function(type, key, obj) { return filter(is(type), Just(obj[key])); });
 
-  //# gets :: Accessible a => TypeRep b -> [String] -> a -> Maybe b
+  //# gets :: Accessible a => TypeRep b -> Array String -> a -> Maybe b
   //.
-  //. Takes a [type representative](#type-representatives), a list of property
-  //. names, and an object and returns Just the value at the path specified by
-  //. the list of property names if such a path exists and the value is of the
-  //. specified type; Nothing otherwise.
+  //. Takes a [type representative](#type-representatives), an array of
+  //. property names, and an object and returns Just the value at the path
+  //. specified by the array of property names if such a path exists and
+  //. the value is of the specified type; Nothing otherwise.
   //.
   //. See also [`get`](#get).
   //.
@@ -2739,12 +2746,12 @@
         return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
       });
 
-  //  requiredNonCapturingGroup :: [String] -> String
+  //  requiredNonCapturingGroup :: Array String -> String
   var requiredNonCapturingGroup = function(xs) {
     return '(?:' + xs.join('|') + ')';
   };
 
-  //  optionalNonCapturingGroup :: [String] -> String
+  //  optionalNonCapturingGroup :: Array String -> String
   var optionalNonCapturingGroup = function(xs) {
     return requiredNonCapturingGroup(xs) + '?';
   };
@@ -2917,12 +2924,12 @@
         return result;
       });
 
-  //# match :: RegExp -> String -> Maybe [Maybe String]
+  //# match :: RegExp -> String -> Maybe (Array (Maybe String))
   //.
-  //. Takes a pattern and a string, and returns Just a list of matches
-  //. if the pattern matches the string; Nothing otherwise. Each match
-  //. has type `Maybe String`, where a Nothing represents an unmatched
-  //. optional capturing group.
+  //. Takes a pattern and a string, and returns Just an array of matches
+  //. if the pattern matches the string; Nothing otherwise. Each match has
+  //. type `Maybe String`, where a Nothing represents an unmatched optional
+  //. capturing group.
   //.
   //. ```javascript
   //. > S.match(/(good)?bye/, 'goodbye')
@@ -2988,9 +2995,9 @@
       [$.String, $.String],
       R.trim);
 
-  //# words :: String -> [String]
+  //# words :: String -> Array String
   //.
-  //. Takes a string and returns the list of words the string contains
+  //. Takes a string and returns the array of words the string contains
   //. (words are delimited by whitespace characters).
   //.
   //. See also [`unwords`](#unwords).
@@ -3005,9 +3012,9 @@
       [$.String, $.Array($.String)],
       compose(R.reject(R.isEmpty), R.split(/\s+/)));
 
-  //# unwords :: [String] -> String
+  //# unwords :: Array String -> String
   //.
-  //. Takes a list of words and returns the result of joining the words
+  //. Takes an array of words and returns the result of joining the words
   //. with separating spaces.
   //.
   //. See also [`words`](#words).
@@ -3022,9 +3029,9 @@
       [$.Array($.String), $.String],
       function(xs) { return xs.join(' '); });
 
-  //# lines :: String -> [String]
+  //# lines :: String -> Array String
   //.
-  //. Takes a string and returns the list of lines the string contains
+  //. Takes a string and returns the array of lines the string contains
   //. (lines are delimited by newlines: `'\n'` or `'\r\n'` or `'\r'`).
   //. The resulting strings do not contain newlines.
   //.
@@ -3040,9 +3047,9 @@
       [$.String, $.Array($.String)],
       compose(R.match(/^(?=[\s\S]).*/gm), R.replace(/\r\n?/g, '\n')));
 
-  //# unlines :: [String] -> String
+  //# unlines :: Array String -> String
   //.
-  //. Takes a list of lines and returns the result of joining the lines
+  //. Takes an array of lines and returns the result of joining the lines
   //. after appending a terminating line feed (`'\n'`) to each.
   //.
   //. See also [`lines`](#lines).
