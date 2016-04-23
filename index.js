@@ -1151,6 +1151,8 @@
   //. Takes a default value and a Maybe, and returns the Maybe's value
   //. if the Maybe is a Just; the default value otherwise.
   //.
+  //. See also [`maybeToNullable`](#maybeToNullable).
+  //.
   //. ```javascript
   //. > S.fromMaybe(0, S.Just(42))
   //. 42
@@ -1163,6 +1165,26 @@
       {},
       [a, $Maybe(a), a],
       function(x, maybe) { return maybe.isJust ? maybe.value : x; });
+
+  //# maybeToNullable :: Maybe a -> Nullable a
+  //.
+  //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
+  //. [Nullable][] is defined in sanctuary-def.
+  //.
+  //. See also [`fromMaybe`](#fromMaybe).
+  //.
+  //. ```javascript
+  //. > S.maybeToNullable(S.Just(42))
+  //. 42
+  //.
+  //. > S.maybeToNullable(S.Nothing())
+  //. null
+  //. ```
+  S.maybeToNullable =
+  def('maybeToNullable',
+      {},
+      [$Maybe(a), $.Nullable(a)],
+      function(maybe) { return maybe.isJust ? maybe.value : null; });
 
   //# toMaybe :: a? -> Maybe a
   //.
@@ -3054,6 +3076,7 @@
 //. [Functor]:        https://github.com/fantasyland/fantasy-land#functor
 //. [Monad]:          https://github.com/fantasyland/fantasy-land#monad
 //. [Monoid]:         https://github.com/fantasyland/fantasy-land#monoid
+//. [Nullable]:       https://github.com/plaid/sanctuary-def#nullable
 //. [R.equals]:       http://ramdajs.com/docs/#equals
 //. [R.map]:          http://ramdajs.com/docs/#map
 //. [R.type]:         http://ramdajs.com/docs/#type
