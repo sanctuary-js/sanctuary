@@ -228,7 +228,7 @@
   var Foldable = $.TypeClass(
     'sanctuary/Foldable',
     function(x) {
-      return _type(x) === 'Array' || hasMethod('reduce');
+      return _type(x) === 'Array' || hasMethod('reduce')(x);
     }
   );
 
@@ -266,6 +266,7 @@
   var b = $.TypeVariable('b');
   var c = $.TypeVariable('c');
   var d = $.TypeVariable('d');
+  var f = $.TypeVariable('f');
   var l = $.TypeVariable('l');
   var r = $.TypeVariable('r');
 
@@ -678,12 +679,12 @@
   //. > S.meld([Math.pow, S.sub])(3)(4)(5)
   //. 76
   //. ```
-  var meld = S.meld =
+  S.meld =
   def('meld',
       {},
       [$.Array($.Function), $.Function],
       function(fs) {
-        var n = 1 + R.sum(R.map(R.length, fs)) - fs.length;
+        var n = 1 + sum(R.map(R.length, fs)) - fs.length;
         return R.curryN(n, function() {
           var args = Array.prototype.slice.call(arguments);
           for (var idx = 0; idx < fs.length; idx += 1) {
@@ -948,7 +949,7 @@
   //. > S.Nothing().map(S.inc)
   //. Nothing()
   //.
-  //. > S.Just([1, 2, 3]).map(R.sum)
+  //. > S.Just([1, 2, 3]).map(S.sum)
   //. Just(6)
   //. ```
   Maybe.prototype.map =
@@ -1253,7 +1254,7 @@
   def('mapMaybe',
       {},
       [$.Function, $.Array(a), $.Array(b)],
-      meld([R.map, justs]));
+      function(f, xs) { return justs(R.map(f, xs)); });
 
   //# encase :: (a -> b) -> a -> Maybe b
   //.
@@ -1566,7 +1567,7 @@
   //. > S.Left('Cannot divide by zero').map(S.inc)
   //. Left('Cannot divide by zero')
   //.
-  //. > S.Right([1, 2, 3]).map(R.sum)
+  //. > S.Right([1, 2, 3]).map(S.sum)
   //. Right(6)
   //. ```
   Either.prototype.map =
@@ -2528,7 +2529,7 @@
   //. > S.reduce(xs => x => [x].concat(xs), [], [1, 2, 3, 4, 5])
   //. [5, 4, 3, 2, 1]
   //. ```
-  S.reduce =
+  var reduce = S.reduce =
   def('reduce',
       {b: [Foldable]},
       [$.Function, a, b, a],
@@ -2699,6 +2700,29 @@
       [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
       function(a, b) { return a + b; });
 
+  //# sum :: Foldable f => f FiniteNumber -> FiniteNumber
+  //.
+  //. Returns the sum of the given array of (finite) numbers.
+  //.
+  //. ```javascript
+  //. > S.sum([1, 2, 3, 4, 5])
+  //. 15
+  //.
+  //. > S.sum([])
+  //. 0
+  //.
+  //. > S.sum(S.Just(42))
+  //. 42
+  //.
+  //. > S.sum(S.Nothing())
+  //. 0
+  //. ```
+  var sum = S.sum =
+  def('sum',
+      {f: [Foldable]},
+      [f, $.FiniteNumber],
+      reduce(function(a) { return function(b) { return a + b; }; }, 0));
+
   //# sub :: FiniteNumber -> FiniteNumber -> FiniteNumber
   //.
   //. Returns the difference between two (finite) numbers.
@@ -2754,6 +2778,29 @@
       {},
       [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber],
       function(a, b) { return a * b; });
+
+  //# product :: Foldable f => f FiniteNumber -> FiniteNumber
+  //.
+  //. Returns the product of the given array of (finite) numbers.
+  //.
+  //. ```javascript
+  //. > S.product([1, 2, 3, 4, 5])
+  //. 120
+  //.
+  //. > S.product([])
+  //. 1
+  //.
+  //. > S.product(S.Just(42))
+  //. 42
+  //.
+  //. > S.product(S.Nothing())
+  //. 1
+  //. ```
+  S.product =
+  def('product',
+      {f: [Foldable]},
+      [f, $.FiniteNumber],
+      reduce(function(a) { return function(b) { return a * b; }; }, 1));
 
   //# div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber
   //.
