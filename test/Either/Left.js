@@ -3,12 +3,12 @@
 var assert = require('assert');
 var throws = assert.throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var parseHex = require('./utils').parseHex;
-var S = require('..');
-var square = require('./utils').square;
-var squareRoot = require('./utils').squareRoot;
+var eq = require('../utils').eq;
+var errorEq = require('../utils').errorEq;
+var parseHex = require('../utils').parseHex;
+var S = require('../..');
+var square = require('../utils').square;
+var squareRoot = require('../utils').squareRoot;
 
 
 describe('Left', function() {

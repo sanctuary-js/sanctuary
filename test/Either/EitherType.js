@@ -2,8 +2,8 @@
 
 var $ = require('sanctuary-def');
 
-var eq = require('./utils').eq;
-var S = require('..');
+var eq = require('../utils').eq;
+var S = require('../..');
 
 
 describe('EitherType', function() {

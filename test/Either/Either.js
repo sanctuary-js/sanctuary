@@ -2,8 +2,8 @@
 
 var throws = require('assert').throws;
 
-var errorEq = require('./utils').errorEq;
-var S = require('..');
+var errorEq = require('../utils').errorEq;
+var S = require('../..');
 
 
 describe('Either', function() {
