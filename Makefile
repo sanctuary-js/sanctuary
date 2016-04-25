@@ -4,7 +4,7 @@ JSCS = node_modules/.bin/jscs
 JSHINT = node_modules/.bin/jshint
 NPM = npm
 TRANSCRIBE = node_modules/.bin/transcribe
-XYZ = node_modules/.bin/xyz --repo git@github.com:plaid/sanctuary.git --script scripts/prepublish
+XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
 
 TESTS = $(shell find test -name '*.js' | sort)
 
@@ -15,7 +15,7 @@ all: README.md
 README.md: index.js
 	$(TRANSCRIBE) \
 	  --heading-level 4 \
-	  --url 'https://github.com/plaid/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
+	  --url 'https://github.com/sanctuary-js/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
 	  -- $^ \
 	| LC_ALL=C sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
 
