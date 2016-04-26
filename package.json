@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/plaid/sanctuary.git"
+    "url": "git://github.com/sanctuary-js/sanctuary.git"
   },
   "scripts": {
     "test": "make lint test"
