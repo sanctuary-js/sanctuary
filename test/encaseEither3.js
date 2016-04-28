@@ -5,6 +5,7 @@ var throws = require('assert').throws;
 var area = require('./utils').area;
 var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
+var highArity = require('./utils').highArity;
 var S = require('..');
 
 
@@ -56,7 +57,7 @@ describe('encaseEither3', function() {
   });
 
   it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encaseEither3(S.I, function(a, b, c, d) { return c; }, 0, 0, 42),
+    eq(S.encaseEither3(S.I, S.K(highArity), 0, 0, 42),
        S.Right(42));
   });
 

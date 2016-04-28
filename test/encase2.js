@@ -5,6 +5,7 @@ var throws = assert.throws;
 var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
 var rem = require('./utils').rem;
+var highArity = require('./utils').highArity;
 var S = require('..');
 
 
@@ -38,7 +39,7 @@ describe('encase2', function() {
   });
 
   it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encase2(function(a, b, c, d) { return b; }, 0, 42), S.Just(42));
+    eq(S.encase2(highArity, 0, 42), S.Just(42));
   });
 
   it('is curried', function() {
