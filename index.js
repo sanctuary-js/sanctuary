@@ -2344,6 +2344,24 @@
 
   //. ### Array
 
+  //# append :: a -> Array a -> Array a
+  //.
+  //. Takes a value of any type and an array of values of that type, and
+  //. returns the result of appending the value to the array.
+  //.
+  //. ```javascript
+  //. > S.append(3, [1, 2])
+  //. [1, 2, 3]
+  //.
+  //. > S.append([3, 4], [[1], [2]])
+  //. [[1], [2], [3, 4]]
+  //. ```
+  S.append =
+  def('append',
+      {},
+      [a, $.Array(a), $.Array(a)],
+      function(x, xs) { return xs.concat([x]); });
+
   //# find :: (a -> Boolean) -> Array a -> Maybe a
   //.
   //. Takes a predicate and an array and returns Just the leftmost element of
