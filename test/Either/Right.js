@@ -167,6 +167,24 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
+  it('provides a "reduce" method', function() {
+    eq(S.Right(5).reduce.length, 2);
+    eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]),
+       [42, 5]);
+
+    throws(function() { S.Right().reduce(null, null); },
+           errorEq(TypeError,
+                   'Invalid value\n' +
+                   '\n' +
+                   'Either#reduce :: Either a b -> Function -> c -> c\n' +
+                   '                               ^^^^^^^^\n' +
+                   '                                  1\n' +
+                   '\n' +
+                   '1)  null :: Null\n' +
+                   '\n' +
+                   'The value at position 1 is not a member of ‘Function’.\n'));
+  });
+
   it('provides a "toBoolean" method', function() {
     eq(S.Right(42).toBoolean.length, 0);
     eq(S.Right(42).toBoolean(), true);
