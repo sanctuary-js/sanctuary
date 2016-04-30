@@ -2451,18 +2451,34 @@
   //. Takes a value of any type and an array of values of that type, and
   //. returns the result of appending the value to the array.
   //.
+  //. See also [`prepend`](#prepend).
+  //.
   //. ```javascript
   //. > S.append(3, [1, 2])
   //. [1, 2, 3]
-  //.
-  //. > S.append([3, 4], [[1], [2]])
-  //. [[1], [2], [3, 4]]
   //. ```
   S.append =
   def('append',
       {},
       [a, $.Array(a), $.Array(a)],
       function(x, xs) { return xs.concat([x]); });
+
+  //# prepend :: a -> Array a -> Array a
+  //.
+  //. Takes a value of any type and an array of values of that type, and
+  //. returns the result of prepending the value to the array.
+  //.
+  //. See also [`append`](#append).
+  //.
+  //. ```javascript
+  //. > S.prepend(1, [2, 3])
+  //. [1, 2, 3]
+  //. ```
+  S.prepend =
+  def('prepend',
+      {},
+      [a, $.Array(a), $.Array(a)],
+      function(x, xs) { return [x].concat(xs); });
 
   //# find :: (a -> Boolean) -> Array a -> Maybe a
   //.
