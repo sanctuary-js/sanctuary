@@ -47,11 +47,11 @@ describe('is', function() {
   });
 
   it('works for user-defined type', function() {
-    function FooBar() {}
+    var FooBar = function FooBar() {};
     FooBar.prototype['@@type'] = 'foobar/FooBar';
-    function Foo() {}
+    var Foo = function Foo() {};
     Foo.prototype = new FooBar();
-    function Bar() {}
+    var Bar = function Bar() {};
     Bar.prototype = new FooBar();
 
     eq(S.is(FooBar, new Foo()), true);

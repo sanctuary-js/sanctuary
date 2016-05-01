@@ -16,11 +16,11 @@
   },
   "devDependencies": {
     "doctest": "0.10.x",
+    "eslint": "2.9.x",
     "istanbul": "0.4.x",
-    "jscs": "1.10.x",
-    "jshint": "2.5.x",
     "jsverify": "0.7.x",
     "mocha": "2.x.x",
+    "sanctuary-style": "0.1.x",
     "transcribe": "0.4.x",
     "xyz": "0.5.x"
   },

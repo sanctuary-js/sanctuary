@@ -63,7 +63,7 @@ var RightArb = function(arb) {
 //          => { of: b -> f b } -> { of: c -> g c }
 //          -> f (g a) -> Compose f g a
 var Compose = function(F, G) {
-  function _Compose(x) {
+  var _Compose = function _Compose(x) {
     return {
       map: function(f) {
         return _Compose(R.map(R.map(f), x));
@@ -76,7 +76,7 @@ var Compose = function(F, G) {
       },
       value: x
     };
-  }
+  };
   _Compose.of = function(x) {
     return _Compose(F.of(G.of(x)));
   };

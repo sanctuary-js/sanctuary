@@ -145,9 +145,7 @@
 //.
 //. ## API
 
-/* global define, self */
-
-;(function(f) {
+(function(f) {
 
   'use strict';
 
@@ -206,8 +204,7 @@
   };
 
   //  negativeZero :: a -> Boolean
-  var negativeZero = R.either(R.equals(-0),
-                              R.equals(new Number(-0)));  // jshint ignore:line
+  var negativeZero = R.either(R.equals(-0), R.equals(new Number(-0)));
 
   //  Accessible :: TypeClass
   var Accessible = $.TypeClass(
@@ -326,7 +323,7 @@
   //  createSanctuary :: Boolean -> Module
   var createSanctuary = function(checkTypes) {
 
-  //  To avoid excessive indentation this function's body is not indented.
+  /* eslint-disable indent */
 
   var S = {EitherType: $Either, MaybeType: $Maybe};
 
@@ -456,8 +453,9 @@
 
   //# A :: (a -> b) -> a -> b
   //.
-  //. The A combinator. Takes a function and a value, and returns the result of
-  //. applying the function to the value. Equivalent to Haskell's `($)` function.
+  //. The A combinator. Takes a function and a value, and returns the result
+  //. of applying the function to the value. Equivalent to Haskell's `($)`
+  //. function.
   //.
   //. ```javascript
   //. > S.A(S.inc, 1)
@@ -497,9 +495,10 @@
 
   //# B :: (b -> c) -> (a -> b) -> a -> c
   //.
-  //. The B combinator. Takes two functions and a value, and returns the result
-  //. of applying the first function to the result of applying the second to the
-  //. value. Equivalent to [`compose`](#compose) and Haskell's `(.)` function.
+  //. The B combinator. Takes two functions and a value, and returns the
+  //. result of applying the first function to the result of applying the
+  //. second to the value. Equivalent to [`compose`](#compose) and Haskell's
+  //. `(.)` function.
   //.
   //. ```javascript
   //. > S.B(Math.sqrt, S.inc, 99)
@@ -1884,7 +1883,8 @@
 
   //# encaseEither3_ :: (Error -> l) -> ((a, b, c) -> r) -> a -> b -> c -> Either l r
   //.
-  //. Version of [`encaseEither3`](#encaseEither3) accepting uncurried functions.
+  //. Version of [`encaseEither3`](#encaseEither3) accepting uncurried
+  //. functions.
   S.encaseEither3_ =
   def('encaseEither3',
       {},
@@ -2013,7 +2013,7 @@
       {a: [Alternative, Monoid]},
       [a, a, a],
       function(x, y) {
-        return toBoolean(x) !== toBoolean(y) ? or(x, y) : empty(x);
+        return toBoolean(x) === toBoolean(y) ? empty(x) : or(x, y);
       });
 
   //. ### Logic
@@ -2173,7 +2173,7 @@
         var A = negativeZero(start) ? len : start < 0 ? start + len : start;
         var Z = negativeZero(end) ? len : end < 0 ? end + len : end;
 
-        return (Math.abs(start) <= len && Math.abs(end) <= len && A <= Z) ?
+        return Math.abs(start) <= len && Math.abs(end) <= len && A <= Z ?
           Just(R.slice(A, Z, xs)) :
           Nothing();
       });
@@ -3247,6 +3247,8 @@
       compose(R.join(''), R.map(concat(_, '\n'))));
 
   return S;
+
+  /* eslint-enable indent */
 
   };
 

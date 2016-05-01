@@ -39,7 +39,7 @@ describe('type', function() {
   });
 
   it('operates on values of user-defined types', function() {
-    function Gizmo() {}
+    var Gizmo = function Gizmo() {};
     Gizmo.prototype['@@type'] = 'gadgets/Gizmo';
 
     eq(S.type(new Gizmo()), 'gadgets/Gizmo');

@@ -45,7 +45,7 @@ var factorial = exports.factorial = function(n) {
 //      parseHex :: String -> Either String Number
 exports.parseHex = function(s) {
   var n = parseInt(s, 16);
-  return n !== n ? S.Left('Invalid hexadecimal string') : S.Right(n);
+  return isNaN(n) ? S.Left('Invalid hexadecimal string') : S.Right(n);
 };
 
 //      rem :: Number -> Number -> Number !
@@ -68,7 +68,6 @@ exports.highArity = function(a) {
 
 exports.runCompositionTests = function(compose) {
 
-  /* globals it */
   it('is a ternary function', function() {
     eq(typeof compose, 'function');
     eq(compose.length, 3);
@@ -94,4 +93,3 @@ exports.squareRoot = function(n) {
   return n < 0 ? S.Left('Cannot represent square root of negative number')
     : S.Right(Math.sqrt(n));
 };
-
