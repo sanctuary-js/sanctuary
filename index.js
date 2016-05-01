@@ -973,7 +973,7 @@
       [b, $Maybe(b)],
       Maybe.of);
 
-  //# Maybe#reduce :: Maybe a ~> (b -> a -> b) -> b -> b
+  //# Maybe#reduce :: Maybe a ~> ((b, a) -> b) -> b -> b
   //.
   //. Takes a function and an initial value of any type, and returns:
   //.
@@ -1357,8 +1357,8 @@
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
   //. value is of type `b`.
   //.
-  //. The Either type satisfies the [Semigroup][], [Monad][], and [Extend][]
-  //. specifications.
+  //. The Either type satisfies the [Semigroup][], [Monad][], [Foldable][], and
+  //. [Extend][] specifications.
 
   //# EitherType :: Type -> Type -> Type
   //.
@@ -1590,6 +1590,30 @@
       {},
       [c, $Either(a, c)],
       Either.of);
+
+  //# Either#reduce :: Either a b ~> ((c, b) -> c) -> c -> c
+  //.
+  //. Takes a function and an initial value of any type, and returns:
+  //.
+  //.   - the initial value if `this` is a Left; otherwise
+  //.
+  //.   - the result of applying the function to the initial value and this
+  //.     Right's value.
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').reduce((xs, x) => xs.concat([x]), [42])
+  //. [42]
+  //.
+  //. > S.Right(5).reduce((xs, x) => xs.concat([x]), [42])
+  //. [42, 5]
+  //. ```
+  Either.prototype.reduce =
+  method('Either#reduce',
+         {},
+         [$Either(a, b), $.Function, c, c],
+         function(either, f, x) {
+           return either.isRight ? f(x, either.value) : x;
+         });
 
   //# Either#toBoolean :: Either a b ~> Boolean
   //.
