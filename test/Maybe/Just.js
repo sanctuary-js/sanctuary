@@ -54,7 +54,7 @@ describe('Just', function() {
                    '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
                    '\n' +
                    'The value at position 1 is not a member of ‘Function’.\n'));
-    });
+  });
 
   it('provides a "concat" method', function() {
     eq(S.Just('foo').concat.length, 1);
@@ -108,7 +108,7 @@ describe('Just', function() {
                    '1)  3 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
                    '\n' +
                    '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
-    });
+  });
 
   it('provides an "equals" method', function() {
     eq(S.Just(42).equals.length, 1);
