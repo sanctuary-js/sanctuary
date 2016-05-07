@@ -27,7 +27,7 @@ describe('append', function() {
                    '\n' +
                    'The value at position 1 is not a member of ‘Array a’.\n'));
 
-    throws(function() { S.append('c', [1, 2]); },
+    throws(function() { S.append('3', [1, 2]); },
            errorEq(TypeError,
                    'Type-variable constraint violation\n' +
                    '\n' +
@@ -35,7 +35,7 @@ describe('append', function() {
                    '          ^          ^\n' +
                    '          1          2\n' +
                    '\n' +
-                   '1)  "c" :: String\n' +
+                   '1)  "3" :: String\n' +
                    '\n' +
                    '2)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
                    '    2 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
@@ -43,22 +43,15 @@ describe('append', function() {
                    'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
   });
 
-  it('adds the element to the end of the list', function() {
-    eq(S.append('c', ['a', 'b']), ['a', 'b', 'c']);
-    eq(S.append({x: 3}, [{x: 1}, {x: 2}]), [{x: 1}, {x: 2}, {x: 3}]);
-  });
-
-  it('adds a list to a list of lists', function() {
-    eq(S.append([3, 4], [[1], [2]]), [[1], [2], [3, 4]]);
-  });
-
-  it('works on empty list', function() {
-    eq(S.append(1, []), [1]);
+  it('appends an element to an array', function() {
+    eq(S.append(3, []), [3]);
+    eq(S.append(3, [1, 2]), [1, 2, 3]);
+    eq(S.append([5, 6], [[1, 2], [3, 4]]), [[1, 2], [3, 4], [5, 6]]);
   });
 
   it('is curried', function() {
-    eq(S.append('c').length, 1);
-    eq(S.append('c')(['a', 'b']), ['a', 'b', 'c']);
+    eq(S.append(3).length, 1);
+    eq(S.append(3)([1, 2]), [1, 2, 3]);
   });
 
 });
