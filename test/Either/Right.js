@@ -185,6 +185,11 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
+  it('provides a "sequence" method', function() {
+    eq(S.Right(S.Just(42)).sequence.length, 1);
+    eq(S.Right(S.Just(42)).sequence(S.Maybe.of), S.Just(S.Right(42)));
+  });
+
   it('provides a "toBoolean" method', function() {
     eq(S.Right(42).toBoolean.length, 0);
     eq(S.Right(42).toBoolean(), true);

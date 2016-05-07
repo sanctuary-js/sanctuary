@@ -1,16 +1,18 @@
 'use strict';
 
+var throws = require('assert').throws;
+
 var jsc = require('jsverify');
 var R = require('ramda');
-var throws = require('assert').throws;
 
 var errorEq = require('../utils').errorEq;
 var S = require('../..');
 
 
 //  Identity :: a -> Identity a
-var Identity = function(x) {
+var Identity = function Identity(x) {
   return {
+    of: Identity,
     map: function(fn) {
       return Identity(fn(x));
     },
@@ -65,6 +67,7 @@ var RightArb = function(arb) {
 var Compose = function(F, G) {
   var _Compose = function _Compose(x) {
     return {
+      constructor: _Compose,
       map: function(f) {
         return _Compose(R.map(R.map(f), x));
       },
