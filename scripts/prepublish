@@ -3,4 +3,4 @@ set -e
 
 rm -f README.md
 make
-git add README.md
+git add LICENSE README.md
