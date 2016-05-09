@@ -1302,7 +1302,7 @@
   //. Binary version of [`encase`](#encase).
   //.
   //. See also [`encase2_`](#encase2_).
-  S.encase2 =
+  var encase2 = S.encase2 =
   def('encase2',
       {},
       [$.Function, a, b, $Maybe(c)],
@@ -1327,7 +1327,7 @@
             return f_(x, y);
           };
         };
-        return S.encase2(f, x, y);
+        return encase2(f, x, y);
       });
 
   //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
@@ -1335,7 +1335,7 @@
   //. Ternary version of [`encase`](#encase).
   //.
   //. See also [`encase3_`](#encase3_).
-  S.encase3 =
+  var encase3 = S.encase3 =
   def('encase3',
       {},
       [$.Function, a, b, c, $Maybe(d)],
@@ -1362,7 +1362,29 @@
             };
           };
         };
-        return S.encase3(f, x, y, z);
+        return encase3(f, x, y, z);
+      });
+
+  //# maybeToEither :: a -> Maybe b -> Either a b
+  //.
+  //. Converts a Maybe to an Either. A Nothing becomes a Left (containing the
+  //. first argument); a Just becomes a Right.
+  //.
+  //. See also [`eitherToMaybe`](#eitherToMaybe).
+  //.
+  //. ```javascript
+  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, 'xyz'))
+  //. Left('Expecting an integer')
+  //.
+  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, '42'))
+  //. Right(42)
+  //. ```
+  S.maybeToEither =
+  def('maybeToEither',
+      {},
+      [a, $Maybe(b), $Either(a, b)],
+      function(x, maybe) {
+        return maybe.isNothing ? Left(x) : Right(maybe.value);
       });
 
   //. ### Either type
@@ -1876,7 +1898,7 @@
   //. Binary version of [`encaseEither`](#encaseEither).
   //.
   //. See also [`encaseEither2_`](#encaseEither2_).
-  S.encaseEither2 =
+  var encaseEither2 = S.encaseEither2 =
   def('encaseEither2',
       {},
       [$.Function, $.Function, a, b, $Either(l, r)],
@@ -1902,7 +1924,7 @@
             return g_(x, y);
           };
         };
-        return S.encaseEither2(f, g, x, y);
+        return encaseEither2(f, g, x, y);
       });
 
   //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
@@ -1910,7 +1932,7 @@
   //. Ternary version of [`encaseEither`](#encaseEither).
   //.
   //. See also [`encaseEither3_`](#encaseEither3_).
-  S.encaseEither3 =
+  var encaseEither3 = S.encaseEither3 =
   def('encaseEither3',
       {},
       [$.Function, $.Function, a, b, c, $Either(l, r)],
@@ -1938,29 +1960,29 @@
             };
           };
         };
-        return S.encaseEither3(f, g, x, y, z);
+        return encaseEither3(f, g, x, y, z);
       });
 
-  //# maybeToEither :: a -> Maybe b -> Either a b
+  //# eitherToMaybe :: Either a b -> Maybe b
   //.
-  //. Takes a value of any type and a Maybe, and returns an Either.
-  //. If the second argument is a Nothing, a Left containing the first
-  //. argument is returned. If the second argument is a Just, a Right
-  //. containing the Just's value is returned.
+  //. Converts an Either to a Maybe. A Left becomes a Nothing; a Right becomes
+  //. a Just.
+  //.
+  //. See also [`maybeToEither`](#maybeToEither).
   //.
   //. ```javascript
-  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, 'xyz'))
-  //. Left('Expecting an integer')
+  //. > S.eitherToMaybe(S.Left('Cannot divide by zero'))
+  //. Nothing()
   //.
-  //. > S.maybeToEither('Expecting an integer', S.parseInt(10, '42'))
-  //. Right(42)
+  //. > S.eitherToMaybe(S.Right(42))
+  //. Just(42)
   //. ```
-  S.maybeToEither =
-  def('maybeToEither',
+  S.eitherToMaybe =
+  def('eitherToMaybe',
       {},
-      [a, $Maybe(b), $Either(a, b)],
-      function(x, maybe) {
-        return maybe.isNothing ? Left(x) : Right(maybe.value);
+      [$Either(a, b), $Maybe(b)],
+      function(either) {
+        return either.isLeft ? Nothing() : Just(either.value);
       });
 
   //. ### Alternative

@@ -43,9 +43,6 @@ var JustArb = function(arb) {
   return arb.smap(S.Just, function(m) { return m.value; }, R.toString);
 };
 
-//  eitherToMaybe :: Either a b -> Maybe b
-var eitherToMaybe = S.either(S.K(S.Nothing()), S.Just);
-
 //  EitherArb :: Arbitrary a -> Arbitrary b -> Arbitrary (Either a b)
 var EitherArb = function(lArb, rArb) {
   return jsc.oneof(LeftArb(lArb), RightArb(rArb));
@@ -97,8 +94,8 @@ describe('Maybe', function() {
 
     it('satisfies naturality', function() {
       jsc.assert(jsc.forall(MaybeArb(EitherArb(jsc.integer, jsc.string)), function(maybe) {
-        var lhs = eitherToMaybe(maybe.sequence(S.Either.of));
-        var rhs = maybe.map(eitherToMaybe).sequence(S.Maybe.of);
+        var lhs = S.eitherToMaybe(maybe.sequence(S.Either.of));
+        var rhs = maybe.map(S.eitherToMaybe).sequence(S.Maybe.of);
         return lhs.equals(rhs);
       }));
     });
