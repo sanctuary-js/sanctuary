@@ -185,6 +185,11 @@ describe('Left', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
+  it('provides a "sequence" method', function() {
+    eq(S.Left('abc').sequence.length, 1);
+    eq(S.Left('abc').sequence(S.Maybe.of), S.Just(S.Left('abc')));
+  });
+
   it('provides a "toBoolean" method', function() {
     eq(S.Left('abc').toBoolean.length, 0);
     eq(S.Left('abc').toBoolean(), false);

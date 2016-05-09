@@ -212,6 +212,17 @@
     function(x) { return x != null; }
   );
 
+  //  Applicative :: TypeClass
+  var Applicative = $.TypeClass(
+    'sanctuary/Applicative',
+    function(x) {
+      return (
+        _type(x) === 'Array' ||
+        Apply.test(x) && (hasMethod('of')(x) || hasMethod('of')(x.constructor))
+      );
+    }
+  );
+
   //  Apply :: TypeClass
   var Apply = $.TypeClass(
     'sanctuary/Apply',
@@ -1011,10 +1022,13 @@
   //.
   //. > S.Just(S.Right(42)).sequence(S.Either.of)
   //. Right(Just(42))
+  //.
+  //. > S.Just(S.Left('Cannot divide by zero')).sequence(S.Either.of)
+  //. Left('Cannot divide by zero')
   //. ```
   Maybe.prototype.sequence =
   method('Maybe#sequence',
-         {a: [Apply], b: [Apply]},
+         {a: [Applicative], b: [Applicative]},
          [$Maybe(a), $.Function, b],
          function(maybe, of) {
            return maybe.isJust ? R.map(Just, maybe.value) : of(maybe);
@@ -1357,8 +1371,8 @@
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
   //. value is of type `b`.
   //.
-  //. The Either type satisfies the [Semigroup][], [Monad][], [Foldable][], and
-  //. [Extend][] specifications.
+  //. The Either type satisfies the [Semigroup][], [Monad][], [Traversable][],
+  //. and [Extend][] specifications.
 
   //# EitherType :: Type -> Type -> Type
   //.
@@ -1613,6 +1627,33 @@
          [$Either(a, b), $.Function, c, c],
          function(either, f, x) {
            return either.isRight ? f(x, either.value) : x;
+         });
+
+  //# Either#sequence :: Applicative f => Either a (f b) ~> (b -> f b) -> f (Either a b)
+  //.
+  //. Evaluates an applicative action contained within the Either,
+  //. resulting in:
+  //.
+  //.   - a pure applicative of a Left if `this` is a Left; otherwise
+  //.
+  //.   - an applicative of a Right of the evaluated action.
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').sequence(S.Maybe.of)
+  //. Just(Left('Cannot divide by zero'))
+  //.
+  //. > S.Right(S.Just(42)).sequence(S.Maybe.of)
+  //. Just(Right(42))
+  //.
+  //. > S.Right(S.Nothing()).sequence(S.Maybe.of)
+  //. Nothing()
+  //. ```
+  Either.prototype.sequence =
+  method('Either#sequence',
+         {b: [Applicative], c: [Applicative]},
+         [$Either(a, b), $.Function, c],
+         function(either, of) {
+           return either.isRight ? R.map(Right, either.value) : of(either);
          });
 
   //# Either#toBoolean :: Either a b ~> Boolean
