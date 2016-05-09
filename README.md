@@ -15,7 +15,7 @@ If `words` is `[]` we'll get a familiar error at run-time:
 Sanctuary gives us a fighting chance of avoiding such errors. We might
 write:
 
-    R.map(S.toUpper, S.head(words))
+    S.map(S.toUpper, S.head(words))
 
 ## Types
 
@@ -26,9 +26,9 @@ function's type. `Math.abs`, for example, has type `Number -> Number`.
 That is, it takes an argument of type `Number` and returns a value of
 type `Number`.
 
-[`R.map`][R.map] has type `(a -> b) -> [a] -> [b]`. That is, it takes
+[`S.map`][S.map] has type `(a -> b) -> [a] -> [b]`. That is, it takes
 an argument of type `a -> b` and returns a value of type `[a] -> [b]`.
-`a` and `b` are type variables: applying `R.map` to a value of type
+`a` and `b` are type variables: applying `S.map` to a value of type
 `String -> Number` will give a value of type `[String] -> [Number]`.
 
 Sanctuary embraces types. JavaScript doesn't support algebraic data types,
@@ -199,7 +199,7 @@ Haskell's `const` function.
 > S.K('foo', 'bar')
 'foo'
 
-> R.map(S.K(42), R.range(0, 5))
+> S.map(S.K(42), R.range(0, 5))
 [42, 42, 42, 42, 42]
 ```
 
@@ -212,7 +212,7 @@ applying the function to the value. Equivalent to Haskell's `($)` function.
 > S.A(S.inc, 1)
 2
 
-> R.map(S.A(R.__, 100), [S.inc, Math.sqrt])
+> S.map(S.A(R.__, 100), [S.inc, Math.sqrt])
 [101, 10]
 ```
 
@@ -270,7 +270,7 @@ function with arity greater than two.
 See also [`C`](#C).
 
 ```javascript
-> R.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
+> S.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
 [1, 4, 9, 16, 25]
 ```
 
@@ -1919,7 +1919,6 @@ See also [`lines`](#lines).
 [Monad]:          https://github.com/fantasyland/fantasy-land#monad
 [Monoid]:         https://github.com/fantasyland/fantasy-land#monoid
 [R.equals]:       http://ramdajs.com/docs/#equals
-[R.map]:          http://ramdajs.com/docs/#map
 [R.type]:         http://ramdajs.com/docs/#type
 [Ramda]:          http://ramdajs.com/
 [RegExp]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
