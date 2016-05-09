@@ -7,7 +7,13 @@ XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --s
 
 
 .PHONY: all
-all: README.md
+all: LICENSE README.md
+
+.PHONY: LICENSE
+LICENSE:
+	cp -- '$@' '$@.orig'
+	sed 's/Copyright (c) .* Sanctuary/Copyright (c) $(shell git log --date=format:%Y --pretty=format:%ad | sort -r | head -n 1) Sanctuary/' '$@.orig' >'$@'
+	rm -- '$@.orig'
 
 README.md: index.js
 	$(TRANSCRIBE) \
