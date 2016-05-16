@@ -216,10 +216,9 @@
   var Applicative = $.TypeClass(
     'sanctuary/Applicative',
     function(x) {
-      return (
-        _type(x) === 'Array' ||
-        Apply.test(x) && (hasMethod('of')(x) || hasMethod('of')(x.constructor))
-      );
+      return _type(x) === 'Array' ||
+             Apply._test(x) && (hasMethod('of')(x) ||
+                                hasMethod('of')(x.constructor));
     }
   );
 
@@ -228,7 +227,7 @@
     'sanctuary/Apply',
     function(x) {
       return R.contains(_type(x), ['Array', 'Function']) ||
-             Functor.test(x) && hasMethod('ap')(x);
+             Functor._test(x) && hasMethod('ap')(x);
     }
   );
 
@@ -261,7 +260,7 @@
   //  Ord :: TypeClass
   var Ord = $.TypeClass(
     'sanctuary/Ord',
-    R.anyPass([$.String.test, $.ValidDate.test, $.ValidNumber.test])
+    R.anyPass([$.String._test, $.ValidDate._test, $.ValidNumber._test])
   );
 
   //  Semigroup :: TypeClass
@@ -292,7 +291,7 @@
     function(x) {
       return x != null &&
              R.type(x) !== 'Function' &&
-             $.Integer.test(x.length) &&
+             $.Integer._test(x.length) &&
              x.length >= 0;
     },
     function(list) {
@@ -325,6 +324,7 @@
     $Either,
     $.Integer,
     $Maybe,
+    $.Pair,
     $.RegexFlags,
     TypeRep,
     $.ValidDate,
@@ -338,7 +338,7 @@
 
   var S = {EitherType: $Either, MaybeType: $Maybe};
 
-  var def = $.create(checkTypes, env);
+  var def = $.create({checkTypes: checkTypes, env: env});
 
   //  Note: Type checking of method arguments takes place once all arguments
   //  have been provided (whereas function arguments are checked as early as
@@ -2423,7 +2423,7 @@
     function(x) {
       return x != null &&
              typeof x !== 'function' &&
-             $.Integer.test(x.length) &&
+             $.Integer._test(x.length) &&
              x.length >= 0;
     }
   );
@@ -3078,7 +3078,7 @@
                                        R.indexOf(_, charset),
                                        R.gte(_, 0))))),
           R.map(R.partialRight(parseInt, [radix])),
-          R.filter($.Integer.test)
+          R.filter($.Integer._test)
         )(s);
       });
 
