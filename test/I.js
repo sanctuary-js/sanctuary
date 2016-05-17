@@ -13,6 +13,7 @@ describe('I', function() {
 
   it('returns its argument', function() {
     eq(S.I([1, 2, 3]), [1, 2, 3]);
+    eq(S.I(['foo', 42]), ['foo', 42]);
     eq(S.I({'@@type': 'my-package/Foreign'}),
        {'@@type': 'my-package/Foreign'});
   });

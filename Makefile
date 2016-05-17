@@ -58,7 +58,7 @@ setup:
 
 .PHONY: test
 test:
-	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive
+	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive --timeout 10000
 	$(ISTANBUL) check-coverage --branches 100
 ifneq ($(shell node --version | sed 's/[.][^.]*$$//'),v0.10)
 	$(DOCTEST) -- index.js

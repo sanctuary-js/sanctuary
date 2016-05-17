@@ -27,7 +27,7 @@ describe('sum', function() {
                    '\n' +
                    '‘sum’ requires ‘f’ to satisfy the Foldable type-class constraint; the value at position 1 does not.\n'));
 
-    throws(function() { S.sum([1, 'xxx']); },
+    throws(function() { S.sum([1, 2, 'xxx']); },
            errorEq(TypeError,
                    'Type-variable constraint violation\n' +
                    '\n' +
@@ -35,7 +35,7 @@ describe('sum', function() {
                    '                     ^\n' +
                    '                     1\n' +
                    '\n' +
-                   '1)  [1, "xxx"] :: Array ???\n' +
+                   '1)  [1, 2, "xxx"] :: Array ???\n' +
                    '\n' +
                    'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
 
