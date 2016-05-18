@@ -56,7 +56,7 @@ describe('match', function() {
        S.Just([S.Just('bye'), S.Nothing()]));
   });
 
-  it('returns a Nothing() if no match', function() {
+  it('returns a Nothing if no match', function() {
     eq(S.match(/zzz/, 'abcdefg'), S.Nothing());
   });
 
