@@ -27,6 +27,8 @@
 //.
 //.     R.map(S.toUpper, S.head(words))
 //.
+//. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
+//.
 //. ## Types
 //.
 //. Sanctuary uses Haskell-like type signatures to describe the types of
@@ -2744,6 +2746,52 @@
           x = x[keys[idx]];
         }
         return filter(is(type), Just(x));
+      });
+
+  //# keys :: StrMap a -> Array String
+  //.
+  //. Returns the keys of the given string map, in arbitrary order.
+  //.
+  //. ```javascript
+  //. > S.keys({b: 2, c: 3, a: 1}).sort()
+  //. ['a', 'b', 'c']
+  //. ```
+  S.keys =
+  def('keys',
+      {},
+      [$.StrMap(a), $.Array($.String)],
+      Object.keys);
+
+  //# values :: StrMap a -> Array a
+  //.
+  //. Returns the values of the given string map, in arbitrary order.
+  //.
+  //. ```javascript
+  //. > S.values({a: 1, c: 3, b: 2}).sort()
+  //. [1, 2, 3]
+  //. ```
+  S.values =
+  def('values',
+      {},
+      [$.StrMap(a), $.Array(a)],
+      function(strMap) {
+        return Object.keys(strMap).map(function(key) { return strMap[key]; });
+      });
+
+  //# toPairs :: StrMap a -> Array (Pair String a)
+  //.
+  //. Returns the key–value pairs of the given string map, in arbitrary order.
+  //.
+  //. ```javascript
+  //. > S.pairs({b: 2, a: 1, c: 3}).sort()
+  //. [['a', 1], ['b', 2], ['c', 3]]
+  //. ```
+  S.pairs =
+  def('pairs',
+      {},
+      [$.StrMap(a), $.Array($.Pair($.String, a))],
+      function(strMap) {
+        return Object.keys(strMap).map(function(k) { return [k, strMap[k]]; });
       });
 
   //. ### Number
