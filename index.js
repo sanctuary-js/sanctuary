@@ -3302,7 +3302,7 @@
   def('trim',
       {},
       [$.String, $.String],
-      R.trim);
+      function(s) { return s.trim(); });
 
   //# words :: String -> Array String
   //.
