@@ -471,8 +471,8 @@
   //. function.
   //.
   //. ```javascript
-  //. > S.A(S.inc, 1)
-  //. 2
+  //. > S.A(S.inc, 42)
+  //. 43
   //.
   //. > R.map(S.A(R.__, 100), [S.inc, Math.sqrt])
   //. [101, 10]
@@ -482,6 +482,25 @@
       {},
       [$.Function, a, b],
       function(f, x) { return f(x); });
+
+  //# T :: a -> (a -> b) -> b
+  //.
+  //. The T ([thrush][]) combinator. Takes a value and a function, and returns
+  //. the result of applying the function to the value. Equivalent to Haskell's
+  //. `(&)` function.
+  //.
+  //. ```javascript
+  //. > S.T(42, S.inc)
+  //. 43
+  //.
+  //. > R.map(S.T(100), [S.inc, Math.sqrt])
+  //. [101, 10]
+  //. ```
+  S.T =
+  def('T',
+      {},
+      [a, $.Function, b],
+      function(x, f) { return f(x); });
 
   //# C :: (a -> b -> c) -> b -> a -> c
   //.
@@ -3432,3 +3451,4 @@
 //. [UnaryType]:      https://github.com/sanctuary-js/sanctuary-def#unarytype
 //. [parseInt]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:  https://github.com/sanctuary-js/sanctuary-def
+//. [thrush]:         https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
