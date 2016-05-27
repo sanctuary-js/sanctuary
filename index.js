@@ -128,21 +128,17 @@
 //.
 //. There is a performance cost to run-time type checking. One may wish to
 //. disable type checking in certain contexts to avoid paying this cost.
-//. There are actually two versions of the Sanctuary module: one with type
-//. checking; one without. The latter is accessible via the `unchecked`
-//. property of the former.
+//. [`create`](#create) facilitates the creation of a Sanctuary module which
+//. does not perform type checking.
 //.
-//. When application of `S.unchecked.<name>` honours the function's type
-//. signature the result will be the same as if `S.<name>` had been used
-//. instead. Otherwise, the behaviour is unspecified.
-//.
-//. In Node, one could use an environment variable to determine which version
-//. of the Sanctuary module to use:
+//. In Node, one could use an environment variable to determine whether to
+//. perform type checking:
 //.
 //. ```javascript
-//. const S = process.env.NODE_ENV === 'production' ?
-//.             require('sanctuary').unchecked :
-//.             require('sanctuary');
+//. const sanctuary = require('sanctuary');
+//.
+//. const checkTypes = process.env.NODE_ENV !== 'production';
+//. const S = sanctuary.create({checkTypes: checkTypes, env: sanctuary.env});
 //. ```
 //.
 //. ## API
@@ -319,8 +315,8 @@
     }
   );
 
-  //  env :: Array Type
-  var env = $.env.concat([
+  //  defaultEnv :: Array Type
+  var defaultEnv = $.env.concat([
     $.FiniteNumber,
     $.NonZeroFiniteNumber,
     $Either,
@@ -333,14 +329,79 @@
     $.ValidNumber
   ]);
 
-  //  createSanctuary :: Boolean -> Module
-  var createSanctuary = function(checkTypes) {
+  //  Options :: Type
+  var Options = $.RecordType({checkTypes: $.Boolean, env: $.Array($.Any)});
+
+  //  createSanctuary :: Options -> Module
+  var createSanctuary = function createSanctuary(opts) {
 
   /* eslint-disable indent */
 
   var S = {EitherType: $Either, MaybeType: $Maybe};
 
-  var def = $.create({checkTypes: checkTypes, env: env});
+  //# create :: { checkTypes :: Boolean, env :: Array Type } -> Module
+  //.
+  //. Takes an options record and returns a Sanctuary module. `checkTypes`
+  //. specifies whether to enable type checking. The module's polymorphic
+  //. functions (such as [`I`](#I)) require each value associated with a
+  //. type variable to be a member of at least one type in the environment.
+  //.
+  //. A well-typed application of a Sanctuary function will produce the same
+  //. result regardless of whether type checking is enabled. If type checking
+  //. is enabled, a badly typed application will produce an exception with a
+  //. descriptive error message.
+  //.
+  //. The following snippet demonstrates defining a custom type and using
+  //. `create` to produce a Sanctuary module which is aware of that type:
+  //.
+  //. ```javascript
+  //. const {create, env} = require('sanctuary');
+  //. const $ = require('sanctuary-def');
+  //.
+  //. //    identityTypeName :: String
+  //. const identityTypeName = 'my-package/Identity';
+  //.
+  //. //    Identity :: a -> Identity a
+  //. const Identity = function Identity(x) {
+  //.   return {
+  //.     '@@type': identityTypeName,
+  //.     map: f => Identity(f(x)),
+  //.     chain: f => f(x),
+  //.     // ...
+  //.     value: x,
+  //.   };
+  //. };
+  //.
+  //. //    isIdentity :: a -> Boolean
+  //. const isIdentity = x => x != null && x['@@type'] === identityTypeName;
+  //.
+  //. //    identityToArray :: Identity a -> Array a
+  //. const identityToArray = identity => [identity.value];
+  //.
+  //. //    IdentityType :: Type
+  //. const IdentityType =
+  //. $.UnaryType(identityTypeName, isIdentity, identityToArray);
+  //.
+  //. const S = create({
+  //.   checkTypes: process.env.NODE_ENV !== 'production',
+  //.   env: env.concat([IdentityType]),
+  //. });
+  //. ```
+  //.
+  //. See also [`env`](#env).
+  S.create =
+  $.create({checkTypes: opts.checkTypes, env: defaultEnv})('create',
+                                                           {},
+                                                           [Options, $.Object],
+                                                           createSanctuary);
+
+  //# env :: Array Type
+  //.
+  //. The default environment, which may be used as is or as the basis of a
+  //. custom environment in conjunction with [`create`](#create).
+  S.env = defaultEnv;
+
+  var def = $.create(opts);
 
   //  Note: Type checking of method arguments takes place once all arguments
   //  have been provided (whereas function arguments are checked as early as
@@ -3446,11 +3507,7 @@
 
   };
 
-  //  Export two versions of the Sanctuary module: one with type checking;
-  //  one without.
-  var S       = createSanctuary(true);
-  S.unchecked = createSanctuary(false);
-  return S;
+  return createSanctuary({checkTypes: true, env: defaultEnv});
 
 }));
 
