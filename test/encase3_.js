@@ -14,8 +14,8 @@ describe('encase3_', function() {
     eq(S.encase3_(area, 3, 4, 5), S.Just(6));
   });
 
-  it('returns a Nothing on failure', function() {
-    eq(S.encase3_(area, 2, 2, 5), S.Nothing());
+  it('returns Nothing on failure', function() {
+    eq(S.encase3_(area, 2, 2, 5), S.Nothing);
   });
 
 });

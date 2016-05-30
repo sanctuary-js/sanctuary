@@ -33,8 +33,8 @@ describe('encase', function() {
     eq(S.encase(factorial, 5), S.Just(120));
   });
 
-  it('returns a Nothing on failure', function() {
-    eq(S.encase(factorial, -1), S.Nothing());
+  it('returns Nothing on failure', function() {
+    eq(S.encase(factorial, -1), S.Nothing);
   });
 
   it('can be applied to a function of arbitrary arity', function() {

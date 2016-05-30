@@ -56,8 +56,8 @@ describe('get', function() {
     var obj = {x: 0, y: 42};
     eq(S.get(Number, 'x', obj), S.Just(0));
     eq(S.get(Number, 'y', obj), S.Just(42));
-    eq(S.get(Number, 'z', obj), S.Nothing());
-    eq(S.get(String, 'x', obj), S.Nothing());
+    eq(S.get(Number, 'z', obj), S.Nothing);
+    eq(S.get(String, 'x', obj), S.Nothing);
   });
 
   it('does not rely on constructor identity', function() {

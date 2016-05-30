@@ -33,8 +33,8 @@ describe('parseDate', function() {
        S.Just(new Date('2001-02-03T04:05:06Z')));
   });
 
-  it('returns a Nothing when applied to an invalid date string', function() {
-    eq(S.parseDate('today'), S.Nothing());
+  it('returns Nothing when applied to an invalid date string', function() {
+    eq(S.parseDate('today'), S.Nothing);
   });
 
 });

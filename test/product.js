@@ -72,12 +72,12 @@ describe('product', function() {
     eq(S.product([1, 2, 3, 4, -5]), -120);
   });
 
-  it('can be applied to Maybes', function() {
-    eq(S.product(S.Nothing()), 1);
+  it('can be applied to maybes', function() {
+    eq(S.product(S.Nothing), 1);
     eq(S.product(S.Just(42)), 42);
   });
 
-  it('can be applied to Eithers', function() {
+  it('can be applied to eithers', function() {
     eq(S.product(S.Left('xxx')), 1);
     eq(S.product(S.Right(42)), 42);
   });

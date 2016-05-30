@@ -13,20 +13,18 @@ var square = require('../utils').square;
 
 describe('Nothing', function() {
 
-  it('is a data constructor', function() {
-    eq(typeof S.Nothing, 'function');
-    eq(S.Nothing.length, 0);
-    eq(S.Nothing()['@@type'], 'sanctuary/Maybe');
-    eq(S.Nothing().isNothing, true);
-    eq(S.Nothing().isJust, false);
+  it('is a member of the "Maybe a" type', function() {
+    eq(S.Nothing['@@type'], 'sanctuary/Maybe');
+    eq(S.Nothing.isNothing, true);
+    eq(S.Nothing.isJust, false);
   });
 
   it('provides an "ap" method', function() {
-    eq(S.Nothing().ap.length, 1);
-    eq(S.Nothing().ap(S.Nothing()), S.Nothing());
-    eq(S.Nothing().ap(S.Just(42)), S.Nothing());
+    eq(S.Nothing.ap.length, 1);
+    eq(S.Nothing.ap(S.Nothing), S.Nothing);
+    eq(S.Nothing.ap(S.Just(42)), S.Nothing);
 
-    throws(function() { S.Nothing().ap([1, 2, 3]); },
+    throws(function() { S.Nothing.ap([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -40,10 +38,10 @@ describe('Nothing', function() {
   });
 
   it('provides a "chain" method', function() {
-    eq(S.Nothing().chain.length, 1);
-    eq(S.Nothing().chain(S.head), S.Nothing());
+    eq(S.Nothing.chain.length, 1);
+    eq(S.Nothing.chain(S.head), S.Nothing);
 
-    throws(function() { S.Nothing().chain(null); },
+    throws(function() { S.Nothing.chain(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -57,11 +55,11 @@ describe('Nothing', function() {
   });
 
   it('provides a "concat" method', function() {
-    eq(S.Nothing().concat.length, 1);
-    eq(S.Nothing().concat(S.Nothing()), S.Nothing());
-    eq(S.Nothing().concat(S.Just('foo')), S.Just('foo'));
+    eq(S.Nothing.concat.length, 1);
+    eq(S.Nothing.concat(S.Nothing), S.Nothing);
+    eq(S.Nothing.concat(S.Just('foo')), S.Just('foo'));
 
-    throws(function() { S.Nothing().concat(null); },
+    throws(function() { S.Nothing.concat(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -73,7 +71,7 @@ describe('Nothing', function() {
                    '\n' +
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
 
-    throws(function() { S.Nothing().concat(S.Just(1)); },
+    throws(function() { S.Nothing.concat(S.Just(1)); },
            errorEq(TypeError,
                    'Type-class constraint violation\n' +
                    '\n' +
@@ -87,24 +85,24 @@ describe('Nothing', function() {
   });
 
   it('provides an "equals" method', function() {
-    eq(S.Nothing().equals.length, 1);
-    eq(S.Nothing().equals(S.Nothing()), true);
-    eq(S.Nothing().equals(S.Just(42)), false);
-    eq(S.Nothing().equals(null), false);
+    eq(S.Nothing.equals.length, 1);
+    eq(S.Nothing.equals(S.Nothing), true);
+    eq(S.Nothing.equals(S.Just(42)), false);
+    eq(S.Nothing.equals(null), false);
   });
 
   it('provides an "extend" method', function() {
-    eq(S.Nothing().extend.length, 1);
-    eq(S.Nothing().extend(function(x) { return x.value / 2; }), S.Nothing());
+    eq(S.Nothing.extend.length, 1);
+    eq(S.Nothing.extend(function(x) { return x.value / 2; }), S.Nothing);
 
     // associativity
-    var w = S.Nothing();
+    var w = S.Nothing;
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
     eq(w.extend(g).extend(f),
        w.extend(function(_w) { return f(_w.extend(g)); }));
 
-    throws(function() { S.Nothing().extend(null); },
+    throws(function() { S.Nothing.extend(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -118,11 +116,11 @@ describe('Nothing', function() {
   });
 
   it('provides a "filter" method', function() {
-    eq(S.Nothing().filter.length, 1);
-    eq(S.Nothing().filter(R.T), S.Nothing());
-    eq(S.Nothing().filter(R.F), S.Nothing());
+    eq(S.Nothing.filter.length, 1);
+    eq(S.Nothing.filter(R.T), S.Nothing);
+    eq(S.Nothing.filter(R.F), S.Nothing);
 
-    var m = S.Nothing();
+    var m = S.Nothing;
     var f = function(n) { return n * n; };
     var p = function(n) { return n < 0; };
     var q = function(n) { return n > 0; };
@@ -132,7 +130,7 @@ describe('Nothing', function() {
     assert(m.map(f).filter(q)
            .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
 
-    throws(function() { S.Nothing().filter(null); },
+    throws(function() { S.Nothing.filter(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -146,10 +144,10 @@ describe('Nothing', function() {
   });
 
   it('provides a "map" method', function() {
-    eq(S.Nothing().map.length, 1);
-    eq(S.Nothing().map(function() { return 42; }), S.Nothing());
+    eq(S.Nothing.map.length, 1);
+    eq(S.Nothing.map(function() { return 42; }), S.Nothing);
 
-    throws(function() { S.Nothing().map(null); },
+    throws(function() { S.Nothing.map(null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -163,10 +161,10 @@ describe('Nothing', function() {
   });
 
   it('provides a "reduce" method', function() {
-    eq(S.Nothing().reduce.length, 2);
-    eq(S.Nothing().reduce(function(a, b) { return a + b; }, 10), 10);
+    eq(S.Nothing.reduce.length, 2);
+    eq(S.Nothing.reduce(function(a, b) { return a + b; }, 10), 10);
 
-    throws(function() { S.Nothing().reduce(null, null); },
+    throws(function() { S.Nothing.reduce(null, null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -180,31 +178,31 @@ describe('Nothing', function() {
   });
 
   it('provides a "sequence" method', function() {
-    eq(S.Nothing().sequence.length, 1);
-    eq(S.Nothing().sequence(S.Either.of), S.Right(S.Nothing()));
+    eq(S.Nothing.sequence.length, 1);
+    eq(S.Nothing.sequence(S.Either.of), S.Right(S.Nothing));
   });
 
   it('provides a "toBoolean" method', function() {
-    eq(S.Nothing().toBoolean.length, 0);
-    eq(S.Nothing().toBoolean(), false);
+    eq(S.Nothing.toBoolean.length, 0);
+    eq(S.Nothing.toBoolean(), false);
   });
 
   it('provides a "toString" method', function() {
-    eq(S.Nothing().toString.length, 0);
-    eq(S.Nothing().toString(), 'Nothing()');
+    eq(S.Nothing.toString.length, 0);
+    eq(S.Nothing.toString(), 'Nothing');
   });
 
   it('implements Semigroup', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
-    var c = S.Nothing();
+    var a = S.Nothing;
+    var b = S.Nothing;
+    var c = S.Nothing;
 
     // associativity
     assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
   });
 
   it('implements Monoid', function() {
-    var a = S.Nothing();
+    var a = S.Nothing;
 
     // left identity
     assert(a.empty().concat(a).equals(a));
@@ -214,7 +212,7 @@ describe('Nothing', function() {
   });
 
   it('implements Functor', function() {
-    var a = S.Nothing();
+    var a = S.Nothing;
     var f = S.inc;
     var g = square;
 
@@ -226,9 +224,9 @@ describe('Nothing', function() {
   });
 
   it('implements Apply', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
-    var c = S.Nothing();
+    var a = S.Nothing;
+    var b = S.Nothing;
+    var c = S.Nothing;
 
     // composition
     assert(a.map(function(f) {
@@ -241,8 +239,8 @@ describe('Nothing', function() {
   });
 
   it('implements Applicative', function() {
-    var a = S.Nothing();
-    var b = S.Nothing();
+    var a = S.Nothing;
+    var b = S.Nothing;
     var f = S.inc;
     var x = 7;
 
@@ -257,7 +255,7 @@ describe('Nothing', function() {
   });
 
   it('implements Chain', function() {
-    var a = S.Nothing();
+    var a = S.Nothing;
     var f = S.head;
     var g = S.last;
 
@@ -267,7 +265,7 @@ describe('Nothing', function() {
   });
 
   it('implements Monad', function() {
-    var a = S.Nothing();
+    var a = S.Nothing;
     var f = S.head;
     var x = [1, 2, 3];
 

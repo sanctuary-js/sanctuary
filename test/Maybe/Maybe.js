@@ -35,7 +35,7 @@ var IdentityArb = function(arb) {
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
 var MaybeArb = function(arb) {
-  return jsc.oneof(JustArb(arb), jsc.constant(S.Nothing()));
+  return jsc.oneof(JustArb(arb), jsc.constant(S.Nothing));
 };
 
 //  JustArb :: Arbitrary a -> Arbitrary (Maybe a)

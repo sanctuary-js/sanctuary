@@ -28,8 +28,8 @@ describe('eitherToMaybe', function() {
                    'The value at position 1 is not a member of ‘Either a b’.\n'));
   });
 
-  it('returns a Nothing when applied to a Left', function() {
-    eq(S.eitherToMaybe(S.Left('Cannot divide by zero')), S.Nothing());
+  it('returns Nothing when applied to a Left', function() {
+    eq(S.eitherToMaybe(S.Left('Cannot divide by zero')), S.Nothing);
   });
 
   it('returns a Just when applied to a Right', function() {

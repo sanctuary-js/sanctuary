@@ -34,8 +34,8 @@ describe('encase2', function() {
     eq(S.encase2(rem, 42, 5), S.Just(2));
   });
 
-  it('returns a Nothing on failure', function() {
-    eq(S.encase2(rem, 42, 0), S.Nothing());
+  it('returns Nothing on failure', function() {
+    eq(S.encase2(rem, 42, 0), S.Nothing);
   });
 
   it('can be applied to a function of arbitrary arity', function() {

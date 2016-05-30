@@ -28,8 +28,8 @@ describe('last', function() {
                    'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
-  it('returns a Nothing if applied to empty list', function() {
-    eq(S.last([]), S.Nothing());
+  it('returns Nothing if applied to empty list', function() {
+    eq(S.last([]), S.Nothing);
   });
 
   it('returns Just the last element of a nonempty list', function() {

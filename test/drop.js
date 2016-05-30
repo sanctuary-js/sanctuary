@@ -40,17 +40,17 @@ describe('drop', function() {
                    'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
-  it('returns a Nothing if n is greater than collection length', function() {
-    eq(S.drop(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.drop(6, 'abcde'), S.Nothing());
+  it('returns Nothing if n is greater than collection length', function() {
+    eq(S.drop(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.drop(6, 'abcde'), S.Nothing);
   });
 
-  it('returns a Nothing if n is negative', function() {
-    eq(S.drop(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.drop(-3, 'abcde'), S.Nothing());
-    eq(S.drop(-0, 'abcde'), S.Nothing());
-    eq(S.drop(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+  it('returns Nothing if n is negative', function() {
+    eq(S.drop(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.drop(-3, 'abcde'), S.Nothing);
+    eq(S.drop(-0, 'abcde'), S.Nothing);
+    eq(S.drop(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing);
   });
 
   it('returns an empty collection if n is equal to collection length', function() {

@@ -55,12 +55,12 @@ describe('gets', function() {
 
   it('returns a Maybe', function() {
     var obj = {x: {z: 0}, y: 42};
-    eq(S.gets(Number, ['x'], obj), S.Nothing());
+    eq(S.gets(Number, ['x'], obj), S.Nothing);
     eq(S.gets(Number, ['y'], obj), S.Just(42));
-    eq(S.gets(Number, ['z'], obj), S.Nothing());
+    eq(S.gets(Number, ['z'], obj), S.Nothing);
     eq(S.gets(Number, ['x', 'z'], obj), S.Just(0));
-    eq(S.gets(Number, ['a', 'b', 'c'], obj), S.Nothing());
-    eq(S.gets(Number, [], obj), S.Nothing());
+    eq(S.gets(Number, ['a', 'b', 'c'], obj), S.Nothing);
+    eq(S.gets(Number, [], obj), S.Nothing);
     eq(S.gets(Object, [], obj), S.Just({x: {z: 0}, y: 42}));
   });
 

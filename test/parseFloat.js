@@ -50,15 +50,15 @@ describe('parseFloat', function() {
     eq(S.parseFloat('-.25'), S.Just(-0.25));
     eq(S.parseFloat('0.5 '), S.Just(0.5));
     eq(S.parseFloat(' 0.5'), S.Just(0.5));
-    eq(S.parseFloat('0.5x'), S.Nothing());  // parseFloat('0.5x') == 0.25
-    eq(S.parseFloat('x0.5'), S.Nothing());
+    eq(S.parseFloat('0.5x'), S.Nothing);  // parseFloat('0.5x') == 0.25
+    eq(S.parseFloat('x0.5'), S.Nothing);
     eq(S.parseFloat('-1e3'), S.Just(-1000));
     eq(S.parseFloat('-1e03'), S.Just(-1000));
     eq(S.parseFloat('-1e+3'), S.Just(-1000));
     eq(S.parseFloat('-1e+03'), S.Just(-1000));
     eq(S.parseFloat('-1e-3'), S.Just(-0.001));
     eq(S.parseFloat('-1e-03'), S.Just(-0.001));
-    eq(S.parseFloat('xxx'), S.Nothing());
+    eq(S.parseFloat('xxx'), S.Nothing);
   });
 
 });

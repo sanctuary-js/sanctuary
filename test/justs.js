@@ -31,9 +31,9 @@ describe('justs', function() {
 
   it('returns a list containing the value of each Just', function() {
     eq(S.justs([]), []);
-    eq(S.justs([S.Nothing(), S.Nothing()]), []);
-    eq(S.justs([S.Nothing(), S.Just('b')]), ['b']);
-    eq(S.justs([S.Just('a'), S.Nothing()]), ['a']);
+    eq(S.justs([S.Nothing, S.Nothing]), []);
+    eq(S.justs([S.Nothing, S.Just('b')]), ['b']);
+    eq(S.justs([S.Just('a'), S.Nothing]), ['a']);
     eq(S.justs([S.Just('a'), S.Just('b')]), ['a', 'b']);
   });
 

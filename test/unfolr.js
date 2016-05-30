@@ -30,7 +30,7 @@ describe('unfoldr', function() {
 
   it('correctly unfolds a value into a list', function() {
     var f = function(n) {
-      return n >= 5 ? S.Nothing() : S.Just([n, n + 1]);
+      return n >= 5 ? S.Nothing : S.Just([n, n + 1]);
     };
     eq(S.unfoldr(f, 5), []);
     eq(S.unfoldr(f, 4), [4]);

@@ -29,7 +29,7 @@ describe('maybeToEither', function() {
   });
 
   it('returns a Left of its first argument when the second is Nothing', function() {
-    eq(S.maybeToEither('error msg', S.Nothing()), S.Left('error msg'));
+    eq(S.maybeToEither('error msg', S.Nothing), S.Left('error msg'));
   });
 
   it('returns a Right of the value contained in the Just when the second argument is a Just', function() {

@@ -28,12 +28,12 @@ describe('indexOf', function() {
                    '‘indexOf’ requires ‘b’ to satisfy the ArrayLike type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('returns a Nothing for an empty list', function() {
-    eq(S.indexOf(10, []), S.Nothing());
+  it('returns Nothing for an empty list', function() {
+    eq(S.indexOf(10, []), S.Nothing);
   });
 
-  it('returns a Nothing if the element is not found', function() {
-    eq(S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing());
+  it('returns Nothing if the element is not found', function() {
+    eq(S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing);
   });
 
   it('returns Just the index of the element found', function() {
@@ -42,7 +42,7 @@ describe('indexOf', function() {
 
   it('can operate on strings', function() {
     eq(S.indexOf('an', 'banana'), S.Just(1));
-    eq(S.indexOf('ax', 'banana'), S.Nothing());
+    eq(S.indexOf('ax', 'banana'), S.Nothing);
   });
 
   it('is curried', function() {

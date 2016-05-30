@@ -53,11 +53,11 @@ describe('match', function() {
     eq(S.match(/(good)?bye/, 'goodbye'),
        S.Just([S.Just('goodbye'), S.Just('good')]));
     eq(S.match(/(good)?bye/, 'bye'),
-       S.Just([S.Just('bye'), S.Nothing()]));
+       S.Just([S.Just('bye'), S.Nothing]));
   });
 
-  it('returns a Nothing if no match', function() {
-    eq(S.match(/zzz/, 'abcdefg'), S.Nothing());
+  it('returns Nothing if no match', function() {
+    eq(S.match(/zzz/, 'abcdefg'), S.Nothing);
   });
 
   it('is curried', function() {

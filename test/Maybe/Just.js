@@ -23,7 +23,7 @@ describe('Just', function() {
 
   it('provides an "ap" method', function() {
     eq(S.Just(S.inc).ap.length, 1);
-    eq(S.Just(S.inc).ap(S.Nothing()), S.Nothing());
+    eq(S.Just(S.inc).ap(S.Nothing), S.Nothing);
     eq(S.Just(S.inc).ap(S.Just(42)), S.Just(43));
 
     throws(function() { S.Just(S.inc).ap([1, 2, 3]); },
@@ -58,7 +58,7 @@ describe('Just', function() {
 
   it('provides a "concat" method', function() {
     eq(S.Just('foo').concat.length, 1);
-    eq(S.Just('foo').concat(S.Nothing()), S.Just('foo'));
+    eq(S.Just('foo').concat(S.Nothing), S.Just('foo'));
     eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
 
     throws(function() { S.Just('foo').concat([1, 2, 3]); },
@@ -114,7 +114,7 @@ describe('Just', function() {
     eq(S.Just(42).equals.length, 1);
     eq(S.Just(42).equals(S.Just(42)), true);
     eq(S.Just(42).equals(S.Just(43)), false);
-    eq(S.Just(42).equals(S.Nothing()), false);
+    eq(S.Just(42).equals(S.Nothing), false);
     eq(S.Just(42).equals(null), false);
 
     // Value-based equality:
@@ -153,9 +153,9 @@ describe('Just', function() {
   it('provides a "filter" method', function() {
     eq(S.Just(42).filter.length, 1);
     eq(S.Just(42).filter(R.T), S.Just(42));
-    eq(S.Just(42).filter(R.F), S.Nothing());
+    eq(S.Just(42).filter(R.F), S.Nothing);
     eq(S.Just(42).filter(function(n) { return n > 0; }), S.Just(42));
-    eq(S.Just(42).filter(function(n) { return n < 0; }), S.Nothing());
+    eq(S.Just(42).filter(function(n) { return n < 0; }), S.Nothing);
 
     var m = S.Just(-5);
     var f = function(n) { return n * n; };

@@ -28,8 +28,8 @@ describe('maybeToNullable', function() {
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
   });
 
-  it('can be applied to a Nothing', function() {
-    eq(S.maybeToNullable(S.Nothing()), null);
+  it('can be applied to Nothing', function() {
+    eq(S.maybeToNullable(S.Nothing), null);
   });
 
   it('can be applied to a Just', function() {

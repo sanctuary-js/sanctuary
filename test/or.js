@@ -30,9 +30,9 @@ describe('or', function() {
   });
 
   it('can be applied to maybes', function() {
-    eq(S.or(S.Nothing(), S.Nothing()), S.Nothing());
-    eq(S.or(S.Nothing(), S.Just(42)), S.Just(42));
-    eq(S.or(S.Just(42), S.Nothing()), S.Just(42));
+    eq(S.or(S.Nothing, S.Nothing), S.Nothing);
+    eq(S.or(S.Nothing, S.Just(42)), S.Just(42));
+    eq(S.or(S.Just(42), S.Nothing), S.Just(42));
     eq(S.or(S.Just(42), S.Just(43)), S.Just(42));
   });
 

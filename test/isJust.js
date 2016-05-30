@@ -32,8 +32,8 @@ describe('isJust', function() {
     eq(S.isJust(S.Just(42)), true);
   });
 
-  it('returns false when applied to a Nothing', function() {
-    eq(S.isJust(S.Nothing()), false);
+  it('returns false when applied to Nothing', function() {
+    eq(S.isJust(S.Nothing), false);
   });
 
 });

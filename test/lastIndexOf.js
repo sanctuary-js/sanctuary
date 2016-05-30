@@ -28,12 +28,12 @@ describe('lastIndexOf', function() {
                    '‘lastIndexOf’ requires ‘b’ to satisfy the ArrayLike type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('returns a Nothing for an empty list', function() {
-    eq(S.lastIndexOf('a', []), S.Nothing());
+  it('returns Nothing for an empty list', function() {
+    eq(S.lastIndexOf('a', []), S.Nothing);
   });
 
-  it('returns a Nothing if the element is not found', function() {
-    eq(S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing());
+  it('returns Nothing if the element is not found', function() {
+    eq(S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing);
   });
 
   it('returns Just the last index of the element found', function() {
@@ -42,7 +42,7 @@ describe('lastIndexOf', function() {
 
   it('can operate on strings', function() {
     eq(S.lastIndexOf('an', 'banana'), S.Just(3));
-    eq(S.lastIndexOf('ax', 'banana'), S.Nothing());
+    eq(S.lastIndexOf('ax', 'banana'), S.Nothing);
   });
 
   it('is curried', function() {

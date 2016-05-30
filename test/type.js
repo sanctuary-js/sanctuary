@@ -34,7 +34,7 @@ describe('type', function() {
   it('operates on values of Sanctuary types', function() {
     eq(S.type(S.Left(42)),  'sanctuary/Either');
     eq(S.type(S.Right(42)), 'sanctuary/Either');
-    eq(S.type(S.Nothing()), 'sanctuary/Maybe');
+    eq(S.type(S.Nothing), 'sanctuary/Maybe');
     eq(S.type(S.Just(42)),  'sanctuary/Maybe');
   });
 

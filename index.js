@@ -46,8 +46,8 @@
 //.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
 //. but these can be simulated by providing a group of data constructors which
-//. return values with the same set of methods. A value of the Maybe type, for
-//. example, is created via the Nothing constructor or the Just constructor.
+//. return values with the same set of methods. A value of the Either type, for
+//. example, is created via the Left constructor or the Right constructor.
 //.
 //. It's necessary to extend Haskell's notation to describe implicit arguments
 //. to the *methods* provided by Sanctuary's types. In `x.map(y)`, for example,
@@ -650,8 +650,8 @@
   //. > S.lift(S.inc, S.Just(2))
   //. Just(3)
   //.
-  //. > S.lift(S.inc, S.Nothing())
-  //. Nothing()
+  //. > S.lift(S.inc, S.Nothing)
+  //. Nothing
   //. ```
   S.lift =
   def('lift',
@@ -668,8 +668,8 @@
   //. > S.lift2(S.add, S.Just(2), S.Just(3))
   //. Just(5)
   //.
-  //. > S.lift2(S.add, S.Just(2), S.Nothing())
-  //. Nothing()
+  //. > S.lift2(S.add, S.Just(2), S.Nothing)
+  //. Nothing
   //.
   //. > S.lift2(S.and, S.Just(true), S.Just(true))
   //. Just(true)
@@ -692,8 +692,8 @@
   //. > S.lift3(S.reduce, S.Just(S.add), S.Just(0), S.Just([1, 2, 3]))
   //. Just(6)
   //.
-  //. > S.lift3(S.reduce, S.Just(S.add), S.Just(0), S.Nothing())
-  //. Nothing()
+  //. > S.lift3(S.reduce, S.Just(S.add), S.Just(0), S.Nothing)
+  //. Nothing
   //. ```
   S.lift3 =
   def('lift3',
@@ -789,7 +789,7 @@
   //. ### Maybe type
   //.
   //. The Maybe type represents optional values: a value of type `Maybe a` is
-  //. either a Just whose value is of type `a` or a Nothing (with no value).
+  //. either a Just whose value is of type `a` or Nothing (with no value).
   //.
   //. The Maybe type satisfies the [Monoid][], [Monad][], [Traversable][],
   //. and [Extend][] specifications.
@@ -801,25 +801,27 @@
   //# Maybe :: TypeRep Maybe
   //.
   //. The [type representative](#type-representatives) for the Maybe type.
-  var Maybe = S.Maybe = function Maybe() {
-    if (arguments[0] !== sentinel) {
-      throw new Error('Cannot instantiate Maybe');
-    }
+  var Maybe = S.Maybe = function Maybe(x, box) {
+    if (x !== sentinel) throw new Error('Cannot instantiate Maybe');
+    var isJust = box.length > 0;
+    if (isJust) this.value = box[0];
+    this.isNothing = !isJust;
+    this.isJust = isJust;
   };
 
   //# Maybe.empty :: -> Maybe a
   //.
-  //. Returns a Nothing.
+  //. Returns Nothing.
   //.
   //. ```javascript
   //. > S.Maybe.empty()
-  //. Nothing()
+  //. Nothing
   //. ```
   Maybe.empty =
   def('Maybe.empty',
       {},
       [$Maybe(a)],
-      function() { return Nothing(); });
+      function() { return Nothing; });
 
   //# Maybe.of :: a -> Maybe a
   //.
@@ -842,10 +844,10 @@
 
   //# Maybe#isNothing :: Boolean
   //.
-  //. `true` if `this` is a Nothing; `false` if `this` is a Just.
+  //. `true` if `this` is Nothing; `false` if `this` is a Just.
   //.
   //. ```javascript
-  //. > S.Nothing().isNothing
+  //. > S.Nothing.isNothing
   //. true
   //.
   //. > S.Just(42).isNothing
@@ -854,29 +856,29 @@
 
   //# Maybe#isJust :: Boolean
   //.
-  //. `true` if `this` is a Just; `false` if `this` is a Nothing.
+  //. `true` if `this` is a Just; `false` if `this` is Nothing.
   //.
   //. ```javascript
   //. > S.Just(42).isJust
   //. true
   //.
-  //. > S.Nothing().isJust
+  //. > S.Nothing.isJust
   //. false
   //. ```
 
   //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
   //.
-  //. Takes a value of type `Maybe a` and returns a Nothing unless `this`
+  //. Takes a value of type `Maybe a` and returns Nothing unless `this`
   //. is a Just *and* the argument is a Just, in which case it returns a
   //. Just whose value is the result of of applying this Just's value to
   //. the given Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().ap(S.Just(42))
-  //. Nothing()
+  //. > S.Nothing.ap(S.Just(42))
+  //. Nothing
   //.
-  //. > S.Just(S.inc).ap(S.Nothing())
-  //. Nothing()
+  //. > S.Just(S.inc).ap(S.Nothing)
+  //. Nothing
   //.
   //. > S.Just(S.inc).ap(S.Just(42))
   //. Just(43)
@@ -889,15 +891,15 @@
 
   //# Maybe#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
   //.
-  //. Takes a function and returns `this` if `this` is a Nothing; otherwise
+  //. Takes a function and returns `this` if `this` is Nothing; otherwise
   //. it returns the result of applying the function to this Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().chain(S.parseFloat)
-  //. Nothing()
+  //. > S.Nothing.chain(S.parseFloat)
+  //. Nothing
   //.
   //. > S.Just('xxx').chain(S.parseFloat)
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.Just('12.34').chain(S.parseFloat)
   //. Just(12.34)
@@ -914,8 +916,8 @@
   //. `a` must have a [Semigroup][] (indicated by the presence of a `concat`
   //. method).
   //.
-  //. If `this` is a Nothing and the argument is a Nothing, this method returns
-  //. a Nothing.
+  //. If `this` is Nothing and the argument is Nothing, this method returns
+  //. Nothing.
   //.
   //. If `this` is a Just and the argument is a Just, this method returns a
   //. Just whose value is the result of concatenating this Just's value and
@@ -924,16 +926,16 @@
   //. Otherwise, this method returns the Just.
   //.
   //. ```javascript
-  //. > S.Nothing().concat(S.Nothing())
-  //. Nothing()
+  //. > S.Nothing.concat(S.Nothing)
+  //. Nothing
   //.
   //. > S.Just([1, 2, 3]).concat(S.Just([4, 5, 6]))
   //. Just([1, 2, 3, 4, 5, 6])
   //.
-  //. > S.Nothing().concat(S.Just([1, 2, 3]))
+  //. > S.Nothing.concat(S.Just([1, 2, 3]))
   //. Just([1, 2, 3])
   //.
-  //. > S.Just([1, 2, 3]).concat(S.Nothing())
+  //. > S.Just([1, 2, 3]).concat(S.Nothing)
   //. Just([1, 2, 3])
   //. ```
   Maybe.prototype.concat =
@@ -947,11 +949,11 @@
 
   //# Maybe#empty :: Maybe a ~> Maybe a
   //.
-  //. Returns a Nothing.
+  //. Returns Nothing.
   //.
   //. ```javascript
   //. > S.Just(42).empty()
-  //. Nothing()
+  //. Nothing
   //. ```
   Maybe.prototype.empty =
   def('Maybe#empty',
@@ -963,16 +965,16 @@
   //.
   //. Takes a value of any type and returns `true` if:
   //.
-  //.   - it is a Nothing and `this` is a Nothing; or
+  //.   - it is Nothing and `this` is Nothing; or
   //.
   //.   - it is a Just and `this` is a Just, and their values are equal
   //.     according to [`R.equals`][R.equals].
   //.
   //. ```javascript
-  //. > S.Nothing().equals(S.Nothing())
+  //. > S.Nothing.equals(S.Nothing)
   //. true
   //.
-  //. > S.Nothing().equals(null)
+  //. > S.Nothing.equals(null)
   //. false
   //.
   //. > S.Just([1, 2, 3]).equals(S.Just([1, 2, 3]))
@@ -981,7 +983,7 @@
   //. > S.Just([1, 2, 3]).equals(S.Just([3, 2, 1]))
   //. false
   //.
-  //. > S.Just([1, 2, 3]).equals(S.Nothing())
+  //. > S.Just([1, 2, 3]).equals(S.Nothing)
   //. false
   //. ```
   Maybe.prototype.equals =
@@ -996,13 +998,13 @@
 
   //# Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   //.
-  //. Takes a function and returns `this` if `this` is a Nothing; otherwise
-  //. it returns a Just whose value is the result of applying the function to
-  //. `this`.
+  //. Takes a function and returns `this` if `this` is Nothing; otherwise
+  //. it returns a Just whose value is the result of applying the function
+  //. to `this`.
   //.
   //. ```javascript
-  //. > S.Nothing().extend(x => x.value + 1)
-  //. Nothing()
+  //. > S.Nothing.extend(x => x.value + 1)
+  //. Nothing
   //.
   //. > S.Just(42).extend(x => x.value + 1)
   //. Just(43)
@@ -1023,7 +1025,7 @@
   //. Just(42)
   //.
   //. > S.Just(43).filter(n => n % 2 === 0)
-  //. Nothing()
+  //. Nothing
   //. ```
   Maybe.prototype.filter =
   method('Maybe#filter',
@@ -1033,13 +1035,13 @@
 
   //# Maybe#map :: Maybe a ~> (a -> b) -> Maybe b
   //.
-  //. Takes a function and returns `this` if `this` is a Nothing; otherwise
-  //. it returns a Just whose value is the result of applying the function to
-  //. this Just's value.
+  //. Takes a function and returns `this` if `this` is Nothing; otherwise
+  //. it returns a Just whose value is the result of applying the function
+  //. to this Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().map(S.inc)
-  //. Nothing()
+  //. > S.Nothing.map(S.inc)
+  //. Nothing
   //.
   //. > S.Just([1, 2, 3]).map(S.sum)
   //. Just(6)
@@ -1057,7 +1059,7 @@
   //. Takes a value of any type and returns a Just with the given value.
   //.
   //. ```javascript
-  //. > S.Nothing().of(42)
+  //. > S.Nothing.of(42)
   //. Just(42)
   //. ```
   Maybe.prototype.of =
@@ -1070,13 +1072,13 @@
   //.
   //. Takes a function and an initial value of any type, and returns:
   //.
-  //.   - the initial value if `this` is a Nothing; otherwise
+  //.   - the initial value if `this` is Nothing; otherwise
   //.
   //.   - the result of applying the function to the initial value and this
   //.     Just's value.
   //.
   //. ```javascript
-  //. > S.Nothing().reduce(S.add, 10)
+  //. > S.Nothing.reduce(S.add, 10)
   //. 10
   //.
   //. > S.Just(5).reduce(S.add, 10)
@@ -1094,13 +1096,13 @@
   //.
   //. Evaluates an applicative action contained within the Maybe, resulting in:
   //.
-  //.   - a pure applicative of a Nothing if `this` is a Nothing; otherwise
+  //.   - a pure applicative of Nothing if `this` is Nothing; otherwise
   //.
   //.   - an applicative of Just the value of the evaluated action.
   //.
   //. ```javascript
-  //. > S.Nothing().sequence(S.Either.of)
-  //. Right(Nothing())
+  //. > S.Nothing.sequence(S.Either.of)
+  //. Right(Nothing)
   //.
   //. > S.Just(S.Right(42)).sequence(S.Either.of)
   //. Right(Just(42))
@@ -1118,10 +1120,10 @@
 
   //# Maybe#toBoolean :: Maybe a ~> Boolean
   //.
-  //. Returns `false` if `this` is a Nothing; `true` if `this` is a Just.
+  //. Returns `false` if `this` is Nothing; `true` if `this` is a Just.
   //.
   //. ```javascript
-  //. > S.Nothing().toBoolean()
+  //. > S.Nothing.toBoolean()
   //. false
   //.
   //. > S.Just(42).toBoolean()
@@ -1138,8 +1140,8 @@
   //. Returns the string representation of the Maybe.
   //.
   //. ```javascript
-  //. > S.Nothing().toString()
-  //. 'Nothing()'
+  //. > S.Nothing.toString()
+  //. 'Nothing'
   //.
   //. > S.Just([1, 2, 3]).toString()
   //. 'Just([1, 2, 3])'
@@ -1150,7 +1152,7 @@
          [$Maybe(a), $.String],
          function(maybe) {
            return maybe.isJust ? 'Just(' + R.toString(maybe.value) + ')'
-                               : 'Nothing()';
+                               : 'Nothing';
          });
 
   //# Maybe#inspect :: Maybe a ~> String
@@ -1161,28 +1163,23 @@
   //. See also [`Maybe#toString`](#Maybe.prototype.toString).
   //.
   //. ```javascript
-  //. > S.Nothing().inspect()
-  //. 'Nothing()'
+  //. > S.Nothing.inspect()
+  //. 'Nothing'
   //.
   //. > S.Just([1, 2, 3]).inspect()
   //. 'Just([1, 2, 3])'
   //. ```
   Maybe.prototype.inspect = inspect;
 
-  //# Nothing :: -> Maybe a
+  //# Nothing :: Maybe a
   //.
-  //. Returns a Nothing.
+  //. Nothing.
   //.
   //. ```javascript
-  //. > S.Nothing()
-  //. Nothing()
+  //. > S.Nothing
+  //. Nothing
   //. ```
-  var Nothing = S.Nothing = function() {
-    var nothing = new Maybe(sentinel);
-    nothing.isNothing = true;
-    nothing.isJust = false;
-    return nothing;
-  };
+  var Nothing = S.Nothing = new Maybe(sentinel, []);
 
   //# Just :: a -> Maybe a
   //.
@@ -1192,20 +1189,14 @@
   //. > S.Just(42)
   //. Just(42)
   //. ```
-  var Just = S.Just = function(value) {
-    var just = new Maybe(sentinel);
-    just.isNothing = false;
-    just.isJust = true;
-    just.value = value;
-    return just;
-  };
+  var Just = S.Just = function(value) { return new Maybe(sentinel, [value]); };
 
   //# isNothing :: Maybe a -> Boolean
   //.
-  //. Returns `true` if the given Maybe is a Nothing; `false` if it is a Just.
+  //. Returns `true` if the given Maybe is Nothing; `false` if it is a Just.
   //.
   //. ```javascript
-  //. > S.isNothing(S.Nothing())
+  //. > S.isNothing(S.Nothing)
   //. true
   //.
   //. > S.isNothing(S.Just(42))
@@ -1219,13 +1210,13 @@
 
   //# isJust :: Maybe a -> Boolean
   //.
-  //. Returns `true` if the given Maybe is a Just; `false` if it is a Nothing.
+  //. Returns `true` if the given Maybe is a Just; `false` if it is Nothing.
   //.
   //. ```javascript
   //. > S.isJust(S.Just(42))
   //. true
   //.
-  //. > S.isJust(S.Nothing())
+  //. > S.isJust(S.Nothing)
   //. false
   //. ```
   S.isJust =
@@ -1245,7 +1236,7 @@
   //. > S.fromMaybe(0, S.Just(42))
   //. 42
   //.
-  //. > S.fromMaybe(0, S.Nothing())
+  //. > S.fromMaybe(0, S.Nothing)
   //. 0
   //. ```
   var fromMaybe = S.fromMaybe =
@@ -1265,7 +1256,7 @@
   //. > S.maybeToNullable(S.Just(42))
   //. 42
   //.
-  //. > S.maybeToNullable(S.Nothing())
+  //. > S.maybeToNullable(S.Nothing)
   //. null
   //. ```
   S.maybeToNullable =
@@ -1281,7 +1272,7 @@
   //.
   //. ```javascript
   //. > S.toMaybe(null)
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.toMaybe(42)
   //. Just(42)
@@ -1290,7 +1281,7 @@
   def('toMaybe',
       {},
       [a, $Maybe(a)],
-      function(x) { return x == null ? Nothing() : Just(x); });
+      function(x) { return x == null ? Nothing : Just(x); });
 
   //# maybe :: b -> (a -> b) -> Maybe a -> b
   //.
@@ -1302,7 +1293,7 @@
   //. > S.maybe(0, R.length, S.Just('refuge'))
   //. 6
   //.
-  //. > S.maybe(0, R.length, S.Nothing())
+  //. > S.maybe(0, R.length, S.Nothing)
   //. 0
   //. ```
   var maybe = S.maybe =
@@ -1319,7 +1310,7 @@
   //. See also [`lefts`](#lefts) and [`rights`](#rights).
   //.
   //. ```javascript
-  //. > S.justs([S.Just('foo'), S.Nothing(), S.Just('baz')])
+  //. > S.justs([S.Just('foo'), S.Nothing, S.Just('baz')])
   //. ['foo', 'baz']
   //. ```
   var justs = S.justs =
@@ -1332,7 +1323,7 @@
   //.
   //. Takes a function and an array, applies the function to each element of
   //. the array, and returns an array of "successful" results. If the result of
-  //. applying the function to an element of the array is a Nothing, the result
+  //. applying the function to an element of the array is Nothing, the result
   //. is discarded; if the result is a Just, the Just's value is included in
   //. the output array.
   //.
@@ -1352,7 +1343,7 @@
   //.
   //. Takes a unary function `f` which may throw and a value `x` of any type,
   //. and applies `f` to `x` inside a `try` block. If an exception is caught,
-  //. the return value is a Nothing; otherwise the return value is Just the
+  //. the return value is Nothing; otherwise the return value is Just the
   //. result of applying `f` to `x`.
   //.
   //. See also [`encaseEither`](#encaseEither).
@@ -1362,7 +1353,7 @@
   //. Just(2)
   //.
   //. > S.encase(eval, '1 +')
-  //. Nothing()
+  //. Nothing
   //. ```
   var encase = S.encase =
   def('encase',
@@ -1372,7 +1363,7 @@
         try {
           return Just(f(x));
         } catch (err) {
-          return Nothing();
+          return Nothing;
         }
       });
 
@@ -1389,7 +1380,7 @@
         try {
           return Just(f(x)(y));
         } catch (err) {
-          return Nothing();
+          return Nothing;
         }
       });
 
@@ -1422,7 +1413,7 @@
         try {
           return Just(f(x)(y)(z));
         } catch (err) {
-          return Nothing();
+          return Nothing;
         }
       });
 
@@ -1446,7 +1437,7 @@
 
   //# maybeToEither :: a -> Maybe b -> Either a b
   //.
-  //. Converts a Maybe to an Either. A Nothing becomes a Left (containing the
+  //. Converts a Maybe to an Either. Nothing becomes a Left (containing the
   //. first argument); a Just becomes a Right.
   //.
   //. See also [`eitherToMaybe`](#eitherToMaybe).
@@ -1746,8 +1737,8 @@
   //. > S.Right(S.Just(42)).sequence(S.Maybe.of)
   //. Just(Right(42))
   //.
-  //. > S.Right(S.Nothing()).sequence(S.Maybe.of)
-  //. Nothing()
+  //. > S.Right(S.Nothing).sequence(S.Maybe.of)
+  //. Nothing
   //. ```
   Either.prototype.sequence =
   method('Either#sequence',
@@ -2058,14 +2049,14 @@
 
   //# eitherToMaybe :: Either a b -> Maybe b
   //.
-  //. Converts an Either to a Maybe. A Left becomes a Nothing; a Right becomes
+  //. Converts an Either to a Maybe. A Left becomes Nothing; a Right becomes
   //. a Just.
   //.
   //. See also [`maybeToEither`](#maybeToEither).
   //.
   //. ```javascript
   //. > S.eitherToMaybe(S.Left('Cannot divide by zero'))
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.eitherToMaybe(S.Right(42))
   //. Just(42)
@@ -2075,7 +2066,7 @@
       {},
       [$Either(a, b), $Maybe(b)],
       function(either) {
-        return either.isLeft ? Nothing() : Just(either.value);
+        return either.isLeft ? Nothing : Just(either.value);
       });
 
   //. ### Alternative
@@ -2119,8 +2110,8 @@
   //. > S.and(S.Just(1), S.Just(2))
   //. Just(2)
   //.
-  //. > S.and(S.Nothing(), S.Just(3))
-  //. Nothing()
+  //. > S.and(S.Nothing, S.Just(3))
+  //. Nothing
   //. ```
   S.and =
   def('and',
@@ -2139,7 +2130,7 @@
   //. > S.or(S.Just(1), S.Just(2))
   //. Just(1)
   //.
-  //. > S.or(S.Nothing(), S.Just(3))
+  //. > S.or(S.Nothing, S.Just(3))
   //. Just(3)
   //. ```
   var or = S.or =
@@ -2158,11 +2149,11 @@
   //. `empty` methods.
   //.
   //. ```javascript
-  //. > S.xor(S.Nothing(), S.Just(1))
+  //. > S.xor(S.Nothing, S.Just(1))
   //. Just(1)
   //.
   //. > S.xor(S.Just(2), S.Just(3))
-  //. Nothing()
+  //. Nothing
   //. ```
   S.xor =
   def('xor',
@@ -2315,7 +2306,7 @@
   //. Just(['c', 'd', 'e'])
   //.
   //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.slice(2, 6, 'banana')
   //. Just('nana')
@@ -2331,7 +2322,7 @@
 
         return Math.abs(start) <= len && Math.abs(end) <= len && A <= Z ?
           Just(R.slice(A, Z, xs)) :
-          Nothing();
+          Nothing;
       });
 
   //# at :: Integer -> [a] -> Maybe a
@@ -2345,7 +2336,7 @@
   //. Just('c')
   //.
   //. > S.at(5, ['a', 'b', 'c', 'd', 'e'])
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.at(-2, ['a', 'b', 'c', 'd', 'e'])
   //. Just('d')
@@ -2368,7 +2359,7 @@
   //. Just(1)
   //.
   //. > S.head([])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.head =
   def('head',
@@ -2386,7 +2377,7 @@
   //. Just(3)
   //.
   //. > S.last([])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.last =
   def('last',
@@ -2405,7 +2396,7 @@
   //. Just([2, 3])
   //.
   //. > S.tail([])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.tail =
   def('tail',
@@ -2424,7 +2415,7 @@
   //. Just([1, 2])
   //.
   //. > S.init([])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.init =
   def('init',
@@ -2447,14 +2438,14 @@
   //. Just('abcd')
   //.
   //. > S.take(4, ['a', 'b', 'c'])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.take =
   def('take',
       {},
       [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
-        return n < 0 || negativeZero(n) ? Nothing() : slice(0, n, xs);
+        return n < 0 || negativeZero(n) ? Nothing : slice(0, n, xs);
       });
 
   //# takeLast :: Integer -> [a] -> Maybe [a]
@@ -2472,14 +2463,14 @@
   //. Just('defg')
   //.
   //. > S.takeLast(4, ['a', 'b', 'c'])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.takeLast =
   def('takeLast',
       {},
       [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
-        return n < 0 || negativeZero(n) ? Nothing() : slice(-n, -0, xs);
+        return n < 0 || negativeZero(n) ? Nothing : slice(-n, -0, xs);
       });
 
   //# drop :: Integer -> [a] -> Maybe [a]
@@ -2497,14 +2488,14 @@
   //. Just('efg')
   //.
   //. > S.drop(4, 'abc')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.drop =
   def('drop',
       {},
       [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
-        return n < 0 || negativeZero(n) ? Nothing() : slice(n, -0, xs);
+        return n < 0 || negativeZero(n) ? Nothing : slice(n, -0, xs);
       });
 
   //# dropLast :: Integer -> [a] -> Maybe [a]
@@ -2522,14 +2513,14 @@
   //. Just('abc')
   //.
   //. > S.dropLast(4, 'abc')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.dropLast =
   def('dropLast',
       {},
       [$.Integer, List(a), $Maybe(List(a))],
       function(n, xs) {
-        return n < 0 || negativeZero(n) ? Nothing() : slice(0, -n, xs);
+        return n < 0 || negativeZero(n) ? Nothing : slice(0, -n, xs);
       });
 
   //# reverse :: [a] -> [a]
@@ -2587,13 +2578,13 @@
   //. Just(1)
   //.
   //. > S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.indexOf('an', 'banana')
   //. Just(1)
   //.
   //. > S.indexOf('ax', 'banana')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.indexOf = sanctifyIndexOf('indexOf');
 
@@ -2612,13 +2603,13 @@
   //. Just(5)
   //.
   //. > S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.lastIndexOf('an', 'banana')
   //. Just(3)
   //.
   //. > S.lastIndexOf('ax', 'banana')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.lastIndexOf = sanctifyIndexOf('lastIndexOf');
 
@@ -2669,7 +2660,7 @@
   //. Just(-2)
   //.
   //. > S.find(n => n < 0, [1, 2, 3, 4, 5])
-  //. Nothing()
+  //. Nothing
   //. ```
   S.find =
   def('find',
@@ -2681,7 +2672,7 @@
             return Just(xs[idx]);
           }
         }
-        return Nothing();
+        return Nothing;
       });
 
   //# pluck :: Accessible a => TypeRep b -> String -> Array a -> Array (Maybe b)
@@ -2696,7 +2687,7 @@
   //.
   //. ```javascript
   //. > S.pluck(Number, 'x', [{x: 1}, {x: 2}, {x: '3'}, {x: null}, {}])
-  //. [Just(1), Just(2), Nothing(), Nothing(), Nothing()]
+  //. [Just(1), Just(2), Nothing, Nothing, Nothing]
   //. ```
   S.pluck =
   def('pluck',
@@ -2760,13 +2751,13 @@
   //. function is initially applied to the seed value. Each application
   //. of the function should result in either:
   //.
-  //.   - a Nothing, in which case the array is returned; or
+  //.   - Nothing, in which case the array is returned; or
   //.
   //.   - Just a pair, in which case the first element is appended to
   //.     the array and the function is applied to the second element.
   //.
   //. ```javascript
-  //. > S.unfoldr(n => n < 5 ? S.Just([n, n + 1]) : S.Nothing(), 1)
+  //. > S.unfoldr(n => n < 5 ? S.Just([n, n + 1]) : S.Nothing, 1)
   //. [1, 2, 3, 4]
   //. ```
   S.unfoldr =
@@ -2842,10 +2833,10 @@
   //. Just(1)
   //.
   //. > S.get(Number, 'x', {x: '1', y: '2'})
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.get(Number, 'x', {})
-  //. Nothing()
+  //. Nothing
   //. ```
   var get = S.get =
   def('get',
@@ -2867,10 +2858,10 @@
   //. Just(42)
   //.
   //. > S.gets(Number, ['a', 'b', 'c'], {a: {b: {c: '42'}}})
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.gets(Number, ['a', 'b', 'c'], {})
-  //. Nothing()
+  //. Nothing
   //. ```
   S.gets =
   def('gets',
@@ -2879,9 +2870,7 @@
       function(type, keys, obj) {
         var x = obj;
         for (var idx = 0; idx < keys.length; idx += 1) {
-          if (x == null) {
-            return Nothing();
-          }
+          if (x == null) return Nothing;
           x = x[keys[idx]];
         }
         return filter(is(type), Just(x));
@@ -2980,7 +2969,7 @@
   //. > S.sum(S.Just(42))
   //. 42
   //.
-  //. > S.sum(S.Nothing())
+  //. > S.sum(S.Nothing)
   //. 0
   //. ```
   var sum = S.sum =
@@ -3059,7 +3048,7 @@
   //. > S.product(S.Just(42))
   //. 42
   //.
-  //. > S.product(S.Nothing())
+  //. > S.product(S.Nothing)
   //. 1
   //. ```
   S.product =
@@ -3092,13 +3081,13 @@
   //. S.Just(3)
   //.
   //. > S.mean([])
-  //. S.Nothing()
+  //. S.Nothing
   //.
   //. > S.mean(S.Just(42))
   //. S.Just(42)
   //.
-  //. > S.mean(S.Nothing())
-  //. S.Nothing()
+  //. > S.mean(S.Nothing)
+  //. S.Nothing
   //. ```
   S.mean =
   def('mean',
@@ -3114,7 +3103,7 @@
           {total: 0, count: 0},
           foldable
         );
-        return result.count === 0 ? Nothing()
+        return result.count === 0 ? Nothing
                                   : Just(result.total / result.count);
       });
 
@@ -3218,7 +3207,7 @@
   //. Just(new Date('2011-01-19T17:40:00.000Z'))
   //.
   //. > S.parseDate('today')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.parseDate =
   def('parseDate',
@@ -3226,7 +3215,7 @@
       [$.String, $Maybe($.Date)],
       function(s) {
         var d = new Date(s);
-        return d.valueOf() === d.valueOf() ? Just(d) : Nothing();
+        return d.valueOf() === d.valueOf() ? Just(d) : Nothing;
       });
 
   //  requiredNonCapturingGroup :: Array String -> String
@@ -3273,7 +3262,7 @@
   //. Just(-123.45)
   //.
   //. > S.parseFloat('foo.bar')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.parseFloat =
   def('parseFloat',
@@ -3300,7 +3289,7 @@
   //. Just(255)
   //.
   //. > S.parseInt(16, '0xGG')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.parseInt =
   def('parseInt',
@@ -3338,10 +3327,10 @@
   //. Just(['foo', 'bar', 'baz'])
   //.
   //. > S.parseJson(Array, '[')
-  //. Nothing()
+  //. Nothing
   //.
   //. > S.parseJson(Object, '["foo","bar","baz"]')
-  //. Nothing()
+  //. Nothing
   //. ```
   S.parseJson =
   def('parseJson',
@@ -3411,7 +3400,7 @@
   //.
   //. Takes a pattern and a string, and returns Just an array of matches
   //. if the pattern matches the string; Nothing otherwise. Each match has
-  //. type `Maybe String`, where a Nothing represents an unmatched optional
+  //. type `Maybe String`, where Nothing represents an unmatched optional
   //. capturing group.
   //.
   //. ```javascript
@@ -3419,7 +3408,7 @@
   //. Just([Just('goodbye'), Just('good')])
   //.
   //. > S.match(/(good)?bye/, 'bye')
-  //. Just([Just('bye'), Nothing()])
+  //. Just([Just('bye'), Nothing])
   //. ```
   S.match =
   def('match',
@@ -3427,7 +3416,7 @@
       [$.RegExp, $.String, $Maybe($.Array($Maybe($.String)))],
       function(pattern, s) {
         var match = s.match(pattern);
-        return match == null ? Nothing() : Just(R.map(toMaybe, match));
+        return match == null ? Nothing : Just(R.map(toMaybe, match));
       });
 
   //. ### String

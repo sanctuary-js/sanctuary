@@ -72,12 +72,12 @@ describe('sum', function() {
     eq(S.sum([1, 2, 3, 4, -5]), 5);
   });
 
-  it('can be applied to Maybes', function() {
-    eq(S.sum(S.Nothing()), 0);
+  it('can be applied to maybes', function() {
+    eq(S.sum(S.Nothing), 0);
     eq(S.sum(S.Just(42)), 42);
   });
 
-  it('can be applied to Eithers', function() {
+  it('can be applied to eithers', function() {
     eq(S.sum(S.Left('xxx')), 0);
     eq(S.sum(S.Right(42)), 42);
   });

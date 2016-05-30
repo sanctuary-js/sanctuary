@@ -48,10 +48,10 @@ describe('at', function() {
     eq(S.at(-1, ['foo', 'bar', 'baz']), S.Just('baz'));
   });
 
-  it('returns a Nothing if index out of bounds', function() {
-    eq(S.at(3, ['foo', 'bar', 'baz']), S.Nothing());
-    eq(S.at(-4, ['foo', 'bar', 'baz']), S.Nothing());
-    eq(S.at(-0, ['foo', 'bar', 'baz']), S.Nothing());
+  it('returns Nothing if index out of bounds', function() {
+    eq(S.at(3, ['foo', 'bar', 'baz']), S.Nothing);
+    eq(S.at(-4, ['foo', 'bar', 'baz']), S.Nothing);
+    eq(S.at(-0, ['foo', 'bar', 'baz']), S.Nothing);
   });
 
   it('is curried', function() {
