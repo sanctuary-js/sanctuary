@@ -2899,7 +2899,7 @@
         return Object.keys(strMap).map(function(key) { return strMap[key]; });
       });
 
-  //# toPairs :: StrMap a -> Array (Pair String a)
+  //# pairs :: StrMap a -> Array (Pair String a)
   //.
   //. Returns the key–value pairs of the given string map, in arbitrary order.
   //.
