@@ -33,21 +33,21 @@
 //.
 //. Sanctuary uses Haskell-like type signatures to describe the types of
 //. values, including functions. `'foo'`, for example, has type `String`;
-//. `[1, 2, 3]` has type `[Number]`. The arrow (`->`) is used to express a
-//. function's type. `Math.abs`, for example, has type `Number -> Number`.
+//. `[1, 2, 3]` has type `Array Number`. The arrow (`->`) is used to express
+//. a function's type. `Math.abs`, for example, has type `Number -> Number`.
 //. That is, it takes an argument of type `Number` and returns a value of
 //. type `Number`.
 //.
-//. [`R.map`][R.map] has type `(a -> b) -> [a] -> [b]`. That is, it takes
-//. an argument of type `a -> b` and returns a value of type `[a] -> [b]`.
-//. `a` and `b` are type variables: applying `R.map` to a value of type
-//. `String -> Number` will give a value of type `[String] -> [Number]`.
+//. [`R.map`][R.map] has type `(a -> b) -> Array a -> Array b`. That is,
+//. it takes an argument of type `a -> b` and returns a value of type
+//. `Array a -> Array b`. `a` and `b` are type variables: applying `R.map`
+//. to a value of type `String -> Number` will result in a value of type
+//. `Array String -> Array Number`.
 //.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
-//. but these can be simulated by providing a group of constructor functions
-//. whose prototypes provide the same set of methods. A value of the Maybe
-//. type, for example, is created via the Nothing constructor or the Just
-//. constructor.
+//. but these can be simulated by providing a group of data constructors which
+//. return values with the same set of methods. A value of the Maybe type, for
+//. example, is created via the Nothing constructor or the Just constructor.
 //.
 //. It's necessary to extend Haskell's notation to describe implicit arguments
 //. to the *methods* provided by Sanctuary's types. In `x.map(y)`, for example,
@@ -135,10 +135,10 @@
 //. perform type checking:
 //.
 //. ```javascript
-//. const sanctuary = require('sanctuary');
+//. const {create, env} = require('sanctuary');
 //.
 //. const checkTypes = process.env.NODE_ENV !== 'production';
-//. const S = sanctuary.create({checkTypes: checkTypes, env: sanctuary.env});
+//. const S = create({checkTypes: checkTypes, env: env});
 //. ```
 //.
 //. ## API
@@ -1171,8 +1171,7 @@
 
   //# Nothing :: -> Maybe a
   //.
-  //. Returns a Nothing. Though this is a constructor function the `new`
-  //. keyword needn't be used.
+  //. Returns a Nothing.
   //.
   //. ```javascript
   //. > S.Nothing()
@@ -1188,8 +1187,6 @@
   //# Just :: a -> Maybe a
   //.
   //. Takes a value of any type and returns a Just with the given value.
-  //. Though this is a constructor function the `new` keyword needn't be
-  //. used.
   //.
   //. ```javascript
   //. > S.Just(42)
@@ -1816,8 +1813,6 @@
   //# Left :: a -> Either a b
   //.
   //. Takes a value of any type and returns a Left with the given value.
-  //. Though this is a constructor function the `new` keyword needn't be
-  //. used.
   //.
   //. ```javascript
   //. > S.Left('Cannot divide by zero')
@@ -1834,8 +1829,6 @@
   //# Right :: b -> Either a b
   //.
   //. Takes a value of any type and returns a Right with the given value.
-  //. Though this is a constructor function the `new` keyword needn't be
-  //. used.
   //.
   //. ```javascript
   //. > S.Right(42)
