@@ -195,6 +195,10 @@ describe('Left', function() {
     eq(S.Left('abc').toBoolean(), false);
   });
 
+  it('provides a "swap" method', function() {
+    eq(S.Left(42).swap(), S.Right(42));
+  });
+
   it('provides a "toString" method', function() {
     eq(S.Left('abc').toString.length, 0);
     eq(S.Left('abc').toString(), 'Left("abc")');

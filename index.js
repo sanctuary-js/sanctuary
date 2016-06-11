@@ -1774,6 +1774,25 @@
          [$Either(a, b), $.Boolean],
          prop('isRight'));
 
+  //# Either#swap :: Either a b ~> Either b a
+  //.
+  //. Flips the left and the right values. (2-complement)
+  //.
+  //. ```javascript
+  //. > S.Left(42).swap()
+  //. Right(42)
+  //.
+  //. > S.Right(42).swap()
+  //. Left(42)
+  //. ```
+  Either.prototype.swap =
+  method('Either#swap',
+         {},
+         [$Either(a, b), $Either(b, a)],
+         function(either) {
+           return either.isLeft ? Right(either.value) : Left(either.value);
+         });
+
   //# Either#toString :: Either a b ~> String
   //.
   //. Returns the string representation of the Either.
