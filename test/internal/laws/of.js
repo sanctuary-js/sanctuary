@@ -1,8 +1,8 @@
 'use strict';
 
+var Z = require('sanctuary-type-classes');
+
+var curry2 = require('./curry2');
+
 //  of :: Applicative f => TypeRep f -> a -> f a
-module.exports = function of(typeRep) {
-  return function(x) {
-    return typeRep.of(x);
-  };
-};
+module.exports = curry2(Z.of);

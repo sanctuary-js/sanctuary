@@ -1,43 +1,17 @@
 'use strict';
 
-var R = require('ramda');
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('maybe', function() {
 
   eq(typeof S.maybe, 'function');
   eq(S.maybe.length, 3);
+  eq(S.maybe.toString(), 'maybe :: b -> (a -> b) -> Maybe a -> b');
 
-  throws(function() { S.maybe(0, [1, 2, 3]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'maybe :: b -> Function -> Maybe a -> b\n' +
-         '              ^^^^^^^^\n' +
-         '                 1\n' +
-         '\n' +
-         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Function’.\n');
-
-  throws(function() { S.maybe(0, R.length, [1, 2, 3]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'maybe :: b -> Function -> Maybe a -> b\n' +
-         '                          ^^^^^^^\n' +
-         '                             1\n' +
-         '\n' +
-         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Maybe a’.\n');
-
-  eq(S.maybe(0, R.length, S.Nothing), 0);
-  eq(S.maybe(0, R.length, S.Just([1, 2, 3])), 3);
+  eq(S.maybe(0, Math.sqrt, S.Nothing), 0);
+  eq(S.maybe(0, Math.sqrt, S.Just(9)), 3);
 
 });

@@ -10,6 +10,7 @@ test('encaseEither2_', function() {
 
   eq(typeof S.encaseEither2_, 'function');
   eq(S.encaseEither2_.length, 4);
+  eq(S.encaseEither2_.toString(), 'encaseEither2_ :: (Error -> l) -> ((a, b) -> r) -> a -> b -> Either l r');
 
   eq(S.encaseEither2_(S.I, rem_, 42, 5), S.Right(2));
   eq(S.encaseEither2_(S.I, rem_, 42, 0), S.Left(new Error('Cannot divide by zero')));

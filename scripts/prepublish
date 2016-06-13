@@ -3,4 +3,5 @@ set -e
 
 rm -f README.md
 make
-git add LICENSE README.md
+sed -i '' "s/var version = '.*';/var version = '$VERSION';/" index.js
+git add LICENSE README.md index.js

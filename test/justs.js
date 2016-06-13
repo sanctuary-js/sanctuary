@@ -3,25 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('justs', function() {
 
   eq(typeof S.justs, 'function');
   eq(S.justs.length, 1);
-
-  throws(function() { S.justs({length: 0}); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'justs :: Array (Maybe a) -> Array a\n' +
-         '         ^^^^^^^^^^^^^^^\n' +
-         '                1\n' +
-         '\n' +
-         '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Array (Maybe a)’.\n');
+  eq(S.justs.toString(), 'justs :: Array (Maybe a) -> Array a');
 
   eq(S.justs([]), []);
   eq(S.justs([S.Nothing, S.Nothing]), []);

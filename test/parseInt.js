@@ -10,30 +10,7 @@ test('parseInt', function() {
 
   eq(typeof S.parseInt, 'function');
   eq(S.parseInt.length, 2);
-
-  throws(function() { S.parseInt(0.5); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'parseInt :: Integer -> String -> Maybe Integer\n' +
-         '            ^^^^^^^\n' +
-         '               1\n' +
-         '\n' +
-         '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Integer’.\n');
-
-  throws(function() { S.parseInt(10, 42); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'parseInt :: Integer -> String -> Maybe Integer\n' +
-         '                       ^^^^^^\n' +
-         '                         1\n' +
-         '\n' +
-         '1)  42 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘String’.\n');
+  eq(S.parseInt.toString(), 'parseInt :: Integer -> String -> Maybe Integer');
 
   eq(S.parseInt(10, '42'), S.Just(42));
   eq(S.parseInt(16, '2A'), S.Just(42));

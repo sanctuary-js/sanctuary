@@ -1,174 +1,65 @@
 'use strict';
 
-var R = require('ramda');
+var FL = require('fantasy-land');
 
 var S = require('../..');
 
 var eq = require('../internal/eq');
-var throws = require('../internal/throws');
 
 
 suite('Nothing', function() {
 
   test('member of the "Maybe a" type', function() {
     eq(S.Nothing['@@type'], 'sanctuary/Maybe');
-    eq(S.Nothing.constructor, S.Maybe);
+//  Revert when updating to sanctuary-type-classes@2.0.0.
+//  eq(S.Nothing.constructor, S.Maybe);
+    eq(S.Nothing.constructor === S.Maybe, true);
     eq(S.Nothing.isNothing, true);
     eq(S.Nothing.isJust, false);
   });
 
-  test('"ap" method', function() {
-    eq(S.Nothing.ap.length, 1);
-    eq(S.Nothing.ap(S.Nothing), S.Nothing);
-    eq(S.Nothing.ap(S.Just(42)), S.Nothing);
-
-    throws(function() { S.Nothing.ap([1, 2, 3]); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#ap :: Maybe Function -> Maybe a -> Maybe b\n' +
-           '                              ^^^^^^^\n' +
-           '                                 1\n' +
-           '\n' +
-           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Maybe a’.\n');
+  test('"fantasy-land/alt" method', function() {
+    eq(S.Nothing[FL.alt].length, 1);
+    eq(S.Nothing[FL.alt](S.Nothing), S.Nothing);
+    eq(S.Nothing[FL.alt](S.Just(1)), S.Just(1));
   });
 
-  test('"chain" method', function() {
-    eq(S.Nothing.chain.length, 1);
-    eq(S.Nothing.chain(S.head), S.Nothing);
-
-    throws(function() { S.Nothing.chain(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#chain :: Maybe a -> Function -> Maybe b\n' +
-           '                          ^^^^^^^^\n' +
-           '                             1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/ap" method', function() {
+    eq(S.Nothing[FL.ap].length, 1);
+    eq(S.Nothing[FL.ap](S.Nothing), S.Nothing);
+    eq(S.Nothing[FL.ap](S.Just(S.inc)), S.Nothing);
   });
 
-  test('"concat" method', function() {
-    eq(S.Nothing.concat.length, 1);
-    eq(S.Nothing.concat(S.Nothing), S.Nothing);
-    eq(S.Nothing.concat(S.Just('foo')), S.Just('foo'));
-
-    throws(function() { S.Nothing.concat(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
-           '                                          ^^^^^^^\n' +
-           '                                             1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Maybe a’.\n');
-
-    throws(function() { S.Nothing.concat(S.Just(1)); },
-           TypeError,
-           'Type-class constraint violation\n' +
-           '\n' +
-           'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
-           '                ^^^^^^^^^^^                     ^\n' +
-           '                                                1\n' +
-           '\n' +
-           '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
-           '\n' +
-           '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
+  test('"fantasy-land/chain" method', function() {
+    eq(S.Nothing[FL.chain].length, 1);
+    eq(S.Nothing[FL.chain](S.head), S.Nothing);
   });
 
-  test('"equals" method', function() {
-    eq(S.Nothing.equals.length, 1);
-    eq(S.Nothing.equals(S.Nothing), true);
-    eq(S.Nothing.equals(S.Just(42)), false);
-    eq(S.Nothing.equals(null), false);
+  test('"fantasy-land/concat" method', function() {
+    eq(S.Nothing[FL.concat].length, 1);
+    eq(S.Nothing[FL.concat](S.Nothing), S.Nothing);
+    eq(S.Nothing[FL.concat](S.Just('foo')), S.Just('foo'));
   });
 
-  test('"extend" method', function() {
-    eq(S.Nothing.extend.length, 1);
-    eq(S.Nothing.extend(function(x) { return x.value / 2; }), S.Nothing);
-
-    throws(function() { S.Nothing.extend(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#extend :: Maybe a -> Function -> Maybe a\n' +
-           '                           ^^^^^^^^\n' +
-           '                              1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/equals" method', function() {
+    eq(S.Nothing[FL.equals].length, 1);
+    eq(S.Nothing[FL.equals](S.Nothing), true);
+    eq(S.Nothing[FL.equals](S.Just(42)), false);
   });
 
-  test('"filter" method', function() {
-    eq(S.Nothing.filter.length, 1);
-    eq(S.Nothing.filter(R.T), S.Nothing);
-    eq(S.Nothing.filter(R.F), S.Nothing);
-
-    var m = S.Nothing;
-    function f(n) { return n * n; }
-    function p(n) { return n < 0; }
-    function q(n) { return n > 0; }
-
-    eq(m.map(f).filter(p).equals(m.filter(function(x) { return p(f(x)); }).map(f)), true);
-    eq(m.map(f).filter(q).equals(m.filter(function(x) { return q(f(x)); }).map(f)), true);
-
-    throws(function() { S.Nothing.filter(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#filter :: Maybe a -> Function -> Maybe a\n' +
-           '                           ^^^^^^^^\n' +
-           '                              1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/extend" method', function() {
+    eq(S.Nothing[FL.extend].length, 1);
+    eq(S.Nothing[FL.extend](function(x) { return x.value / 2; }), S.Nothing);
   });
 
-  test('"map" method', function() {
-    eq(S.Nothing.map.length, 1);
-    eq(S.Nothing.map(function() { return 42; }), S.Nothing);
-
-    throws(function() { S.Nothing.map(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#map :: Maybe a -> Function -> Maybe b\n' +
-           '                        ^^^^^^^^\n' +
-           '                           1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/map" method', function() {
+    eq(S.Nothing[FL.map].length, 1);
+    eq(S.Nothing[FL.map](function() { return 42; }), S.Nothing);
   });
 
-  test('"reduce" method', function() {
-    eq(S.Nothing.reduce.length, 2);
-    eq(S.Nothing.reduce(function(a, b) { return a + b; }, 10), 10);
-
-    throws(function() { S.Nothing.reduce(null, null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Maybe#reduce :: Maybe a -> Function -> b -> b\n' +
-           '                           ^^^^^^^^\n' +
-           '                              1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
-  });
-
-  test('"sequence" method', function() {
-    eq(S.Nothing.sequence.length, 1);
-    eq(S.Nothing.sequence(S.Either.of), S.Right(S.Nothing));
+  test('"fantasy-land/reduce" method', function() {
+    eq(S.Nothing[FL.reduce].length, 2);
+    eq(S.Nothing[FL.reduce](function(x, y) { return x - y; }, 42), 42);
   });
 
   test('"toString" method', function() {

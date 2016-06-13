@@ -21,30 +21,7 @@ test('create', function() {
 
   eq(typeof S.create, 'function');
   eq(S.create.length, 1);
-
-  throws(function() { S.create({}); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'create :: { checkTypes :: Boolean, env :: Array Any } -> Object\n' +
-         '          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
-         '                               1\n' +
-         '\n' +
-         '1)  {} :: Object, StrMap ???\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘{ checkTypes :: Boolean, env :: Array Any }’.\n');
-
-  throws(function() { S.create({checkTypes: 'true', env: []}); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'create :: { checkTypes :: Boolean, env :: Array Any } -> Object\n' +
-         '                          ^^^^^^^\n' +
-         '                             1\n' +
-         '\n' +
-         '1)  "true" :: String\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Boolean’.\n');
+  eq(S.create.toString(), 'create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
   var expected = Object.keys(S).sort();
   eq(Object.keys(checkedDefaultEnv).sort(), expected);

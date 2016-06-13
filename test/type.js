@@ -11,6 +11,7 @@ test('type', function() {
 
   eq(typeof S.type, 'function');
   eq(S.type.length, 1);
+  eq(S.type.toString(), 'type :: Any -> String');
 
   var args = (function() { return arguments; }());
   eq(S.type(args),                'Arguments');

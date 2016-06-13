@@ -1,7 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
 
 
 //  Compose :: (Apply f, Apply g) => { of :: b -> f b } -> { of :: c -> g c } -> f (g a) -> Compose f g a
@@ -12,22 +12,22 @@ module.exports = function Compose(F) {
       this.value = value;
     }
 
-    ComposeFG.of = function(x) {
-      return ComposeFG(F.of(G.of(x)));
+    ComposeFG[FL.of] = function(x) {
+      return ComposeFG(Z.of(F, Z.of(G, x)));
     };
 
     ComposeFG.prototype['@@type'] = 'sanctuary/Compose';
 
     ComposeFG.prototype[FL.equals] = function(other) {
-      return R.equals(this.value, other.value);
+      return Z.equals(this.value, other.value);
     };
 
     ComposeFG.prototype[FL.map] = function(f) {
-      return ComposeFG(R.map(R.map(f), this.value));
+      return ComposeFG(Z.map(function(y) { return Z.map(f, y); }, this.value));
     };
 
     ComposeFG.prototype[FL.ap] = function(other) {
-      return ComposeFG(R.ap(R.map(R.ap, this.value), other.value));
+      return ComposeFG(Z.ap(Z.map(function(u) { return function(y) { return Z.ap(u, y); }; }, other.value), this.value));
     };
 
     //  name :: TypeRep a -> String
@@ -42,7 +42,7 @@ module.exports = function Compose(F) {
     ComposeFG.prototype.toString = function() {
       return 'Compose(' + name(F) + ')' +
                     '(' + name(G) + ')' +
-                    '(' + R.toString(this.value) + ')';
+                    '(' + Z.toString(this.value) + ')';
     };
 
     return ComposeFG;

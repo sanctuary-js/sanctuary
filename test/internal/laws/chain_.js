@@ -1,10 +1,8 @@
 'use strict';
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
+
+var curry2 = require('./curry2');
 
 //  chain_ :: Chain m => (a -> m b) -> m a -> m b
-module.exports = function chain_(f) {
-  return function(chain) {
-    return R.chain(f, chain);
-  };
-};
+module.exports = curry2(Z.chain);

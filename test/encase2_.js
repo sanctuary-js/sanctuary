@@ -10,6 +10,7 @@ test('encase2_', function() {
 
   eq(typeof S.encase2_, 'function');
   eq(S.encase2_.length, 3);
+  eq(S.encase2_.toString(), 'encase2_ :: ((a, b) -> c) -> a -> b -> Maybe c');
 
   eq(S.encase2_(rem_, 42, 5), S.Just(2));
   eq(S.encase2_(rem_, 42, 0), S.Nothing);

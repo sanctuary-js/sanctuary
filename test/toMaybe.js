@@ -9,6 +9,7 @@ test('toMaybe', function() {
 
   eq(typeof S.toMaybe, 'function');
   eq(S.toMaybe.length, 1);
+  eq(S.toMaybe.toString(), 'toMaybe :: a -> Maybe a');
 
   eq(S.toMaybe(null), S.Nothing);
   eq(S.toMaybe(undefined), S.Nothing);

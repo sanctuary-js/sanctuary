@@ -3,37 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('dropLast', function() {
 
   eq(typeof S.dropLast, 'function');
   eq(S.dropLast.length, 2);
-
-  throws(function() { S.dropLast(0.5); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'dropLast :: Integer -> List a -> Maybe (List a)\n' +
-         '            ^^^^^^^\n' +
-         '               1\n' +
-         '\n' +
-         '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Integer’.\n');
-
-  throws(function() { S.dropLast(0, null); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'dropLast :: Integer -> List a -> Maybe (List a)\n' +
-         '                       ^^^^^^\n' +
-         '                         1\n' +
-         '\n' +
-         '1)  null :: Null\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘List a’.\n');
+  eq(S.dropLast.toString(), 'dropLast :: Integer -> List a -> Maybe (List a)');
 
   eq(S.dropLast(0, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
   eq(S.dropLast(1, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4]));
@@ -53,6 +29,5 @@ test('dropLast', function() {
 
   eq(S.dropLast(-1, [1, 2, 3, 4, 5]), S.Nothing);
   eq(S.dropLast(-0, [1, 2, 3, 4, 5]), S.Nothing);
-  eq(S.dropLast(new Number(-0), [1, 2, 3, 4, 5]), S.Nothing);
 
 });

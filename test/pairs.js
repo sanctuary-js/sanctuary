@@ -3,7 +3,6 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('pairs', function() {
@@ -14,32 +13,7 @@ test('pairs', function() {
 
   eq(typeof S.pairs, 'function');
   eq(S.pairs.length, 1);
-
-  throws(function() { S.pairs('xxx'); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'pairs :: StrMap a -> Array (Pair String a)\n' +
-         '         ^^^^^^^^\n' +
-         '            1\n' +
-         '\n' +
-         '1)  "xxx" :: String\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘StrMap a’.\n');
-
-  throws(function() { S.pairs({a: '1', b: 2, c: '3'}); },
-         TypeError,
-         'Type-variable constraint violation\n' +
-         '\n' +
-         'pairs :: StrMap a -> Array (Pair String a)\n' +
-         '                ^\n' +
-         '                1\n' +
-         '\n' +
-         '1)  "1" :: String\n' +
-         '    2 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
-         '    "3" :: String\n' +
-         '\n' +
-         'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n');
+  eq(S.pairs.toString(), 'pairs :: StrMap a -> Array (Pair String a)');
 
   eq(S.pairs({}), []);
   eq(S.pairs({a: 1, b: 2, c: 3}).sort(comparePairsAsc), [['a', 1], ['b', 2], ['c', 3]]);

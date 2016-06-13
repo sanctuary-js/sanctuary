@@ -1,6 +1,6 @@
 'use strict';
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
 
 var S = require('..');
 
@@ -11,8 +11,9 @@ test('A', function() {
 
   eq(typeof S.A, 'function');
   eq(S.A.length, 2);
+  eq(S.A.toString(), 'A :: (a -> b) -> a -> b');
 
   eq(S.A(S.inc, 1), 2);
-  eq(R.map(S.A(R.__, 100), [S.inc, Math.sqrt]), [101, 10]);
+  eq(Z.map(S.A(S.__, 100), [S.inc, Math.sqrt]), [101, 10]);
 
 });

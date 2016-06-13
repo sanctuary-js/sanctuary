@@ -1,9 +1,9 @@
 'use strict';
 
 var jsc = require('jsverify');
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
 
-var S = require('../..');
+var S = require('../internal/sanctuary');
 
 var EitherArb = require('../internal/EitherArb');
 var Identity = require('../internal/Identity');
@@ -37,7 +37,7 @@ suite('Maybe', function() {
 
   suite('Semigroup laws', function() {
 
-    var semigroupLaws = laws.Semigroup(R.equals);
+    var semigroupLaws = laws.Semigroup(Z.equals);
 
     semigroupLaws.associativity(
       MaybeArb(jsc.string),
@@ -49,7 +49,7 @@ suite('Maybe', function() {
 
   suite('Monoid laws', function() {
 
-    var monoidLaws = laws.Monoid(R.equals);
+    var monoidLaws = laws.Monoid(Z.equals, S.Maybe);
 
     monoidLaws.leftIdentity(
       MaybeArb(jsc.string)
@@ -63,7 +63,7 @@ suite('Maybe', function() {
 
   suite('Functor laws', function() {
 
-    var functorLaws = laws.Functor(R.equals);
+    var functorLaws = laws.Functor(Z.equals);
 
     functorLaws.identity(
       MaybeArb(jsc.number)
@@ -79,7 +79,7 @@ suite('Maybe', function() {
 
   suite('Apply laws', function() {
 
-    var applyLaws = laws.Apply(R.equals);
+    var applyLaws = laws.Apply(Z.equals);
 
     applyLaws.composition(
       MaybeArb(jsc.constant(Math.sqrt)),
@@ -91,7 +91,7 @@ suite('Maybe', function() {
 
   suite('Applicative laws', function() {
 
-    var applicativeLaws = laws.Applicative(R.equals, S.Maybe);
+    var applicativeLaws = laws.Applicative(Z.equals, S.Maybe);
 
     applicativeLaws.identity(
       MaybeArb(jsc.number)
@@ -111,7 +111,7 @@ suite('Maybe', function() {
 
   suite('Chain laws', function() {
 
-    var chainLaws = laws.Chain(R.equals);
+    var chainLaws = laws.Chain(Z.equals);
 
     chainLaws.associativity(
       MaybeArb(jsc.array(jsc.asciistring)),
@@ -123,7 +123,7 @@ suite('Maybe', function() {
 
   suite('Monad laws', function() {
 
-    var monadLaws = laws.Monad(R.equals, S.Maybe);
+    var monadLaws = laws.Monad(Z.equals, S.Maybe);
 
     monadLaws.leftIdentity(
       jsc.constant(S.head),
@@ -138,7 +138,7 @@ suite('Maybe', function() {
 
   suite('Foldable laws', function() {
 
-    var foldableLaws = laws.Foldable(R.equals);
+    var foldableLaws = laws.Foldable(Z.equals);
 
     foldableLaws.associativity(
       jsc.constant(function(x, y) { return x + y; }),
@@ -150,7 +150,7 @@ suite('Maybe', function() {
 
   suite('Traversable laws', function() {
 
-    var traversableLaws = laws.Traversable(R.equals);
+    var traversableLaws = laws.Traversable(Z.equals);
 
     traversableLaws.naturality(
       jsc.constant(S.eitherToMaybe),
@@ -174,7 +174,7 @@ suite('Maybe', function() {
 
   suite('Extend laws', function() {
 
-    var extendLaws = laws.Extend(R.equals);
+    var extendLaws = laws.Extend(Z.equals);
 
     extendLaws.associativity(
       MaybeArb(jsc.integer),

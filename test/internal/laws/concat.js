@@ -1,10 +1,8 @@
 'use strict';
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
+
+var curry2 = require('./curry2');
 
 //  concat :: Semigroup a => a -> a -> a
-module.exports = function concat(x) {
-  return function(y) {
-    return R.concat(x, y);
-  };
-};
+module.exports = curry2(Z.concat);

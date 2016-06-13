@@ -3,25 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('lastIndexOf', function() {
 
   eq(typeof S.lastIndexOf, 'function');
   eq(S.lastIndexOf.length, 2);
-
-  throws(function() { S.lastIndexOf('x', null); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'lastIndexOf :: a -> List a -> Maybe Integer\n' +
-         '                    ^^^^^^\n' +
-         '                      1\n' +
-         '\n' +
-         '1)  null :: Null\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘List a’.\n');
+  eq(S.lastIndexOf.toString(), 'lastIndexOf :: a -> List a -> Maybe Integer');
 
   eq(S.lastIndexOf('x', []), S.Nothing);
   eq(S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing);

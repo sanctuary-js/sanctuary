@@ -3,39 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('concat', function() {
 
   eq(typeof S.concat, 'function');
   eq(S.concat.length, 2);
-
-  throws(function() { S.concat(/XXX/); },
-         TypeError,
-         'Type-class constraint violation\n' +
-         '\n' +
-         'concat :: Semigroup a => a -> a -> a\n' +
-         '          ^^^^^^^^^^^    ^\n' +
-         '                         1\n' +
-         '\n' +
-         '1)  /XXX/ :: RegExp\n' +
-         '\n' +
-         '‘concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
-
-  throws(function() { S.concat('abc', [1, 2, 3]); },
-         TypeError,
-         'Type-variable constraint violation\n' +
-         '\n' +
-         'concat :: Semigroup a => a -> a -> a\n' +
-         '                         ^    ^\n' +
-         '                         1    2\n' +
-         '\n' +
-         '1)  "abc" :: String\n' +
-         '\n' +
-         '2)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-         '\n' +
-         'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n');
+  eq(S.concat.toString(), 'concat :: Semigroup a => a -> a -> a');
 
   eq(S.concat([], []), []);
   eq(S.concat([1, 2, 3], []), [1, 2, 3]);
