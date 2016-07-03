@@ -35,8 +35,8 @@ describe('encase3', function() {
     eq(S.encase3(area, 3, 4, 5), S.Just(6));
   });
 
-  it('returns a Nothing on failure', function() {
-    eq(S.encase3(area, 2, 2, 5), S.Nothing());
+  it('returns Nothing on failure', function() {
+    eq(S.encase3(area, 2, 2, 5), S.Nothing);
   });
 
   it('can be applied to a function of arbitrary arity', function() {

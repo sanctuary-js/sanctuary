@@ -30,7 +30,7 @@ describe('lift', function() {
 
   it('lifts a function into the context of Functors', function() {
     eq(S.lift(S.mult(2), S.Just(3)), S.Just(6));
-    eq(S.lift(S.mult(2), S.Nothing()), S.Nothing());
+    eq(S.lift(S.mult(2), S.Nothing), S.Nothing);
 
     eq(S.lift(S.mult(2), S.Left(3)), S.Left(3));
     eq(S.lift(S.mult(2), S.Right(3)), S.Right(6));

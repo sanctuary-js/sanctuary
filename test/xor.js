@@ -30,10 +30,10 @@ describe('xor', function() {
   });
 
   it('can be applied to maybes', function() {
-    eq(S.xor(S.Nothing(), S.Nothing()), S.Nothing());
-    eq(S.xor(S.Nothing(), S.Just(42)), S.Just(42));
-    eq(S.xor(S.Just(42), S.Nothing()), S.Just(42));
-    eq(S.xor(S.Just(42), S.Just(43)), S.Nothing());
+    eq(S.xor(S.Nothing, S.Nothing), S.Nothing);
+    eq(S.xor(S.Nothing, S.Just(42)), S.Just(42));
+    eq(S.xor(S.Just(42), S.Nothing), S.Just(42));
+    eq(S.xor(S.Just(42), S.Just(43)), S.Nothing);
   });
 
   it('cannot be applied to eithers', function() {

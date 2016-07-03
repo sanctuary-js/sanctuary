@@ -44,8 +44,8 @@ describe('maybe', function() {
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
   });
 
-  it('can be applied to a Nothing', function() {
-    eq(S.maybe(0, R.length, S.Nothing()), 0);
+  it('can be applied to Nothing', function() {
+    eq(S.maybe(0, R.length, S.Nothing), 0);
   });
 
   it('can be applied to a Just', function() {

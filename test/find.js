@@ -46,9 +46,9 @@ describe('find', function() {
     eq(S.find(function(n) { return n >= 0; }, [-1, 0, 1]), S.Just(0));
   });
 
-  it('returns a Nothing if no element satisfies the predicate', function() {
-    eq(S.find(R.T, []), S.Nothing());
-    eq(S.find(R.F, [1, 2, 3]), S.Nothing());
+  it('returns Nothing if no element satisfies the predicate', function() {
+    eq(S.find(R.T, []), S.Nothing);
+    eq(S.find(R.F, [1, 2, 3]), S.Nothing);
   });
 
   it('is curried', function() {

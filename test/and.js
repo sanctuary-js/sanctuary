@@ -30,9 +30,9 @@ describe('and', function() {
   });
 
   it('can be applied to maybes', function() {
-    eq(S.and(S.Nothing(), S.Nothing()), S.Nothing());
-    eq(S.and(S.Nothing(), S.Just(42)), S.Nothing());
-    eq(S.and(S.Just(42), S.Nothing()), S.Nothing());
+    eq(S.and(S.Nothing, S.Nothing), S.Nothing);
+    eq(S.and(S.Nothing, S.Just(42)), S.Nothing);
+    eq(S.and(S.Just(42), S.Nothing), S.Nothing);
     eq(S.and(S.Just(42), S.Just(43)), S.Just(43));
   });
 

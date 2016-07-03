@@ -39,17 +39,17 @@ describe('take', function() {
                    'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
-  it('returns a Nothing if n is greater than collection length', function() {
-    eq(S.take(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.take(6, 'abcde'), S.Nothing());
+  it('returns Nothing if n is greater than collection length', function() {
+    eq(S.take(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.take(6, 'abcde'), S.Nothing);
   });
 
-  it('returns a Nothing if n is negative', function() {
-    eq(S.take(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.take(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.take(-0, 'abcdefg'), S.Nothing());
-    eq(S.take(-1, 'abcde'), S.Nothing());
-    eq(S.take(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+  it('returns Nothing if n is negative', function() {
+    eq(S.take(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.take(-1, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.take(-0, 'abcdefg'), S.Nothing);
+    eq(S.take(-1, 'abcde'), S.Nothing);
+    eq(S.take(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing);
   });
 
   it('returns an empty collection if n is 0', function() {

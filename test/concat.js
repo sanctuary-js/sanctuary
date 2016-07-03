@@ -57,9 +57,9 @@ describe('concat', function() {
   });
 
   it('can be applied to maybes', function() {
-    eq(S.concat(S.Nothing(), S.Nothing()), S.Nothing());
-    eq(S.concat(S.Just('foo'), S.Nothing()), S.Just('foo'));
-    eq(S.concat(S.Nothing(), S.Just('bar')), S.Just('bar'));
+    eq(S.concat(S.Nothing, S.Nothing), S.Nothing);
+    eq(S.concat(S.Just('foo'), S.Nothing), S.Just('foo'));
+    eq(S.concat(S.Nothing, S.Just('bar')), S.Just('bar'));
     eq(S.concat(S.Just('foo'), S.Just('bar')), S.Just('foobar'));
   });
 

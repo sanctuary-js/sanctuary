@@ -44,12 +44,12 @@ describe('parseJson', function() {
     eq(S.parseJson(Array, '["foo","bar"]'), S.Just(['foo', 'bar']));
   });
 
-  it('returns a Nothing when applied to an invalid JSON string', function() {
-    eq(S.parseJson(Object, '[Invalid JSON]'), S.Nothing());
+  it('returns Nothing when applied to an invalid JSON string', function() {
+    eq(S.parseJson(Object, '[Invalid JSON]'), S.Nothing);
   });
 
-  it('returns a Nothing when the parsed result is not a member of the given type', function() {
-    eq(S.parseJson(Array, '{"foo":"bar"}'), S.Nothing());
+  it('returns Nothing when the parsed result is not a member of the given type', function() {
+    eq(S.parseJson(Array, '{"foo":"bar"}'), S.Nothing);
   });
 
 });

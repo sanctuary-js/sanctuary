@@ -28,8 +28,8 @@ describe('isNothing', function() {
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
   });
 
-  it('returns true when applied to a Nothing', function() {
-    eq(S.isNothing(S.Nothing()), true);
+  it('returns true when applied to Nothing', function() {
+    eq(S.isNothing(S.Nothing), true);
   });
 
   it('returns false when applied to a Just', function() {

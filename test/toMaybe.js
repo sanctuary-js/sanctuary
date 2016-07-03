@@ -11,9 +11,9 @@ describe('toMaybe', function() {
     eq(S.toMaybe.length, 1);
   });
 
-  it('returns a Nothing when applied to null/undefined', function() {
-    eq(S.toMaybe(null), S.Nothing());
-    eq(S.toMaybe(undefined), S.Nothing());
+  it('returns Nothing when applied to null/undefined', function() {
+    eq(S.toMaybe(null), S.Nothing);
+    eq(S.toMaybe(undefined), S.Nothing);
   });
 
   it('returns a Just when applied to any other value', function() {

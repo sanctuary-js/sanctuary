@@ -52,20 +52,20 @@ describe('slice', function() {
                    'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
-  it('returns a Nothing with a positive end index greater than start index', function() {
-    eq(S.slice(6, 1, [1, 2, 3, 4, 5]), S.Nothing());
+  it('returns Nothing with a positive end index greater than start index', function() {
+    eq(S.slice(6, 1, [1, 2, 3, 4, 5]), S.Nothing);
   });
 
-  it('returns a Nothing with a positive end index greater than list length', function() {
-    eq(S.slice(1, 6, [1, 2, 3, 4, 5]), S.Nothing());
+  it('returns Nothing with a positive end index greater than list length', function() {
+    eq(S.slice(1, 6, [1, 2, 3, 4, 5]), S.Nothing);
   });
 
-  it('returns a Nothing with a negative end index greater than list length', function() {
-    eq(S.slice(1, -6, [1, 2, 3, 4, 5]), S.Nothing());
+  it('returns Nothing with a negative end index greater than list length', function() {
+    eq(S.slice(1, -6, [1, 2, 3, 4, 5]), S.Nothing);
   });
 
-  it('returns a Nothing with a negative start index greater than list length', function() {
-    eq(S.slice(-6, 1, [1, 2, 3, 4, 5]), S.Nothing());
+  it('returns Nothing with a negative start index greater than list length', function() {
+    eq(S.slice(-6, 1, [1, 2, 3, 4, 5]), S.Nothing);
   });
 
   it('returns a Just with an empty array when start index equals end index', function() {
@@ -106,7 +106,7 @@ describe('slice', function() {
     eq(S.slice(0, -0, 'ramda'), S.Just('ramda'));
     eq(S.slice(1, -3, 'ramda'), S.Just('a'));
     eq(S.slice(2, -3, 'ramda'), S.Just(''));
-    eq(S.slice(3, -3, 'ramda'), S.Nothing());
+    eq(S.slice(3, -3, 'ramda'), S.Nothing);
   });
 
   it('is curried', function() {

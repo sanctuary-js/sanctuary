@@ -40,21 +40,21 @@ describe('dropLast', function() {
                    'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
-  it('returns a Nothing if n is negative', function() {
-    eq(S.dropLast(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.dropLast(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing());
-    eq(S.dropLast(-3, 'abcde'), S.Nothing());
-    eq(S.dropLast(-0, 'abcde'), S.Nothing());
-    eq(S.dropLast(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing());
+  it('returns Nothing if n is negative', function() {
+    eq(S.dropLast(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.dropLast(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
+    eq(S.dropLast(-3, 'abcde'), S.Nothing);
+    eq(S.dropLast(-0, 'abcde'), S.Nothing);
+    eq(S.dropLast(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing);
   });
 
   it('returns a Just dropping the last n items for valid n; Nothing otherwise', function() {
-    eq(S.dropLast(4, ['a', 'b', 'c']), S.Nothing());
+    eq(S.dropLast(4, ['a', 'b', 'c']), S.Nothing);
     eq(S.dropLast(3, ['a', 'b', 'c']), S.Just([]));
     eq(S.dropLast(2, ['a', 'b', 'c']), S.Just(['a']));
     eq(S.dropLast(1, ['a', 'b', 'c']), S.Just(['a', 'b']));
     eq(S.dropLast(0, ['a', 'b', 'c']), S.Just(['a', 'b', 'c']));
-    eq(S.dropLast(4, 'abc'), S.Nothing());
+    eq(S.dropLast(4, 'abc'), S.Nothing);
     eq(S.dropLast(3, 'abc'), S.Just(''));
     eq(S.dropLast(2, 'abc'), S.Just('a'));
     eq(S.dropLast(1, 'abc'), S.Just('ab'));

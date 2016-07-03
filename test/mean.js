@@ -59,17 +59,17 @@ describe('mean', function() {
     eq(S.mean([-0, 0]), S.Just(0));
   });
 
-  it('returns nothing when applied to an empty array', function() {
-    eq(S.mean([]), S.Nothing());
+  it('returns Nothing when applied to an empty array', function() {
+    eq(S.mean([]), S.Nothing);
   });
 
-  it('can be applied to Maybes', function() {
-    eq(S.mean(S.Nothing()), S.Nothing());
+  it('can be applied to maybes', function() {
+    eq(S.mean(S.Nothing), S.Nothing);
     eq(S.mean(S.Just(42)), S.Just(42));
   });
 
-  it('can be applied to Eithers', function() {
-    eq(S.mean(S.Left('xxx')), S.Nothing());
+  it('can be applied to eithers', function() {
+    eq(S.mean(S.Left('xxx')), S.Nothing);
     eq(S.mean(S.Right(42)), S.Just(42));
   });
 
