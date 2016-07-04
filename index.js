@@ -3509,13 +3509,151 @@
       [f($.FiniteNumber), $Maybe($.FiniteNumber)],
       mean);
 
+  //# lt :: Ord a => a -> a -> Boolean
+  //.
+  //. Returns `true` if its *second* argument is smaller than its *first*
+  //. argument; `false` otherwise.
+  //.
+  //. Strings are compared lexicographically.
+  //.
+  //. See also [`lt_`](#lt_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.lt(3), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+  //. [1, 2, 1, 2]
+  //.
+  //. > S.filter(S.lt('3'), [' ', '1', '100', '3', '33'])
+  //. [' ', '1', '100']
+  //. ```
+  function lt(y, x) {
+    return x < y;
+  }
+  S.lt = def('lt', {a: [Ord]}, [a, a, $.Boolean], lt);
+
+  //# lte :: Ord a => a -> a -> Boolean
+  //.
+  //. Returns `true` if its *second* argument is smaller than or equal to
+  //. its *first* argument; `false` otherwise.
+  //.
+  //. Strings are compared lexicographically.
+  //.
+  //. See also [`lte_`](#lte_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.lte(3), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+  //. [1, 2, 3, 1, 2, 3]
+  //.
+  //. > S.filter(S.lte('3'), [' ', '1', '100', '3', '33'])
+  //. [' ', '1', '100', '3']
+  //. ```
+  function lte(y, x) {
+    return x <= y;
+  }
+  S.lte = def('lte', {a: [Ord]}, [a, a, $.Boolean], lte);
+
+  //# gt :: Ord a => a -> a -> Boolean
+  //.
+  //. Returns `true` if its *second* argument is larger than its *first*
+  //. argument; `false` otherwise.
+  //.
+  //. Strings are compared lexicographically.
+  //.
+  //. See also [`gt_`](#gt_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.gt(3), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+  //. [4, 5, 4, 5]
+  //.
+  //. > S.filter(S.gt('3'), [' ', '1', '100', '3', '33'])
+  //. ['33']
+  //. ```
+  function gt(y, x) {
+    return x > y;
+  }
+  S.gt = def('gt', {a: [Ord]}, [a, a, $.Boolean], gt);
+
+  //# gte :: Ord a => a -> a -> Boolean
+  //.
+  //. Returns `true` if its *second* argument is larger than or equal to
+  //. its *first* argument; `false` otherwise.
+  //.
+  //. Strings are compared lexicographically.
+  //.
+  //. See also [`gte_`](#gte_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.gte(3), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+  //. [3, 4, 5, 3, 4, 5]
+  //.
+  //. > S.filter(S.gte('3'), [' ', '1', '100', '3', '33'])
+  //. ['3', '33']
+  //. ```
+  function gte(y, x) {
+    return x >= y;
+  }
+  S.gte = def('gte', {a: [Ord]}, [a, a, $.Boolean], gte);
+
+  //# lt_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Flipped version of [`lt`](#lt). Returns `true` if its first argument
+  //. is smaller than its second argument; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.lt_(2, 10)
+  //. true
+  //.
+  //. > S.lt_('2', '10')
+  //. false
+  //. ```
+  S.lt_ = def('lt_', {a: [Ord]}, [a, a, $.Boolean], gt);
+
+  //# lte_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Flipped version of [`lte`](#lte). Returns `true` if its first argument
+  //. is smaller than or equal to its second argument; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.lte_(2, 10)
+  //. true
+  //.
+  //. > S.lte_('2', '10')
+  //. false
+  //. ```
+  S.lte_ = def('lte_', {a: [Ord]}, [a, a, $.Boolean], gte);
+
+  //# gt_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Flipped version of [`gt`](#gt). Returns `true` if its first argument
+  //. is larger than its second argument; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.gt_(2, 10)
+  //. false
+  //.
+  //. > S.gt_('2', '10')
+  //. true
+  //. ```
+  S.gt_ = def('gt_', {a: [Ord]}, [a, a, $.Boolean], lt);
+
+  //# gte_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Flipped version of [`gte`](#gte). Returns `true` if its first argument
+  //. is larger than or equal to its second argument; `false` otherwise.
+  //.
+  //. ```javascript
+  //. > S.gte_(2, 10)
+  //. false
+  //.
+  //. > S.gte_('2', '10')
+  //. true
+  //. ```
+  S.gte_ = def('gte_', {a: [Ord]}, [a, a, $.Boolean], lte);
+
   //# min :: Ord a => a -> a -> a
   //.
   //. Returns the smaller of its two arguments.
   //.
-  //. Strings are compared lexicographically. Specifically, the Unicode
-  //. code point value of each character in the first string is compared
-  //. to the value of the corresponding character in the second string.
+  //. Strings are compared lexicographically.
   //.
   //. See also [`max`](#max).
   //.
@@ -3538,9 +3676,7 @@
   //.
   //. Returns the larger of its two arguments.
   //.
-  //. Strings are compared lexicographically. Specifically, the Unicode
-  //. code point value of each character in the first string is compared
-  //. to the value of the corresponding character in the second string.
+  //. Strings are compared lexicographically.
   //.
   //. See also [`min`](#min).
   //.
