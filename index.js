@@ -566,8 +566,8 @@
   //# C :: (a -> b -> c) -> b -> a -> c
   //.
   //. The C combinator. Takes a curried binary function and two values, and
-  //. returns the result of applying the function to the values in reverse.
-  //. Equivalent to Haskell's `flip` function.
+  //. returns the result of applying the function to the values in reverse
+  //. order. Equivalent to Haskell's `flip` function.
   //.
   //. This function is very similar to [`flip`](#flip), except that its first
   //. argument must be curried. This allows it to work with manually curried
@@ -625,10 +625,8 @@
 
   //# flip :: ((a, b) -> c) -> b -> a -> c
   //.
-  //. Takes a binary function and two values and returns the result of
-  //. applying the function - with its argument order reversed - to the
-  //. values. `flip` may also be applied to a Ramda-style curried
-  //. function with arity greater than two.
+  //. Takes a binary function and two values, and returns the result of
+  //. applying the function to the values in reverse order.
   //.
   //. See also [`C`](#C).
   //.
