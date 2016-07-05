@@ -659,7 +659,7 @@
 
   //# lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
   //.
-  //. Promotes a binary function to a function which operates on two
+  //. Promotes a curried binary function to a function which operates on two
   //. [Apply][]s.
   //.
   //. ```javascript
@@ -683,7 +683,7 @@
 
   //# lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
   //.
-  //. Promotes a ternary function to a function which operates on three
+  //. Promotes a curried ternary function to a function which operates on three
   //. [Apply][]s.
   //.
   //. ```javascript
