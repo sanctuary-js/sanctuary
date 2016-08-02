@@ -36,6 +36,35 @@ suite('Right', function() {
            'The value at position 1 is not a member of ‘Either a b’.\n');
   });
 
+  test('"bimap" method', function() {
+    eq(S.Right(42).bimap.length, 2);
+    eq(S.Right(42).bimap(S.toUpper, S.inc), S.Right(43));
+
+    throws(function() { S.Right(42).bimap(null, null); },
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#bimap :: Either a b -> Function -> Function -> Either c d\n' +
+           '                              ^^^^^^^^\n' +
+           '                                 1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
+
+    throws(function() { S.Right(42).bimap(S.toUpper, null); },
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#bimap :: Either a b -> Function -> Function -> Either c d\n' +
+           '                                          ^^^^^^^^\n' +
+           '                                             1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
+  });
+
   test('"chain" method', function() {
     eq(S.Right(25).chain.length, 1);
     eq(S.Right(25).chain(squareRoot), S.Right(5));

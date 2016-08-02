@@ -63,6 +63,24 @@ suite('Either', function() {
 
   });
 
+  suite('Bifunctor laws', function() {
+
+    var bifunctorLaws = laws.Bifunctor(R.equals);
+
+    bifunctorLaws.identity(
+      EitherArb(jsc.string, jsc.number)
+    );
+
+    bifunctorLaws.composition(
+      EitherArb(jsc.string, jsc.number),
+      jsc.constant(Math.sqrt),
+      jsc.constant(function(s) { return s.length; }),
+      jsc.constant(Math.sqrt),
+      jsc.constant(Math.abs)
+    );
+
+  });
+
   suite('Apply laws', function() {
 
     var applyLaws = laws.Apply(R.equals);
