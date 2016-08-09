@@ -19,7 +19,7 @@
     "eslint": "2.9.x",
     "istanbul": "0.4.x",
     "jsverify": "0.7.x",
-    "mocha": "2.x.x",
+    "mocha": "3.x.x",
     "sanctuary-style": "0.1.x",
     "transcribe": "0.4.x",
     "xyz": "0.5.x"
