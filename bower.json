@@ -24,7 +24,7 @@
     "types"
   ],
   "dependencies": {
-    "ramda": "0.21.x",
+    "ramda": "0.22.x",
     "sanctuary-def": "0.6.x"
   },
   "ignore": [
