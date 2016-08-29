@@ -15,6 +15,10 @@
     "sanctuary-def": "0.6.x"
   },
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.13.2",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-stage-1": "^6.13.0",
     "doctest": "0.10.x",
     "eslint": "2.9.x",
     "istanbul": "0.4.x",
