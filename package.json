@@ -3,22 +3,26 @@
   "version": "0.11.1",
   "description": "Refuge from unsafe JavaScript",
   "license": "MIT",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/sanctuary-js/sanctuary.git"
   },
   "scripts": {
-    "test": "make lint test"
+    "test": "make lint test",
+    "build": "webpack src/index.js lib/index.js"
   },
   "dependencies": {
     "ramda": "0.22.x",
-    "sanctuary-def": "0.6.x"
+    "sanctuary-def": "0.6.x",
+    "webpack": "^1.13.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-es2015": "^6.13.2",
-    "babel-preset-stage-1": "^6.13.0",
     "doctest": "0.10.x",
     "eslint": "2.9.x",
     "istanbul": "0.4.x",
@@ -26,6 +30,7 @@
     "mocha": "3.x.x",
     "sanctuary-style": "0.1.x",
     "transcribe": "0.4.x",
+    "webpack": "^2.1.0-beta.21",
     "xyz": "1.0.x"
   },
   "files": [
