@@ -14,7 +14,9 @@
 
 export { encase } from './encase'
 export { encase2 } from './encase2'
+export { encase2_ } from './encase2_'
 export { encase3 } from './encase3'
+export { encase3_ } from './encase3_'
 export { fromMaybe } from './fromMaybe'
 export { isJust } from './isJust'
 export { isNothing } from './isNothing'

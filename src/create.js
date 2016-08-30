@@ -1,5 +1,6 @@
 
 import $ from 'sanctuary-def'
+import { Options } from './_internal/Types'
 import { defaultEnv } from './_internal'
 
 var createSanctuary = () => {}

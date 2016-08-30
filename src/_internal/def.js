@@ -1,5 +1,5 @@
 
 import $ from 'sanctuary-def'
-import { defaultEnv } from './defaultEnv'
+import { defaultEnv as env } from './defaultEnv'
 
-export const def = $.create({ checkTypes: true, env: defaultEnv })
+export const def = $.create({ checkTypes: true, env })

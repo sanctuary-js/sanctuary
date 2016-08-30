@@ -141,22 +141,20 @@
 //. const checkTypes = process.env.NODE_ENV !== 'production';
 //. const S = create({checkTypes: checkTypes, env: env});
 //. ```
-//.
+
 //. ## API
 
-// import {
-//   $Either,
-//   $Maybe
-// } from './_internal/Types'
-// import {
-//   env
-// } from './env'
-import {
+export {
+  $Either as EitherType,
+  $Maybe as MaybeType,
+  defaultEnv as env
+} from './_internal/Types'
+export {
   and,
   or,
   xor
 } from './Alternative'
-import {
+export {
   append,
   find,
   pluck,
@@ -166,11 +164,11 @@ import {
   reduce_,
   unfoldr
 } from './Array'
-import {
+export {
   is,
   type
 } from './Classify'
-import {
+export {
   A,
   B,
   C,
@@ -179,17 +177,19 @@ import {
   S,
   T
 } from './Combinator'
-import {
+export {
   compose,
   meld,
   pipe
 } from './Composition'
-import {
+export {
   either,
   Either,
   eitherToMaybe,
   encaseEither,
+  encaseEither2_,
   encaseEither2,
+  encaseEither3_,
   encaseEither3,
   fromEither,
   isLeft,
@@ -199,17 +199,17 @@ import {
   Right,
   rights
 } from './Either'
-import {
+export {
   flip,
   lift,
   lift2,
   lift3
 } from './Function'
-import {
+export {
   even,
   odd
 } from './Integer'
-import {
+export {
   at,
   concat,
   drop,
@@ -225,28 +225,32 @@ import {
   take,
   takeLast
 } from './List'
-import {
+export {
   allPass,
   anyPass,
   ifElse,
   not
 } from './Logic'
-import {
+export {
   encase,
   encase2,
+  encase2_,
   encase3,
+  encase3_,
   fromMaybe,
   isJust,
   isNothing,
   justs,
+  Just,
   mapMaybe,
-  maybe,
   Maybe,
+  maybe,
   maybeToEither,
   maybeToNullable,
+  Nothing,
   toMaybe
 } from './Maybe'
-import {
+export {
   add,
   dec,
   div,
@@ -260,7 +264,7 @@ import {
   sub,
   sum
 } from './Number'
-import {
+export {
   get,
   gets,
   keys,
@@ -268,19 +272,19 @@ import {
   prop,
   values
 } from './Object'
-import {
+export {
   parseDate,
-  parseFloat as _parseFloat,
-  parseInt as _parseInt,
+  parseFloat,
+  parseInt,
   parseJson
 } from './Parse'
-import {
+export {
   match,
   regex,
   regexEscape,
   test
 } from './RegExp'
-import {
+export {
   lines,
   toLower,
   toUpper,
@@ -289,156 +293,6 @@ import {
   unwords,
   words
 } from './String'
-// import {
-//   lines,
-//   toLower,
-//   toUpper,
-//   trim,
-//   unlines,
-//   unwords,
-//   words
-// } from './String'
-
-export default {
-
-  // Alternative
-  and,
-  or,
-  xor,
-
-  // Array
-  append,
-  find,
-  pluck,
-  prepend,
-  range,
-  reduce,
-  reduce_,
-  unfoldr,
-
-  // Classify,
-  is,
-  type,
-
-  // Combinator,
-  A,
-  B,
-  C,
-  I,
-  K,
-  S,
-  T,
-
-  // Composition,
-  compose,
-  meld,
-  pipe,
-
-  // Either,
-  either,
-  Either,
-  eitherToMaybe,
-  encaseEither,
-  encaseEither2,
-  encaseEither3,
-  fromEither,
-  isLeft,
-  isRight,
-  Left,
-  lefts,
-  Right,
-  rights,
-
-  // Function
-  flip,
-  lift,
-  lift2,
-  lift3,
-
-  // Integer
-  even,
-  odd,
-
-  // List,
-  at,
-  concat,
-  drop,
-  dropLast,
-  head,
-  indexOf,
-  init,
-  last,
-  lastIndexOf,
-  reverse,
-  slice,
-  tail,
-  take,
-  takeLast,
-
-  // Logic,
-  allPass,
-  anyPass,
-  ifElse,
-  not,
-
-  // Maybe,
-  maybe,
-  encase,
-  encase2,
-  encase3,
-  fromMaybe,
-  isJust,
-  isNothing,
-  justs,
-  mapMaybe,
-  Maybe,
-  maybeToEither,
-  maybeToNullable,
-  toMaybe,
-
-  // Number
-  add,
-  dec,
-  div,
-  inc,
-  max,
-  mean,
-  min,
-  mult,
-  negate,
-  product,
-  sub,
-  sum,
-
-  // Object
-  get,
-  gets,
-  keys,
-  pairs,
-  prop,
-  values,
-
-  // Parse
-  parseDate,
-  parseFloat: _parseFloat,
-  parseInt: _parseInt,
-  parseJson,
-
-  // RegExp
-  match,
-  regex,
-  regexEscape,
-  test,
-
-  // String
-  lines,
-  toLower,
-  toUpper,
-  trim,
-  unlines,
-  unwords,
-  words
-}
 
 //. [Apply]:          https://github.com/fantasyland/fantasy-land#apply
 //. [BinaryType]:     https://github.com/sanctuary-js/sanctuary-def#binarytype

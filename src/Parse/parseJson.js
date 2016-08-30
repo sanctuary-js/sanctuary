@@ -1,8 +1,9 @@
 
 import { $Maybe, TypeRep } from '../_internal/Types'
-import { a, def, filter, is } from '../_internal'
+import { a, def, filter } from '../_internal'
 import $ from 'sanctuary-def'
 import { encase } from '../Maybe'
+import { is } from '../Classify'
 
 //# parseJson :: TypeRep a -> String -> Maybe a
 //.
