@@ -146,9 +146,11 @@
 
 export {
   $Either as EitherType,
-  $Maybe as MaybeType,
-  defaultEnv as env
+  $Maybe as MaybeType
 } from './_internal/Types'
+export {
+  env
+} from './env'
 export {
   and,
   or,
@@ -293,6 +295,157 @@ export {
   unwords,
   words
 } from './String'
+
+// export default {
+//   //
+//   EitherType: $Either,
+//   MaybeType: $Maybe,
+//
+//   // Alternative
+//   and,
+//   or,
+//   xor,
+//
+//   // Array
+//   append,
+//   find,
+//   pluck,
+//   prepend,
+//   range,
+//   reduce,
+//   reduce_,
+//   unfoldr,
+//
+//   // Classify,
+//   is,
+//   type,
+//
+//   // Combinator,
+//   A,
+//   B,
+//   C,
+//   I,
+//   K,
+//   S,
+//   T,
+//
+//   // Composition,
+//   compose,
+//   meld,
+//   pipe,
+//
+//   // Either,
+//   either,
+//   Either,
+//   eitherToMaybe,
+//   encaseEither,
+//   encaseEither2_,
+//   encaseEither2,
+//   encaseEither3_,
+//   encaseEither3,
+//   fromEither,
+//   isLeft,
+//   isRight,
+//   Left,
+//   lefts,
+//   Right,
+//   rights,
+//
+//   // Function
+//   flip,
+//   lift,
+//   lift2,
+//   lift3,
+//
+//   // Integer
+//   even,
+//   odd,
+//
+//   // List,
+//   at,
+//   concat,
+//   drop,
+//   dropLast,
+//   head,
+//   indexOf,
+//   init,
+//   last,
+//   lastIndexOf,
+//   reverse,
+//   slice,
+//   tail,
+//   take,
+//   takeLast,
+//
+//   // Logic,
+//   allPass,
+//   anyPass,
+//   ifElse,
+//   not,
+//
+//   // Maybe,
+//   encase,
+//   encase2,
+//   encase2_,
+//   encase3,
+//   encase3_,
+//   fromMaybe,
+//   isJust,
+//   isNothing,
+//   Just,
+//   justs,
+//   mapMaybe,
+//   maybe,
+//   Maybe,
+//   maybeToEither,
+//   maybeToNullable,
+//   Nothing,
+//   toMaybe,
+//
+//   // Number
+//   add,
+//   dec,
+//   div,
+//   inc,
+//   max,
+//   mean,
+//   min,
+//   mult,
+//   negate,
+//   product,
+//   sub,
+//   sum,
+//
+//   // Object
+//   get,
+//   gets,
+//   keys,
+//   pairs,
+//   prop,
+//   values,
+//
+//   // Parse
+//   parseDate,
+//   parseFloat: _parseFloat,
+//   parseInt: _parseInt,
+//   parseJson,
+//
+//   // RegExp
+//   match,
+//   regex,
+//   regexEscape,
+//   test,
+//
+//   // String
+//   lines,
+//   toLower,
+//   toUpper,
+//   trim,
+//   unlines,
+//   unwords,
+//   words
+// }
+
 
 //. [Apply]:          https://github.com/fantasyland/fantasy-land#apply
 //. [BinaryType]:     https://github.com/sanctuary-js/sanctuary-def#binarytype
