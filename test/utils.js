@@ -4,7 +4,7 @@ var assert = require('assert');
 
 var R = require('ramda');
 
-var S = require('../index.js');
+import * as S from '../src'
 
 
 //      area :: Number -> Number -> Number -> Number !

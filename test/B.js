@@ -1,7 +1,7 @@
 'use strict';
 
 var runCompositionTests = require('./utils').runCompositionTests;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('B', function() {

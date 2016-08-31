@@ -1,7 +1,7 @@
 'use strict';
 
 var eq = require('./utils').eq;
-var S = require('..');
+import * as S from '../src'
 
 var add = function(a, b) { return a + b; };
 

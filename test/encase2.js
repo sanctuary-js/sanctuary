@@ -6,7 +6,7 @@ var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
 var rem = require('./utils').rem;
 var highArity = require('./utils').highArity;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('encase2', function() {

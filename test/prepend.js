@@ -4,7 +4,7 @@ var throws = require('assert').throws;
 
 var errorEq = require('./utils').errorEq;
 var eq = require('./utils').eq;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('prepend', function() {

@@ -4,7 +4,7 @@ var throws = require('assert').throws;
 
 var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
-var S = require('..');
+import * as S from '../src'
 
 var unaryAdd = function(a) { return function(b) { return a + b; }; };
 var UnaryFoldable = {
