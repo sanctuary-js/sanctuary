@@ -3,15 +3,20 @@
   "version": "0.11.1",
   "description": "Refuge from unsafe JavaScript",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "lib/index",
+  "jsnext:main": "es6/index",
   "repository": {
     "type": "git",
     "url": "git://github.com/sanctuary-js/sanctuary.git"
   },
   "scripts": {
     "test": "make lint test",
-    "build-es6": "babel ./src -d es6",
-    "build": "webpack src/index.js lib/index.js"
+    "cleanup": "rm -rf es6 lib umd",
+    "build": "npm run cleanup && npm run build-cjs && npm run build-es",
+    "build-es": "BABEL_ENV=es babel ./src -d es6",
+    "build-cjs": "BABEL_ENV=cjs webpack src/index.js lib/index.js",
+    "build-umd": "NODE_ENV=development webpack src/index.js umd/sanctuary.js",
+    "build-min": "NODE_ENV=production webpack -p src/index.js umd/sanctuary.min.js"
   },
   "dependencies": {
     "ramda": "0.22.x",

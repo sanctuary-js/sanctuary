@@ -1,11 +1,14 @@
 const webpack = require('webpack')
+const package = require('./package')
 
 module.exports = {
 
   output: {
-    library: 'Sanctuary',
+    library: 'sanctuary',
     libraryTarget: 'umd'
   },
+
+  externals: Object.keys(package.dependencies),
 
   module: {
     loaders: [
@@ -13,9 +16,9 @@ module.exports = {
     ]
   },
 
-  // node: {
-  //   Buffer: false
-  // },
+  node: {
+    Buffer: false
+  },
 
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
