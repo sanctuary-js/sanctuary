@@ -1,8 +1,8 @@
 
-import R from 'ramda'
-import $ from 'sanctuary-def'
 import { a, b, compose2, def } from '../_internal'
+import $ from 'sanctuary-def'
 import { I } from '../Combinator'
+import R from 'ramda'
 
 //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
 //.

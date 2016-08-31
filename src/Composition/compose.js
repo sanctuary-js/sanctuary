@@ -1,7 +1,6 @@
 
-import R from 'ramda'
+import { a, c, compose3, def } from '../_internal'
 import $ from 'sanctuary-def'
-import { a, c, def, compose3 } from '../_internal'
 
 //# compose :: (b -> c) -> (a -> b) -> a -> c
 //.

@@ -1,6 +1,6 @@
 
-import R from 'ramda'
 import $ from 'sanctuary-def'
+import R from 'ramda'
 import { def } from '../_internal'
 import { sum } from '../Number'
 
