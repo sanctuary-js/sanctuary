@@ -60,6 +60,8 @@ setup:
 test:
 	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive --timeout 10000
 	$(ISTANBUL) check-coverage --branches 100
-ifneq ($(shell node --version | sed 's/[.][^.]*$$//'),v0.10)
+ifeq ($(shell node --version | cut -d . -f 1),v6)
 	$(DOCTEST) -- index.js
+else
+	@echo '[WARN] Doctests are only run in Node v6.x.x (current version is $(shell node --version))' >&2
 endif

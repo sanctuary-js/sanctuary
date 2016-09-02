@@ -1983,10 +1983,10 @@
   //. Right(['foo', 'bar', 'baz'])
   //.
   //. > S.encaseEither(S.I, JSON.parse, '[')
-  //. Left(new SyntaxError('Unexpected end of input'))
+  //. Left(new SyntaxError('Unexpected end of JSON input'))
   //.
   //. > S.encaseEither(S.prop('message'), JSON.parse, '[')
-  //. Left('Unexpected end of input')
+  //. Left('Unexpected end of JSON input')
   //. ```
   S.encaseEither =
   def('encaseEither',
