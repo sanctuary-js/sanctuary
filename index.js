@@ -1265,7 +1265,7 @@
 
   //# toMaybe :: a? -> Maybe a
   //.
-  //. Takes a value and returns Nothing if the value is null or undefined;
+  //. Takes a value and returns Nothing if the value is `null` or `undefined`;
   //. Just the value otherwise.
   //.
   //. ```javascript
@@ -1882,6 +1882,31 @@
       {},
       [b, $Either(a, b), b],
       function(x, either) { return either.isRight ? either.value : x; });
+
+  //# toEither :: a -> b? -> Either a b
+  //.
+  //. Converts an arbitrary value to an Either: a Left if the value is `null`
+  //. or `undefined`; a Right otherwise. The first argument specifies the
+  //. value of the Left in the "failure" case.
+  //.
+  //. ```javascript
+  //. > S.toEither('XYZ', null)
+  //. Left('XYZ')
+  //.
+  //. > S.toEither('XYZ', 'ABC')
+  //. Right('ABC')
+  //.
+  //. > R.map(R.head, S.toEither('Invalid protocol', 'ftp://example.com/'.match(/^https?:/)))
+  //. Left('Invalid protocol')
+  //.
+  //. > R.map(R.head, S.toEither('Invalid protocol', 'https://example.com/'.match(/^https?:/)))
+  //. Right('https:')
+  //. ```
+  S.toEither =
+  def('toEither',
+      {},
+      [a, b, $Either(a, b)],
+      function(x, y) { return y == null ? Left(x) : Right(y); });
 
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
