@@ -7,6 +7,7 @@ var S = require('../internal/sanctuary');
 var EitherArb = require('../internal/EitherArb');
 var Identity = require('../internal/Identity');
 var IdentityArb = require('../internal/IdentityArb');
+var add_ = require('../internal/add_');
 var equals = require('../internal/equals');
 var laws = require('../internal/laws');
 var squareRoot = require('../internal/squareRoot');
@@ -163,7 +164,7 @@ suite('Either', function() {
     var foldableLaws = laws.Foldable(equals);
 
     foldableLaws.associativity(
-      jsc.constant(function(x, y) { return x + y; }),
+      jsc.constant(add_),
       jsc.number,
       EitherArb(jsc.string, jsc.number)
     );

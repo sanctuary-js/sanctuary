@@ -8,6 +8,7 @@ var EitherArb = require('../internal/EitherArb');
 var Identity = require('../internal/Identity');
 var IdentityArb = require('../internal/IdentityArb');
 var MaybeArb = require('../internal/MaybeArb');
+var add_ = require('../internal/add_');
 var equals = require('../internal/equals');
 var laws = require('../internal/laws');
 
@@ -193,7 +194,7 @@ suite('Maybe', function() {
     var foldableLaws = laws.Foldable(equals);
 
     foldableLaws.associativity(
-      jsc.constant(function(x, y) { return x + y; }),
+      jsc.constant(add_),
       jsc.number,
       MaybeArb(jsc.number)
     );
