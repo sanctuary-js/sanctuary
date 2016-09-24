@@ -200,6 +200,11 @@ describe('Right', function() {
     eq(S.Right([1, 2, 3]).toString(), 'Right([1, 2, 3])');
   });
 
+  it('provides an "inspect" method', function() {
+    eq(S.Right([1, 2, 3]).inspect.length, 0);
+    eq(S.Right([1, 2, 3]).inspect(), 'Right([1, 2, 3])');
+  });
+
   it('implements Semigroup', function() {
     var a = S.Right('foo');
     var b = S.Right('bar');

@@ -192,6 +192,11 @@ describe('Nothing', function() {
     eq(S.Nothing.toString(), 'Nothing');
   });
 
+  it('provides an "inspect" method', function() {
+    eq(S.Nothing.inspect.length, 0);
+    eq(S.Nothing.inspect(), 'Nothing');
+  });
+
   it('implements Semigroup', function() {
     var a = S.Nothing;
     var b = S.Nothing;

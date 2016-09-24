@@ -32,17 +32,59 @@
 //. ## Types
 //.
 //. Sanctuary uses Haskell-like type signatures to describe the types of
-//. values, including functions. `'foo'`, for example, has type `String`;
-//. `[1, 2, 3]` has type `Array Number`. The arrow (`->`) is used to express
-//. a function's type. `Math.abs`, for example, has type `Number -> Number`.
-//. That is, it takes an argument of type `Number` and returns a value of
-//. type `Number`.
+//. values, including functions. `'foo'`, for example, is a member of `String`;
+//. `[1, 2, 3]` is a member of `Array Number`. The double colon (`::`) is used
+//. to mean "is a member of", so one could write:
 //.
-//. [`R.map`][R.map] has type `(a -> b) -> Array a -> Array b`. That is,
-//. it takes an argument of type `a -> b` and returns a value of type
-//. `Array a -> Array b`. `a` and `b` are type variables: applying `R.map`
-//. to a value of type `String -> Number` will result in a value of type
-//. `Array String -> Array Number`.
+//.     'foo' :: String
+//.     [1, 2, 3] :: Array Number
+//.
+//. An identifier may appear to the left of the double colon:
+//.
+//.     Math.PI :: Number
+//.
+//. The arrow (`->`) is used to express a function's type:
+//.
+//.     Math.abs :: Number -> Number
+//.
+//. That states that `Math.abs` is a unary function which takes an argument
+//. of type `Number` and returns a value of type `Number`.
+//.
+//. Some functions are parametrically polymorphic: their types are not fixed.
+//. Type variables are used in the representations of such functions:
+//.
+//.     S.I :: a -> a
+//.
+//. `a` is a type variable. Type variables are not capitalized, so they
+//. are differentiable from type identifiers (which are always capitalized).
+//. By convention type variables have single-character names. The signature
+//. above states that `S.I` takes a value of any type and returns a value of
+//. the same type. Some signatures feature multiple type variables:
+//.
+//.     S.K :: a -> b -> a
+//.
+//. It must be possible to replace all occurrences of `a` with a concrete type.
+//. The same applies for each other type variable. For the function above, the
+//. types with which `a` and `b` are replaced may be different, but needn't be.
+//.
+//. Since all Sanctuary functions are curried (they accept their arguments
+//. one at a time), a binary function is represented as a unary function which
+//. returns a unary function: `* -> * -> *`. This aligns neatly with Haskell,
+//. which uses curried functions exclusively. In JavaScript, though, we may
+//. wish to represent the types of functions with arities less than or greater
+//. than one. The general form is `(<input-types>) -> <output-type>`, where
+//. `<input-types>` comprises zero or more comma–space (<code>, </code>)
+//. -separated type representations:
+//.
+//.   - `() -> String`
+//.   - `(a, b) -> a`
+//.   - `(a, b, c) -> d`
+//.
+//. `Number -> Number` can thus be seen as shorthand for `(Number) -> Number`.
+//.
+//. The question mark (`?`) is used to represent types which include `null`
+//. and `undefined` as members. `String?`, for example, represents the type
+//. comprising `null`, `undefined`, and all strings.
 //.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
 //. but these can be simulated by providing a group of data constructors which
@@ -60,6 +102,10 @@
 //. _When the `map` method is invoked on a value of type `Maybe a`
 //. (for any type `a`) with an argument of type `a -> b` (for any type `b`),
 //. it returns a value of type `Maybe b`._
+//.
+//. The squiggly arrow is also used when representing non-function properties.
+//. `Maybe a ~> Boolean`, for example, represents a Boolean property of a value
+//. of type `Maybe a`.
 //.
 //. Sanctuary supports type classes: constraints on type variables. Whereas
 //. `a -> a` implicitly supports every type, `Functor f => (a -> b) -> f a ->
@@ -182,23 +228,18 @@
     return f(g(x));
   };
 
-  //  filter :: (Monad m, Monoid m) => ((a -> Boolean), m a) -> m a
+  //  filter :: (Monad m, Monoid (m a)) => (a -> Boolean, m a) -> m a
   var filter = function(pred, m) {
     return m.chain(function(x) {
       return pred(x) ? m.of(x) : m.empty();
     });
   };
 
-  //  hasMethod :: String -> Any -> Boolean
+  //  hasMethod :: String -> a -> Boolean
   var hasMethod = function(name) {
     return function(x) {
       return x != null && typeof x[name] === 'function';
     };
-  };
-
-  //  inspect :: -> String
-  var inspect = /* istanbul ignore next */ function() {
-    return this.toString();
   };
 
   //  negativeZero :: a -> Boolean
@@ -835,12 +876,12 @@
       [a, $Maybe(a)],
       function(x) { return Just(x); });
 
-  //# Maybe#@@type :: String
+  //# Maybe#@@type :: Maybe a ~> String
   //.
   //. Maybe type identifier, `'sanctuary/Maybe'`.
   Maybe.prototype['@@type'] = 'sanctuary/Maybe';
 
-  //# Maybe#isNothing :: Boolean
+  //# Maybe#isNothing :: Maybe a ~> Boolean
   //.
   //. `true` if `this` is Nothing; `false` if `this` is a Just.
   //.
@@ -852,7 +893,7 @@
   //. false
   //. ```
 
-  //# Maybe#isJust :: Boolean
+  //# Maybe#isJust :: Maybe a ~> Boolean
   //.
   //. `true` if `this` is a Just; `false` if `this` is Nothing.
   //.
@@ -1116,7 +1157,7 @@
            return maybe.isJust ? R.map(Just, maybe.value) : of(maybe);
          });
 
-  //# Maybe#toBoolean :: Maybe a ~> Boolean
+  //# Maybe#toBoolean :: Maybe a ~> () -> Boolean
   //.
   //. Returns `false` if `this` is Nothing; `true` if `this` is a Just.
   //.
@@ -1133,7 +1174,7 @@
          [$Maybe(a), $.Boolean],
          prop('isJust'));
 
-  //# Maybe#toString :: Maybe a ~> String
+  //# Maybe#toString :: Maybe a ~> () -> String
   //.
   //. Returns the string representation of the Maybe.
   //.
@@ -1153,7 +1194,7 @@
                                : 'Nothing';
          });
 
-  //# Maybe#inspect :: Maybe a ~> String
+  //# Maybe#inspect :: Maybe a ~> () -> String
   //.
   //. Returns the string representation of the Maybe. This method is used by
   //. `util.inspect` and the REPL to format a Maybe for display.
@@ -1167,7 +1208,7 @@
   //. > S.Just([1, 2, 3]).inspect()
   //. 'Just([1, 2, 3])'
   //. ```
-  Maybe.prototype.inspect = inspect;
+  Maybe.prototype.inspect = function() { return this.toString(); };
 
   //# Nothing :: Maybe a
   //.
@@ -1491,12 +1532,12 @@
       [b, $Either(a, b)],
       function(x) { return Right(x); });
 
-  //# Either#@@type :: String
+  //# Either#@@type :: Either a b ~> String
   //.
   //. Either type identifier, `'sanctuary/Either'`.
   Either.prototype['@@type'] = 'sanctuary/Either';
 
-  //# Either#isLeft :: Boolean
+  //# Either#isLeft :: Either a b ~> Boolean
   //.
   //. `true` if `this` is a Left; `false` if `this` is a Right.
   //.
@@ -1508,7 +1549,7 @@
   //. false
   //. ```
 
-  //# Either#isRight :: Boolean
+  //# Either#isRight :: Either a b ~> Boolean
   //.
   //. `true` if `this` is a Right; `false` if `this` is a Left.
   //.
@@ -1746,7 +1787,7 @@
            return either.isRight ? R.map(Right, either.value) : of(either);
          });
 
-  //# Either#toBoolean :: Either a b ~> Boolean
+  //# Either#toBoolean :: Either a b ~> () -> Boolean
   //.
   //. Returns `false` if `this` is a Left; `true` if `this` is a Right.
   //.
@@ -1763,7 +1804,7 @@
          [$Either(a, b), $.Boolean],
          prop('isRight'));
 
-  //# Either#toString :: Either a b ~> String
+  //# Either#toString :: Either a b ~> () -> String
   //.
   //. Returns the string representation of the Either.
   //.
@@ -1783,7 +1824,7 @@
                   '(' + R.toString(either.value) + ')';
          });
 
-  //# Either#inspect :: Either a b ~> String
+  //# Either#inspect :: Either a b ~> () -> String
   //.
   //. Returns the string representation of the Either. This method is used by
   //. `util.inspect` and the REPL to format a Either for display.
@@ -1797,7 +1838,7 @@
   //. > S.Right([1, 2, 3]).inspect()
   //. 'Right([1, 2, 3])'
   //. ```
-  Either.prototype.inspect = inspect;
+  Either.prototype.inspect = function() { return this.toString(); };
 
   //# Left :: a -> Either a b
   //.
