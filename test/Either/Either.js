@@ -80,6 +80,14 @@ var Compose = function(F, G) {
 
 describe('Either', function() {
 
+  describe('Properties of the "swap" method', function() {
+    it('it should be it\'s own inverse', function() {
+      jsc.assert(jsc.forall(EitherArb(jsc.integer, jsc.integer), function(either) {
+        return either.swap().swap().equals(either);
+      }));
+    });
+  });
+
   it('throws if called', function() {
     throws(function() { S.Either(); },
            errorEq(Error, 'Cannot instantiate Either'));

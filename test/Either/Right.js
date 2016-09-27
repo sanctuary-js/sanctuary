@@ -195,6 +195,10 @@ describe('Right', function() {
     eq(S.Right(42).toBoolean(), true);
   });
 
+  it('provides a "swap" method', function() {
+    eq(S.Right(42).swap(), S.Left(42));
+  });
+
   it('provides a "toString" method', function() {
     eq(S.Right([1, 2, 3]).toString.length, 0);
     eq(S.Right([1, 2, 3]).toString(), 'Right([1, 2, 3])');
