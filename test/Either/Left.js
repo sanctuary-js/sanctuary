@@ -200,6 +200,11 @@ describe('Left', function() {
     eq(S.Left('abc').toString(), 'Left("abc")');
   });
 
+  it('provides an "inspect" method', function() {
+    eq(S.Left('abc').inspect.length, 0);
+    eq(S.Left('abc').inspect(), 'Left("abc")');
+  });
+
   it('implements Semigroup', function() {
     var a = S.Left('foo');
     var b = S.Left('bar');

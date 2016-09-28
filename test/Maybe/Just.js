@@ -229,6 +229,11 @@ describe('Just', function() {
     eq(S.Just([1, 2, 3]).toString(), 'Just([1, 2, 3])');
   });
 
+  it('provides an "inspect" method', function() {
+    eq(S.Just([1, 2, 3]).inspect.length, 0);
+    eq(S.Just([1, 2, 3]).inspect(), 'Just([1, 2, 3])');
+  });
+
   it('implements Semigroup', function() {
     var a = S.Just('foo');
     var b = S.Just('bar');
