@@ -146,15 +146,15 @@
 
 export {
   $Either as EitherType,
-  $Maybe as MaybeType
+  $Maybe as MaybeType,
 } from './_internal/Types'
 export {
-  env
+  env,
 } from './env'
 export {
   and,
   or,
-  xor
+  xor,
 } from './Alternative'
 export {
   append,
@@ -164,11 +164,11 @@ export {
   range,
   reduce,
   reduce_,
-  unfoldr
+  unfoldr,
 } from './Array'
 export {
   is,
-  type
+  type,
 } from './Classify'
 export {
   A,
@@ -182,7 +182,7 @@ export {
 export {
   compose,
   meld,
-  pipe
+  pipe,
 } from './Composition'
 export {
   either,
@@ -206,11 +206,11 @@ export {
   flip,
   lift,
   lift2,
-  lift3
+  lift3,
 } from './Function'
 export {
   even,
-  odd
+  odd,
 } from './Integer'
 export {
   at,
@@ -226,13 +226,13 @@ export {
   slice,
   tail,
   take,
-  takeLast
+  takeLast,
 } from './List'
 export {
   allPass,
   anyPass,
   ifElse,
-  not
+  not,
 } from './Logic'
 export {
   encase,
@@ -251,7 +251,7 @@ export {
   maybeToEither,
   maybeToNullable,
   Nothing,
-  toMaybe
+  toMaybe,
 } from './Maybe'
 export {
   add,
@@ -265,7 +265,7 @@ export {
   negate,
   product,
   sub,
-  sum
+  sum,
 } from './Number'
 export {
   get,
@@ -273,19 +273,19 @@ export {
   keys,
   pairs,
   prop,
-  values
+  values,
 } from './Object'
 export {
   parseDate,
   parseFloat,
   parseInt,
-  parseJson
+  parseJson,
 } from './Parse'
 export {
   match,
   regex,
   regexEscape,
-  test
+  test,
 } from './RegExp'
 export {
   lines,
@@ -294,7 +294,7 @@ export {
   trim,
   unlines,
   unwords,
-  words
+  words,
 } from './String'
 
 // export default {
