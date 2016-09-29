@@ -42,7 +42,9 @@
   "files": [
     "/LICENSE",
     "/README.md",
-    "/index.js",
+    "es6",
+    "lib",
+    "umd",
     "/package.json"
   ]
 }
