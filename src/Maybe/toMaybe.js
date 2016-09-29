@@ -5,7 +5,7 @@ import { $Maybe } from '../_internal/Types'
 
 //# toMaybe :: a? -> Maybe a
 //.
-//. Takes a value and returns Nothing if the value is null or undefined;
+//. Takes a value and returns Nothing if the value is `null` or `undefined`;
 //. Just the value otherwise.
 //.
 //. ```javascript
