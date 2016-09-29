@@ -199,7 +199,8 @@ export {
   Left,
   lefts,
   Right,
-  rights
+  rights,
+  toEither,
 } from './Either'
 export {
   flip,
