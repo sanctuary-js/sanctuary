@@ -3,7 +3,7 @@
 var $ = require('sanctuary-def');
 
 var eq = require('../utils').eq;
-var S = require('../..');
+import * as S from '../../src'
 
 
 describe('MaybeType', function() {

@@ -5,7 +5,7 @@ var utils = require('./utils');
 
 var area = R.uncurryN(3, utils.area);
 var eq = utils.eq;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('encaseEither3_', function() {

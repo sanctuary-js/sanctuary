@@ -6,7 +6,7 @@ var area = require('./utils').area;
 var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
 var highArity = require('./utils').highArity;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('encaseEither3', function() {

@@ -3,7 +3,7 @@
 var R = require('ramda');
 
 var eq = require('./utils').eq;
-var S = require('..');
+import * as S from '../src'
 
 
 describe('T', function() {

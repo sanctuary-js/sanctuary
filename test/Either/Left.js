@@ -6,7 +6,7 @@ var throws = assert.throws;
 var eq = require('../utils').eq;
 var errorEq = require('../utils').errorEq;
 var parseHex = require('../utils').parseHex;
-var S = require('../..');
+import * as S from '../../src'
 var square = require('../utils').square;
 var squareRoot = require('../utils').squareRoot;
 

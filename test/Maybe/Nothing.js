@@ -7,7 +7,7 @@ var R = require('ramda');
 
 var eq = require('../utils').eq;
 var errorEq = require('../utils').errorEq;
-var S = require('../..');
+import * as S from '../../src'
 var square = require('../utils').square;
 
 

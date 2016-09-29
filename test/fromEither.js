@@ -3,7 +3,7 @@
 var throws = require('assert').throws;
 
 var eq = require('./utils').eq;
-var S = require('..');
+import * as S from '../src'
 
 describe('fromEither', function() {
 
