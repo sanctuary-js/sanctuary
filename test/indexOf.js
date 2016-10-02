@@ -17,15 +17,15 @@ describe('indexOf', function() {
   it('type checks its arguments', function() {
     throws(function() { S.indexOf('x', null); },
            errorEq(TypeError,
-                   'Type-class constraint violation\n' +
+                   'Invalid value\n' +
                    '\n' +
-                   'indexOf :: ArrayLike b => a -> b -> Maybe Integer\n' +
-                   '           ^^^^^^^^^^^         ^\n' +
-                   '                               1\n' +
+                   'indexOf :: a -> List a -> Maybe Integer\n' +
+                   '                ^^^^^^\n' +
+                   '                  1\n' +
                    '\n' +
                    '1)  null :: Null\n' +
                    '\n' +
-                   '‘indexOf’ requires ‘b’ to satisfy the ArrayLike type-class constraint; the value at position 1 does not.\n'));
+                   'The value at position 1 is not a member of ‘List a’.\n'));
   });
 
   it('returns Nothing for an empty list', function() {

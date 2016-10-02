@@ -334,7 +334,7 @@
              x.length >= 0;
     },
     function(list) {
-      return list.length > 0 && R.type(list) !== 'String' ? [list[0]] : [];
+      return R.type(list) === 'String' ? [] : Array.prototype.slice.call(list);
     }
   );
 
@@ -2609,21 +2609,10 @@
         return result;
       });
 
-  //  ArrayLike :: TypeClass
-  var ArrayLike = $.TypeClass(
-    'ArrayLike',
-    function(x) {
-      return x != null &&
-             typeof x !== 'function' &&
-             $.Integer._test(x.length) &&
-             x.length >= 0;
-    }
-  );
-
   var sanctifyIndexOf = function(name) {
     return def(name,
-               {b: [ArrayLike]},
-               [a, b, $Maybe($.Integer)],
+               {},
+               [a, List(a), $Maybe($.Integer)],
                R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
