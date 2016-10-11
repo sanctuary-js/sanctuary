@@ -328,10 +328,7 @@
   var List = $.UnaryType(
     'sanctuary/List',
     function(x) {
-      return x != null &&
-             R.type(x) !== 'Function' &&
-             $.Integer._test(x.length) &&
-             x.length >= 0;
+      return R.contains(R.type(x), ['Array', 'String']);
     },
     function(list) {
       return R.type(list) === 'String' ? [] : Array.prototype.slice.call(list);
@@ -2320,11 +2317,35 @@
 
   //. ### List
   //.
-  //. The List type represents non-Function values with integer `length`
-  //. properties greater than or equal to zero, such as `[1, 2, 3]` and
-  //. `'foo'`.
+  //. The List type constructor enables type signatures to describe ad hoc
+  //. polymorphic functions which operate on either [`Array`][$.Array] or
+  //. [`String`][$.String] values.
   //.
-  //. `[a]` is the notation used to represent a List of values of type `a`.
+  //. Mental gymnastics are required to treat arrays and strings similarly.
+  //. `[1, 2, 3]` is a list containing `1`, `2`, and `3`. `'abc'` is a list
+  //. containing `'a'`, `'b'`, and `'c'`. But what is the type of `'a'`?
+  //. `String`, since JavaScript has no Char type! Thus:
+  //.
+  //.     'abc' :: String, List String, List (List String), ...
+  //.
+  //. Every member of `String` is also a member of `List String`! This
+  //. affects the interpretation of type signatures. Consider the type of
+  //. [`indexOf`](#indexOf):
+  //.
+  //.     a -> List a -> Maybe Integer
+  //.
+  //. Assume the second argument is `'hello' :: List String`. `a` must then be
+  //. replaced with `String`:
+  //.
+  //.     String -> List String -> Maybe Integer
+  //.
+  //. Since `List String` and `String` are interchangeable, the former can be
+  //. replaced with the latter:
+  //.
+  //.     String -> String -> Maybe Integer
+  //.
+  //. It's then apparent that the first argument needn't be a single-character
+  //. string; the correspondence between arrays and strings does not hold.
 
   //# concat :: Semigroup a => a -> a -> a
   //.
@@ -2347,7 +2368,7 @@
       [a, a, a],
       function(x, y) { return x.concat(y); });
 
-  //# slice :: Integer -> Integer -> [a] -> Maybe [a]
+  //# slice :: Integer -> Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just a list containing the elements from the supplied list
   //. from a beginning index (inclusive) to an end index (exclusive).
@@ -2355,9 +2376,6 @@
   //. the end interval, and the list contains both (half-open) intervals.
   //. Accepts negative indices, which indicate an offset from the end of
   //. the list.
-  //.
-  //. Dispatches to its third argument's `slice` method if present. As a
-  //. result, one may replace `[a]` with `String` in the type signature.
   //.
   //. ```javascript
   //. > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
@@ -2385,11 +2403,11 @@
         var Z = negativeZero(end) ? len : end < 0 ? end + len : end;
 
         return Math.abs(start) <= len && Math.abs(end) <= len && A <= Z ?
-          Just(R.slice(A, Z, xs)) :
+          Just(xs.slice(A, Z)) :
           Nothing;
       });
 
-  //# at :: Integer -> [a] -> Maybe a
+  //# at :: Integer -> List a -> Maybe a
   //.
   //. Takes an index and a list and returns Just the element of the list at
   //. the index if the index is within the list's bounds; Nothing otherwise.
@@ -2413,7 +2431,7 @@
         return R.map(R.head, slice(n, n === -1 ? -0 : n + 1, xs));
       });
 
-  //# head :: [a] -> Maybe a
+  //# head :: List a -> Maybe a
   //.
   //. Takes a list and returns Just the first element of the list if the
   //. list contains at least one element; Nothing if the list is empty.
@@ -2431,7 +2449,7 @@
       [List(a), $Maybe(a)],
       at(0));
 
-  //# last :: [a] -> Maybe a
+  //# last :: List a -> Maybe a
   //.
   //. Takes a list and returns Just the last element of the list if the
   //. list contains at least one element; Nothing if the list is empty.
@@ -2449,7 +2467,7 @@
       [List(a), $Maybe(a)],
       at(-1));
 
-  //# tail :: [a] -> Maybe [a]
+  //# tail :: List a -> Maybe (List a)
   //.
   //. Takes a list and returns Just a list containing all but the first
   //. of the list's elements if the list contains at least one element;
@@ -2468,7 +2486,7 @@
       [List(a), $Maybe(List(a))],
       slice(1, -0));
 
-  //# init :: [a] -> Maybe [a]
+  //# init :: List a -> Maybe (List a)
   //.
   //. Takes a list and returns Just a list containing all but the last
   //. of the list's elements if the list contains at least one element;
@@ -2487,12 +2505,11 @@
       [List(a), $Maybe(List(a))],
       slice(0, -1));
 
-  //# take :: Integer -> [a] -> Maybe [a]
+  //# take :: Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just the first N elements of the given collection if N is
   //. greater than or equal to zero and less than or equal to the length
-  //. of the collection; Nothing otherwise. Supports Array, String, and
-  //. any other collection type which provides a `slice` method.
+  //. of the collection; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.take(2, ['a', 'b', 'c', 'd', 'e'])
@@ -2512,12 +2529,11 @@
         return n < 0 || negativeZero(n) ? Nothing : slice(0, n, xs);
       });
 
-  //# takeLast :: Integer -> [a] -> Maybe [a]
+  //# takeLast :: Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just the last N elements of the given collection if N is
   //. greater than or equal to zero and less than or equal to the length
-  //. of the collection; Nothing otherwise. Supports Array, String, and
-  //. any other collection type which provides a `slice` method.
+  //. of the collection; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.takeLast(2, ['a', 'b', 'c', 'd', 'e'])
@@ -2537,12 +2553,11 @@
         return n < 0 || negativeZero(n) ? Nothing : slice(-n, -0, xs);
       });
 
-  //# drop :: Integer -> [a] -> Maybe [a]
+  //# drop :: Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just all but the first N elements of the given collection
   //. if N is greater than or equal to zero and less than or equal to the
-  //. length of the collection; Nothing otherwise. Supports Array, String,
-  //. and any other collection type which provides a `slice` method.
+  //. length of the collection; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.drop(2, ['a', 'b', 'c', 'd', 'e'])
@@ -2562,12 +2577,11 @@
         return n < 0 || negativeZero(n) ? Nothing : slice(n, -0, xs);
       });
 
-  //# dropLast :: Integer -> [a] -> Maybe [a]
+  //# dropLast :: Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just all but the last N elements of the given collection
   //. if N is greater than or equal to zero and less than or equal to the
-  //. length of the collection; Nothing otherwise. Supports Array, String,
-  //. and any other collection type which provides a `slice` method.
+  //. length of the collection; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.dropLast(2, ['a', 'b', 'c', 'd', 'e'])
@@ -2587,7 +2601,7 @@
         return n < 0 || negativeZero(n) ? Nothing : slice(0, -n, xs);
       });
 
-  //# reverse :: [a] -> [a]
+  //# reverse :: List a -> List a
   //.
   //. Returns the elements of the given list in reverse order.
   //.
@@ -2602,11 +2616,10 @@
   def('reverse',
       {},
       [List(a), List(a)],
-      function reverse(xs) {
-        if (_type(xs) === 'String') return reverse(xs.split('')).join('');
+      function(xs) {
         var result = [];
         for (var idx = xs.length - 1; idx >= 0; idx -= 1) result.push(xs[idx]);
-        return result;
+        return _type(xs) === 'String' ? result.join('') : result;
       });
 
   var sanctifyIndexOf = function(name) {
@@ -2616,15 +2629,11 @@
                R.pipe(R[name], Just, R.filter(R.gte(_, 0))));
   };
 
-  //# indexOf :: a -> [a] -> Maybe Integer
+  //# indexOf :: a -> List a -> Maybe Integer
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the first occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
-  //.
-  //. Dispatches to its second argument's `indexOf` method if present.
-  //. As a result, `String -> String -> Maybe Integer` is an alternative
-  //. type signature.
   //.
   //. ```javascript
   //. > S.indexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
@@ -2641,15 +2650,11 @@
   //. ```
   S.indexOf = sanctifyIndexOf('indexOf');
 
-  //# lastIndexOf :: a -> [a] -> Maybe Integer
+  //# lastIndexOf :: a -> List a -> Maybe Integer
   //.
   //. Takes a value of any type and a list, and returns Just the index
   //. of the last occurrence of the value in the list, if applicable;
   //. Nothing otherwise.
-  //.
-  //. Dispatches to its second argument's `lastIndexOf` method if present.
-  //. As a result, `String -> String -> Maybe Integer` is an alternative
-  //. type signature.
   //.
   //. ```javascript
   //. > S.lastIndexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
@@ -3599,6 +3604,8 @@
 
 }));
 
+//. [$.Array]:        https://github.com/sanctuary-js/sanctuary-def/#array
+//. [$.String]:       https://github.com/sanctuary-js/sanctuary-def/#string
 //. [Apply]:          https://github.com/fantasyland/fantasy-land#apply
 //. [BinaryType]:     https://github.com/sanctuary-js/sanctuary-def#binarytype
 //. [Extend]:         https://github.com/fantasyland/fantasy-land#extend
