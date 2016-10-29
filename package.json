@@ -22,7 +22,7 @@
     "mocha": "3.x.x",
     "sanctuary-style": "0.3.x",
     "transcribe": "0.5.x",
-    "xyz": "1.0.x"
+    "xyz": "1.1.x"
   },
   "files": [
     "/LICENSE",
