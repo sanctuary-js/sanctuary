@@ -2224,6 +2224,46 @@
         return toBoolean(x) === toBoolean(y) ? empty(x) : or(x, y);
       });
 
+  //. ### Apply
+  //.
+  //# apFirst :: (Apply a, Apply b) => a -> b -> a
+  //.
+  //. Combine two effectful actions, keeping only the result of the first.
+  //. ```javascript
+  //. > S.apFirst(S.Nothing, S.Nothing)
+  //. Nothing
+  //.
+  //. > S.apFirst(S.Just(1), S.Nothing)
+  //. Nothing
+  //.
+  //. > S.apFirst(S.Just(1), S.Just('2'))
+  //. Just(1)
+  //. ```
+  S.apFirst =
+  def('apFirst',
+    {a: [Apply], b: [Apply]},
+    [a, b, a],
+    S.lift2(S.K));
+
+  //# apSecond :: (Apply a, Apply b) => a -> b -> b
+  //.
+  //. Combine two effectful actions, keeping only the result of the second.
+  //. ```javascript
+  //. > S.apSecond(S.Nothing, S.Nothing)
+  //. Nothing
+  //.
+  //. > S.apSecond(S.Just(1), S.Nothing)
+  //. Nothing
+  //.
+  //. > S.apSecond(S.Just(1), S.Just('2'))
+  //. Just('2')
+  //. ```
+  S.apSecond =
+  def('apSecond',
+    {a: [Apply], b: [Apply]},
+    [a, b, b],
+    S.lift2(S.K(S.I)));
+
   //. ### Logic
 
   //# not :: Boolean -> Boolean
