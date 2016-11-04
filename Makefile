@@ -2,6 +2,7 @@ DOCTEST = node_modules/.bin/doctest --nodejs '--harmony' --module commonjs --pre
 ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-es3.json --env es3
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
+REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
 
@@ -37,6 +38,7 @@ lint:
 	  --rule 'dot-notation: [error, {allowKeywords: true}]' \
 	  --rule 'max-len: [off]' \
 	  -- test
+	$(REMEMBER_BOWER) $(shell pwd)
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
 	| sort -u \
