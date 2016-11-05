@@ -36,9 +36,4 @@ describe('fromMaybe', function() {
     eq(S.fromMaybe(0, S.Just(42)), 42);
   });
 
-  it('is curried', function() {
-    eq(S.fromMaybe(0).length, 1);
-    eq(S.fromMaybe(0)(S.Just(42)), 42);
-  });
-
 });

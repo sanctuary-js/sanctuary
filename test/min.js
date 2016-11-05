@@ -75,9 +75,4 @@ describe('min', function() {
     eq(S.min('a', 'A'), 'A');
   });
 
-  it('is curried', function() {
-    eq(S.min(10).length, 1);
-    eq(S.min(10)(2), 2);
-  });
-
 });

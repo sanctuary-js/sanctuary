@@ -41,9 +41,4 @@ describe('encase', function() {
     eq(S.encase(function(a, b, c, d) { return a; }, 42), S.Just(42));
   });
 
-  it('is curried', function() {
-    eq(S.encase(factorial).length, 1);
-    eq(S.encase(factorial)(5), S.Just(120));
-  });
-
 });

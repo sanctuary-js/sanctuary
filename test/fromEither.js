@@ -33,9 +33,4 @@ describe('fromEither', function() {
     eq(S.fromEither(0, S.Left(42)), 0);
   });
 
-  it('is curried', function() {
-    eq(S.fromEither(0).length, 1);
-    eq(S.fromEither(0)(S.Right(42)), 42);
-  });
-
 });

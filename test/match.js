@@ -60,9 +60,4 @@ describe('match', function() {
     eq(S.match(/zzz/, 'abcdefg'), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.match(/x/).length, 1);
-    eq(S.match(/x/)('xyz'), S.Just([S.Just('x')]));
-  });
-
 });

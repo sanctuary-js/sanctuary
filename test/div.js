@@ -73,9 +73,4 @@ describe('div', function() {
     eq(S.div(-1.5, -2), 0.75);
   });
 
-  it('is curried', function() {
-    eq(S.div(4).length, 1);
-    eq(S.div(8)(2), 4);
-  });
-
 });

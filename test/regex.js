@@ -91,9 +91,4 @@ describe('regex', function() {
     eq(S.regex('gim', '\\d'), /\d/gim);
   });
 
-  it('is curried', function() {
-    eq(S.regex('').length, 1);
-    eq(S.regex('')('\\d'), /\d/);
-  });
-
 });

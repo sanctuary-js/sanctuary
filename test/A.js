@@ -18,9 +18,4 @@ describe('A', function() {
     eq(R.map(S.A(R.__, 100), [S.inc, Math.sqrt]), [101, 10]);
   });
 
-  it('is curried', function() {
-    eq(S.A(S.inc).length, 1);
-    eq(S.A(S.inc)(1), 2);
-  });
-
 });

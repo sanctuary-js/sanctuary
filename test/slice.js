@@ -109,10 +109,4 @@ describe('slice', function() {
     eq(S.slice(3, -3, 'ramda'), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.slice(1).length, 2);
-    eq(S.slice(1)(-1).length, 1);
-    eq(S.slice(1)(-1)(['a', 'b', 'c', 'd', 'e']), S.Just(['b', 'c', 'd']));
-  });
-
 });

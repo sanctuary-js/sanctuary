@@ -130,9 +130,4 @@ describe('xor', function() {
                    '‘xor’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('is curried', function() {
-    eq(S.xor([]).length, 1);
-    eq(S.xor([])([42]), [42]);
-  });
-
 });

@@ -68,9 +68,4 @@ describe('drop', function() {
     eq(S.drop(0, 'abcdefg'), S.Just('abcdefg'));
   });
 
-  it('is curried', function() {
-    eq(S.drop(3).length, 1);
-    eq(S.drop(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['d', 'e']));
-  });
-
 });

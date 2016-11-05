@@ -62,11 +62,4 @@ describe('ifElse', function() {
     eq(S.ifElse(lt0, Math.abs, Math.sqrt, 16), 4);
   });
 
-  it('is curried', function() {
-    eq(S.ifElse(lt0).length, 3);
-    eq(S.ifElse(lt0)(Math.abs).length, 2);
-    eq(S.ifElse(lt0)(Math.abs)(Math.sqrt).length, 1);
-    eq(S.ifElse(lt0)(Math.abs)(Math.sqrt)(-1), 1);
-  });
-
 });

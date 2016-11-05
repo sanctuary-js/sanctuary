@@ -65,10 +65,4 @@ describe('pluck', function() {
     eq(S.pluck(vm.runInNewContext('Array'), 'x', [{x: [0]}]), [S.Just([0])]);
   });
 
-  it('is curried', function() {
-    eq(S.pluck(Number).length, 2);
-    eq(S.pluck(Number)('x').length, 1);
-    eq(S.pluck(Number)('x')([{x: 42}]), [S.Just(42)]);
-  });
-
 });

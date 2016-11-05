@@ -18,10 +18,4 @@ describe('C', function() {
     eq(R.map(S.C(S.concat, '!'), ['BAM', 'POW', 'KA-POW']), ['BAM!', 'POW!', 'KA-POW!']);
   });
 
-  it('is curried', function() {
-    eq(S.C(S.concat).length, 2);
-    eq(S.C(S.concat)('foo').length, 1);
-    eq(S.C(S.concat)('foo')('bar'), 'barfoo');
-  });
-
 });

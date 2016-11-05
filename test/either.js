@@ -98,38 +98,4 @@ describe('either', function() {
     eq(S.either(R.length, square, S.Right(42)), 1764);
   });
 
-  it('is curried', function() {
-    var f = R.length;
-    var g = square;
-    var x = S.Left('abc');
-    var _ = R.__;
-
-    eq(S.either(f).length, 2);
-    eq(S.either(f)(g).length, 1);
-
-    eq(S.either(f)(g)(x), 3);
-    eq(S.either(f)(g, x), 3);
-    eq(S.either(f, g)(x), 3);
-    eq(S.either(f, g, x), 3);
-
-    eq(S.either(_, g, x)(f), 3);
-    eq(S.either(f, _, x)(g), 3);
-    eq(S.either(f, g, _)(x), 3);
-
-    eq(S.either(f, _, _)(g)(x), 3);
-    eq(S.either(_, g, _)(f)(x), 3);
-    eq(S.either(_, _, x)(f)(g), 3);
-
-    eq(S.either(f, _, _)(g, x), 3);
-    eq(S.either(_, g, _)(f, x), 3);
-    eq(S.either(_, _, x)(f, g), 3);
-
-    eq(S.either(f, _, _)(_, x)(g), 3);
-    eq(S.either(_, g, _)(_, x)(f), 3);
-    eq(S.either(_, _, x)(_, g)(f), 3);
-
-    eq(S.either(_, _, _)(_, _)(_)(f, g, x), 3);
-    eq(S.either(_, _, _)(f, _, _)(_, _)(g, _)(_)(x), 3);
-  });
-
 });

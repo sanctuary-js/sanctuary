@@ -61,9 +61,4 @@ describe('dropLast', function() {
     eq(S.dropLast(0, 'abc'), S.Just('abc'));
   });
 
-  it('is curried', function() {
-    eq(S.dropLast(3).length, 1);
-    eq(S.dropLast(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b']));
-  });
-
 });

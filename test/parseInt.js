@@ -167,9 +167,4 @@ describe('parseInt', function() {
     eq(S.parseInt(10, '-Infinity'), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.parseInt(10).length, 1);
-    eq(S.parseInt(10)('42'), S.Just(42));
-  });
-
 });

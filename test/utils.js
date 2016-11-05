@@ -77,12 +77,6 @@ exports.runCompositionTests = function(compose) {
     eq(compose(R.map(Math.sqrt), JSON.parse, '[1, 4, 9]'), [1, 2, 3]);
   });
 
-  it('is curried', function() {
-    eq(compose(R.map(Math.sqrt)).length, 2);
-    eq(compose(R.map(Math.sqrt))(JSON.parse).length, 1);
-    eq(compose(R.map(Math.sqrt))(JSON.parse)('[1, 4, 9]'), [1, 2, 3]);
-  });
-
 };
 
 //      square :: Number -> Number

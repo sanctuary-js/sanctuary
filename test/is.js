@@ -63,9 +63,4 @@ describe('is', function() {
     eq(S.is(vm.runInNewContext('Array'), [1, 2, 3]), true);
   });
 
-  it('is curried', function() {
-    eq(S.is(Array).length, 1);
-    eq(S.is(Array)([]), true);
-  });
-
 });

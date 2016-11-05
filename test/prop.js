@@ -70,9 +70,4 @@ describe('prop', function() {
     eq(S.prop('global', /x/g), true);
   });
 
-  it('is curried', function() {
-    eq(S.prop('a').length, 1);
-    eq(S.prop('a')({a: 0, b: 1}), 0);
-  });
-
 });

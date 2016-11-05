@@ -51,9 +51,4 @@ describe('find', function() {
     eq(S.find(R.F, [1, 2, 3]), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.find(R.T).length, 1);
-    eq(S.find(R.T)([null]), S.Just(null));
-  });
-
 });

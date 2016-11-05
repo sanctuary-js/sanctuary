@@ -50,10 +50,4 @@ describe('reduce', function() {
     eq(S.reduce(unaryAdd, 10, UnaryFoldable), 11);
   });
 
-  it('is curried', function() {
-    eq(S.reduce(S.add).length, 2);
-    eq(S.reduce(S.add)(0).length, 1);
-    eq(S.reduce(S.add)(0)([1, 2, 3, 4, 5]), 15);
-  });
-
 });

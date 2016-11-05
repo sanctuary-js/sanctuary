@@ -45,9 +45,4 @@ describe('lastIndexOf', function() {
     eq(S.lastIndexOf('ax', 'banana'), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.lastIndexOf('c').length, 1);
-    eq(S.lastIndexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
-  });
-
 });

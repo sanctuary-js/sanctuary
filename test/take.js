@@ -67,9 +67,4 @@ describe('take', function() {
     eq(S.take(7, 'abcdefg'), S.Just('abcdefg'));
   });
 
-  it('is curried', function() {
-    eq(S.take(3).length, 1);
-    eq(S.take(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c']));
-  });
-
 });

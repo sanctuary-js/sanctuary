@@ -61,10 +61,4 @@ describe('encaseEither', function() {
        S.Right(42));
   });
 
-  it('is curried', function() {
-    eq(S.encaseEither(S.I).length, 2);
-    eq(S.encaseEither(S.I)(factorial).length, 1);
-    eq(S.encaseEither(S.I)(factorial)(5), S.Right(120));
-  });
-
 });

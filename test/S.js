@@ -15,10 +15,4 @@ describe('S', function() {
     eq(S.S(S.add, Math.sqrt, 100), 110);
   });
 
-  it('is curried', function() {
-    eq(S.S(S.add).length, 2);
-    eq(S.S(S.add)(Math.sqrt).length, 1);
-    eq(S.S(S.add)(Math.sqrt)(100), 110);
-  });
-
 });
