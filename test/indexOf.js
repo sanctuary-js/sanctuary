@@ -45,9 +45,4 @@ describe('indexOf', function() {
     eq(S.indexOf('ax', 'banana'), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.indexOf('c').length, 1);
-    eq(S.indexOf('c')(['a', 'b', 'c', 'd', 'e']), S.Just(2));
-  });
-
 });

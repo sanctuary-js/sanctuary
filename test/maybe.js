@@ -8,7 +8,6 @@ var R = require('ramda');
 var eq = require('./utils').eq;
 var errorEq = require('./utils').errorEq;
 var S = require('..');
-var square = require('./utils').square;
 
 
 describe('maybe', function() {
@@ -50,12 +49,6 @@ describe('maybe', function() {
 
   it('can be applied to a Just', function() {
     eq(S.maybe(0, R.length, S.Just([1, 2, 3])), 3);
-  });
-
-  it('is curried', function() {
-    eq(S.maybe(NaN).length, 2);
-    eq(S.maybe(NaN)(square).length, 1);
-    eq(S.maybe(NaN)(square)(S.Just(5)), 25);
   });
 
 });

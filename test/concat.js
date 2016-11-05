@@ -70,9 +70,4 @@ describe('concat', function() {
     eq(S.concat(S.Right([1, 2, 3]), S.Right([4, 5, 6])), S.Right([1, 2, 3, 4, 5, 6]));
   });
 
-  it('is curried', function() {
-    eq(S.concat([1, 2, 3]).length, 1);
-    eq(S.concat([1, 2, 3])([4, 5, 6]), [1, 2, 3, 4, 5, 6]);
-  });
-
 });

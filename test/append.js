@@ -49,9 +49,4 @@ describe('append', function() {
     eq(S.append([5, 6], [[1, 2], [3, 4]]), [[1, 2], [3, 4], [5, 6]]);
   });
 
-  it('is curried', function() {
-    eq(S.append(3).length, 1);
-    eq(S.append(3)([1, 2]), [1, 2, 3]);
-  });
-
 });

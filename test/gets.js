@@ -69,10 +69,4 @@ describe('gets', function() {
     eq(S.gets(vm.runInNewContext('RegExp'), ['x'], {x: /.*/}), S.Just(/.*/));
   });
 
-  it('is curried', function() {
-    eq(S.gets(Number).length, 2);
-    eq(S.gets(Number)(['x']).length, 1);
-    eq(S.gets(Number)(['x'])({x: 42}), S.Just(42));
-  });
-
 });

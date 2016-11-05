@@ -60,9 +60,4 @@ describe('takeLast', function() {
     eq(S.takeLast(0, 'abc'), S.Just(''));
   });
 
-  it('is curried', function() {
-    eq(S.takeLast(3).length, 1);
-    eq(S.takeLast(3)(['a', 'b', 'c', 'd', 'e']), S.Just(['c', 'd', 'e']));
-  });
-
 });

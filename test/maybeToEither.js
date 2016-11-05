@@ -36,9 +36,4 @@ describe('maybeToEither', function() {
     eq(S.maybeToEither('error msg', S.Just(42)), S.Right(42));
   });
 
-  it('is curried', function() {
-    eq(S.maybeToEither(0).length, 1);
-    eq(S.maybeToEither(0)(S.Just(42)), S.Right(42));
-  });
-
 });

@@ -17,9 +17,4 @@ describe('K', function() {
     eq(S.K(84, undefined), 84);
   });
 
-  it('is curried', function() {
-    eq(S.K(42).length, 1);
-    eq(S.K(42)(null), 42);
-  });
-
 });

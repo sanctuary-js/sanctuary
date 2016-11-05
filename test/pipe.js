@@ -19,9 +19,4 @@ describe('pipe', function() {
     eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec], '99'), 9);
   });
 
-  it('is curried', function() {
-    eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec]).length, 1);
-    eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec])('99'), 9);
-  });
-
 });

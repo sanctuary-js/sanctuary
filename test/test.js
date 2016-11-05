@@ -56,9 +56,4 @@ describe('test', function() {
     eq(S.test(pattern, 'xyz'), true);
   });
 
-  it('is curried', function() {
-    eq(S.test(/^a/).length, 1);
-    eq(S.test(/^a/)('abacus'), true);
-  });
-
 });

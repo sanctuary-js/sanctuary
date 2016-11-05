@@ -42,10 +42,4 @@ describe('encase2', function() {
     eq(S.encase2(highArity, 0, 42), S.Just(42));
   });
 
-  it('is curried', function() {
-    eq(S.encase2(rem).length, 2);
-    eq(S.encase2(rem)(42).length, 1);
-    eq(S.encase2(rem)(42)(5), S.Just(2));
-  });
-
 });

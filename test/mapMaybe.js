@@ -48,9 +48,4 @@ describe('mapMaybe', function() {
     eq(S.mapMaybe(S.head, [[1], [], [3], [], [5], []]), [1, 3, 5]);
   });
 
-  it('is curried', function() {
-    eq(S.mapMaybe(S.head).length, 1);
-    eq(S.mapMaybe(S.head)(['foo', '', 'bar', '', 'baz']), ['f', 'b', 'b']);
-  });
-
 });

@@ -87,9 +87,4 @@ describe('or', function() {
                    '‘or’ requires ‘a’ to satisfy the Alternative type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('is curried', function() {
-    eq(S.or([]).length, 1);
-    eq(S.or([])([42]), [42]);
-  });
-
 });

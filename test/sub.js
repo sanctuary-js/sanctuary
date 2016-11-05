@@ -71,9 +71,4 @@ describe('sub', function() {
     eq(S.sub(-7.5, -2), -5.5);
   });
 
-  it('is curried', function() {
-    eq(S.sub(1).length, 1);
-    eq(S.sub(1)(1), 0);
-  });
-
 });

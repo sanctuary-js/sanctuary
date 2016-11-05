@@ -43,11 +43,4 @@ describe('encase3', function() {
     eq(S.encase3(S.K(highArity), 0, 0, 42), S.Just(42));
   });
 
-  it('is curried', function() {
-    eq(S.encase3(area).length, 3);
-    eq(S.encase3(area)(3).length, 2);
-    eq(S.encase3(area)(3)(4).length, 1);
-    eq(S.encase3(area)(3)(4)(5), S.Just(6));
-  });
-
 });

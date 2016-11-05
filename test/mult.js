@@ -73,9 +73,4 @@ describe('mult', function() {
     eq(S.mult(-1.5, -3), 4.5);
   });
 
-  it('is curried', function() {
-    eq(S.mult(1).length, 1);
-    eq(S.mult(2)(2), 4);
-  });
-
 });

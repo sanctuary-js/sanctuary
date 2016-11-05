@@ -34,10 +34,4 @@ describe('flip', function() {
     eq(S.flip(S.indexOf, ['a', 'b', 'c', 'd'], 'c'), S.Just(2));
   });
 
-  it('is curried', function() {
-    eq(S.flip(S.indexOf).length, 2);
-    eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd']).length, 1);
-    eq(S.flip(S.indexOf)(['a', 'b', 'c', 'd'])('c'), S.Just(2));
-  });
-
 });

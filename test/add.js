@@ -71,9 +71,4 @@ describe('add', function() {
     eq(S.add(-1.5, -1), -2.5);
   });
 
-  it('is curried', function() {
-    eq(S.add(1).length, 1);
-    eq(S.add(1)(1), 2);
-  });
-
 });

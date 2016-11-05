@@ -86,9 +86,4 @@ describe('allPass', function() {
     eq(evaluated, false);
   });
 
-  it('is curried', function() {
-    eq(S.allPass([S.test(/q/)]).length, 1);
-    eq(S.allPass([S.test(/q/)])('quiessence'), true);
-  });
-
 });

@@ -54,9 +54,4 @@ describe('at', function() {
     eq(S.at(-0, ['foo', 'bar', 'baz']), S.Nothing);
   });
 
-  it('is curried', function() {
-    eq(S.at(1).length, 1);
-    eq(S.at(1)(['foo', 'bar', 'baz']), S.Just('bar'));
-  });
-
 });

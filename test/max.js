@@ -75,9 +75,4 @@ describe('max', function() {
     eq(S.max('a', 'A'), 'a');
   });
 
-  it('is curried', function() {
-    eq(S.max(10).length, 1);
-    eq(S.max(10)(2), 10);
-  });
-
 });
