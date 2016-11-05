@@ -14,8 +14,8 @@ describe('type', function() {
   });
 
   it('operates on values of built-in types', function() {
-    eq(S.type((function() { return arguments; }())),
-       'Arguments');
+    var args = (function() { return arguments; }());
+    eq(S.type(args),                'Arguments');
     eq(S.type([]),                  'Array');
     eq(S.type(false),               'Boolean');
     eq(S.type(new Date(0)),         'Date');

@@ -45,15 +45,12 @@ describe('match', function() {
   });
 
   it('supports global patterns', function() {
-    eq(S.match(/[a-z]a/g, 'bananas'),
-       S.Just([S.Just('ba'), S.Just('na'), S.Just('na')]));
+    eq(S.match(/[a-z]a/g, 'bananas'), S.Just([S.Just('ba'), S.Just('na'), S.Just('na')]));
   });
 
   it('supports (optional) capturing groups', function() {
-    eq(S.match(/(good)?bye/, 'goodbye'),
-       S.Just([S.Just('goodbye'), S.Just('good')]));
-    eq(S.match(/(good)?bye/, 'bye'),
-       S.Just([S.Just('bye'), S.Nothing]));
+    eq(S.match(/(good)?bye/, 'goodbye'), S.Just([S.Just('goodbye'), S.Just('good')]));
+    eq(S.match(/(good)?bye/, 'bye'), S.Just([S.Just('bye'), S.Nothing]));
   });
 
   it('returns Nothing if no match', function() {

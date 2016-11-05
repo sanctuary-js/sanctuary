@@ -29,8 +29,7 @@ describe('parseDate', function() {
   });
 
   it('returns a Just when applied to a valid date string', function() {
-    eq(S.parseDate('2001-02-03T04:05:06Z'),
-       S.Just(new Date('2001-02-03T04:05:06Z')));
+    eq(S.parseDate('2001-02-03T04:05:06Z'), S.Just(new Date('2001-02-03T04:05:06Z')));
   });
 
   it('returns Nothing when applied to an invalid date string', function() {

@@ -134,8 +134,7 @@ describe('Just', function() {
     var w = S.Just(42);
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
-    eq(w.extend(g).extend(f),
-       w.extend(function(_w) { return f(_w.extend(g)); }));
+    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Just(42).extend(null); },
            errorEq(TypeError,

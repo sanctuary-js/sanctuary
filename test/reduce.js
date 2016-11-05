@@ -37,9 +37,7 @@ describe('reduce', function() {
   it('folds over lists with the supplied accumulator', function() {
     eq(S.reduce(S.add, 0, [1, 2, 3, 4, 5]), 15);
     eq(S.reduce(S.add, 0, []), 0);
-    eq(S.reduce(S.lift2(S.add), S.Just(0),
-                [S.Just(1), S.Just(2), S.Just(3), S.Just(4), S.Just(5)]),
-       S.Just(15));
+    eq(S.reduce(S.lift2(S.add), S.Just(0), [S.Just(1), S.Just(2), S.Just(3), S.Just(4), S.Just(5)]), S.Just(15));
   });
 
   it('dispatches to a "reduce" method if present', function() {

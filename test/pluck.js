@@ -56,8 +56,7 @@ describe('pluck', function() {
   it('returns a list of satisfactory plucked values', function() {
     var xs = [{x: '1'}, {x: 2}, {x: null}, {x: undefined}, {}];
     eq(S.pluck(Number, 'x', []), []);
-    eq(S.pluck(Number, 'x', xs),
-       [S.Nothing, S.Just(2), S.Nothing, S.Nothing, S.Nothing]);
+    eq(S.pluck(Number, 'x', xs), [S.Nothing, S.Just(2), S.Nothing, S.Nothing, S.Nothing]);
   });
 
   it('does not rely on constructor identity', function() {

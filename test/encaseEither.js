@@ -47,18 +47,15 @@ describe('encaseEither', function() {
   });
 
   it('returns a Left on failure', function() {
-    eq(S.encaseEither(S.I, factorial, -1),
-       S.Left(new Error('Cannot determine factorial of negative number')));
+    eq(S.encaseEither(S.I, factorial, -1), S.Left(new Error('Cannot determine factorial of negative number')));
   });
 
   it('applies the first argument to the Error', function() {
-    eq(S.encaseEither(S.prop('message'), factorial, -1),
-       S.Left('Cannot determine factorial of negative number'));
+    eq(S.encaseEither(S.prop('message'), factorial, -1), S.Left('Cannot determine factorial of negative number'));
   });
 
   it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encaseEither(S.I, function(a, b, c, d) { return a; }, 42),
-       S.Right(42));
+    eq(S.encaseEither(S.I, function(a, b, c, d) { return a; }, 42), S.Right(42));
   });
 
 });
