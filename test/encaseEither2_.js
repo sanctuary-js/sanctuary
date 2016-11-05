@@ -15,13 +15,11 @@ describe('encaseEither2_', function() {
   });
 
   it('returns a Left on failure', function() {
-    eq(S.encaseEither2_(S.I, rem, 42, 0),
-       S.Left(new Error('Cannot divide by zero')));
+    eq(S.encaseEither2_(S.I, rem, 42, 0), S.Left(new Error('Cannot divide by zero')));
   });
 
   it('applies the first argument to the Error', function() {
-    eq(S.encaseEither2_(S.prop('message'), rem, 42, 0),
-       S.Left('Cannot divide by zero'));
+    eq(S.encaseEither2_(S.prop('message'), rem, 42, 0), S.Left('Cannot divide by zero'));
   });
 
 });

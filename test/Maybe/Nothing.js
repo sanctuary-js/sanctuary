@@ -99,8 +99,7 @@ describe('Nothing', function() {
     var w = S.Nothing;
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
-    eq(w.extend(g).extend(f),
-       w.extend(function(_w) { return f(_w.extend(g)); }));
+    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Nothing.extend(null); },
            errorEq(TypeError,

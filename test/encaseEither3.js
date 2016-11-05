@@ -47,18 +47,15 @@ describe('encaseEither3', function() {
   });
 
   it('returns a Left on failure', function() {
-    eq(S.encaseEither3(S.I, area, 2, 2, 5),
-       S.Left(new Error('Impossible triangle')));
+    eq(S.encaseEither3(S.I, area, 2, 2, 5), S.Left(new Error('Impossible triangle')));
   });
 
   it('applies the first argument to the Error', function() {
-    eq(S.encaseEither3(S.prop('message'), area, 2, 2, 5),
-       S.Left('Impossible triangle'));
+    eq(S.encaseEither3(S.prop('message'), area, 2, 2, 5), S.Left('Impossible triangle'));
   });
 
   it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encaseEither3(S.I, S.K(highArity), 0, 0, 42),
-       S.Right(42));
+    eq(S.encaseEither3(S.I, S.K(highArity), 0, 0, 42), S.Right(42));
   });
 
 });

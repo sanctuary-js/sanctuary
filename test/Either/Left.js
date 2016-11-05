@@ -134,8 +134,7 @@ describe('Left', function() {
     var w = S.Left('abc');
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
-    eq(w.extend(g).extend(f),
-       w.extend(function(_w) { return f(_w.extend(g)); }));
+    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Left('abc').extend(null); },
            errorEq(TypeError,
@@ -169,8 +168,7 @@ describe('Left', function() {
 
   it('provides a "reduce" method', function() {
     eq(S.Left().reduce.length, 2);
-    eq(S.Left().reduce(function(xs, x) { return xs.concat([x]); }, [42]),
-       [42]);
+    eq(S.Left().reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42]);
 
     throws(function() { S.Left().reduce(null, null); },
            errorEq(TypeError,

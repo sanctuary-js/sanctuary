@@ -134,8 +134,7 @@ describe('Right', function() {
     var w = S.Right(42);
     var f = function(x) { return x.value + 1; };
     var g = function(x) { return x.value * x.value; };
-    eq(w.extend(g).extend(f),
-       w.extend(function(_w) { return f(_w.extend(g)); }));
+    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Right('abc').extend(null); },
            errorEq(TypeError,
@@ -169,8 +168,7 @@ describe('Right', function() {
 
   it('provides a "reduce" method', function() {
     eq(S.Right(5).reduce.length, 2);
-    eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]),
-       [42, 5]);
+    eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42, 5]);
 
     throws(function() { S.Right().reduce(null, null); },
            errorEq(TypeError,
