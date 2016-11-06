@@ -169,7 +169,7 @@ describe('Right', function() {
     eq(S.Right(5).reduce.length, 2);
     eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42, 5]);
 
-    throws(function() { S.Right().reduce(null, null); },
+    throws(function() { S.Right(5).reduce(null, null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
