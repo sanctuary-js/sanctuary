@@ -1,13 +1,12 @@
 'use strict';
 
-var assert = require('assert');
-var throws = assert.throws;
+var throws = require('assert').throws;
 
-var area = require('./utils').area;
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var highArity = require('./utils').highArity;
 var S = require('..');
+
+var area = require('./internal/area');
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('encase3', function() {
@@ -37,10 +36,6 @@ describe('encase3', function() {
 
   it('returns Nothing on failure', function() {
     eq(S.encase3(area, 2, 2, 5), S.Nothing);
-  });
-
-  it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encase3(S.K(highArity), 0, 0, 42), S.Just(42));
   });
 
 });

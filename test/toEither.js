@@ -1,7 +1,8 @@
 'use strict';
 
-var eq = require('./utils').eq;
 var S = require('..');
+
+var eq = require('./internal/eq');
 
 
 describe('toEither', function() {

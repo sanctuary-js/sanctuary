@@ -1,10 +1,12 @@
 'use strict';
+
 var throws = require('assert').throws;
 var vm = require('vm');
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('get', function() {

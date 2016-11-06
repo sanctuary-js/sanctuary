@@ -2,8 +2,10 @@
 
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
 var S = require('..');
+
+var eq = require('./internal/eq');
+
 
 describe('fromEither', function() {
 

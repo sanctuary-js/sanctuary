@@ -2,11 +2,11 @@
 
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var rem = require('./utils').rem;
-var highArity = require('./utils').highArity;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
+var rem = require('./internal/rem');
 
 
 describe('encaseEither2', function() {
@@ -52,10 +52,6 @@ describe('encaseEither2', function() {
 
   it('applies the first argument to the Error', function() {
     eq(S.encaseEither2(S.prop('message'), rem, 42, 0), S.Left('Cannot divide by zero'));
-  });
-
-  it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encaseEither2(S.I, highArity, 0, 42), S.Right(42));
   });
 
 });

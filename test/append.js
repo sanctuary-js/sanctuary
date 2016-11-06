@@ -2,9 +2,10 @@
 
 var throws = require('assert').throws;
 
-var errorEq = require('./utils').errorEq;
-var eq = require('./utils').eq;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('append', function() {

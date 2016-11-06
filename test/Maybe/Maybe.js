@@ -5,8 +5,9 @@ var throws = require('assert').throws;
 var jsc = require('jsverify');
 var R = require('ramda');
 
-var errorEq = require('../utils').errorEq;
 var S = require('../..');
+
+var errorEq = require('../internal/errorEq');
 
 
 //  Identity :: a -> Identity a

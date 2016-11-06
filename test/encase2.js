@@ -1,12 +1,12 @@
 'use strict';
-var assert = require('assert');
-var throws = assert.throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var rem = require('./utils').rem;
-var highArity = require('./utils').highArity;
+var throws = require('assert').throws;
+
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
+var rem = require('./internal/rem');
 
 
 describe('encase2', function() {
@@ -36,10 +36,6 @@ describe('encase2', function() {
 
   it('returns Nothing on failure', function() {
     eq(S.encase2(rem, 42, 0), S.Nothing);
-  });
-
-  it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encase2(highArity, 0, 42), S.Just(42));
   });
 
 });

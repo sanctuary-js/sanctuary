@@ -2,10 +2,11 @@
 
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var factorial = require('./utils').factorial;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
+var factorial = require('./internal/factorial');
 
 
 describe('encase', function() {
