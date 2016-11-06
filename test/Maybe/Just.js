@@ -197,7 +197,7 @@ describe('Just', function() {
     eq(S.Just(5).reduce.length, 2);
     eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
 
-    throws(function() { S.Just().reduce(null, null); },
+    throws(function() { S.Just(5).reduce(null, null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +

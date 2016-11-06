@@ -166,10 +166,10 @@ describe('Left', function() {
   });
 
   it('provides a "reduce" method', function() {
-    eq(S.Left().reduce.length, 2);
-    eq(S.Left().reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42]);
+    eq(S.Left('abc').reduce.length, 2);
+    eq(S.Left('abc').reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42]);
 
-    throws(function() { S.Left().reduce(null, null); },
+    throws(function() { S.Left('abc').reduce(null, null); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +

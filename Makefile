@@ -31,6 +31,7 @@ lint:
 	  --global module \
 	  --global require \
 	  --global self \
+	  --rule 'func-style: [off]' \
 	  -- index.js
 	$(ESLINT) \
 	  --env node \
@@ -60,7 +61,7 @@ setup:
 
 .PHONY: test
 test:
-	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive --timeout 10000
+	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive --timeout 20000
 	$(ISTANBUL) check-coverage --branches 100
 ifeq ($(shell node --version | cut -d . -f 1),v6)
 	$(DOCTEST) -- index.js
