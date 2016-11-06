@@ -1,14 +1,13 @@
 'use strict';
 
-var assert = require('assert');
-var throws = assert.throws;
+var throws = require('assert').throws;
 
 var R = require('ramda');
 
-var eq = require('../utils').eq;
-var errorEq = require('../utils').errorEq;
 var S = require('../..');
-var square = require('../utils').square;
+
+var eq = require('../internal/eq');
+var errorEq = require('../internal/errorEq');
 
 
 describe('Nothing', function() {
@@ -124,10 +123,8 @@ describe('Nothing', function() {
     var p = function(n) { return n < 0; };
     var q = function(n) { return n > 0; };
 
-    assert(m.map(f).filter(p)
-           .equals(m.filter(function(x) { return p(f(x)); }).map(f)));
-    assert(m.map(f).filter(q)
-           .equals(m.filter(function(x) { return q(f(x)); }).map(f)));
+    eq(m.map(f).filter(p).equals(m.filter(function(x) { return p(f(x)); }).map(f)), true);
+    eq(m.map(f).filter(q).equals(m.filter(function(x) { return q(f(x)); }).map(f)), true);
 
     throws(function() { S.Nothing.filter(null); },
            errorEq(TypeError,
@@ -202,29 +199,29 @@ describe('Nothing', function() {
     var c = S.Nothing;
 
     // associativity
-    assert(a.concat(b).concat(c).equals(a.concat(b.concat(c))));
+    eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
   });
 
   it('implements Monoid', function() {
     var a = S.Nothing;
 
     // left identity
-    assert(a.empty().concat(a).equals(a));
+    eq(a.empty().concat(a).equals(a), true);
 
     // right identity
-    assert(a.concat(a.empty()).equals(a));
+    eq(a.concat(a.empty()).equals(a), true);
   });
 
   it('implements Functor', function() {
     var a = S.Nothing;
     var f = S.inc;
-    var g = square;
+    var g = Math.sqrt;
 
     // identity
-    assert(a.map(S.I).equals(a));
+    eq(a.map(S.I).equals(a), true);
 
     // composition
-    assert(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)));
+    eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
   });
 
   it('implements Apply', function() {
@@ -233,13 +230,13 @@ describe('Nothing', function() {
     var c = S.Nothing;
 
     // composition
-    assert(a.map(function(f) {
+    eq(a.map(function(f) {
       return function(g) {
         return function(x) {
           return f(g(x));
         };
       };
-    }).ap(b).ap(c).equals(a.ap(b.ap(c))));
+    }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
   });
 
   it('implements Applicative', function() {
@@ -249,13 +246,13 @@ describe('Nothing', function() {
     var x = 7;
 
     // identity
-    assert(a.of(S.I).ap(b).equals(b));
+    eq(a.of(S.I).ap(b).equals(b), true);
 
     // homomorphism
-    assert(a.of(f).ap(a.of(x)).equals(a.of(f(x))));
+    eq(a.of(f).ap(a.of(x)).equals(a.of(f(x))), true);
 
     // interchange
-    assert(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))));
+    eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
   });
 
   it('implements Chain', function() {
@@ -264,8 +261,7 @@ describe('Nothing', function() {
     var g = S.last;
 
     // associativity
-    assert(a.chain(f).chain(g)
-           .equals(a.chain(function(x) { return f(x).chain(g); })));
+    eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
   });
 
   it('implements Monad', function() {
@@ -274,10 +270,10 @@ describe('Nothing', function() {
     var x = [1, 2, 3];
 
     // left identity
-    assert(a.of(x).chain(f).equals(f(x)));
+    eq(a.of(x).chain(f).equals(f(x)), true);
 
     // right identity
-    assert(a.chain(a.of).equals(a));
+    eq(a.chain(a.of).equals(a), true);
   });
 
 });

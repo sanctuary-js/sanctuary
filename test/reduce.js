@@ -2,16 +2,11 @@
 
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
 var S = require('..');
 
-var unaryAdd = function(a) { return function(b) { return a + b; }; };
-var UnaryFoldable = {
-  reduce: function(f, a) {
-    return f(a, 1);
-  }
-};
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
+
 
 describe('reduce', function() {
 
@@ -42,10 +37,6 @@ describe('reduce', function() {
 
   it('dispatches to a "reduce" method if present', function() {
     eq(S.reduce(S.add, 10, S.Just(5)), 15);
-  });
-
-  it('works with manually curried functions when dispatching', function() {
-    eq(S.reduce(unaryAdd, 10, UnaryFoldable), 11);
   });
 
 });

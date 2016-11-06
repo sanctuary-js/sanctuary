@@ -1,12 +1,12 @@
 'use strict';
 
 var throws = require('assert').throws;
-var R = require('ramda');
 
-var area = require('./utils').area;
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
 var S = require('..');
+
+var area = require('./internal/area');
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('lift3', function() {
@@ -40,7 +40,7 @@ describe('lift3', function() {
     eq(S.lift3(S.reduce, [S.add], [0], [[1, 2, 3]]), [6]);
     eq(S.lift3(S.reduce, [S.add], [0], []), []);
 
-    eq(S.lift3(R.curry(area), S.dec, S.I, S.inc)(4), 6);
+    eq(S.lift3(area, S.dec, S.I, S.inc)(4), 6);
   });
 
 });

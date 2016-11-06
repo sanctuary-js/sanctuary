@@ -2,11 +2,11 @@
 
 var throws = require('assert').throws;
 
-var area = require('./utils').area;
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
-var highArity = require('./utils').highArity;
 var S = require('..');
+
+var area = require('./internal/area');
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('encaseEither3', function() {
@@ -52,10 +52,6 @@ describe('encaseEither3', function() {
 
   it('applies the first argument to the Error', function() {
     eq(S.encaseEither3(S.prop('message'), area, 2, 2, 5), S.Left('Impossible triangle'));
-  });
-
-  it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encaseEither3(S.I, S.K(highArity), 0, 0, 42), S.Right(42));
   });
 
 });

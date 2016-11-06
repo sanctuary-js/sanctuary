@@ -1,12 +1,13 @@
 'use strict';
 
-var R = require('ramda');
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
+var R = require('ramda');
+
 var S = require('..');
-var square = require('./utils').square;
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('either', function() {
@@ -29,7 +30,7 @@ describe('either', function() {
                    '\n' +
                    'The value at position 1 is not a member of ‘Function’.\n'));
 
-    throws(function() { S.either(R.__, square)([1, 2, 3]); },
+    throws(function() { S.either(R.__, Math.sqrt)([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -65,7 +66,7 @@ describe('either', function() {
                    '\n' +
                    'The value at position 1 is not a member of ‘Function’.\n'));
 
-    throws(function() { S.either(R.length, square, [1, 2, 3]); },
+    throws(function() { S.either(R.length, Math.sqrt, [1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -77,7 +78,7 @@ describe('either', function() {
                    '\n' +
                    'The value at position 1 is not a member of ‘Either a b’.\n'));
 
-    throws(function() { S.either(R.length)(square)([1, 2, 3]); },
+    throws(function() { S.either(R.length)(Math.sqrt)([1, 2, 3]); },
            errorEq(TypeError,
                    'Invalid value\n' +
                    '\n' +
@@ -91,11 +92,11 @@ describe('either', function() {
   });
 
   it('can be applied to a Left', function() {
-    eq(S.either(R.length, square, S.Left('abc')), 3);
+    eq(S.either(R.length, Math.sqrt, S.Left('abc')), 3);
   });
 
   it('can be applied to a Right', function() {
-    eq(S.either(R.length, square, S.Right(42)), 1764);
+    eq(S.either(R.length, Math.sqrt, S.Right(256)), 16);
   });
 
 });

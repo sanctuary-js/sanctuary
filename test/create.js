@@ -4,9 +4,10 @@ var throws = require('assert').throws;
 
 var $ = require('sanctuary-def');
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 //  customEnv :: Array Type

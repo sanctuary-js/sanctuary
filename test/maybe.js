@@ -1,13 +1,13 @@
 'use strict';
 
-var assert = require('assert');
-var throws = assert.throws;
+var throws = require('assert').throws;
 
 var R = require('ramda');
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('maybe', function() {

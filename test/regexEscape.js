@@ -1,11 +1,13 @@
 'use strict';
 
-var jsc = require('jsverify');
 var throws = require('assert').throws;
 
-var eq = require('./utils').eq;
-var errorEq = require('./utils').errorEq;
+var jsc = require('jsverify');
+
 var S = require('..');
+
+var eq = require('./internal/eq');
+var errorEq = require('./internal/errorEq');
 
 
 describe('regexEscape', function() {
