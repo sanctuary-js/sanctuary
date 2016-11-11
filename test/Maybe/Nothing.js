@@ -178,11 +178,6 @@ describe('Nothing', function() {
     eq(S.Nothing.sequence(S.Either.of), S.Right(S.Nothing));
   });
 
-  it('provides a "toBoolean" method', function() {
-    eq(S.Nothing.toBoolean.length, 0);
-    eq(S.Nothing.toBoolean(), false);
-  });
-
   it('provides a "toString" method', function() {
     eq(S.Nothing.toString.length, 0);
     eq(S.Nothing.toString(), 'Nothing');
