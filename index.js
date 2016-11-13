@@ -750,8 +750,6 @@
   //. In general terms, `pipe` performs left-to-right composition of an array
   //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
   //.
-  //. See also [`meld`](#meld).
-  //.
   //. ```javascript
   //. > S.pipe([S.inc, Math.sqrt, S.dec])(99)
   //. 9
@@ -760,48 +758,6 @@
     return fs.reduce(function(x, f) { return f(x); }, x);
   }
   S.pipe = def('pipe', {}, [$.Array($.Function), a, b], pipe);
-
-  //# meld :: [** -> *] -> (* -> * -> ... -> *)
-  //.
-  //. Takes an array of non-nullary functions and returns a curried function
-  //. whose arity is one greater than the sum of the arities of the given
-  //. functions less the number of functions.
-  //.
-  //. The behaviour of `meld` is best conveyed diagrammatically. The following
-  //. diagram depicts the "melding" of binary functions `f` and `g`:
-  //.
-  //.               +-------+
-  //.     --- a --->|       |
-  //.               |   f   |                +-------+
-  //.     --- b --->|       |--- f(a, b) --->|       |
-  //.               +-------+                |   g   |
-  //.     --- c ---------------------------->|       |--- g(f(a, b), c) --->
-  //.                                        +-------+
-  //.
-  //. See also [`pipe`](#pipe).
-  //.
-  //. ```javascript
-  //. > S.meld([Math.pow, S.sub])(3, 4, 5)
-  //. 76
-  //.
-  //. > S.meld([Math.pow, S.sub])(3)(4)(5)
-  //. 76
-  //. ```
-  function meld(fs) {
-    return R.curryN(
-      fs.reduce(function(n, f) { return n + f.length - 1; }, 1),
-      function() {
-        return fs.reduce(
-          function(args, f) {
-            var idx = f.length;
-            return prepend(f.apply(null, args.slice(0, idx)), args.slice(idx));
-          },
-          _slice.call(arguments)
-        )[0];
-      }
-    );
-  }
-  S.meld = def('meld', {}, [$.Array($.Function), $.Function], meld);
 
   //. ### Maybe type
   //.
