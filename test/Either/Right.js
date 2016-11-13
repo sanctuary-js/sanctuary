@@ -187,11 +187,6 @@ describe('Right', function() {
     eq(S.Right(S.Just(42)).sequence(S.Maybe.of), S.Just(S.Right(42)));
   });
 
-  it('provides a "toBoolean" method', function() {
-    eq(S.Right(42).toBoolean.length, 0);
-    eq(S.Right(42).toBoolean(), true);
-  });
-
   it('provides a "toString" method', function() {
     eq(S.Right([1, 2, 3]).toString.length, 0);
     eq(S.Right([1, 2, 3]).toString(), 'Right([1, 2, 3])');

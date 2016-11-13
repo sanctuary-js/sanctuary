@@ -284,15 +284,6 @@
     }
   );
 
-  //  Monoid :: TypeClass
-  var Monoid = $.TypeClass(
-    'sanctuary/Monoid',
-    function(x) {
-      return R.contains(R.type(x), ['Array', 'Boolean', 'String']) ||
-             hasMethod('empty')(x);
-    }
-  );
-
   //  Ord :: TypeClass
   var Ord = $.TypeClass(
     'sanctuary/Ord',
@@ -1096,26 +1087,6 @@
          [$Maybe(a), $.Function, b],
          Maybe$prototype$sequence);
 
-  //# Maybe#toBoolean :: Maybe a ~> () -> Boolean
-  //.
-  //. Returns `false` if `this` is Nothing; `true` if `this` is a Just.
-  //.
-  //. ```javascript
-  //. > S.Nothing.toBoolean()
-  //. false
-  //.
-  //. > S.Just(42).toBoolean()
-  //. true
-  //. ```
-  function Maybe$prototype$toBoolean(self) {
-    return self.isJust;
-  }
-  Maybe.prototype.toBoolean =
-  method('Maybe#toBoolean',
-         {},
-         [$Maybe(a), $.Boolean],
-         Maybe$prototype$toBoolean);
-
   //# Maybe#toString :: Maybe a ~> () -> String
   //.
   //. Returns the string representation of the Maybe.
@@ -1704,26 +1675,6 @@
          [$Either(a, b), $.Function, c],
          Either$prototype$sequence);
 
-  //# Either#toBoolean :: Either a b ~> () -> Boolean
-  //.
-  //. Returns `false` if `this` is a Left; `true` if `this` is a Right.
-  //.
-  //. ```javascript
-  //. > S.Left(42).toBoolean()
-  //. false
-  //.
-  //. > S.Right(42).toBoolean()
-  //. true
-  //. ```
-  function Either$prototype$toBoolean(self) {
-    return self.isRight;
-  }
-  Either.prototype.toBoolean =
-  method('Either#toBoolean',
-         {},
-         [$Either(a, b), $.Boolean],
-         Either$prototype$toBoolean);
-
   //# Either#toString :: Either a b ~> () -> String
   //.
   //. Returns the string representation of the Either.
@@ -2033,108 +1984,62 @@
   S.eitherToMaybe =
   def('eitherToMaybe', {}, [$Either(a, b), $Maybe(b)], eitherToMaybe);
 
-  //. ### Alternative
+  //. ### Logic
 
-  //  Alternative :: TypeClass
-  var Alternative = $.TypeClass(
-    'Alternative',
-    function(x) {
-      return R.contains(R.type(x), ['Array', 'Boolean']) ||
-             hasMethod('toBoolean')(x);
-    }
-  );
-
-  //  toBoolean :: Alternative a => a -> Boolean
-  var toBoolean = function(x) {
-    switch (R.type(x)) {
-      case 'Array':     return x.length > 0;
-      case 'Boolean':   return x.valueOf();
-      default:          return x.toBoolean();
-    }
-  };
-
-  //  empty :: Monoid a => a -> a
-  var empty = function(x) {
-    switch (R.type(x)) {
-      case 'Array':     return [];
-      case 'Boolean':   return false;
-      default:          return x.empty();
-    }
-  };
-
-  //# and :: Alternative a => a -> a -> a
+  //# and :: Boolean -> Boolean -> Boolean
   //.
-  //. Takes two values of the same type and returns the second value
-  //. if the first is "true"; the first value otherwise. An array is
-  //. considered "true" if its length is greater than zero. The Boolean
-  //. value `true` is also considered "true". Other types must provide
-  //. a `toBoolean` method.
+  //. Boolean "and".
   //.
   //. ```javascript
-  //. > S.and(S.Just(1), S.Just(2))
-  //. Just(2)
+  //. > S.and(false, false)
+  //. false
   //.
-  //. > S.and(S.Nothing, S.Just(3))
-  //. Nothing
+  //. > S.and(false, true)
+  //. false
+  //.
+  //. > S.and(true, false)
+  //. false
+  //.
+  //. > S.and(true, true)
+  //. true
   //. ```
   function and(x, y) {
-    return toBoolean(x) ? y : x;
+    return x.valueOf() && y.valueOf();
   }
-  S.and = def('and', {a: [Alternative]}, [a, a, a], and);
+  S.and = def('and', {}, [$.Boolean, $.Boolean, $.Boolean], and);
 
-  //# or :: Alternative a => a -> a -> a
+  //# or :: Boolean -> Boolean -> Boolean
   //.
-  //. Takes two values of the same type and returns the first value if it
-  //. is "true"; the second value otherwise. An array is considered "true"
-  //. if its length is greater than zero. The Boolean value `true` is also
-  //. considered "true". Other types must provide a `toBoolean` method.
+  //. Boolean "or".
   //.
   //. ```javascript
-  //. > S.or(S.Just(1), S.Just(2))
-  //. Just(1)
+  //. > S.or(false, false)
+  //. false
   //.
-  //. > S.or(S.Nothing, S.Just(3))
-  //. Just(3)
+  //. > S.or(false, true)
+  //. true
+  //.
+  //. > S.or(true, false)
+  //. true
+  //.
+  //. > S.or(true, true)
+  //. true
   //. ```
   function or(x, y) {
-    return toBoolean(x) ? x : y;
+    return x.valueOf() || y.valueOf();
   }
-  S.or = def('or', {a: [Alternative]}, [a, a, a], or);
-
-  //# xor :: (Alternative a, Monoid a) => a -> a -> a
-  //.
-  //. Takes two values of the same type and returns the "true" value
-  //. if one value is "true" and the other is "false"; otherwise it
-  //. returns the type's "false" value. An array is considered "true"
-  //. if its length is greater than zero. The Boolean value `true` is
-  //. also considered "true". Other types must provide `toBoolean` and
-  //. `empty` methods.
-  //.
-  //. ```javascript
-  //. > S.xor(S.Nothing, S.Just(1))
-  //. Just(1)
-  //.
-  //. > S.xor(S.Just(2), S.Just(3))
-  //. Nothing
-  //. ```
-  function xor(x, y) {
-    return toBoolean(x) === toBoolean(y) ? empty(x) : or(x, y);
-  }
-  S.xor = def('xor', {a: [Alternative, Monoid]}, [a, a, a], xor);
-
-  //. ### Logic
+  S.or = def('or', {}, [$.Boolean, $.Boolean, $.Boolean], or);
 
   //# not :: Boolean -> Boolean
   //.
-  //. Takes a Boolean and returns the negation of that value
-  //. (`false` for `true`; `true` for `false`).
+  //. Boolean "not".
   //.
   //. ```javascript
-  //. > S.not(true)
-  //. false
-  //.
   //. > S.not(false)
   //. true
+  //.
+  //. > S.not(true)
+  //. false
   //. ```
   function not(x) {
     return !x.valueOf();

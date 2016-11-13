@@ -187,11 +187,6 @@ describe('Left', function() {
     eq(S.Left('abc').sequence(S.Maybe.of), S.Just(S.Left('abc')));
   });
 
-  it('provides a "toBoolean" method', function() {
-    eq(S.Left('abc').toBoolean.length, 0);
-    eq(S.Left('abc').toBoolean(), false);
-  });
-
   it('provides a "toString" method', function() {
     eq(S.Left('abc').toString.length, 0);
     eq(S.Left('abc').toString(), 'Left("abc")');

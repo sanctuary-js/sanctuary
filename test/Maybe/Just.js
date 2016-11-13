@@ -215,11 +215,6 @@ describe('Just', function() {
     eq(S.Just(S.Right(42)).sequence(S.Either.of), S.Right(S.Just(42)));
   });
 
-  it('provides a "toBoolean" method', function() {
-    eq(S.Just(42).toBoolean.length, 0);
-    eq(S.Just(42).toBoolean(), true);
-  });
-
   it('provides a "toString" method', function() {
     eq(S.Just([1, 2, 3]).toString.length, 0);
     eq(S.Just([1, 2, 3]).toString(), 'Just([1, 2, 3])');
