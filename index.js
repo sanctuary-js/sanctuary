@@ -750,6 +750,30 @@
   }
   S.pipe = def('pipe', {}, [$.Array($.Function), a, b], pipe);
 
+  //# on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
+  //.
+  //. Takes a binary function `f`, a unary function `g`, and two
+  //. values `x` and `y`. Returns `f(g(x))(g(y))`.
+  //.
+  //. See also [`on_`](#on_).
+  //.
+  //. ```javascript
+  //. > S.on(S.concat, S.reverse, [1, 2, 3], [4, 5, 6])
+  //. [3, 2, 1, 6, 5, 4]
+  //. ```
+  function on(f, g, x, y) {
+    return on_(uncurry2(f), g, x, y);
+  }
+  S.on = def('on', {}, [$.Function, $.Function, a, a, c], on);
+
+  //# on_ :: ((b, b) -> c) -> (a -> b) -> a -> a -> c
+  //.
+  //. Version of [`on`](#on) accepting uncurried functions.
+  function on_(f, g, x, y) {
+    return f(g(x), g(y));
+  }
+  S.on_ = def('on_', {}, [$.Function, $.Function, a, a, c], on_);
+
   //. ### Maybe type
   //.
   //. The Maybe type represents optional values: a value of type `Maybe a` is
