@@ -768,7 +768,7 @@
 
   //# on_ :: ((b, b) -> c) -> (a -> b) -> a -> a -> c
   //.
-  //. Version of [`on`](#on) accepting uncurried functions.
+  //. Variant of [`on`](#on) which takes an uncurried binary function.
   function on_(f, g, x, y) {
     return f(g(x), g(y));
   }
@@ -1352,7 +1352,8 @@
 
   //# encase2_ :: ((a, b) -> c) -> a -> b -> Maybe c
   //.
-  //. Version of [`encase2`](#encase2) accepting uncurried functions.
+  //. Variant of [`encase2`](#encase2) which takes an uncurried binary
+  //. function.
   function encase2_(f, x, y) {
     try {
       return Just(f(x, y));
@@ -1374,7 +1375,8 @@
 
   //# encase3_ :: ((a, b, c) -> d) -> a -> b -> c -> Maybe d
   //.
-  //. Version of [`encase3`](#encase3) accepting uncurried functions.
+  //. Variant of [`encase3`](#encase3) which takes an uncurried ternary
+  //. function.
   function encase3_(f, x, y, z) {
     try {
       return Just(f(x, y, z));
@@ -1942,8 +1944,8 @@
 
   //# encaseEither2_ :: (Error -> l) -> ((a, b) -> r) -> a -> b -> Either l r
   //.
-  //. Version of [`encaseEither2`](#encaseEither2) accepting uncurried
-  //. functions.
+  //. Variant of [`encaseEither2`](#encaseEither2) which takes an uncurried
+  //. binary function.
   function encaseEither2_(f, g, x, y) {
     try {
       return Right(g(x, y));
@@ -1973,8 +1975,8 @@
 
   //# encaseEither3_ :: (Error -> l) -> ((a, b, c) -> r) -> a -> b -> c -> Either l r
   //.
-  //. Version of [`encaseEither3`](#encaseEither3) accepting uncurried
-  //. functions.
+  //. Variant of [`encaseEither3`](#encaseEither3) which takes an uncurried
+  //. ternary function.
   function encaseEither3_(f, g, x, y, z) {
     try {
       return Right(g(x, y, z));
@@ -2590,7 +2592,7 @@
 
   //# reduce_ :: Foldable f => ((a, b) -> a) -> a -> f b -> a
   //.
-  //. Version of [`reduce`](#reduce) accepting uncurried functions.
+  //. Variant of [`reduce`](#reduce) which takes an uncurried binary function.
   function reduce_(f, initial, foldable) {
     return foldable.reduce(
       type(foldable) === 'Array' ? function(acc, x) { return f(acc, x); } : f,
