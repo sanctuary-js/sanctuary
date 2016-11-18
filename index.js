@@ -797,6 +797,29 @@
   }
   S.Maybe = Maybe;
 
+  //# Nothing :: Maybe a
+  //.
+  //. Nothing.
+  //.
+  //. ```javascript
+  //. > S.Nothing
+  //. Nothing
+  //. ```
+  var Nothing = S.Nothing = new Maybe(sentinel, 'Nothing');
+
+  //# Just :: a -> Maybe a
+  //.
+  //. Takes a value of any type and returns a Just with the given value.
+  //.
+  //. ```javascript
+  //. > S.Just(42)
+  //. Just(42)
+  //. ```
+  function Just(x) {
+    return new Maybe(sentinel, 'Just', x);
+  }
+  S.Just = def('Just', {}, [a, $Maybe(a)], Just);
+
   //# Maybe.empty :: -> Maybe a
   //.
   //. Returns Nothing.
@@ -849,55 +872,77 @@
   //. false
   //. ```
 
-  //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
+  //# Maybe#toString :: Maybe a ~> () -> String
   //.
-  //. Takes a value of type `Maybe a` and returns Nothing unless `this`
-  //. is a Just *and* the argument is a Just, in which case it returns a
-  //. Just whose value is the result of of applying this Just's value to
-  //. the given Just's value.
+  //. Returns the string representation of the Maybe.
   //.
   //. ```javascript
-  //. > S.Nothing.ap(S.Just(42))
-  //. Nothing
+  //. > S.Nothing.toString()
+  //. 'Nothing'
   //.
-  //. > S.Just(S.inc).ap(S.Nothing)
-  //. Nothing
-  //.
-  //. > S.Just(S.inc).ap(S.Just(42))
-  //. Just(43)
+  //. > S.Just([1, 2, 3]).toString()
+  //. 'Just([1, 2, 3])'
   //. ```
-  function Maybe$prototype$ap(self, other) {
-    return self.isJust ? other.map(self.value) : self;
+  function Maybe$prototype$toString(self) {
+    return self.isJust ? 'Just(' + R.toString(self.value) + ')' : 'Nothing';
   }
-  Maybe.prototype.ap =
-  method('Maybe#ap',
+  Maybe.prototype.toString =
+  method('Maybe#toString',
          {},
-         [$Maybe($.Function), $Maybe(a), $Maybe(b)],
-         Maybe$prototype$ap);
+         [$Maybe(a), $.String],
+         Maybe$prototype$toString);
 
-  //# Maybe#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
+  //# Maybe#inspect :: Maybe a ~> () -> String
   //.
-  //. Takes a function and returns `this` if `this` is Nothing; otherwise
-  //. it returns the result of applying the function to this Just's value.
+  //. Returns the string representation of the Maybe. This method is used by
+  //. `util.inspect` and the REPL to format a Maybe for display.
+  //.
+  //. See also [`Maybe#toString`](#Maybe.prototype.toString).
   //.
   //. ```javascript
-  //. > S.Nothing.chain(S.parseFloat)
-  //. Nothing
+  //. > S.Nothing.inspect()
+  //. 'Nothing'
   //.
-  //. > S.Just('xxx').chain(S.parseFloat)
-  //. Nothing
-  //.
-  //. > S.Just('12.34').chain(S.parseFloat)
-  //. Just(12.34)
+  //. > S.Just([1, 2, 3]).inspect()
+  //. 'Just([1, 2, 3])'
   //. ```
-  function Maybe$prototype$chain(self, f) {
-    return self.isJust ? f(self.value) : self;
+  Maybe.prototype.inspect = function() { return this.toString(); };
+
+  //# Maybe#equals :: Maybe a ~> b -> Boolean
+  //.
+  //. Takes a value of any type and returns `true` if:
+  //.
+  //.   - it is Nothing and `this` is Nothing; or
+  //.
+  //.   - it is a Just and `this` is a Just, and their values are equal
+  //.     according to [`R.equals`][R.equals].
+  //.
+  //. ```javascript
+  //. > S.Nothing.equals(S.Nothing)
+  //. true
+  //.
+  //. > S.Nothing.equals(null)
+  //. false
+  //.
+  //. > S.Just([1, 2, 3]).equals(S.Just([1, 2, 3]))
+  //. true
+  //.
+  //. > S.Just([1, 2, 3]).equals(S.Just([3, 2, 1]))
+  //. false
+  //.
+  //. > S.Just([1, 2, 3]).equals(S.Nothing)
+  //. false
+  //. ```
+  function Maybe$prototype$equals(self, x) {
+    return type(x) === 'sanctuary/Maybe' &&
+           (self.isNothing ? x.isNothing
+                           : x.isJust && R.equals(x.value, self.value));
   }
-  Maybe.prototype.chain =
-  method('Maybe#chain',
+  Maybe.prototype.equals =
+  method('Maybe#equals',
          {},
-         [$Maybe(a), $.Function, $Maybe(b)],
-         Maybe$prototype$chain);
+         [$Maybe(a), b, $.Boolean],
+         Maybe$prototype$equals);
 
   //# Maybe#concat :: Semigroup a => Maybe a ~> Maybe a -> Maybe a
   //.
@@ -948,85 +993,6 @@
   //. ```
   Maybe.prototype.empty = def('Maybe#empty', {}, [$Maybe(a)], Maybe.empty);
 
-  //# Maybe#equals :: Maybe a ~> b -> Boolean
-  //.
-  //. Takes a value of any type and returns `true` if:
-  //.
-  //.   - it is Nothing and `this` is Nothing; or
-  //.
-  //.   - it is a Just and `this` is a Just, and their values are equal
-  //.     according to [`R.equals`][R.equals].
-  //.
-  //. ```javascript
-  //. > S.Nothing.equals(S.Nothing)
-  //. true
-  //.
-  //. > S.Nothing.equals(null)
-  //. false
-  //.
-  //. > S.Just([1, 2, 3]).equals(S.Just([1, 2, 3]))
-  //. true
-  //.
-  //. > S.Just([1, 2, 3]).equals(S.Just([3, 2, 1]))
-  //. false
-  //.
-  //. > S.Just([1, 2, 3]).equals(S.Nothing)
-  //. false
-  //. ```
-  function Maybe$prototype$equals(self, x) {
-    return type(x) === 'sanctuary/Maybe' &&
-           (self.isNothing ? x.isNothing
-                           : x.isJust && R.equals(x.value, self.value));
-  }
-  Maybe.prototype.equals =
-  method('Maybe#equals',
-         {},
-         [$Maybe(a), b, $.Boolean],
-         Maybe$prototype$equals);
-
-  //# Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
-  //.
-  //. Takes a function and returns `this` if `this` is Nothing; otherwise
-  //. it returns a Just whose value is the result of applying the function
-  //. to `this`.
-  //.
-  //. ```javascript
-  //. > S.Nothing.extend(x => x.value + 1)
-  //. Nothing
-  //.
-  //. > S.Just(42).extend(x => x.value + 1)
-  //. Just(43)
-  //. ```
-  function Maybe$prototype$extend(self, f) {
-    return self.isJust ? Just(f(self)) : self;
-  }
-  Maybe.prototype.extend =
-  method('Maybe#extend',
-         {},
-         [$Maybe(a), $.Function, $Maybe(a)],
-         Maybe$prototype$extend);
-
-  //# Maybe#filter :: Maybe a ~> (a -> Boolean) -> Maybe a
-  //.
-  //. Takes a predicate and returns `this` if `this` is a Just whose value
-  //. satisfies the predicate; Nothing otherwise.
-  //.
-  //. ```javascript
-  //. > S.Just(42).filter(n => n % 2 === 0)
-  //. Just(42)
-  //.
-  //. > S.Just(43).filter(n => n % 2 === 0)
-  //. Nothing
-  //. ```
-  function Maybe$prototype$filter(self, pred) {
-    return filter(pred, self);
-  }
-  Maybe.prototype.filter =
-  method('Maybe#filter',
-         {},
-         [$Maybe(a), $.Function, $Maybe(a)],
-         Maybe$prototype$filter);
-
   //# Maybe#map :: Maybe a ~> (a -> b) -> Maybe b
   //.
   //. Takes a function and returns `this` if `this` is Nothing; otherwise
@@ -1049,6 +1015,32 @@
          [$Maybe(a), $.Function, $Maybe(b)],
          Maybe$prototype$map);
 
+  //# Maybe#ap :: Maybe (a -> b) ~> Maybe a -> Maybe b
+  //.
+  //. Takes a value of type `Maybe a` and returns Nothing unless `this`
+  //. is a Just *and* the argument is a Just, in which case it returns a
+  //. Just whose value is the result of of applying this Just's value to
+  //. the given Just's value.
+  //.
+  //. ```javascript
+  //. > S.Nothing.ap(S.Just(42))
+  //. Nothing
+  //.
+  //. > S.Just(S.inc).ap(S.Nothing)
+  //. Nothing
+  //.
+  //. > S.Just(S.inc).ap(S.Just(42))
+  //. Just(43)
+  //. ```
+  function Maybe$prototype$ap(self, other) {
+    return self.isJust ? other.map(self.value) : self;
+  }
+  Maybe.prototype.ap =
+  method('Maybe#ap',
+         {},
+         [$Maybe($.Function), $Maybe(a), $Maybe(b)],
+         Maybe$prototype$ap);
+
   //# Maybe#of :: Maybe a ~> b -> Maybe b
   //.
   //. Takes a value of any type and returns a Just with the given value.
@@ -1058,6 +1050,51 @@
   //. Just(42)
   //. ```
   Maybe.prototype.of = def('Maybe#of', {}, [b, $Maybe(b)], Just);
+
+  //# Maybe#chain :: Maybe a ~> (a -> Maybe b) -> Maybe b
+  //.
+  //. Takes a function and returns `this` if `this` is Nothing; otherwise
+  //. it returns the result of applying the function to this Just's value.
+  //.
+  //. ```javascript
+  //. > S.Nothing.chain(S.parseFloat)
+  //. Nothing
+  //.
+  //. > S.Just('xxx').chain(S.parseFloat)
+  //. Nothing
+  //.
+  //. > S.Just('12.34').chain(S.parseFloat)
+  //. Just(12.34)
+  //. ```
+  function Maybe$prototype$chain(self, f) {
+    return self.isJust ? f(self.value) : self;
+  }
+  Maybe.prototype.chain =
+  method('Maybe#chain',
+         {},
+         [$Maybe(a), $.Function, $Maybe(b)],
+         Maybe$prototype$chain);
+
+  //# Maybe#filter :: Maybe a ~> (a -> Boolean) -> Maybe a
+  //.
+  //. Takes a predicate and returns `this` if `this` is a Just whose value
+  //. satisfies the predicate; Nothing otherwise.
+  //.
+  //. ```javascript
+  //. > S.Just(42).filter(n => n % 2 === 0)
+  //. Just(42)
+  //.
+  //. > S.Just(43).filter(n => n % 2 === 0)
+  //. Nothing
+  //. ```
+  function Maybe$prototype$filter(self, pred) {
+    return filter(pred, self);
+  }
+  Maybe.prototype.filter =
+  method('Maybe#filter',
+         {},
+         [$Maybe(a), $.Function, $Maybe(a)],
+         Maybe$prototype$filter);
 
   //# Maybe#reduce :: Maybe a ~> ((b, a) -> b) -> b -> b
   //.
@@ -1111,64 +1148,27 @@
          [$Maybe(a), $.Function, b],
          Maybe$prototype$sequence);
 
-  //# Maybe#toString :: Maybe a ~> () -> String
+  //# Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
   //.
-  //. Returns the string representation of the Maybe.
-  //.
-  //. ```javascript
-  //. > S.Nothing.toString()
-  //. 'Nothing'
-  //.
-  //. > S.Just([1, 2, 3]).toString()
-  //. 'Just([1, 2, 3])'
-  //. ```
-  function Maybe$prototype$toString(self) {
-    return self.isJust ? 'Just(' + R.toString(self.value) + ')' : 'Nothing';
-  }
-  Maybe.prototype.toString =
-  method('Maybe#toString',
-         {},
-         [$Maybe(a), $.String],
-         Maybe$prototype$toString);
-
-  //# Maybe#inspect :: Maybe a ~> () -> String
-  //.
-  //. Returns the string representation of the Maybe. This method is used by
-  //. `util.inspect` and the REPL to format a Maybe for display.
-  //.
-  //. See also [`Maybe#toString`](#Maybe.prototype.toString).
+  //. Takes a function and returns `this` if `this` is Nothing; otherwise
+  //. it returns a Just whose value is the result of applying the function
+  //. to `this`.
   //.
   //. ```javascript
-  //. > S.Nothing.inspect()
-  //. 'Nothing'
-  //.
-  //. > S.Just([1, 2, 3]).inspect()
-  //. 'Just([1, 2, 3])'
-  //. ```
-  Maybe.prototype.inspect = function() { return this.toString(); };
-
-  //# Nothing :: Maybe a
-  //.
-  //. Nothing.
-  //.
-  //. ```javascript
-  //. > S.Nothing
+  //. > S.Nothing.extend(x => x.value + 1)
   //. Nothing
-  //. ```
-  var Nothing = S.Nothing = new Maybe(sentinel, 'Nothing');
-
-  //# Just :: a -> Maybe a
   //.
-  //. Takes a value of any type and returns a Just with the given value.
-  //.
-  //. ```javascript
-  //. > S.Just(42)
-  //. Just(42)
+  //. > S.Just(42).extend(x => x.value + 1)
+  //. Just(43)
   //. ```
-  function Just(x) {
-    return new Maybe(sentinel, 'Just', x);
+  function Maybe$prototype$extend(self, f) {
+    return self.isJust ? Just(f(self)) : self;
   }
-  S.Just = def('Just', {}, [a, $Maybe(a)], Just);
+  Maybe.prototype.extend =
+  method('Maybe#extend',
+         {},
+         [$Maybe(a), $.Function, $Maybe(a)],
+         Maybe$prototype$extend);
 
   //# isNothing :: Maybe a -> Boolean
   //.
@@ -1430,6 +1430,32 @@
   }
   S.Either = Either;
 
+  //# Left :: a -> Either a b
+  //.
+  //. Takes a value of any type and returns a Left with the given value.
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero')
+  //. Left('Cannot divide by zero')
+  //. ```
+  function Left(x) {
+    return new Either(sentinel, 'Left', x);
+  }
+  S.Left = def('Left', {}, [a, $Either(a, b)], Left);
+
+  //# Right :: b -> Either a b
+  //.
+  //. Takes a value of any type and returns a Right with the given value.
+  //.
+  //. ```javascript
+  //. > S.Right(42)
+  //. Right(42)
+  //. ```
+  function Right(x) {
+    return new Either(sentinel, 'Right', x);
+  }
+  S.Right = def('Right', {}, [b, $Either(a, b)], Right);
+
   //# Either.of :: b -> Either a b
   //.
   //. Takes a value of any type and returns a Right with the given value.
@@ -1469,60 +1495,72 @@
   //. false
   //. ```
 
-  //# Either#ap :: Either a (b -> c) ~> Either a b -> Either a c
+  //# Either#toString :: Either a b ~> () -> String
   //.
-  //. Takes a value of type `Either a b` and returns a Left unless `this`
-  //. is a Right *and* the argument is a Right, in which case it returns
-  //. a Right whose value is the result of applying this Right's value to
-  //. the given Right's value.
+  //. Returns the string representation of the Either.
   //.
   //. ```javascript
-  //. > S.Left('Cannot divide by zero').ap(S.Right(42))
-  //. Left('Cannot divide by zero')
+  //. > S.Left('Cannot divide by zero').toString()
+  //. 'Left("Cannot divide by zero")'
   //.
-  //. > S.Right(S.inc).ap(S.Left('Cannot divide by zero'))
-  //. Left('Cannot divide by zero')
-  //.
-  //. > S.Right(S.inc).ap(S.Right(42))
-  //. Right(43)
+  //. > S.Right([1, 2, 3]).toString()
+  //. 'Right([1, 2, 3])'
   //. ```
-  function Either$prototype$ap(self, other) {
-    return self.isRight ? other.map(self.value) : self;
+  function Either$prototype$toString(self) {
+    return (self.isLeft ? 'Left' : 'Right') +
+           '(' + R.toString(self.value) + ')';
   }
-  Either.prototype.ap =
-  method('Either#ap',
+  Either.prototype.toString =
+  method('Either#toString',
          {},
-         [$Either(a, $.Function), $Either(a, b), $Either(a, c)],
-         Either$prototype$ap);
+         [$Either(a, b), $.String],
+         Either$prototype$toString);
 
-  //# Either#chain :: Either a b ~> (b -> Either a c) -> Either a c
+  //# Either#inspect :: Either a b ~> () -> String
   //.
-  //. Takes a function and returns `this` if `this` is a Left; otherwise
-  //. it returns the result of applying the function to this Right's value.
+  //. Returns the string representation of the Either. This method is used by
+  //. `util.inspect` and the REPL to format a Either for display.
+  //.
+  //. See also [`Either#toString`](#Either.prototype.toString).
   //.
   //. ```javascript
-  //. > global.sqrt = n =>
-  //. .   n < 0 ? S.Left('Cannot represent square root of negative number')
-  //. .         : S.Right(Math.sqrt(n))
-  //. sqrt
+  //. > S.Left('Cannot divide by zero').inspect()
+  //. 'Left("Cannot divide by zero")'
   //.
-  //. > S.Left('Cannot divide by zero').chain(sqrt)
-  //. Left('Cannot divide by zero')
-  //.
-  //. > S.Right(-1).chain(sqrt)
-  //. Left('Cannot represent square root of negative number')
-  //.
-  //. > S.Right(25).chain(sqrt)
-  //. Right(5)
+  //. > S.Right([1, 2, 3]).inspect()
+  //. 'Right([1, 2, 3])'
   //. ```
-  function Either$prototype$chain(self, f) {
-    return self.isRight ? f(self.value) : self;
+  Either.prototype.inspect = function() { return this.toString(); };
+
+  //# Either#equals :: Either a b ~> c -> Boolean
+  //.
+  //. Takes a value of any type and returns `true` if:
+  //.
+  //.   - it is a Left and `this` is a Left, and their values are equal
+  //.     according to [`R.equals`][R.equals]; or
+  //.
+  //.   - it is a Right and `this` is a Right, and their values are equal
+  //.     according to [`R.equals`][R.equals].
+  //.
+  //. ```javascript
+  //. > S.Right([1, 2, 3]).equals(S.Right([1, 2, 3]))
+  //. true
+  //.
+  //. > S.Right([1, 2, 3]).equals(S.Left([1, 2, 3]))
+  //. false
+  //.
+  //. > S.Right(42).equals(42)
+  //. false
+  //. ```
+  function Either$prototype$equals(self, x) {
+    return type(x) === 'sanctuary/Either' &&
+           x.isLeft === self.isLeft && R.equals(x.value, self.value);
   }
-  Either.prototype.chain =
-  method('Either#chain',
+  Either.prototype.equals =
+  method('Either#equals',
          {},
-         [$Either(a, b), $.Function, $Either(a, c)],
-         Either$prototype$chain);
+         [$Either(a, b), c, $.Boolean],
+         Either$prototype$equals);
 
   //# Either#concat :: (Semigroup a, Semigroup b) => Either a b ~> Either a b -> Either a b
   //.
@@ -1564,58 +1602,6 @@
          [$Either(a, b), $Either(a, b), $Either(a, b)],
          Either$prototype$concat);
 
-  //# Either#equals :: Either a b ~> c -> Boolean
-  //.
-  //. Takes a value of any type and returns `true` if:
-  //.
-  //.   - it is a Left and `this` is a Left, and their values are equal
-  //.     according to [`R.equals`][R.equals]; or
-  //.
-  //.   - it is a Right and `this` is a Right, and their values are equal
-  //.     according to [`R.equals`][R.equals].
-  //.
-  //. ```javascript
-  //. > S.Right([1, 2, 3]).equals(S.Right([1, 2, 3]))
-  //. true
-  //.
-  //. > S.Right([1, 2, 3]).equals(S.Left([1, 2, 3]))
-  //. false
-  //.
-  //. > S.Right(42).equals(42)
-  //. false
-  //. ```
-  function Either$prototype$equals(self, x) {
-    return type(x) === 'sanctuary/Either' &&
-           x.isLeft === self.isLeft && R.equals(x.value, self.value);
-  }
-  Either.prototype.equals =
-  method('Either#equals',
-         {},
-         [$Either(a, b), c, $.Boolean],
-         Either$prototype$equals);
-
-  //# Either#extend :: Either a b ~> (Either a b -> b) -> Either a b
-  //.
-  //. Takes a function and returns `this` if `this` is a Left; otherwise it
-  //. returns a Right whose value is the result of applying the function to
-  //. `this`.
-  //.
-  //. ```javascript
-  //. > S.Left('Cannot divide by zero').extend(x => x.value + 1)
-  //. Left('Cannot divide by zero')
-  //.
-  //. > S.Right(42).extend(x => x.value + 1)
-  //. Right(43)
-  //. ```
-  function Either$prototype$extend(self, f) {
-    return self.isLeft ? self : Right(f(self));
-  }
-  Either.prototype.extend =
-  method('Either#extend',
-         {},
-         [$Either(a, b), $.Function, $Either(a, b)],
-         Either$prototype$extend);
-
   //# Either#map :: Either a b ~> (b -> c) -> Either a c
   //.
   //. Takes a function and returns `this` if `this` is a Left; otherwise it
@@ -1638,6 +1624,32 @@
          [$Either(a, b), $.Function, $Either(a, c)],
          Either$prototype$map);
 
+  //# Either#ap :: Either a (b -> c) ~> Either a b -> Either a c
+  //.
+  //. Takes a value of type `Either a b` and returns a Left unless `this`
+  //. is a Right *and* the argument is a Right, in which case it returns
+  //. a Right whose value is the result of applying this Right's value to
+  //. the given Right's value.
+  //.
+  //. ```javascript
+  //. > S.Left('Cannot divide by zero').ap(S.Right(42))
+  //. Left('Cannot divide by zero')
+  //.
+  //. > S.Right(S.inc).ap(S.Left('Cannot divide by zero'))
+  //. Left('Cannot divide by zero')
+  //.
+  //. > S.Right(S.inc).ap(S.Right(42))
+  //. Right(43)
+  //. ```
+  function Either$prototype$ap(self, other) {
+    return self.isRight ? other.map(self.value) : self;
+  }
+  Either.prototype.ap =
+  method('Either#ap',
+         {},
+         [$Either(a, $.Function), $Either(a, b), $Either(a, c)],
+         Either$prototype$ap);
+
   //# Either#of :: Either a b ~> c -> Either a c
   //.
   //. Takes a value of any type and returns a Right with the given value.
@@ -1647,6 +1659,35 @@
   //. Right(42)
   //. ```
   Either.prototype.of = def('Either#of', {}, [c, $Either(a, c)], Right);
+
+  //# Either#chain :: Either a b ~> (b -> Either a c) -> Either a c
+  //.
+  //. Takes a function and returns `this` if `this` is a Left; otherwise
+  //. it returns the result of applying the function to this Right's value.
+  //.
+  //. ```javascript
+  //. > global.sqrt = n =>
+  //. .   n < 0 ? S.Left('Cannot represent square root of negative number')
+  //. .         : S.Right(Math.sqrt(n))
+  //. sqrt
+  //.
+  //. > S.Left('Cannot divide by zero').chain(sqrt)
+  //. Left('Cannot divide by zero')
+  //.
+  //. > S.Right(-1).chain(sqrt)
+  //. Left('Cannot represent square root of negative number')
+  //.
+  //. > S.Right(25).chain(sqrt)
+  //. Right(5)
+  //. ```
+  function Either$prototype$chain(self, f) {
+    return self.isRight ? f(self.value) : self;
+  }
+  Either.prototype.chain =
+  method('Either#chain',
+         {},
+         [$Either(a, b), $.Function, $Either(a, c)],
+         Either$prototype$chain);
 
   //# Either#reduce :: Either a b ~> ((c, b) -> c) -> c -> c
   //.
@@ -1701,68 +1742,27 @@
          [$Either(a, b), $.Function, c],
          Either$prototype$sequence);
 
-  //# Either#toString :: Either a b ~> () -> String
+  //# Either#extend :: Either a b ~> (Either a b -> b) -> Either a b
   //.
-  //. Returns the string representation of the Either.
-  //.
-  //. ```javascript
-  //. > S.Left('Cannot divide by zero').toString()
-  //. 'Left("Cannot divide by zero")'
-  //.
-  //. > S.Right([1, 2, 3]).toString()
-  //. 'Right([1, 2, 3])'
-  //. ```
-  function Either$prototype$toString(self) {
-    return (self.isLeft ? 'Left' : 'Right') +
-           '(' + R.toString(self.value) + ')';
-  }
-  Either.prototype.toString =
-  method('Either#toString',
-         {},
-         [$Either(a, b), $.String],
-         Either$prototype$toString);
-
-  //# Either#inspect :: Either a b ~> () -> String
-  //.
-  //. Returns the string representation of the Either. This method is used by
-  //. `util.inspect` and the REPL to format a Either for display.
-  //.
-  //. See also [`Either#toString`](#Either.prototype.toString).
+  //. Takes a function and returns `this` if `this` is a Left; otherwise it
+  //. returns a Right whose value is the result of applying the function to
+  //. `this`.
   //.
   //. ```javascript
-  //. > S.Left('Cannot divide by zero').inspect()
-  //. 'Left("Cannot divide by zero")'
-  //.
-  //. > S.Right([1, 2, 3]).inspect()
-  //. 'Right([1, 2, 3])'
-  //. ```
-  Either.prototype.inspect = function() { return this.toString(); };
-
-  //# Left :: a -> Either a b
-  //.
-  //. Takes a value of any type and returns a Left with the given value.
-  //.
-  //. ```javascript
-  //. > S.Left('Cannot divide by zero')
+  //. > S.Left('Cannot divide by zero').extend(x => x.value + 1)
   //. Left('Cannot divide by zero')
-  //. ```
-  function Left(x) {
-    return new Either(sentinel, 'Left', x);
-  }
-  S.Left = def('Left', {}, [a, $Either(a, b)], Left);
-
-  //# Right :: b -> Either a b
   //.
-  //. Takes a value of any type and returns a Right with the given value.
-  //.
-  //. ```javascript
-  //. > S.Right(42)
-  //. Right(42)
+  //. > S.Right(42).extend(x => x.value + 1)
+  //. Right(43)
   //. ```
-  function Right(x) {
-    return new Either(sentinel, 'Right', x);
+  function Either$prototype$extend(self, f) {
+    return self.isLeft ? self : Right(f(self));
   }
-  S.Right = def('Right', {}, [b, $Either(a, b)], Right);
+  Either.prototype.extend =
+  method('Either#extend',
+         {},
+         [$Either(a, b), $.Function, $Either(a, b)],
+         Either$prototype$extend);
 
   //# isLeft :: Either a b -> Boolean
   //.
