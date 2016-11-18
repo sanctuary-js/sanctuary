@@ -1264,6 +1264,8 @@
   //. a Just, the return value is the result of applying the function to
   //. the Just's value. Otherwise, the first argument is returned.
   //.
+  //. See also [`maybe_`](#maybe_).
+  //.
   //. ```javascript
   //. > S.maybe(0, R.length, S.Just('refuge'))
   //. 6
@@ -1275,6 +1277,28 @@
     return fromMaybe(x, maybe.map(f));
   }
   S.maybe = def('maybe', {}, [b, $.Function, $Maybe(a), b], maybe);
+
+  //# maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b
+  //.
+  //. Variant of [`maybe`](#maybe) which takes a thunk so the default value
+  //. is only computed if required.
+  //.
+  //. ```javascript
+  //. > global.fib = function fib(n) {
+  //. .   return n <= 1 ? n : fib(n - 2) + fib(n - 1);
+  //. . }
+  //. fib
+  //.
+  //. > S.maybe_(() => fib(30), Math.sqrt, S.Just(1000000))
+  //. 1000
+  //.
+  //. > S.maybe_(() => fib(30), Math.sqrt, S.Nothing)
+  //. 832040
+  //. ```
+  function maybe_(f, g, maybe) {
+    return maybe.isJust ? g(maybe.value) : f();
+  }
+  S.maybe_ = def('maybe_', {}, [$.Function, $.Function, $Maybe(a), b], maybe_);
 
   //# justs :: Array (Maybe a) -> Array a
   //.
