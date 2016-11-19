@@ -8,65 +8,53 @@ var eq = require('./internal/eq');
 var errorEq = require('./internal/errorEq');
 
 
-describe('drop', function() {
+test('drop', function() {
 
-  it('is a binary function', function() {
-    eq(typeof S.drop, 'function');
-    eq(S.drop.length, 2);
-  });
+  eq(typeof S.drop, 'function');
+  eq(S.drop.length, 2);
 
-  it('type checks its arguments', function() {
-    throws(function() { S.drop(0.5); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'drop :: Integer -> List a -> Maybe (List a)\n' +
-                   '        ^^^^^^^\n' +
-                   '           1\n' +
-                   '\n' +
-                   '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Integer’.\n'));
+  throws(function() { S.drop(0.5); },
+         errorEq(TypeError,
+                 'Invalid value\n' +
+                 '\n' +
+                 'drop :: Integer -> List a -> Maybe (List a)\n' +
+                 '        ^^^^^^^\n' +
+                 '           1\n' +
+                 '\n' +
+                 '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                 '\n' +
+                 'The value at position 1 is not a member of ‘Integer’.\n'));
 
-    throws(function() { S.drop(0, null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'drop :: Integer -> List a -> Maybe (List a)\n' +
-                   '                   ^^^^^^\n' +
-                   '                     1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘List a’.\n'));
-  });
+  throws(function() { S.drop(0, null); },
+         errorEq(TypeError,
+                 'Invalid value\n' +
+                 '\n' +
+                 'drop :: Integer -> List a -> Maybe (List a)\n' +
+                 '                   ^^^^^^\n' +
+                 '                     1\n' +
+                 '\n' +
+                 '1)  null :: Null\n' +
+                 '\n' +
+                 'The value at position 1 is not a member of ‘List a’.\n'));
 
-  it('returns Nothing if n is greater than collection length', function() {
-    eq(S.drop(6, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-    eq(S.drop(6, 'abcde'), S.Nothing);
-  });
+  eq(S.drop(0, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
+  eq(S.drop(1, [1, 2, 3, 4, 5]), S.Just([2, 3, 4, 5]));
+  eq(S.drop(2, [1, 2, 3, 4, 5]), S.Just([3, 4, 5]));
+  eq(S.drop(3, [1, 2, 3, 4, 5]), S.Just([4, 5]));
+  eq(S.drop(4, [1, 2, 3, 4, 5]), S.Just([5]));
+  eq(S.drop(5, [1, 2, 3, 4, 5]), S.Just([]));
+  eq(S.drop(6, [1, 2, 3, 4, 5]), S.Nothing);
 
-  it('returns Nothing if n is negative', function() {
-    eq(S.drop(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-    eq(S.drop(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-    eq(S.drop(-3, 'abcde'), S.Nothing);
-    eq(S.drop(-0, 'abcde'), S.Nothing);
-    eq(S.drop(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-  });
+  eq(S.drop(0, '12345'), S.Just('12345'));
+  eq(S.drop(1, '12345'), S.Just('2345'));
+  eq(S.drop(2, '12345'), S.Just('345'));
+  eq(S.drop(3, '12345'), S.Just('45'));
+  eq(S.drop(4, '12345'), S.Just('5'));
+  eq(S.drop(5, '12345'), S.Just(''));
+  eq(S.drop(6, '12345'), S.Nothing);
 
-  it('returns an empty collection if n is equal to collection length', function() {
-    eq(S.drop(5, ['a', 'b', 'c', 'd', 'e']), S.Just([]));
-    eq(S.drop(5, 'abcde'), S.Just(''));
-  });
-
-  it('returns Just the last three elements from the collection', function() {
-    eq(S.drop(2, ['a', 'b', 'c', 'd', 'e']), S.Just(['c', 'd', 'e']));
-    eq(S.drop(4, 'abcdefg'), S.Just('efg'));
-  });
-
-  it('returns Just the whole collection if n is zero', function() {
-    eq(S.drop(0, ['a', 'b', 'c', 'd', 'e']), S.Just(['a', 'b', 'c', 'd', 'e']));
-    eq(S.drop(0, 'abcdefg'), S.Just('abcdefg'));
-  });
+  eq(S.drop(-1, [1, 2, 3, 4, 5]), S.Nothing);
+  eq(S.drop(-0, [1, 2, 3, 4, 5]), S.Nothing);
+  eq(S.drop(new Number(-0), [1, 2, 3, 4, 5]), S.Nothing);
 
 });

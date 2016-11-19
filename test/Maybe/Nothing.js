@@ -10,15 +10,15 @@ var eq = require('../internal/eq');
 var errorEq = require('../internal/errorEq');
 
 
-describe('Nothing', function() {
+suite('Nothing', function() {
 
-  it('is a member of the "Maybe a" type', function() {
+  test('member of the "Maybe a" type', function() {
     eq(S.Nothing['@@type'], 'sanctuary/Maybe');
     eq(S.Nothing.isNothing, true);
     eq(S.Nothing.isJust, false);
   });
 
-  it('provides an "ap" method', function() {
+  test('"ap" method', function() {
     eq(S.Nothing.ap.length, 1);
     eq(S.Nothing.ap(S.Nothing), S.Nothing);
     eq(S.Nothing.ap(S.Just(42)), S.Nothing);
@@ -36,7 +36,7 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
   });
 
-  it('provides a "chain" method', function() {
+  test('"chain" method', function() {
     eq(S.Nothing.chain.length, 1);
     eq(S.Nothing.chain(S.head), S.Nothing);
 
@@ -53,7 +53,7 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "concat" method', function() {
+  test('"concat" method', function() {
     eq(S.Nothing.concat.length, 1);
     eq(S.Nothing.concat(S.Nothing), S.Nothing);
     eq(S.Nothing.concat(S.Just('foo')), S.Just('foo'));
@@ -83,14 +83,14 @@ describe('Nothing', function() {
                    '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('provides an "equals" method', function() {
+  test('"equals" method', function() {
     eq(S.Nothing.equals.length, 1);
     eq(S.Nothing.equals(S.Nothing), true);
     eq(S.Nothing.equals(S.Just(42)), false);
     eq(S.Nothing.equals(null), false);
   });
 
-  it('provides an "extend" method', function() {
+  test('"extend" method', function() {
     eq(S.Nothing.extend.length, 1);
     eq(S.Nothing.extend(function(x) { return x.value / 2; }), S.Nothing);
 
@@ -113,7 +113,7 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "filter" method', function() {
+  test('"filter" method', function() {
     eq(S.Nothing.filter.length, 1);
     eq(S.Nothing.filter(R.T), S.Nothing);
     eq(S.Nothing.filter(R.F), S.Nothing);
@@ -139,7 +139,7 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "map" method', function() {
+  test('"map" method', function() {
     eq(S.Nothing.map.length, 1);
     eq(S.Nothing.map(function() { return 42; }), S.Nothing);
 
@@ -156,7 +156,7 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "reduce" method', function() {
+  test('"reduce" method', function() {
     eq(S.Nothing.reduce.length, 2);
     eq(S.Nothing.reduce(function(a, b) { return a + b; }, 10), 10);
 
@@ -173,22 +173,22 @@ describe('Nothing', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "sequence" method', function() {
+  test('"sequence" method', function() {
     eq(S.Nothing.sequence.length, 1);
     eq(S.Nothing.sequence(S.Either.of), S.Right(S.Nothing));
   });
 
-  it('provides a "toString" method', function() {
+  test('"toString" method', function() {
     eq(S.Nothing.toString.length, 0);
     eq(S.Nothing.toString(), 'Nothing');
   });
 
-  it('provides an "inspect" method', function() {
+  test('"inspect" method', function() {
     eq(S.Nothing.inspect.length, 0);
     eq(S.Nothing.inspect(), 'Nothing');
   });
 
-  it('implements Semigroup', function() {
+  test('Semigroup', function() {
     var a = S.Nothing;
     var b = S.Nothing;
     var c = S.Nothing;
@@ -197,7 +197,7 @@ describe('Nothing', function() {
     eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
   });
 
-  it('implements Monoid', function() {
+  test('Monoid', function() {
     var a = S.Nothing;
 
     // left identity
@@ -207,7 +207,7 @@ describe('Nothing', function() {
     eq(a.concat(a.empty()).equals(a), true);
   });
 
-  it('implements Functor', function() {
+  test('Functor', function() {
     var a = S.Nothing;
     var f = S.inc;
     var g = Math.sqrt;
@@ -219,7 +219,7 @@ describe('Nothing', function() {
     eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
   });
 
-  it('implements Apply', function() {
+  test('Apply', function() {
     var a = S.Nothing;
     var b = S.Nothing;
     var c = S.Nothing;
@@ -234,7 +234,7 @@ describe('Nothing', function() {
     }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
   });
 
-  it('implements Applicative', function() {
+  test('Applicative', function() {
     var a = S.Nothing;
     var b = S.Nothing;
     var f = S.inc;
@@ -250,7 +250,7 @@ describe('Nothing', function() {
     eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
   });
 
-  it('implements Chain', function() {
+  test('Chain', function() {
     var a = S.Nothing;
     var f = S.head;
     var g = S.last;
@@ -259,7 +259,7 @@ describe('Nothing', function() {
     eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
   });
 
-  it('implements Monad', function() {
+  test('Monad', function() {
     var a = S.Nothing;
     var f = S.head;
     var x = [1, 2, 3];

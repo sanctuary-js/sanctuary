@@ -10,9 +10,9 @@ var eq = require('../internal/eq');
 var errorEq = require('../internal/errorEq');
 
 
-describe('Just', function() {
+suite('Just', function() {
 
-  it('is a data constructor', function() {
+  test('data constructor', function() {
     eq(typeof S.Just, 'function');
     eq(S.Just.length, 1);
     eq(S.Just(42)['@@type'], 'sanctuary/Maybe');
@@ -20,7 +20,7 @@ describe('Just', function() {
     eq(S.Just(42).isJust, true);
   });
 
-  it('provides an "ap" method', function() {
+  test('"ap" method', function() {
     eq(S.Just(S.inc).ap.length, 1);
     eq(S.Just(S.inc).ap(S.Nothing), S.Nothing);
     eq(S.Just(S.inc).ap(S.Just(42)), S.Just(43));
@@ -38,7 +38,7 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Maybe a’.\n'));
   });
 
-  it('provides a "chain" method', function() {
+  test('"chain" method', function() {
     eq(S.Just([1, 2, 3]).chain.length, 1);
     eq(S.Just([1, 2, 3]).chain(S.head), S.Just(1));
 
@@ -55,7 +55,7 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "concat" method', function() {
+  test('"concat" method', function() {
     eq(S.Just('foo').concat.length, 1);
     eq(S.Just('foo').concat(S.Nothing), S.Just('foo'));
     eq(S.Just('foo').concat(S.Just('bar')), S.Just('foobar'));
@@ -109,7 +109,7 @@ describe('Just', function() {
                    '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('provides an "equals" method', function() {
+  test('"equals" method', function() {
     eq(S.Just(42).equals.length, 1);
     eq(S.Just(42).equals(S.Just(42)), true);
     eq(S.Just(42).equals(S.Just(43)), false);
@@ -125,7 +125,7 @@ describe('Just', function() {
     eq(S.Just(new Number(42)).equals(42), false);
   });
 
-  it('provides an "extend" method', function() {
+  test('"extend" method', function() {
     eq(S.Just(42).extend.length, 1);
     eq(S.Just(42).extend(function(x) { return x.value / 2; }), S.Just(21));
 
@@ -148,7 +148,7 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "filter" method', function() {
+  test('"filter" method', function() {
     eq(S.Just(42).filter.length, 1);
     eq(S.Just(42).filter(R.T), S.Just(42));
     eq(S.Just(42).filter(R.F), S.Nothing);
@@ -176,7 +176,7 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "map" method', function() {
+  test('"map" method', function() {
     eq(S.Just(42).map.length, 1);
     eq(S.Just(42).map(function(x) { return x / 2; }), S.Just(21));
 
@@ -193,7 +193,7 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "reduce" method', function() {
+  test('"reduce" method', function() {
     eq(S.Just(5).reduce.length, 2);
     eq(S.Just(5).reduce(function(a, b) { return a + b; }, 10), 15);
 
@@ -210,22 +210,22 @@ describe('Just', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "sequence" method', function() {
+  test('"sequence" method', function() {
     eq(S.Just(S.Right(42)).sequence.length, 1);
     eq(S.Just(S.Right(42)).sequence(S.Either.of), S.Right(S.Just(42)));
   });
 
-  it('provides a "toString" method', function() {
+  test('"toString" method', function() {
     eq(S.Just([1, 2, 3]).toString.length, 0);
     eq(S.Just([1, 2, 3]).toString(), 'Just([1, 2, 3])');
   });
 
-  it('provides an "inspect" method', function() {
+  test('"inspect" method', function() {
     eq(S.Just([1, 2, 3]).inspect.length, 0);
     eq(S.Just([1, 2, 3]).inspect(), 'Just([1, 2, 3])');
   });
 
-  it('implements Semigroup', function() {
+  test('Semigroup', function() {
     var a = S.Just('foo');
     var b = S.Just('bar');
     var c = S.Just('baz');
@@ -234,7 +234,7 @@ describe('Just', function() {
     eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
   });
 
-  it('implements Monoid', function() {
+  test('Monoid', function() {
     var a = S.Just([1, 2, 3]);
 
     // left identity
@@ -244,7 +244,7 @@ describe('Just', function() {
     eq(a.concat(a.empty()).equals(a), true);
   });
 
-  it('implements Functor', function() {
+  test('Functor', function() {
     var a = S.Just(9);
     var f = S.inc;
     var g = Math.sqrt;
@@ -256,7 +256,7 @@ describe('Just', function() {
     eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
   });
 
-  it('implements Apply', function() {
+  test('Apply', function() {
     var a = S.Just(S.inc);
     var b = S.Just(Math.sqrt);
     var c = S.Just(9);
@@ -271,7 +271,7 @@ describe('Just', function() {
     }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
   });
 
-  it('implements Applicative', function() {
+  test('Applicative', function() {
     var a = S.Just(null);
     var b = S.Just(S.inc);
     var f = S.inc;
@@ -287,7 +287,7 @@ describe('Just', function() {
     eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
   });
 
-  it('implements Chain', function() {
+  test('Chain', function() {
     var a = S.Just([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
     var f = S.head;
     var g = S.last;
@@ -296,7 +296,7 @@ describe('Just', function() {
     eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
   });
 
-  it('implements Monad', function() {
+  test('Monad', function() {
     var a = S.Just(null);
     var f = S.head;
     var x = [1, 2, 3];
