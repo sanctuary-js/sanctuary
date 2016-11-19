@@ -300,6 +300,7 @@
   var b = $.TypeVariable('b');
   var c = $.TypeVariable('c');
   var d = $.TypeVariable('d');
+  var e = $.TypeVariable('e');
   var f = $.TypeVariable('f');
   var l = $.TypeVariable('l');
   var r = $.TypeVariable('r');
@@ -631,6 +632,89 @@
   S.S = def('S', {}, [$.Function, $.Function, a, c], S_);
 
   //. ### Function
+
+  //# curry2 :: ((a, b) -> c) -> a -> b -> c
+  //.
+  //. Curries the given binary function.
+  //.
+  //. ```javascript
+  //. > R.map(S.curry2(Math.pow)(10), [1, 2, 3])
+  //. [10, 100, 1000]
+  //.
+  //. > R.map(S.curry2(Math.pow, 10), [1, 2, 3])
+  //. [10, 100, 1000]
+  //. ```
+  function curry2(f, x, y) {
+    return f(x, y);
+  }
+  S.curry2 = def('curry2', {}, [$.Function, a, b, c], curry2);
+
+  //# curry3 :: ((a, b, c) -> d) -> a -> b -> c -> d
+  //.
+  //. Curries the given ternary function.
+  //.
+  //. ```javascript
+  //. > global.replaceString = S.curry3((what, replacement, string) =>
+  //. .   string.replace(what, replacement)
+  //. . )
+  //. replaceString
+  //.
+  //. > replaceString('banana')('orange')('banana icecream')
+  //. 'orange icecream'
+  //.
+  //. > replaceString('banana', 'orange', 'banana icecream')
+  //. 'orange icecream'
+  //. ```
+  function curry3(f, x, y, z) {
+    return f(x, y, z);
+  }
+  S.curry3 = def('curry3', {}, [$.Function, a, b, c, d], curry3);
+
+  //# curry4 :: ((a, b, c, d) -> e) -> a -> b -> c -> d -> e
+  //.
+  //. Curries the given quaternary function.
+  //.
+  //. ```javascript
+  //. > global.createRect = S.curry4((x, y, width, height) =>
+  //. .   ({x, y, width, height})
+  //. . )
+  //. createRect
+  //.
+  //. > createRect(0)(0)(10)(10)
+  //. {x: 0, y: 0, width: 10, height: 10}
+  //.
+  //. > createRect(0, 0, 10, 10)
+  //. {x: 0, y: 0, width: 10, height: 10}
+  //. ```
+  function curry4(f, w, x, y, z) {
+    return f(w, x, y, z);
+  }
+  S.curry4 = def('curry4', {}, [$.Function, a, b, c, d, e], curry4);
+
+  //# curry5 :: ((a, b, c, d, e) -> f) -> a -> b -> c -> d -> e -> f
+  //.
+  //. Curries the given quinary function.
+  //.
+  //. ```javascript
+  //. > global.toUrl = S.curry5((protocol, creds, hostname, port, pathname) =>
+  //. .   protocol + '//' +
+  //. .   S.maybe('', _ => _.username + ':' + _.password + '@', creds) +
+  //. .   hostname +
+  //. .   S.maybe('', S.concat(':'), port) +
+  //. .   pathname
+  //. . )
+  //. toUrl
+  //.
+  //. > toUrl('https:')(S.Nothing)('example.com')(S.Just('443'))('/foo/bar')
+  //. 'https://example.com:443/foo/bar'
+  //.
+  //. > toUrl('https:', S.Nothing, 'example.com', S.Just('443'), '/foo/bar')
+  //. 'https://example.com:443/foo/bar'
+  //. ```
+  function curry5(f, v, w, x, y, z) {
+    return f(v, w, x, y, z);
+  }
+  S.curry5 = def('curry5', {}, [$.Function, a, b, c, d, e, r], curry5);
 
   //# flip :: ((a, b) -> c) -> b -> a -> c
   //.
