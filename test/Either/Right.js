@@ -10,9 +10,9 @@ var parseHex = require('../internal/parseHex');
 var squareRoot = require('../internal/squareRoot');
 
 
-describe('Right', function() {
+suite('Right', function() {
 
-  it('is a data constructor', function() {
+  test('data constructor', function() {
     eq(typeof S.Right, 'function');
     eq(S.Right.length, 1);
     eq(S.Right(42)['@@type'], 'sanctuary/Either');
@@ -20,7 +20,7 @@ describe('Right', function() {
     eq(S.Right(42).isRight, true);
   });
 
-  it('provides an "ap" method', function() {
+  test('"ap" method', function() {
     eq(S.Right(S.inc).ap.length, 1);
     eq(S.Right(S.inc).ap(S.Left('abc')), S.Left('abc'));
     eq(S.Right(S.inc).ap(S.Right(42)), S.Right(43));
@@ -38,7 +38,7 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Either a b’.\n'));
   });
 
-  it('provides a "chain" method', function() {
+  test('"chain" method', function() {
     eq(S.Right(25).chain.length, 1);
     eq(S.Right(25).chain(squareRoot), S.Right(5));
 
@@ -55,7 +55,7 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "concat" method', function() {
+  test('"concat" method', function() {
     eq(S.Right('abc').concat.length, 1);
     eq(S.Right('abc').concat(S.Left('xyz')), S.Right('abc'));
     eq(S.Right('abc').concat(S.Right('def')), S.Right('abcdef'));
@@ -109,7 +109,7 @@ describe('Right', function() {
                    '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
   });
 
-  it('provides an "equals" method', function() {
+  test('"equals" method', function() {
     eq(S.Right(42).equals.length, 1);
     eq(S.Right(42).equals(S.Right(42)), true);
     eq(S.Right(42).equals(S.Right('42')), false);
@@ -125,7 +125,7 @@ describe('Right', function() {
     eq(S.Right(new Number(42)).equals(42), false);
   });
 
-  it('provides an "extend" method', function() {
+  test('"extend" method', function() {
     eq(S.Right(42).extend.length, 1);
     eq(S.Right(42).extend(function(x) { return x.value / 2; }), S.Right(21));
 
@@ -148,7 +148,7 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "map" method', function() {
+  test('"map" method', function() {
     eq(S.Right(9).map.length, 1);
     eq(S.Right(9).map(Math.sqrt), S.Right(3));
 
@@ -165,7 +165,7 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "reduce" method', function() {
+  test('"reduce" method', function() {
     eq(S.Right(5).reduce.length, 2);
     eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42, 5]);
 
@@ -182,22 +182,22 @@ describe('Right', function() {
                    'The value at position 1 is not a member of ‘Function’.\n'));
   });
 
-  it('provides a "sequence" method', function() {
+  test('"sequence" method', function() {
     eq(S.Right(S.Just(42)).sequence.length, 1);
     eq(S.Right(S.Just(42)).sequence(S.Maybe.of), S.Just(S.Right(42)));
   });
 
-  it('provides a "toString" method', function() {
+  test('"toString" method', function() {
     eq(S.Right([1, 2, 3]).toString.length, 0);
     eq(S.Right([1, 2, 3]).toString(), 'Right([1, 2, 3])');
   });
 
-  it('provides an "inspect" method', function() {
+  test('"inspect" method', function() {
     eq(S.Right([1, 2, 3]).inspect.length, 0);
     eq(S.Right([1, 2, 3]).inspect(), 'Right([1, 2, 3])');
   });
 
-  it('implements Semigroup', function() {
+  test('Semigroup', function() {
     var a = S.Right('foo');
     var b = S.Right('bar');
     var c = S.Right('baz');
@@ -206,7 +206,7 @@ describe('Right', function() {
     eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
   });
 
-  it('implements Functor', function() {
+  test('Functor', function() {
     var a = S.Right(9);
     var f = S.inc;
     var g = Math.sqrt;
@@ -218,7 +218,7 @@ describe('Right', function() {
     eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
   });
 
-  it('implements Apply', function() {
+  test('Apply', function() {
     var a = S.Right(S.inc);
     var b = S.Right(Math.sqrt);
     var c = S.Right(9);
@@ -233,7 +233,7 @@ describe('Right', function() {
     }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
   });
 
-  it('implements Applicative', function() {
+  test('Applicative', function() {
     var a = S.Right(null);
     var b = S.Right(S.inc);
     var f = S.inc;
@@ -249,7 +249,7 @@ describe('Right', function() {
     eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
   });
 
-  it('implements Chain', function() {
+  test('Chain', function() {
     var a = S.Right('0x0100');
     var f = parseHex;
     var g = squareRoot;
@@ -258,7 +258,7 @@ describe('Right', function() {
     eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
   });
 
-  it('implements Monad', function() {
+  test('Monad', function() {
     var a = S.Right(null);
     var f = squareRoot;
     var x = 25;

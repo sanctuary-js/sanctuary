@@ -10,9 +10,9 @@ var eq = require('./internal/eq');
 var errorEq = require('./internal/errorEq');
 
 
-describe('invariants', function() {
+suite('invariants', function() {
 
-  it('f() is equivalent to f for every "regular" function', function() {
+  test('f() is equivalent to f for every "regular" function', function() {
     for (var prop in S) {
       if (typeof S[prop] === 'function' && /^(?![A-Z])/.test(prop)) {
         var result = S[prop]();
@@ -22,7 +22,7 @@ describe('invariants', function() {
     }
   });
 
-  it('f(R.__) is equivalent to f for every "regular" function', function() {
+  test('f(R.__) is equivalent to f for every "regular" function', function() {
     for (var prop in S) {
       if (typeof S[prop] === 'function' && /^(?![A-Z])/.test(prop)) {
         var result = S[prop](R.__);
@@ -32,7 +32,7 @@ describe('invariants', function() {
     }
   });
 
-  it('exported functions throw if applied to too many arguments', function() {
+  test('exported functions throw if applied to too many arguments', function() {
     throws(function() { S.I(1, 2); },
            errorEq(TypeError,
                    '‘I’ requires one argument; received two arguments'));

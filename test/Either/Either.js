@@ -79,16 +79,16 @@ var Compose = function(F, G) {
   return _Compose;
 };
 
-describe('Either', function() {
+suite('Either', function() {
 
-  it('throws if called', function() {
+  test('throws if called', function() {
     throws(function() { S.Either(); },
            errorEq(Error, 'Cannot instantiate Either'));
   });
 
-  describe('Traversable laws', function() {
+  suite('Traversable laws', function() {
 
-    it('satisfies naturality', function() {
+    test('satisfies naturality', function() {
       jsc.assert(jsc.forall(EitherArb(jsc.integer, IdentityArb(jsc.string)), function(either) {
         var lhs = identityToMaybe(either.sequence(Identity.of));
         var rhs = either.map(identityToMaybe).sequence(S.Maybe.of);
@@ -96,7 +96,7 @@ describe('Either', function() {
       }));
     });
 
-    it('satisfies identity', function() {
+    test('satisfies identity', function() {
       jsc.assert(jsc.forall(EitherArb(jsc.integer, jsc.string), function(either) {
         var lhs = either.map(Identity).sequence(Identity.of);
         var rhs = Identity.of(either);
@@ -104,7 +104,7 @@ describe('Either', function() {
       }));
     });
 
-    it('satisfies composition', function() {
+    test('satisfies composition', function() {
       jsc.assert(jsc.forall(EitherArb(jsc.string, IdentityArb(EitherArb(jsc.string, jsc.integer))), function(u) {
         var C = Compose(Identity, S.Either);
         var lhs = u.map(C).sequence(C.of);

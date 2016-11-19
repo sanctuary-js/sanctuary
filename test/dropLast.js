@@ -8,58 +8,53 @@ var eq = require('./internal/eq');
 var errorEq = require('./internal/errorEq');
 
 
-describe('dropLast', function() {
+test('dropLast', function() {
 
-  it('is a binary function', function() {
-    eq(typeof S.dropLast, 'function');
-    eq(S.dropLast.length, 2);
-  });
+  eq(typeof S.dropLast, 'function');
+  eq(S.dropLast.length, 2);
 
-  it('type checks its arguments', function() {
-    throws(function() { S.dropLast(0.5); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'dropLast :: Integer -> List a -> Maybe (List a)\n' +
-                   '            ^^^^^^^\n' +
-                   '               1\n' +
-                   '\n' +
-                   '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Integer’.\n'));
+  throws(function() { S.dropLast(0.5); },
+         errorEq(TypeError,
+                 'Invalid value\n' +
+                 '\n' +
+                 'dropLast :: Integer -> List a -> Maybe (List a)\n' +
+                 '            ^^^^^^^\n' +
+                 '               1\n' +
+                 '\n' +
+                 '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+                 '\n' +
+                 'The value at position 1 is not a member of ‘Integer’.\n'));
 
-    throws(function() { S.dropLast(0, null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'dropLast :: Integer -> List a -> Maybe (List a)\n' +
-                   '                       ^^^^^^\n' +
-                   '                         1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘List a’.\n'));
-  });
+  throws(function() { S.dropLast(0, null); },
+         errorEq(TypeError,
+                 'Invalid value\n' +
+                 '\n' +
+                 'dropLast :: Integer -> List a -> Maybe (List a)\n' +
+                 '                       ^^^^^^\n' +
+                 '                         1\n' +
+                 '\n' +
+                 '1)  null :: Null\n' +
+                 '\n' +
+                 'The value at position 1 is not a member of ‘List a’.\n'));
 
-  it('returns Nothing if n is negative', function() {
-    eq(S.dropLast(-3, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-    eq(S.dropLast(-0, ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-    eq(S.dropLast(-3, 'abcde'), S.Nothing);
-    eq(S.dropLast(-0, 'abcde'), S.Nothing);
-    eq(S.dropLast(new Number(-0), ['a', 'b', 'c', 'd', 'e']), S.Nothing);
-  });
+  eq(S.dropLast(0, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
+  eq(S.dropLast(1, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4]));
+  eq(S.dropLast(2, [1, 2, 3, 4, 5]), S.Just([1, 2, 3]));
+  eq(S.dropLast(3, [1, 2, 3, 4, 5]), S.Just([1, 2]));
+  eq(S.dropLast(4, [1, 2, 3, 4, 5]), S.Just([1]));
+  eq(S.dropLast(5, [1, 2, 3, 4, 5]), S.Just([]));
+  eq(S.dropLast(6, [1, 2, 3, 4, 5]), S.Nothing);
 
-  it('returns a Just dropping the last n items for valid n; Nothing otherwise', function() {
-    eq(S.dropLast(4, ['a', 'b', 'c']), S.Nothing);
-    eq(S.dropLast(3, ['a', 'b', 'c']), S.Just([]));
-    eq(S.dropLast(2, ['a', 'b', 'c']), S.Just(['a']));
-    eq(S.dropLast(1, ['a', 'b', 'c']), S.Just(['a', 'b']));
-    eq(S.dropLast(0, ['a', 'b', 'c']), S.Just(['a', 'b', 'c']));
-    eq(S.dropLast(4, 'abc'), S.Nothing);
-    eq(S.dropLast(3, 'abc'), S.Just(''));
-    eq(S.dropLast(2, 'abc'), S.Just('a'));
-    eq(S.dropLast(1, 'abc'), S.Just('ab'));
-    eq(S.dropLast(0, 'abc'), S.Just('abc'));
-  });
+  eq(S.dropLast(0, '12345'), S.Just('12345'));
+  eq(S.dropLast(1, '12345'), S.Just('1234'));
+  eq(S.dropLast(2, '12345'), S.Just('123'));
+  eq(S.dropLast(3, '12345'), S.Just('12'));
+  eq(S.dropLast(4, '12345'), S.Just('1'));
+  eq(S.dropLast(5, '12345'), S.Just(''));
+  eq(S.dropLast(6, '12345'), S.Nothing);
+
+  eq(S.dropLast(-1, [1, 2, 3, 4, 5]), S.Nothing);
+  eq(S.dropLast(-0, [1, 2, 3, 4, 5]), S.Nothing);
+  eq(S.dropLast(new Number(-0), [1, 2, 3, 4, 5]), S.Nothing);
 
 });

@@ -9,37 +9,24 @@ var errorEq = require('./internal/errorEq');
 var factorial = require('./internal/factorial');
 
 
-describe('encase', function() {
+test('encase', function() {
 
-  it('is a binary function', function() {
-    eq(typeof S.encase, 'function');
-    eq(S.encase.length, 2);
-  });
+  eq(typeof S.encase, 'function');
+  eq(S.encase.length, 2);
 
-  it('type checks its arguments', function() {
-    throws(function() { S.encase([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'encase :: Function -> a -> Maybe b\n' +
-                   '          ^^^^^^^^\n' +
-                   '             1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
-  });
+  throws(function() { S.encase([1, 2, 3]); },
+         errorEq(TypeError,
+                 'Invalid value\n' +
+                 '\n' +
+                 'encase :: Function -> a -> Maybe b\n' +
+                 '          ^^^^^^^^\n' +
+                 '             1\n' +
+                 '\n' +
+                 '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+                 '\n' +
+                 'The value at position 1 is not a member of ‘Function’.\n'));
 
-  it('returns a Just on success', function() {
-    eq(S.encase(factorial, 5), S.Just(120));
-  });
-
-  it('returns Nothing on failure', function() {
-    eq(S.encase(factorial, -1), S.Nothing);
-  });
-
-  it('can be applied to a function of arbitrary arity', function() {
-    eq(S.encase(function(a, b, c, d) { return a; }, 42), S.Just(42));
-  });
+  eq(S.encase(factorial, 5), S.Just(120));
+  eq(S.encase(factorial, -1), S.Nothing);
 
 });
