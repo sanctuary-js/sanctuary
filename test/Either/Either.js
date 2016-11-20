@@ -1,46 +1,172 @@
 'use strict';
 
 var jsc = require('jsverify');
+var R = require('ramda');
 
 var S = require('../..');
 
-var Compose = require('../internal/Compose');
 var EitherArb = require('../internal/EitherArb');
 var Identity = require('../internal/Identity');
 var IdentityArb = require('../internal/IdentityArb');
+var laws = require('../internal/laws');
+var squareRoot = require('../internal/squareRoot');
 
 
 suite('Either', function() {
 
+  suite('Setoid laws', function() {
+
+    var setoidLaws = laws.Setoid;
+
+    setoidLaws.reflexivity(
+      EitherArb(jsc.string, jsc.falsy)
+    );
+
+    setoidLaws.symmetry(
+      EitherArb(jsc.bool, jsc.bool),
+      EitherArb(jsc.bool, jsc.bool)
+    );
+
+    setoidLaws.transitivity(
+      EitherArb(jsc.bool, jsc.bool),
+      EitherArb(jsc.bool, jsc.bool),
+      EitherArb(jsc.bool, jsc.bool)
+    );
+
+  });
+
+  suite('Semigroup laws', function() {
+
+    var semigroupLaws = laws.Semigroup(R.equals);
+
+    semigroupLaws.associativity(
+      EitherArb(jsc.string, jsc.string),
+      EitherArb(jsc.string, jsc.string),
+      EitherArb(jsc.string, jsc.string)
+    );
+
+  });
+
+  suite('Functor laws', function() {
+
+    var functorLaws = laws.Functor(R.equals);
+
+    functorLaws.identity(
+      EitherArb(jsc.string, jsc.number)
+    );
+
+    functorLaws.composition(
+      EitherArb(jsc.string, jsc.number),
+      jsc.constant(Math.sqrt),
+      jsc.constant(Math.abs)
+    );
+
+  });
+
+  suite('Apply laws', function() {
+
+    var applyLaws = laws.Apply(R.equals);
+
+    applyLaws.composition(
+      EitherArb(jsc.string, jsc.constant(Math.sqrt)),
+      EitherArb(jsc.string, jsc.constant(Math.abs)),
+      EitherArb(jsc.string, jsc.number)
+    );
+
+  });
+
+  suite('Applicative laws', function() {
+
+    var applicativeLaws = laws.Applicative(R.equals, S.Either);
+
+    applicativeLaws.identity(
+      EitherArb(jsc.string, jsc.number)
+    );
+
+    applicativeLaws.homomorphism(
+      jsc.constant(Math.abs),
+      jsc.number
+    );
+
+    applicativeLaws.interchange(
+      EitherArb(jsc.string, jsc.constant(Math.abs)),
+      jsc.number
+    );
+
+  });
+
+  suite('Chain laws', function() {
+
+    var chainLaws = laws.Chain(R.equals);
+
+    chainLaws.associativity(
+      EitherArb(jsc.string, jsc.array(jsc.number)),
+      jsc.constant(function(xs) { return xs.length > 0 ? S.Right(xs[0]) : S.Left('Empty list'); }),
+      jsc.constant(squareRoot)
+    );
+
+  });
+
+  suite('Monad laws', function() {
+
+    var monadLaws = laws.Monad(R.equals, S.Either);
+
+    monadLaws.leftIdentity(
+      jsc.constant(squareRoot),
+      jsc.number
+    );
+
+    monadLaws.rightIdentity(
+      EitherArb(jsc.string, jsc.number)
+    );
+
+  });
+
+  suite('Foldable laws', function() {
+
+    var foldableLaws = laws.Foldable(R.equals);
+
+    foldableLaws.associativity(
+      jsc.constant(function(x, y) { return x + y; }),
+      jsc.number,
+      EitherArb(jsc.string, jsc.number)
+    );
+
+  });
+
   suite('Traversable laws', function() {
 
-    test('satisfies naturality', function() {
-      var identityToMaybe = S.compose(S.Just, S.prop('value'));
-      jsc.assert(jsc.forall(EitherArb(jsc.integer, IdentityArb(jsc.string)), function(either) {
-        var lhs = identityToMaybe(either.sequence(Identity.of));
-        var rhs = either.map(identityToMaybe).sequence(S.Maybe.of);
-        return lhs.equals(rhs);
-      }));
-    });
+    var traversableLaws = laws.Traversable(R.equals);
 
-    test('satisfies identity', function() {
-      jsc.assert(jsc.forall(EitherArb(jsc.integer, jsc.string), function(either) {
-        var lhs = either.map(Identity).sequence(Identity.of);
-        var rhs = Identity.of(either);
-        return lhs.equals(rhs);
-      }));
-    });
+    traversableLaws.naturality(
+      jsc.constant(S.compose(S.Just, S.prop('value'))),
+      EitherArb(jsc.string, IdentityArb(jsc.number)),
+      jsc.constant(Identity),
+      jsc.constant(S.Maybe)
+    );
 
-    test('satisfies composition', function() {
-      jsc.assert(jsc.forall(EitherArb(jsc.string, IdentityArb(EitherArb(jsc.string, jsc.integer))), function(u) {
-        var C = Compose(Identity)(S.Either);
-        var lhs = u.map(C).sequence(C.of);
-        var rhs = C(u.sequence(Identity.of).map(function(x) {
-          return x.sequence(S.Either.of);
-        }));
-        return lhs.equals(rhs);
-      }));
-    });
+    traversableLaws.identity(
+      EitherArb(jsc.string, jsc.number),
+      jsc.constant(Identity)
+    );
+
+    traversableLaws.composition(
+      EitherArb(jsc.string, IdentityArb(EitherArb(jsc.string, jsc.number))),
+      jsc.constant(Identity),
+      jsc.constant(S.Either)
+    );
+
+  });
+
+  suite('Extend laws', function() {
+
+    var extendLaws = laws.Extend(R.equals);
+
+    extendLaws.associativity(
+      EitherArb(jsc.string, jsc.integer),
+      jsc.constant(function(either) { return either.value + 1; }),
+      jsc.constant(function(either) { return either.value * either.value; })
+    );
 
   });
 

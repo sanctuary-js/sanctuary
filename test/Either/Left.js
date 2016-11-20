@@ -3,7 +3,6 @@
 var S = require('../..');
 
 var eq = require('../internal/eq');
-var parseHex = require('../internal/parseHex');
 var squareRoot = require('../internal/squareRoot');
 var throws = require('../internal/throws');
 
@@ -114,25 +113,11 @@ suite('Left', function() {
     eq(S.Left(42).equals(S.Left('42')), false);
     eq(S.Left(42).equals(S.Right(42)), false);
     eq(S.Left(42).equals(null), false);
-
-    // Value-based equality:
-    eq(S.Left(0).equals(S.Left(-0)), false);
-    eq(S.Left(-0).equals(S.Left(0)), false);
-    eq(S.Left(NaN).equals(S.Left(NaN)), true);
-    eq(S.Left([1, 2, 3]).equals(S.Left([1, 2, 3])), true);
-    eq(S.Left(new Number(42)).equals(S.Left(new Number(42))), true);
-    eq(S.Left(new Number(42)).equals(42), false);
   });
 
   test('"extend" method', function() {
     eq(S.Left('abc').extend.length, 1);
     eq(S.Left('abc').extend(function(x) { return x / 2; }), S.Left('abc'));
-
-    // associativity
-    var w = S.Left('abc');
-    function f(x) { return x.value + 1; }
-    function g(x) { return x.value * x.value; }
-    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Left('abc').extend(null); },
            TypeError,
@@ -194,79 +179,6 @@ suite('Left', function() {
   test('"inspect" method', function() {
     eq(S.Left('abc').inspect.length, 0);
     eq(S.Left('abc').inspect(), 'Left("abc")');
-  });
-
-  test('Semigroup', function() {
-    var a = S.Left('foo');
-    var b = S.Left('bar');
-    var c = S.Left('baz');
-
-    // associativity
-    eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
-  });
-
-  test('Functor', function() {
-    var a = S.Left('Cannot divide by zero');
-    var f = S.inc;
-    var g = Math.sqrt;
-
-    // identity
-    eq(a.map(S.I).equals(a), true);
-
-    // composition
-    eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
-  });
-
-  test('Apply', function() {
-    var a = S.Left('Cannot divide by zero');
-    var b = S.Left('Cannot divide by zero');
-    var c = S.Left('Cannot divide by zero');
-
-    // composition
-    eq(a.map(function(f) {
-      return function(g) {
-        return function(x) {
-          return f(g(x));
-        };
-      };
-    }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
-  });
-
-  test('Applicative', function() {
-    var a = S.Left('Cannot divide by zero');
-    var b = S.Left('Cannot divide by zero');
-    var f = S.inc;
-    var x = 7;
-
-    // identity
-    eq(a.of(S.I).ap(b).equals(b), true);
-
-    // homomorphism
-    eq(a.of(f).ap(a.of(x)).equals(a.of(f(x))), true);
-
-    // interchange
-    eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
-  });
-
-  test('Chain', function() {
-    var a = S.Left('Cannot divide by zero');
-    var f = parseHex;
-    var g = squareRoot;
-
-    // associativity
-    eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
-  });
-
-  test('Monad', function() {
-    var a = S.Left('Cannot divide by zero');
-    var f = squareRoot;
-    var x = 25;
-
-    // left identity
-    eq(a.of(x).chain(f).equals(f(x)), true);
-
-    // right identity
-    eq(a.chain(a.of).equals(a), true);
   });
 
 });
