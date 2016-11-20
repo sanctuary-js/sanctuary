@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('drop', function() {
@@ -14,28 +12,28 @@ test('drop', function() {
   eq(S.drop.length, 2);
 
   throws(function() { S.drop(0.5); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'drop :: Integer -> List a -> Maybe (List a)\n' +
-                 '        ^^^^^^^\n' +
-                 '           1\n' +
-                 '\n' +
-                 '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Integer’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'drop :: Integer -> List a -> Maybe (List a)\n' +
+         '        ^^^^^^^\n' +
+         '           1\n' +
+         '\n' +
+         '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Integer’.\n');
 
   throws(function() { S.drop(0, null); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'drop :: Integer -> List a -> Maybe (List a)\n' +
-                 '                   ^^^^^^\n' +
-                 '                     1\n' +
-                 '\n' +
-                 '1)  null :: Null\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘List a’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'drop :: Integer -> List a -> Maybe (List a)\n' +
+         '                   ^^^^^^\n' +
+         '                     1\n' +
+         '\n' +
+         '1)  null :: Null\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘List a’.\n');
 
   eq(S.drop(0, [1, 2, 3, 4, 5]), S.Just([1, 2, 3, 4, 5]));
   eq(S.drop(1, [1, 2, 3, 4, 5]), S.Just([2, 3, 4, 5]));

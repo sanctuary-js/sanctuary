@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var jsc = require('jsverify');
 var R = require('ramda');
 
 var S = require('../..');
 
-var errorEq = require('../internal/errorEq');
+var throws = require('../internal/throws');
 
 
 //  Identity :: a -> Identity a
@@ -82,8 +80,7 @@ var Compose = function(F, G) {
 suite('Either', function() {
 
   test('throws if called', function() {
-    throws(function() { S.Either(); },
-           errorEq(Error, 'Cannot instantiate Either'));
+    throws(function() { S.Either(); }, Error, 'Cannot instantiate Either');
   });
 
   suite('Traversable laws', function() {

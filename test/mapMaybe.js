@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('mapMaybe', function() {
@@ -14,28 +12,28 @@ test('mapMaybe', function() {
   eq(S.mapMaybe.length, 2);
 
   throws(function() { S.mapMaybe([1, 2, 3]); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'mapMaybe :: Function -> Array a -> Array b\n' +
-                 '            ^^^^^^^^\n' +
-                 '               1\n' +
-                 '\n' +
-                 '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Function’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'mapMaybe :: Function -> Array a -> Array b\n' +
+         '            ^^^^^^^^\n' +
+         '               1\n' +
+         '\n' +
+         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Function’.\n');
 
   throws(function() { S.mapMaybe(S.head, null); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'mapMaybe :: Function -> Array a -> Array b\n' +
-                 '                        ^^^^^^^\n' +
-                 '                           1\n' +
-                 '\n' +
-                 '1)  null :: Null\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Array a’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'mapMaybe :: Function -> Array a -> Array b\n' +
+         '                        ^^^^^^^\n' +
+         '                           1\n' +
+         '\n' +
+         '1)  null :: Null\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Array a’.\n');
 
   eq(S.mapMaybe(S.head, []), []);
   eq(S.mapMaybe(S.head, [[], [], []]), []);

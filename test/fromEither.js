@@ -1,10 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
+var throws = require('./internal/throws');
 
 
 test('fromEither', function() {
@@ -13,11 +12,12 @@ test('fromEither', function() {
   eq(S.fromEither.length, 2);
 
   throws(function() { S.fromEither(0, [1, 2, 3]); },
+         TypeError,
          'Invalid value\n' +
          '\n' +
          'fromEither :: b -> Either a b -> b\n' +
-         '                   ^^^^^^^^^^n' +
-         '                        1\n' +
+         '                   ^^^^^^^^^^\n' +
+         '                       1\n' +
          '\n' +
          '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
          '\n' +

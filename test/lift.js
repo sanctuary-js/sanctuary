@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('lift', function() {
@@ -14,16 +12,16 @@ test('lift', function() {
   eq(S.lift.length, 2);
 
   throws(function() { S.lift('wrong'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'lift :: (Functor a, Functor b) => Function -> a -> b\n' +
-                 '                                  ^^^^^^^^\n' +
-                 '                                     1\n' +
-                 '\n' +
-                 '1)  "wrong" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Function’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'lift :: (Functor a, Functor b) => Function -> a -> b\n' +
+         '                                  ^^^^^^^^\n' +
+         '                                     1\n' +
+         '\n' +
+         '1)  "wrong" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Function’.\n');
 
   eq(S.lift(S.mult(2), S.Just(3)), S.Just(6));
   eq(S.lift(S.mult(2), S.Nothing), S.Nothing);

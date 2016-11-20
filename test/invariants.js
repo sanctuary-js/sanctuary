@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var R = require('ramda');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 suite('invariants', function() {
@@ -34,20 +32,20 @@ suite('invariants', function() {
 
   test('exported functions throw if applied to too many arguments', function() {
     throws(function() { S.I(1, 2); },
-           errorEq(TypeError,
-                   '‘I’ requires one argument; received two arguments'));
+           TypeError,
+           '‘I’ requires one argument; received two arguments');
 
     throws(function() { S.K(1, 2, 3); },
-           errorEq(TypeError,
-                   '‘K’ requires two arguments; received three arguments'));
+           TypeError,
+           '‘K’ requires two arguments; received three arguments');
 
     throws(function() { S.K(1)(2, 3); },
-           errorEq(TypeError,
-                   '‘K’ requires two arguments; received three arguments'));
+           TypeError,
+           '‘K’ requires two arguments; received three arguments');
 
     throws(function() { S.K(1, 2, 3, 4, 5, 6, 7, 8, 9, 10); },
-           errorEq(TypeError,
-                   '‘K’ requires two arguments; received 10 arguments'));
+           TypeError,
+           '‘K’ requires two arguments; received 10 arguments');
   });
 
 });

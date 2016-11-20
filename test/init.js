@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('init', function() {
@@ -14,16 +12,16 @@ test('init', function() {
   eq(S.init.length, 1);
 
   throws(function() { S.init({length: -1}); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'init :: List a -> Maybe (List a)\n' +
-                 '        ^^^^^^\n' +
-                 '          1\n' +
-                 '\n' +
-                 '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘List a’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'init :: List a -> Maybe (List a)\n' +
+         '        ^^^^^^\n' +
+         '          1\n' +
+         '\n' +
+         '1)  {"length": -1} :: Object, StrMap Number, StrMap FiniteNumber, StrMap NonZeroFiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘List a’.\n');
 
   eq(S.init([]), S.Nothing);
   eq(S.init(['foo']), S.Just([]));
