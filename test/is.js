@@ -1,12 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
 var vm = require('vm');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('is', function() {
@@ -15,16 +14,16 @@ test('is', function() {
   eq(S.is.length, 2);
 
   throws(function() { S.is([1, 2, 3]); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'is :: TypeRep -> Any -> Boolean\n' +
-                 '      ^^^^^^^\n' +
-                 '         1\n' +
-                 '\n' +
-                 '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘TypeRep’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'is :: TypeRep -> Any -> Boolean\n' +
+         '      ^^^^^^^\n' +
+         '         1\n' +
+         '\n' +
+         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘TypeRep’.\n');
 
   eq(S.is(Array,    []),                  true);
   eq(S.is(Boolean,  false),               true);

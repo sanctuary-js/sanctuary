@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var R = require('ramda');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('regex', function() {
@@ -16,67 +14,67 @@ test('regex', function() {
   eq(S.regex.length, 2);
 
   throws(function() { S.regex('y'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
-                 '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
-                 '                                  1\n' +
-                 '\n' +
-                 '1)  "y" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+         '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+         '                                  1\n' +
+         '\n' +
+         '1)  "y" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n');
 
   throws(function() { S.regex('G'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
-                 '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
-                 '                                  1\n' +
-                 '\n' +
-                 '1)  "G" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+         '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+         '                                  1\n' +
+         '\n' +
+         '1)  "G" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n');
 
   throws(function() { S.regex('ig'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
-                 '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
-                 '                                  1\n' +
-                 '\n' +
-                 '1)  "ig" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+         '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+         '                                  1\n' +
+         '\n' +
+         '1)  "ig" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n');
 
   var G = function G() {};
   G.prototype.toString = R.always('g');
 
   throws(function() { S.regex(new G()); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
-                 '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
-                 '                                  1\n' +
-                 '\n' +
-                 '1)  g :: Object, StrMap ???\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+         '         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n' +
+         '                                  1\n' +
+         '\n' +
+         '1)  g :: Object, StrMap ???\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n');
 
   throws(function() { S.regex('', /(?:)/); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
-                 '                                                                ^^^^^^\n' +
-                 '                                                                  1\n' +
-                 '\n' +
-                 '1)  /(?:)/ :: RegExp\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘String’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp\n' +
+         '                                                                ^^^^^^\n' +
+         '                                                                  1\n' +
+         '\n' +
+         '1)  /(?:)/ :: RegExp\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘String’.\n');
 
   eq(S.regex('', '\\d'), /\d/);
   eq(S.regex('g', '\\d'), /\d/g);

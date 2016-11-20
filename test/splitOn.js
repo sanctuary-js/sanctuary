@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var jsc = require('jsverify');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('splitOn', function() {
@@ -16,28 +14,28 @@ test('splitOn', function() {
   eq(S.splitOn.length, 2);
 
   throws(function() { S.splitOn(/x/); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'splitOn :: String -> String -> Array String\n' +
-                 '           ^^^^^^\n' +
-                 '             1\n' +
-                 '\n' +
-                 '1)  /x/ :: RegExp\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘String’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'splitOn :: String -> String -> Array String\n' +
+         '           ^^^^^^\n' +
+         '             1\n' +
+         '\n' +
+         '1)  /x/ :: RegExp\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘String’.\n');
 
   throws(function() { S.splitOn('', null); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'splitOn :: String -> String -> Array String\n' +
-                 '                     ^^^^^^\n' +
-                 '                       1\n' +
-                 '\n' +
-                 '1)  null :: Null\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘String’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'splitOn :: String -> String -> Array String\n' +
+         '                     ^^^^^^\n' +
+         '                       1\n' +
+         '\n' +
+         '1)  null :: Null\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘String’.\n');
 
   eq(S.splitOn('', 'abc'), ['a', 'b', 'c']);
   eq(S.splitOn(':', ''), ['']);

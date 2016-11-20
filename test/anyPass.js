@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('anyPass', function() {
@@ -14,16 +12,16 @@ test('anyPass', function() {
   eq(S.anyPass.length, 2);
 
   throws(function() { S.anyPass('wrong'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'anyPass :: Array Function -> a -> Boolean\n' +
-                 '           ^^^^^^^^^^^^^^\n' +
-                 '                 1\n' +
-                 '\n' +
-                 '1)  "wrong" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Array Function’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'anyPass :: Array Function -> a -> Boolean\n' +
+         '           ^^^^^^^^^^^^^^\n' +
+         '                 1\n' +
+         '\n' +
+         '1)  "wrong" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Array Function’.\n');
 
   eq(S.anyPass([], 'narwhal'), false);
   eq(S.anyPass([S.test(/a/), S.test(/b/), S.test(/c/)], 'narwhal'), true);

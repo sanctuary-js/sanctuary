@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var jsc = require('jsverify');
 var R = require('ramda');
 
 var S = require('../..');
 
-var errorEq = require('../internal/errorEq');
+var throws = require('../internal/throws');
 
 
 //  Identity :: a -> Identity a
@@ -87,8 +85,7 @@ var Compose = function(F, G) {
 suite('Maybe', function() {
 
   test('throws if called', function() {
-    throws(function() { S.Maybe(); },
-           errorEq(Error, 'Cannot instantiate Maybe'));
+    throws(function() { S.Maybe(); }, Error, 'Cannot instantiate Maybe');
   });
 
   suite('Traversable laws', function() {

@@ -1,12 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
 var vm = require('vm');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('pluck', function() {
@@ -15,40 +14,40 @@ test('pluck', function() {
   eq(S.pluck.length, 3);
 
   throws(function() { S.pluck([1, 2, 3]); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
-                 '                         ^^^^^^^\n' +
-                 '                            1\n' +
-                 '\n' +
-                 '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘TypeRep’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+         '                         ^^^^^^^\n' +
+         '                            1\n' +
+         '\n' +
+         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘TypeRep’.\n');
 
   throws(function() { S.pluck(Number, [1, 2, 3]); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
-                 '                                    ^^^^^^\n' +
-                 '                                      1\n' +
-                 '\n' +
-                 '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘String’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+         '                                    ^^^^^^\n' +
+         '                                      1\n' +
+         '\n' +
+         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘String’.\n');
 
   throws(function() { S.pluck(Number, 'x', {length: 0}); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
-                 '                                              ^^^^^^^\n' +
-                 '                                                 1\n' +
-                 '\n' +
-                 '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Array a’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'pluck :: Accessible a => TypeRep -> String -> Array a -> Array (Maybe b)\n' +
+         '                                              ^^^^^^^\n' +
+         '                                                 1\n' +
+         '\n' +
+         '1)  {"length": 0} :: Object, StrMap Number, StrMap FiniteNumber, StrMap Integer, StrMap ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Array a’.\n');
 
   eq(S.pluck(Number, 'x', []), []);
   eq(S.pluck(Number, 'x', [{x: '1'}, {x: 2}, {x: null}, {x: undefined}, {}]), [S.Nothing, S.Just(2), S.Nothing, S.Nothing, S.Nothing]);

@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var R = require('ramda');
 
 var S = require('../..');
 
 var eq = require('../internal/eq');
-var errorEq = require('../internal/errorEq');
+var throws = require('../internal/throws');
 
 
 suite('Nothing', function() {
@@ -24,16 +22,16 @@ suite('Nothing', function() {
     eq(S.Nothing.ap(S.Just(42)), S.Nothing);
 
     throws(function() { S.Nothing.ap([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#ap :: Maybe Function -> Maybe a -> Maybe b\n' +
-                   '                              ^^^^^^^\n' +
-                   '                                 1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Maybe a’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#ap :: Maybe Function -> Maybe a -> Maybe b\n' +
+           '                              ^^^^^^^\n' +
+           '                                 1\n' +
+           '\n' +
+           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Maybe a’.\n');
   });
 
   test('"chain" method', function() {
@@ -41,16 +39,16 @@ suite('Nothing', function() {
     eq(S.Nothing.chain(S.head), S.Nothing);
 
     throws(function() { S.Nothing.chain(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#chain :: Maybe a -> Function -> Maybe b\n' +
-                   '                          ^^^^^^^^\n' +
-                   '                             1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#chain :: Maybe a -> Function -> Maybe b\n' +
+           '                          ^^^^^^^^\n' +
+           '                             1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"concat" method', function() {
@@ -59,28 +57,28 @@ suite('Nothing', function() {
     eq(S.Nothing.concat(S.Just('foo')), S.Just('foo'));
 
     throws(function() { S.Nothing.concat(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
-                   '                                          ^^^^^^^\n' +
-                   '                                             1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Maybe a’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+           '                                          ^^^^^^^\n' +
+           '                                             1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Maybe a’.\n');
 
     throws(function() { S.Nothing.concat(S.Just(1)); },
-           errorEq(TypeError,
-                   'Type-class constraint violation\n' +
-                   '\n' +
-                   'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
-                   '                ^^^^^^^^^^^                     ^\n' +
-                   '                                                1\n' +
-                   '\n' +
-                   '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
-                   '\n' +
-                   '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+           TypeError,
+           'Type-class constraint violation\n' +
+           '\n' +
+           'Maybe#concat :: Semigroup a => Maybe a -> Maybe a -> Maybe a\n' +
+           '                ^^^^^^^^^^^                     ^\n' +
+           '                                                1\n' +
+           '\n' +
+           '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+           '\n' +
+           '‘Maybe#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
   });
 
   test('"equals" method', function() {
@@ -101,16 +99,16 @@ suite('Nothing', function() {
     eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Nothing.extend(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#extend :: Maybe a -> Function -> Maybe a\n' +
-                   '                           ^^^^^^^^\n' +
-                   '                              1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#extend :: Maybe a -> Function -> Maybe a\n' +
+           '                           ^^^^^^^^\n' +
+           '                              1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"filter" method', function() {
@@ -127,16 +125,16 @@ suite('Nothing', function() {
     eq(m.map(f).filter(q).equals(m.filter(function(x) { return q(f(x)); }).map(f)), true);
 
     throws(function() { S.Nothing.filter(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#filter :: Maybe a -> Function -> Maybe a\n' +
-                   '                           ^^^^^^^^\n' +
-                   '                              1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#filter :: Maybe a -> Function -> Maybe a\n' +
+           '                           ^^^^^^^^\n' +
+           '                              1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"map" method', function() {
@@ -144,16 +142,16 @@ suite('Nothing', function() {
     eq(S.Nothing.map(function() { return 42; }), S.Nothing);
 
     throws(function() { S.Nothing.map(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#map :: Maybe a -> Function -> Maybe b\n' +
-                   '                        ^^^^^^^^\n' +
-                   '                           1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#map :: Maybe a -> Function -> Maybe b\n' +
+           '                        ^^^^^^^^\n' +
+           '                           1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"reduce" method', function() {
@@ -161,16 +159,16 @@ suite('Nothing', function() {
     eq(S.Nothing.reduce(function(a, b) { return a + b; }, 10), 10);
 
     throws(function() { S.Nothing.reduce(null, null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Maybe#reduce :: Maybe a -> Function -> b -> b\n' +
-                   '                           ^^^^^^^^\n' +
-                   '                              1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Maybe#reduce :: Maybe a -> Function -> b -> b\n' +
+           '                           ^^^^^^^^\n' +
+           '                              1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"sequence" method', function() {

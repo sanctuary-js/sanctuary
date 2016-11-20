@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('indexOf', function() {
@@ -14,16 +12,16 @@ test('indexOf', function() {
   eq(S.indexOf.length, 2);
 
   throws(function() { S.indexOf('x', null); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'indexOf :: a -> List a -> Maybe Integer\n' +
-                 '                ^^^^^^\n' +
-                 '                  1\n' +
-                 '\n' +
-                 '1)  null :: Null\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘List a’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'indexOf :: a -> List a -> Maybe Integer\n' +
+         '                ^^^^^^\n' +
+         '                  1\n' +
+         '\n' +
+         '1)  null :: Null\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘List a’.\n');
 
   eq(S.indexOf('x', []), S.Nothing);
   eq(S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a']), S.Nothing);

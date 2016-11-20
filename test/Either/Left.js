@@ -1,13 +1,11 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('../..');
 
 var eq = require('../internal/eq');
-var errorEq = require('../internal/errorEq');
 var parseHex = require('../internal/parseHex');
 var squareRoot = require('../internal/squareRoot');
+var throws = require('../internal/throws');
 
 
 suite('Left', function() {
@@ -26,16 +24,16 @@ suite('Left', function() {
     eq(S.Left('abc').ap(S.Right(42)), S.Left('abc'));
 
     throws(function() { S.Left('abc').ap([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#ap :: Either a Function -> Either a b -> Either a c\n' +
-                   '                                  ^^^^^^^^^^\n' +
-                   '                                      1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Either a b’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#ap :: Either a Function -> Either a b -> Either a c\n' +
+           '                                  ^^^^^^^^^^\n' +
+           '                                      1\n' +
+           '\n' +
+           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Either a b’.\n');
   });
 
   test('"chain" method', function() {
@@ -43,16 +41,16 @@ suite('Left', function() {
     eq(S.Left('abc').chain(squareRoot), S.Left('abc'));
 
     throws(function() { S.Left('abc').chain([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#chain :: Either a b -> Function -> Either a c\n' +
-                   '                              ^^^^^^^^\n' +
-                   '                                 1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#chain :: Either a b -> Function -> Either a c\n' +
+           '                              ^^^^^^^^\n' +
+           '                                 1\n' +
+           '\n' +
+           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"concat" method', function() {
@@ -61,52 +59,52 @@ suite('Left', function() {
     eq(S.Left('abc').concat(S.Right('xyz')), S.Right('xyz'));
 
     throws(function() { S.Left('abc').concat([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-                   '                                                             ^^^^^^^^^^\n' +
-                   '                                                                 1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Either a b’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+           '                                                             ^^^^^^^^^^\n' +
+           '                                                                 1\n' +
+           '\n' +
+           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Either a b’.\n');
 
     throws(function() { S.Left(/xxx/).concat(null); },
-           errorEq(TypeError,
-                   'Type-class constraint violation\n' +
-                   '\n' +
-                   'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-                   '                  ^^^^^^^^^^^                         ^\n' +
-                   '                                                      1\n' +
-                   '\n' +
-                   '1)  /xxx/ :: RegExp\n' +
-                   '\n' +
-                   '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+           TypeError,
+           'Type-class constraint violation\n' +
+           '\n' +
+           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+           '                  ^^^^^^^^^^^                         ^\n' +
+           '                                                      1\n' +
+           '\n' +
+           '1)  /xxx/ :: RegExp\n' +
+           '\n' +
+           '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
 
     throws(function() { S.Left([1, 2, 3]).concat(S.Left(/xxx/)); },
-           errorEq(TypeError,
-                   'Type-class constraint violation\n' +
-                   '\n' +
-                   'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-                   '                  ^^^^^^^^^^^                                       ^\n' +
-                   '                                                                    1\n' +
-                   '\n' +
-                   '1)  /xxx/ :: RegExp\n' +
-                   '\n' +
-                   '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+           TypeError,
+           'Type-class constraint violation\n' +
+           '\n' +
+           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+           '                  ^^^^^^^^^^^                                       ^\n' +
+           '                                                                    1\n' +
+           '\n' +
+           '1)  /xxx/ :: RegExp\n' +
+           '\n' +
+           '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
 
     throws(function() { S.Left([1, 2, 3]).concat(S.Right(/xxx/)); },
-           errorEq(TypeError,
-                   'Type-class constraint violation\n' +
-                   '\n' +
-                   'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-                   '                               ^^^^^^^^^^^                            ^\n' +
-                   '                                                                      1\n' +
-                   '\n' +
-                   '1)  /xxx/ :: RegExp\n' +
-                   '\n' +
-                   '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n'));
+           TypeError,
+           'Type-class constraint violation\n' +
+           '\n' +
+           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
+           '                               ^^^^^^^^^^^                            ^\n' +
+           '                                                                      1\n' +
+           '\n' +
+           '1)  /xxx/ :: RegExp\n' +
+           '\n' +
+           '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
   });
 
   test('"equals" method', function() {
@@ -136,16 +134,16 @@ suite('Left', function() {
     eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Left('abc').extend(null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#extend :: Either a b -> Function -> Either a b\n' +
-                   '                               ^^^^^^^^\n' +
-                   '                                  1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#extend :: Either a b -> Function -> Either a b\n' +
+           '                               ^^^^^^^^\n' +
+           '                                  1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"map" method', function() {
@@ -153,16 +151,16 @@ suite('Left', function() {
     eq(S.Left('abc').map(Math.sqrt), S.Left('abc'));
 
     throws(function() { S.Left('abc').map([1, 2, 3]); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#map :: Either a b -> Function -> Either a c\n' +
-                   '                            ^^^^^^^^\n' +
-                   '                               1\n' +
-                   '\n' +
-                   '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#map :: Either a b -> Function -> Either a c\n' +
+           '                            ^^^^^^^^\n' +
+           '                               1\n' +
+           '\n' +
+           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"reduce" method', function() {
@@ -170,16 +168,16 @@ suite('Left', function() {
     eq(S.Left('abc').reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42]);
 
     throws(function() { S.Left('abc').reduce(null, null); },
-           errorEq(TypeError,
-                   'Invalid value\n' +
-                   '\n' +
-                   'Either#reduce :: Either a b -> Function -> c -> c\n' +
-                   '                               ^^^^^^^^\n' +
-                   '                                  1\n' +
-                   '\n' +
-                   '1)  null :: Null\n' +
-                   '\n' +
-                   'The value at position 1 is not a member of ‘Function’.\n'));
+           TypeError,
+           'Invalid value\n' +
+           '\n' +
+           'Either#reduce :: Either a b -> Function -> c -> c\n' +
+           '                               ^^^^^^^^\n' +
+           '                                  1\n' +
+           '\n' +
+           '1)  null :: Null\n' +
+           '\n' +
+           'The value at position 1 is not a member of ‘Function’.\n');
   });
 
   test('"sequence" method', function() {

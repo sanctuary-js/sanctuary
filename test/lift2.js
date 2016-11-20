@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('lift2', function() {
@@ -14,16 +12,16 @@ test('lift2', function() {
   eq(S.lift2.length, 3);
 
   throws(function() { S.lift2('wrong'); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'lift2 :: (Apply a, Apply b, Apply c) => Function -> a -> b -> c\n' +
-                 '                                        ^^^^^^^^\n' +
-                 '                                           1\n' +
-                 '\n' +
-                 '1)  "wrong" :: String\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Function’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'lift2 :: (Apply a, Apply b, Apply c) => Function -> a -> b -> c\n' +
+         '                                        ^^^^^^^^\n' +
+         '                                           1\n' +
+         '\n' +
+         '1)  "wrong" :: String\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Function’.\n');
 
   //  positive :: Number -> Boolean
   var positive = function(n) { return n > 0; };

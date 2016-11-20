@@ -1,11 +1,9 @@
 'use strict';
 
-var throws = require('assert').throws;
-
 var S = require('..');
 
 var eq = require('./internal/eq');
-var errorEq = require('./internal/errorEq');
+var throws = require('./internal/throws');
 
 
 test('parseInt', function() {
@@ -14,28 +12,28 @@ test('parseInt', function() {
   eq(S.parseInt.length, 2);
 
   throws(function() { S.parseInt(0.5); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'parseInt :: Integer -> String -> Maybe Integer\n' +
-                 '            ^^^^^^^\n' +
-                 '               1\n' +
-                 '\n' +
-                 '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘Integer’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'parseInt :: Integer -> String -> Maybe Integer\n' +
+         '            ^^^^^^^\n' +
+         '               1\n' +
+         '\n' +
+         '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Integer’.\n');
 
   throws(function() { S.parseInt(10, 42); },
-         errorEq(TypeError,
-                 'Invalid value\n' +
-                 '\n' +
-                 'parseInt :: Integer -> String -> Maybe Integer\n' +
-                 '                       ^^^^^^\n' +
-                 '                         1\n' +
-                 '\n' +
-                 '1)  42 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
-                 '\n' +
-                 'The value at position 1 is not a member of ‘String’.\n'));
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'parseInt :: Integer -> String -> Maybe Integer\n' +
+         '                       ^^^^^^\n' +
+         '                         1\n' +
+         '\n' +
+         '1)  42 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘String’.\n');
 
   eq(S.parseInt(10, '42'), S.Just(42));
   eq(S.parseInt(16, '2A'), S.Just(42));
@@ -115,11 +113,8 @@ test('parseInt', function() {
   eq(S.parseInt(36, '['), S.Nothing);
 
   // Throws if radix is not in [2 .. 36]
-  throws(function() { S.parseInt(1, ''); },
-         errorEq(RangeError, 'Radix not in [2 .. 36]'));
-
-  throws(function() { S.parseInt(37, ''); },
-         errorEq(RangeError, 'Radix not in [2 .. 36]'));
+  throws(function() { S.parseInt(1, ''); }, RangeError, 'Radix not in [2 .. 36]');
+  throws(function() { S.parseInt(37, ''); }, RangeError, 'Radix not in [2 .. 36]');
 
   // Is not case-sensitive
   eq(S.parseInt(16, 'FF'), S.Just(255));
