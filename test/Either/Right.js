@@ -14,6 +14,7 @@ suite('Right', function() {
     eq(typeof S.Right, 'function');
     eq(S.Right.length, 1);
     eq(S.Right(42)['@@type'], 'sanctuary/Either');
+    eq(S.Right(42).constructor, S.Either);
     eq(S.Right(42).isLeft, false);
     eq(S.Right(42).isRight, true);
   });

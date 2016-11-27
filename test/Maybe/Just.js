@@ -14,6 +14,7 @@ suite('Just', function() {
     eq(typeof S.Just, 'function');
     eq(S.Just.length, 1);
     eq(S.Just(42)['@@type'], 'sanctuary/Maybe');
+    eq(S.Just(42).constructor, S.Maybe);
     eq(S.Just(42).isNothing, false);
     eq(S.Just(42).isJust, true);
   });
