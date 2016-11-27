@@ -2651,27 +2651,27 @@
   }
   S.find = def('find', {}, [$.Function, $.Array(a), $Maybe(a)], find);
 
-  //# pluck :: Accessible a => TypeRep b -> String -> Array a -> Array (Maybe b)
+  //# pluck :: Accessible a => String -> Array a -> Array b
   //.
-  //. Takes a [type representative](#type-representatives), a property name,
-  //. and an array of objects and returns an array of equal length. Each
-  //. element of the output array is Just the value of the specified property
-  //. of the corresponding object if the value is of the specified type
-  //. (according to [`is`](#is)); Nothing otherwise.
-  //.
-  //. See also [`get`](#get).
+  //. Combines [`map`][R.map] and [`prop`](#prop). `pluck(k, xs)` is equivalent
+  //. to `map(prop(k), xs)`.
   //.
   //. ```javascript
-  //. > S.pluck(Number, 'x', [{x: 1}, {x: 2}, {x: '3'}, {x: null}, {}])
-  //. [Just(1), Just(2), Nothing, Nothing, Nothing]
+  //. > S.pluck('x', [{x: 1}, {x: 2}, {x: 3}])
+  //. [1, 2, 3]
   //. ```
-  function pluck(typeRep, key, xs) {
-    return xs.map(function(x) { return get(typeRep, key, x); });
+  function pluck(key, xs) {
+    return xs.map(function(x, idx) {
+      if (key in Object(x)) return x[key];
+      throw new TypeError('‘pluck’ expected object at index ' + idx +
+                          ' to have a property named ‘' + key + '’; ' +
+                          R.toString(x) + ' does not');
+    });
   }
   S.pluck =
   def('pluck',
       {a: [Accessible]},
-      [TypeRep, $.String, $.Array(a), $.Array($Maybe(b))],
+      [$.String, $.Array(a), $.Array(b)],
       pluck);
 
   //# reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a
@@ -2765,6 +2765,8 @@
   //. lacks the specified property, a type error is thrown.
   //.
   //. For accessing properties of uncertain objects, use [`get`](#get) instead.
+  //.
+  //. See also [`pluck`](#pluck).
   //.
   //. ```javascript
   //. > S.prop('a', {a: 1, b: 2})
@@ -3498,6 +3500,7 @@
 //. [Nullable]:         https://github.com/sanctuary-js/sanctuary-def#nullable
 //. [Object#toString]:  https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
 //. [R.equals]:         http://ramdajs.com/docs/#equals
+//. [R.map]:            http://ramdajs.com/docs/#map
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       https://github.com/sanctuary-js/sanctuary-def#regexflags
 //. [Semigroup]:        https://github.com/fantasyland/fantasy-land#semigroup
