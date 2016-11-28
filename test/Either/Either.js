@@ -5,8 +5,6 @@ var R = require('ramda');
 
 var S = require('../..');
 
-var throws = require('../internal/throws');
-
 
 //  Identity :: a -> Identity a
 var Identity = function Identity(x) {
@@ -78,10 +76,6 @@ var Compose = function(F, G) {
 };
 
 suite('Either', function() {
-
-  test('throws if called', function() {
-    throws(function() { S.Either(); }, Error, 'Cannot instantiate Either');
-  });
 
   suite('Traversable laws', function() {
 

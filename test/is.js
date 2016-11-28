@@ -40,6 +40,16 @@ test('is', function() {
   eq(S.is(Array,    undefined),           false);
   eq(S.is(Array,    {}),                  false);
 
+  eq(S.is(S.Maybe,  S.Nothing),           true);
+  eq(S.is(S.Maybe,  S.Just(9)),           true);
+  eq(S.is(S.Maybe,  S.Left(9)),           false);
+  eq(S.is(S.Maybe,  S.Right(9)),          false);
+
+  eq(S.is(S.Either, S.Nothing),           false);
+  eq(S.is(S.Either, S.Just(9)),           false);
+  eq(S.is(S.Either, S.Left(9)),           true);
+  eq(S.is(S.Either, S.Right(9)),          true);
+
   var FooBar = function FooBar() {};
   FooBar.prototype['@@type'] = 'foobar/FooBar';
   var Foo = function Foo() {};

@@ -5,8 +5,6 @@ var R = require('ramda');
 
 var S = require('../..');
 
-var throws = require('../internal/throws');
-
 
 //  Identity :: a -> Identity a
 var Identity = function Identity(x) {
@@ -83,10 +81,6 @@ var Compose = function(F, G) {
 };
 
 suite('Maybe', function() {
-
-  test('throws if called', function() {
-    throws(function() { S.Maybe(); }, Error, 'Cannot instantiate Maybe');
-  });
 
   suite('Traversable laws', function() {
 

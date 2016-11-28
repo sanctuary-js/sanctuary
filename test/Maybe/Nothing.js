@@ -12,6 +12,7 @@ suite('Nothing', function() {
 
   test('member of the "Maybe a" type', function() {
     eq(S.Nothing['@@type'], 'sanctuary/Maybe');
+    eq(S.Nothing.constructor, S.Maybe);
     eq(S.Nothing.isNothing, true);
     eq(S.Nothing.isJust, false);
   });
