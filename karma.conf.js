@@ -1,11 +1,11 @@
 'use strict';
 
 //  depMain :: String -> String
-var depMain = function(name) {
+function depMain(name) {
   var pkg = require(name + '/package.json');
   var main = 'main' in pkg ? pkg.main : 'index.js';
   return './node_modules/' + name + '/' + main;
-};
+}
 
 //  dependencies :: Array String
 var dependencies = Object.keys(require('./package.json').dependencies);

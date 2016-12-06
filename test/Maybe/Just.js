@@ -130,8 +130,8 @@ suite('Just', function() {
 
     // associativity
     var w = S.Just(42);
-    var f = function(x) { return x.value + 1; };
-    var g = function(x) { return x.value * x.value; };
+    function f(x) { return x.value + 1; }
+    function g(x) { return x.value * x.value; }
     eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Just(42).extend(null); },
@@ -155,9 +155,9 @@ suite('Just', function() {
     eq(S.Just(42).filter(function(n) { return n < 0; }), S.Nothing);
 
     var m = S.Just(-5);
-    var f = function(n) { return n * n; };
-    var p = function(n) { return n < 0; };
-    var q = function(n) { return n > 0; };
+    function f(n) { return n * n; }
+    function p(n) { return n < 0; }
+    function q(n) { return n > 0; }
 
     eq(m.map(f).filter(p).equals(m.filter(function(x) { return p(f(x)); }).map(f)), true);
     eq(m.map(f).filter(q).equals(m.filter(function(x) { return q(f(x)); }).map(f)), true);

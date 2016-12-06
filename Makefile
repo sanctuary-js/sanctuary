@@ -31,7 +31,6 @@ lint:
 	  --global module \
 	  --global require \
 	  --global self \
-	  --rule 'func-style: [off]' \
 	  -- index.js
 	$(ESLINT) \
 	  --env node \

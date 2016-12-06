@@ -8,9 +8,9 @@ var throws = require('./internal/throws');
 
 test('pairs', function() {
 
-  var comparePairsAsc = function(a, b) {
+  function comparePairsAsc(a, b) {
     return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
-  };
+  }
 
   eq(typeof S.pairs, 'function');
   eq(S.pairs.length, 1);

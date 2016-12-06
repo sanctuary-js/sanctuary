@@ -50,11 +50,11 @@ test('is', function() {
   eq(S.is(S.Either, S.Left(9)),           true);
   eq(S.is(S.Either, S.Right(9)),          true);
 
-  var FooBar = function FooBar() {};
+  function FooBar() {}
   FooBar.prototype['@@type'] = 'foobar/FooBar';
-  var Foo = function Foo() {};
+  function Foo() {}
   Foo.prototype = new FooBar();
-  var Bar = function Bar() {};
+  function Bar() {}
   Bar.prototype = new FooBar();
 
   eq(S.is(FooBar, new Foo()), true);
