@@ -33,7 +33,7 @@ test('type', function() {
   eq(S.type(S.Nothing),   'sanctuary/Maybe');
   eq(S.type(S.Just(42)),  'sanctuary/Maybe');
 
-  var Gizmo = function Gizmo() {};
+  function Gizmo() {}
   Gizmo.prototype['@@type'] = 'gadgets/Gizmo';
 
   eq(S.type(new Gizmo()), 'gadgets/Gizmo');

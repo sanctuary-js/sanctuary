@@ -130,8 +130,8 @@ suite('Right', function() {
 
     // associativity
     var w = S.Right(42);
-    var f = function(x) { return x.value + 1; };
-    var g = function(x) { return x.value * x.value; };
+    function f(x) { return x.value + 1; }
+    function g(x) { return x.value * x.value; }
     eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Right('abc').extend(null); },

@@ -7,7 +7,7 @@ var S = require('../..');
 
 
 //  Identity :: a -> Identity a
-var Identity = function Identity(x) {
+function Identity(x) {
   return {
     of: Identity,
     map: function(fn) {
@@ -21,40 +21,40 @@ var Identity = function Identity(x) {
     },
     value: x
   };
-};
+}
 
 Identity.of = Identity;
 
 //  IdentityArb :: Arbitrary a -> Arbitrary (Identity a)
-var IdentityArb = function(arb) {
+function IdentityArb(arb) {
   return arb.smap(Identity, function(i) { return i.value; });
-};
+}
 
 //  identityToMaybe :: Identity a -> Maybe a
-var identityToMaybe = function(i) {
+function identityToMaybe(i) {
   return S.Just(i.value);
-};
+}
 
 //  EitherArb :: Arbitrary a -> Arbitrary b -> Arbitrary (Either a b)
-var EitherArb = function(lArb, rArb) {
+function EitherArb(lArb, rArb) {
   return jsc.oneof(LeftArb(lArb), RightArb(rArb));
-};
+}
 
 //  LeftArb :: Arbitrary a -> Arbitrary (Either a b)
-var LeftArb = function(arb) {
+function LeftArb(arb) {
   return arb.smap(S.Left, function(e) { return e.value; }, R.toString);
-};
+}
 
 //  RightArb :: Arbitrary a -> Arbitrary (Either b a)
-var RightArb = function(arb) {
+function RightArb(arb) {
   return arb.smap(S.Right, function(e) { return e.value; }, R.toString);
-};
+}
 
 //  Compose :: Apply f, Apply g
 //          => { of: b -> f b } -> { of: c -> g c }
 //          -> f (g a) -> Compose f g a
-var Compose = function(F, G) {
-  var _Compose = function _Compose(x) {
+function Compose(F, G) {
+  function _Compose(x) {
     return {
       constructor: _Compose,
       map: function(f) {
@@ -68,12 +68,12 @@ var Compose = function(F, G) {
       },
       value: x
     };
-  };
+  }
   _Compose.of = function(x) {
     return _Compose(F.of(G.of(x)));
   };
   return _Compose;
-};
+}
 
 suite('Either', function() {
 

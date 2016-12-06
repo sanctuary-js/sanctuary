@@ -24,7 +24,7 @@ test('lift2', function() {
          'The value at position 1 is not a member of ‘Function’.\n');
 
   //  positive :: Number -> Boolean
-  var positive = function(n) { return n > 0; };
+  function positive(n) { return n > 0; }
 
   eq(S.lift2(S.add, S.Just(3), S.Just(3)), S.Just(6));
   eq(S.lift2(S.add, S.Nothing, S.Just(3)), S.Nothing);

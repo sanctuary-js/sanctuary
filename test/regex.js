@@ -49,7 +49,7 @@ test('regex', function() {
          '\n' +
          'The value at position 1 is not a member of ‘("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim")’.\n');
 
-  var G = function G() {};
+  function G() {}
   G.prototype.toString = R.always('g');
 
   throws(function() { S.regex(new G()); },

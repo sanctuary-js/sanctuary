@@ -23,9 +23,9 @@ test('unfoldr', function() {
          '\n' +
          'The value at position 1 is not a member of ‘Function’.\n');
 
-  var f = function(n) {
+  function f(n) {
     return n >= 5 ? S.Nothing : S.Just([n, n + 1]);
-  };
+  }
   eq(S.unfoldr(f, 5), []);
   eq(S.unfoldr(f, 4), [4]);
   eq(S.unfoldr(f, 1), [1, 2, 3, 4]);

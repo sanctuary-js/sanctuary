@@ -214,35 +214,35 @@
   var _toString = Object.prototype.toString;
 
   //  filter :: (Monad m, Monoid (m a)) => (a -> Boolean, m a) -> m a
-  var filter = function(pred, m) {
+  function filter(pred, m) {
     return m.chain(function(x) {
       return pred(x) ? m.of(x) : m.empty();
     });
-  };
+  }
 
   //  hasMethod :: String -> a -> Boolean
-  var hasMethod = function(name) {
+  function hasMethod(name) {
     return function(x) {
       return x != null && typeof x[name] === 'function';
     };
-  };
+  }
 
   //  negativeZero :: a -> Boolean
   var negativeZero = R.either(R.equals(-0), R.equals(new Number(-0)));
 
   //  uncurry2 :: (a -> b -> c) -> ((a, b) -> c)
-  var uncurry2 = function(f) {
+  function uncurry2(f) {
     return function(x, y) {
       return f(x)(y);
     };
-  };
+  }
 
   //  uncurry3 :: (a -> b -> c -> d) -> ((a, b, c) -> d)
-  var uncurry3 = function(f) {
+  function uncurry3(f) {
     return function(x, y, z) {
       return f(x)(y)(z);
     };
-  };
+  }
 
   //  Accessible :: TypeClass
   var Accessible = $.TypeClass(
@@ -362,7 +362,7 @@
   var Options = $.RecordType({checkTypes: $.Boolean, env: $.Array($.Any)});
 
   //  createSanctuary :: Options -> Module
-  var createSanctuary = function createSanctuary(opts) {
+  function createSanctuary(opts) {
 
   /* eslint-disable indent */
 
@@ -441,7 +441,7 @@
   //
   //    - intuitive ordering (`a.m(b, c)` is checked in a-b-c order rather
   //      than b-c-a order).
-  var method = function(name, constraints, types, _f) {
+  function method(name, constraints, types, _f) {
     var f = def(name, constraints, types, _f);
     return def(name,
                constraints,
@@ -451,7 +451,7 @@
                  args.unshift(this);
                  return f.apply(null, args);
                });
-  };
+  }
 
   //. ### Classify
 
@@ -3165,14 +3165,14 @@
   S.parseDate = def('parseDate', {}, [$.String, $Maybe($.Date)], parseDate);
 
   //  requiredNonCapturingGroup :: Array String -> String
-  var requiredNonCapturingGroup = function(xs) {
+  function requiredNonCapturingGroup(xs) {
     return '(?:' + xs.join('|') + ')';
-  };
+  }
 
   //  optionalNonCapturingGroup :: Array String -> String
-  var optionalNonCapturingGroup = function(xs) {
+  function optionalNonCapturingGroup(xs) {
     return requiredNonCapturingGroup(xs) + '?';
-  };
+  }
 
   //  validFloatRepr :: RegExp
   var validFloatRepr = new RegExp(
@@ -3490,7 +3490,7 @@
 
   /* eslint-enable indent */
 
-  };
+  }
 
   return createSanctuary({checkTypes: true, env: defaultEnv});
 
