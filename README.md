@@ -1,5 +1,9 @@
 # Sanctuary
 
+[![npm](https://img.shields.io/npm/v/sanctuary.svg)](https://www.npmjs.com/package/sanctuary)
+[![CircleCI](https://img.shields.io/circleci/project/github/sanctuary-js/sanctuary.svg)](https://circleci.com/gh/sanctuary-js/sanctuary)
+[![Gitter](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/sanctuary-js/sanctuary)
+
 Sanctuary is a functional programming library inspired by Haskell and
 PureScript. It depends on and works nicely with [Ramda][]. Sanctuary
 makes it possible to write safe code without null checks.
