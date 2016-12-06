@@ -35,6 +35,9 @@ lint:
 	  -- index.js
 	$(ESLINT) \
 	  --env node \
+	  -- karma.conf.js
+	$(ESLINT) \
+	  --env node \
 	  --global suite \
 	  --global test \
 	  --rule 'dot-notation: [error, {allowKeywords: true}]' \
@@ -62,7 +65,7 @@ setup:
 
 .PHONY: test
 test:
-	$(ISTANBUL) cover node_modules/.bin/_mocha -- --recursive --timeout 20000 --ui tdd
+	$(ISTANBUL) cover node_modules/.bin/_mocha
 	$(ISTANBUL) check-coverage --branches 100
 ifeq ($(shell node --version | cut -d . -f 1),v6)
 	$(DOCTEST) -- index.js
