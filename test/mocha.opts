@@ -1,0 +1,3 @@
+--recursive
+--timeout 20000
+--ui tdd

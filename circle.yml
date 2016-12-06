@@ -2,15 +2,16 @@ dependencies:
   override:
     - printf '%s\n' color=false progress=false >.npmrc
     - rm -rf node_modules
-    - case $CIRCLE_NODE_INDEX in 0) make setup ;; 1) nvm exec 0.12.7 make setup ;; 2) nvm exec 4 make setup ;; 3) nvm install 6 && nvm exec 6 make setup ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) make setup ;; 1) nvm exec 4 make setup ;; 2) nvm install 6 && nvm exec 6 make setup ;; esac:
         parallel: true
 
 machine:
   node:
-    version: 0.10.34
+    version: 0.12.7
 
 test:
   override:
     - make lint
-    - case $CIRCLE_NODE_INDEX in 0) make test ;; 1) nvm exec 0.12.7 make test ;; 2) nvm exec 4 make test ;; 3) nvm exec 6 make test ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) make test ;; 1) nvm exec 4 make test ;; 2) nvm exec 6 make test ;; esac:
         parallel: true
+    - node_modules/.bin/karma start

@@ -496,11 +496,12 @@
   //. false
   //. ```
   function is(typeRep, x) {
-    return type(x) ===
-           (typeRep.prototype != null &&
-            _toString.call(typeRep.prototype['@@type']) === '[object String]' ?
-              typeRep.prototype['@@type'] :
-              typeRep.name);
+    if (_toString.call(typeRep.prototype['@@type']) === '[object String]') {
+      return x != null && x['@@type'] === typeRep.prototype['@@type'];
+    } else {
+      var match = /function (\w*)/.exec(typeRep);
+      return match != null && match[1] === type(x);
+    }
   }
   S.is = def('is', {}, [TypeRep, $.Any, $.Boolean], is);
 

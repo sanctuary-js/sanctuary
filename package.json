@@ -15,10 +15,15 @@
     "sanctuary-def": "0.6.x"
   },
   "devDependencies": {
+    "browserify": "13.1.x",
     "doctest": "0.10.x",
     "eslint": "2.9.x",
     "istanbul": "0.4.x",
     "jsverify": "0.7.x",
+    "karma": "1.3.x",
+    "karma-browserify": "5.1.x",
+    "karma-mocha": "1.3.x",
+    "karma-sauce-launcher": "1.1.x",
     "mocha": "3.x.x",
     "remember-bower": "0.1.x",
     "sanctuary-style": "0.3.x",
