@@ -1237,7 +1237,7 @@
          [$Maybe(a), $.Function, b],
          Maybe$prototype$sequence);
 
-  //# Maybe#extend :: Maybe a ~> (Maybe a -> a) -> Maybe a
+  //# Maybe#extend :: Maybe a ~> (Maybe a -> b) -> Maybe b
   //.
   //. Takes a function and returns `this` if `this` is Nothing; otherwise
   //. it returns a Just whose value is the result of applying the function
@@ -1858,7 +1858,7 @@
          [$Either(a, b), $.Function, c],
          Either$prototype$sequence);
 
-  //# Either#extend :: Either a b ~> (Either a b -> b) -> Either a b
+  //# Either#extend :: Either a b ~> (Either a b -> c) -> Either a c
   //.
   //. Takes a function and returns `this` if `this` is a Left; otherwise it
   //. returns a Right whose value is the result of applying the function to
