@@ -909,7 +909,7 @@
   }
   S.Just = def('Just', {}, [a, $Maybe(a)], Just);
 
-  //# Maybe.empty :: -> Maybe a
+  //# Maybe.empty :: () -> Maybe a
   //.
   //. Returns Nothing.
   //.
