@@ -198,21 +198,27 @@
 
   'use strict';
 
+  //  deps :: Array String
+  var deps = [
+    'sanctuary-def',
+    'sanctuary-type-classes',
+    'sanctuary-type-identifiers'
+  ];
+
   /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = f(require('sanctuary-type-classes'),
-                       require('sanctuary-def'));
+    module.exports = f(require(deps[0]), require(deps[1]), require(deps[2]));
   } else if (typeof define === 'function' && define.amd != null) {
-    define(['sanctuary-type-classes', 'sanctuary-def'], f);
+    define(deps, f);
   } else {
-    self.sanctuary = f(self.sanctuaryTypeClasses, self.sanctuaryDef);
+    self.sanctuary = f(self.sanctuaryDef,
+                       self.sanctuaryTypeClasses,
+                       self.sanctuaryTypeIdentifiers);
   }
 
-}(function(Z, $) {
+}(function($, Z, type) {
 
   'use strict';
-
-  var _toString = Object.prototype.toString;
 
   //  Fn :: (Type, Type) -> Type
   function Fn(x, y) { return $.Function([x, y]); }
@@ -222,6 +228,13 @@
 
   //  Thunk :: Type -> Type
   function Thunk(x) { return $.Function([x]); }
+
+  //  typeEq :: String -> a -> Boolean
+  function typeEq(typeIdent) {
+    return function(x) {
+      return type(x) === typeIdent;
+    };
+  }
 
   //  uncurry2 :: (a -> b -> c) -> ((a, b) -> c)
   function uncurry2(f) {
@@ -274,11 +287,14 @@
   var l = $.TypeVariable('l');
   var r = $.TypeVariable('r');
 
+  //  eitherTypeIdent :: String
+  var eitherTypeIdent = 'sanctuary/Either';
+
   //  $Either :: Type -> Type -> Type
   var $Either = $.BinaryType(
-    'sanctuary/Either',
+    eitherTypeIdent,
     readmeUrl('EitherType'),
-    function(x) { return x != null && x['@@type'] === 'sanctuary/Either'; },
+    typeEq(eitherTypeIdent),
     function(either) { return either.isLeft ? [either.value] : []; },
     function(either) { return either.isRight ? [either.value] : []; }
   );
@@ -291,11 +307,14 @@
     function(list) { return $.String._test(list) ? [] : list; }
   );
 
+  //  maybeTypeIdent :: String
+  var maybeTypeIdent = 'sanctuary/Maybe';
+
   //  $Maybe :: Type -> Type
   var $Maybe = $.UnaryType(
-    'sanctuary/Maybe',
+    maybeTypeIdent,
     readmeUrl('MaybeType'),
-    function(x) { return x != null && x['@@type'] === 'sanctuary/Maybe'; },
+    typeEq(maybeTypeIdent),
     function(maybe) { return maybe.isJust ? [maybe.value] : []; }
   );
 
@@ -305,9 +324,7 @@
     readmeUrl('type-representatives'),
     function(x) {
       return $.AnyFunction._test(x) ||
-             (x != null &&
-              x.prototype != null &&
-              $.String._test(x.prototype['@@type']));
+             x != null && $.String._test(x['@@type']);
     },
     function(typeRep) { return []; }
   );
@@ -356,30 +373,36 @@
   //. ```javascript
   //. const {create, env} = require('sanctuary');
   //. const $ = require('sanctuary-def');
+  //. const type = require('sanctuary-type-identifiers');
   //.
-  //. //    identityTypeName :: String
-  //. const identityTypeName = 'my-package/Identity';
+  //. //    identityTypeIdent :: String
+  //. const identityTypeIdent = 'my-package/Identity';
   //.
   //. //    Identity :: a -> Identity a
-  //. const Identity = function Identity(x) {
-  //.   return {
-  //.     '@@type': identityTypeName,
-  //.     map: f => Identity(f(x)),
-  //.     chain: f => f(x),
-  //.     // ...
-  //.     value: x,
-  //.   };
+  //. function Identity(x) {
+  //.   if (!(this instanceof Identity)) return new Identity(x);
+  //.   this.value = x;
+  //. }
+  //.
+  //. Identity['@@type'] = identityTypeIdent;
+  //.
+  //. Identity.prototype['fantasy-land/map'] = function(f) {
+  //.   return Identity(f(this.value));
+  //. };
+  //.
+  //. Identity.prototype['fantasy-land/chain'] = function(f) {
+  //.   return f(this.value);
   //. };
   //.
   //. //    isIdentity :: a -> Boolean
-  //. const isIdentity = x => x != null && x['@@type'] === identityTypeName;
+  //. const isIdentity = x => type(x) === identityTypeIdent;
   //.
   //. //    identityToArray :: Identity a -> Array a
   //. const identityToArray = identity => [identity.value];
   //.
   //. //    IdentityType :: Type
   //. const IdentityType =
-  //. $.UnaryType(identityTypeName, isIdentity, identityToArray);
+  //. $.UnaryType(identityTypeIdent, isIdentity, identityToArray);
   //.
   //. const S = create({
   //.   checkTypes: process.env.NODE_ENV !== 'production',
@@ -441,17 +464,7 @@
 
   //# type :: Any -> String
   //.
-  //. Takes a value, `x`, of any type and returns its type identifier:
-  //.
-  //.   - `x['@@type']` if `x` has a `'@@type'` property whose value is
-  //.     a string; otherwise
-  //.
-  //.   - the [`Object#toString`][Object#toString] representation of `x`
-  //.     sans the leading `'[object '` and trailing `']'`.
-  //.
-  //. `'@@type'` properties should use the form `'<package-name>/<type-name>'`,
-  //. where `<package-name>` is the name of the npm package in which the type
-  //. is defined.
+  //. Takes a value, `x`, of any type and returns its [type identifier][].
   //.
   //. ```javascript
   //. > S.type(S.Just(42))
@@ -460,11 +473,6 @@
   //. > S.type([1, 2, 3])
   //. 'Array'
   //. ```
-  function type(x) {
-    return x != null && $.String._test(x['@@type']) ?
-      x['@@type'] :
-      _toString.call(x).slice('[object '.length, -']'.length);
-  }
   S.type = def('type', {}, [$.Any, $.String], type);
 
   //# is :: TypeRep a -> Any -> Boolean
@@ -485,8 +493,8 @@
   //. ```
   function is(typeRep, x) {
     var xType = type(x);
-    if ($.String._test(typeRep.prototype['@@type'])) {
-      return xType === typeRep.prototype['@@type'];
+    if ($.String._test(typeRep['@@type'])) {
+      return xType === typeRep['@@type'];
     } else {
       var match = /function (\w*)/.exec(typeRep);
       return match != null && match[1] === xType;
@@ -897,7 +905,12 @@
   }
   S.Just = def('Just', {}, [a, $Maybe(a)], Just);
 
-  //# Maybe.fantasy-land/empty :: () -> Maybe a
+  //# Maybe.@@type :: String
+  //.
+  //. Maybe type identifier, `'sanctuary/Maybe'`.
+  Maybe['@@type'] = maybeTypeIdent;
+
+  //# Maybe.empty :: () -> Maybe a
   //.
   //. Returns Nothing.
   //.
@@ -916,11 +929,6 @@
   //. Just(42)
   //. ```
   Maybe['fantasy-land/of'] = Just;
-
-  //# Maybe#@@type :: Maybe a ~> String
-  //.
-  //. Maybe type identifier, `'sanctuary/Maybe'`.
-  Maybe.prototype['@@type'] = 'sanctuary/Maybe';
 
   //# Maybe#isNothing :: Maybe a ~> Boolean
   //.
@@ -1515,7 +1523,12 @@
   }
   S.Right = def('Right', {}, [b, $Either(a, b)], Right);
 
-  //# Either.fantasy-land/of :: b -> Either a b
+  //# Either.@@type :: String
+  //.
+  //. Either type identifier, `'sanctuary/Either'`.
+  Either['@@type'] = eitherTypeIdent;
+
+  //# Either.of :: b -> Either a b
   //.
   //. Takes a value of any type and returns a Right with the given value.
   //.
@@ -1524,11 +1537,6 @@
   //. Right(42)
   //. ```
   Either['fantasy-land/of'] = Right;
-
-  //# Either#@@type :: Either a b ~> String
-  //.
-  //. Either type identifier, `'sanctuary/Either'`.
-  Either.prototype['@@type'] = 'sanctuary/Either';
 
   //# Either#isLeft :: Either a b ~> Boolean
   //.
@@ -3526,6 +3534,7 @@
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:    https://github.com/sanctuary-js/sanctuary-def
 //. [thrush]:           https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
+//. [type identifier]:  https://github.com/sanctuary-js/sanctuary-type-identifiers
 //.
 //. [`Either#fantasy-land/bimap`]:      #Either.prototype.fantasy-land/bimap
 //. [`Either#fantasy-land/map`]:        #Either.prototype.fantasy-land/map

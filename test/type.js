@@ -35,10 +35,11 @@ test('type', function() {
   eq(S.type(S.Just(42)),  'sanctuary/Maybe');
 
   function Gizmo() {}
-  Gizmo.prototype['@@type'] = 'gadgets/Gizmo';
+  Gizmo['@@type'] = 'gadgets/Gizmo';
 
   eq(S.type(new Gizmo()), 'gadgets/Gizmo');
-  eq(S.type({'@@type': 'foobar/FooBar'}), 'foobar/FooBar');
+  eq(S.type(Gizmo), 'Function');
+  eq(S.type(Gizmo.prototype), 'Object');
 
   eq(S.type(vm.runInNewContext('[1, 2, 3]')), 'Array');
 

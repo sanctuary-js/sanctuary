@@ -9,7 +9,7 @@ test('regex', function() {
 
   eq(typeof S.regex, 'function');
   eq(S.regex.length, 2);
-  eq(S.regex.toString(), 'regex :: ("" | "g" | "i" | "m" | "gi" | "gm" | "im" | "gim") -> String -> RegExp');
+  eq(S.regex.toString(), 'regex :: RegexFlags -> String -> RegExp');
 
   eq(S.regex('', '\\d'), /\d/);
   eq(S.regex('g', '\\d'), /\d/g);

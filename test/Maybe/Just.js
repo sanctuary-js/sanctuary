@@ -12,10 +12,7 @@ suite('Just', function() {
   test('data constructor', function() {
     eq(typeof S.Just, 'function');
     eq(S.Just.length, 1);
-    eq(S.Just(42)['@@type'], 'sanctuary/Maybe');
-//  Revert when updating to sanctuary-type-classes@2.0.0.
-//  eq(S.Just(42).constructor, S.Maybe);
-    eq(S.Just(42).constructor === S.Maybe, true);
+    eq(S.Just(42).constructor, S.Maybe);
     eq(S.Just(42).isNothing, false);
     eq(S.Just(42).isJust, true);
   });

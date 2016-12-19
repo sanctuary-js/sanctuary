@@ -8,8 +8,11 @@ var eq = require('./internal/eq');
 var throws = require('./internal/throws');
 
 
+//  FooTrue42 :: Type
+var FooTrue42 = $.EnumType('my-package/FooTrue42', '', ['foo', true, 42]);
+
 //  customEnv :: Array Type
-var customEnv = S.env.concat([$.EnumType(['foo', true, 42])]);
+var customEnv = S.env.concat([FooTrue42]);
 
 var checkedDefaultEnv   = S.create({checkTypes: true, env: S.env});
 var checkedCustomEnv    = S.create({checkTypes: true, env: customEnv});

@@ -12,11 +12,11 @@ module.exports = function Compose(F) {
       this.value = value;
     }
 
+    ComposeFG['@@type'] = 'sanctuary/Compose';
+
     ComposeFG[FL.of] = function(x) {
       return ComposeFG(Z.of(F, Z.of(G, x)));
     };
-
-    ComposeFG.prototype['@@type'] = 'sanctuary/Compose';
 
     ComposeFG.prototype[FL.equals] = function(other) {
       return Z.equals(this.value, other.value);
@@ -32,9 +32,8 @@ module.exports = function Compose(F) {
 
     //  name :: TypeRep a -> String
     function name(typeRep) {
-      return typeRep.prototype != null &&
-             typeof typeRep.prototype['@@type'] === 'string' ?
-               typeRep.prototype['@@type'].replace(/^[^/]*[/]/, '') :
+      return typeof typeRep['@@type'] === 'string' ?
+               typeRep['@@type'].replace(/^[^/]*[/]/, '') :
                typeRep.name;
     }
 

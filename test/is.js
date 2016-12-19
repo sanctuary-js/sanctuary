@@ -39,7 +39,7 @@ test('is', function() {
   eq(S.is(S.Either, S.Right(9)),          true);
 
   function FooBar() {}
-  FooBar.prototype['@@type'] = 'foobar/FooBar';
+  FooBar['@@type'] = 'foobar/FooBar';
   function Foo() {}
   Foo.prototype = new FooBar();
   function Bar() {}
