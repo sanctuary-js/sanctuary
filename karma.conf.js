@@ -7,9 +7,19 @@ function depMain(name) {
   return './node_modules/' + name + '/' + main;
 }
 
+//  getDeps :: String -> StrMap String String
+function getDeps(path) {
+  return Object.keys(require(path)).dependencies;
+}
+
 //  dependencies :: Array String
-var dependencies = Object.keys(require('./package.json').dependencies)
-                         .reverse();
+var dependencies = getDeps('./package.json')
+      .map(function(x) {
+        return [x, getDeps('./node_modules/' + x + '}/package.json')];
+      })
+      .sort(function(a, b) { return a[1].indexOf(b[0]) === -1 ? -1 : 1; })
+      .sort(function(b, a) { return a[1].indexOf(b[0]) === -1 ? 1 : -1; })
+      .map(function(x) { return x[0]; });
 
 //  https://saucelabs.com/platforms
 var customLaunchers = {
@@ -78,6 +88,7 @@ var baseOptions = {
   ],
 
   plugins: [
+    require('karma-sauce-launcher'),
     require('karma-browserify'),
     require('karma-mocha')
   ],
