@@ -2787,6 +2787,29 @@
   }
   S.prop = def('prop', {a: [Accessible]}, [$.String, a, b], prop);
 
+  //# props :: Accessible a => Array String -> a -> b
+  //.
+  //. Takes a property path (an array of property names) and an object with
+  //. known structure and returns the value at the given path. If for some
+  //. reason the path does not exist, a type error is thrown.
+  //.
+  //. For accessing property paths of uncertain objects, use [`gets`](#gets)
+  //. instead.
+  //.
+  //. ```javascript
+  //. > S.props(['a', 'b', 'c'], {a: {b: {c: 1}}})
+  //. 1
+  //. ```
+  function props(path, obj) {
+    return path.reduce(function(memo, key) {
+      if (key in memo) return memo[key];
+      throw new TypeError('‘props’ expected object to have a property at ' +
+                          R.toString(path) + '; ' +
+                          R.toString(obj) + ' does not');
+    }, Object(obj));
+  }
+  S.props = def('props', {a: [Accessible]}, [$.Array($.String), a, b], props);
+
   //# get :: Accessible a => (b -> Boolean) -> String -> a -> Maybe c
   //.
   //. Takes a predicate, a property name, and an object and returns Just the
@@ -2814,10 +2837,9 @@
 
   //# gets :: Accessible a => (b -> Boolean) -> Array String -> a -> Maybe c
   //.
-  //. Takes a predicate, an array of property names, and an object and returns
-  //. Just the value at the path specified by the array of property names if
-  //. such a path exists and the value satisfies the given predicate; Nothing
-  //. otherwise.
+  //. Takes a predicate, a property path (an array of property names), and
+  //. an object and returns Just the value at the given path if such a path
+  //. exists and the value satisfies the given predicate; Nothing otherwise.
   //.
   //. See also [`get`](#get).
   //.
