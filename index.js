@@ -865,8 +865,8 @@
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or Nothing (with no value).
   //.
-  //. The Maybe type satisfies the [Monoid][], [Monad][], [Traversable][],
-  //. and [Extend][] specifications.
+  //. The Maybe type satisfies the [Setoid][], [Monoid][], [Monad][],
+  //. [Traversable][], and [Extend][] specifications.
 
   //# MaybeType :: Type -> Type
   //.
@@ -1525,8 +1525,8 @@
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
   //. value is of type `b`.
   //.
-  //. The Either type satisfies the [Semigroup][], [Monad][], [Traversable][],
-  //. and [Extend][] specifications.
+  //. The Either type satisfies the [Setoid][], [Semigroup][], [Monad][],
+  //. [Traversable][], and [Extend][] specifications.
 
   //# EitherType :: Type -> Type -> Type
   //.
@@ -3512,6 +3512,7 @@
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       v:sanctuary-js/sanctuary-def#regexflags
 //. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
+//. [Setoid]:           v:fantasyland/fantasy-land#setoid
 //. [Traversable]:      v:fantasyland/fantasy-land#traversable
 //. [UnaryType]:        v:sanctuary-js/sanctuary-def#unarytype
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
