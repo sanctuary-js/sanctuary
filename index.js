@@ -1313,7 +1313,7 @@
   //# maybeToNullable :: Maybe a -> Nullable a
   //.
   //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
-  //. [Nullable][] is defined in sanctuary-def.
+  //. [Nullable][] is defined in [sanctuary-def][].
   //.
   //. See also [`fromMaybe`](#fromMaybe).
   //.
@@ -3496,24 +3496,24 @@
 
 }));
 
-//. [$.Array]:          https://github.com/sanctuary-js/sanctuary-def/#array
-//. [$.String]:         https://github.com/sanctuary-js/sanctuary-def/#string
-//. [Apply]:            https://github.com/fantasyland/fantasy-land#apply
-//. [BinaryType]:       https://github.com/sanctuary-js/sanctuary-def#binarytype
-//. [Extend]:           https://github.com/fantasyland/fantasy-land#extend
-//. [Foldable]:         https://github.com/fantasyland/fantasy-land#foldable
-//. [Functor]:          https://github.com/fantasyland/fantasy-land#functor
-//. [Monad]:            https://github.com/fantasyland/fantasy-land#monad
-//. [Monoid]:           https://github.com/fantasyland/fantasy-land#monoid
-//. [Nullable]:         https://github.com/sanctuary-js/sanctuary-def#nullable
+//. [$.Array]:          v:sanctuary-js/sanctuary-def#array
+//. [$.String]:         v:sanctuary-js/sanctuary-def#string
+//. [Apply]:            v:fantasyland/fantasy-land#apply
+//. [BinaryType]:       v:sanctuary-js/sanctuary-def#binarytype
+//. [Extend]:           v:fantasyland/fantasy-land#extend
+//. [Foldable]:         v:fantasyland/fantasy-land#foldable
+//. [Functor]:          v:fantasyland/fantasy-land#functor
+//. [Monad]:            v:fantasyland/fantasy-land#monad
+//. [Monoid]:           v:fantasyland/fantasy-land#monoid
+//. [Nullable]:         v:sanctuary-js/sanctuary-def#nullable
 //. [Object#toString]:  https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
-//. [R.equals]:         http://ramdajs.com/docs/#equals
-//. [R.map]:            http://ramdajs.com/docs/#map
+//. [R.equals]:         v:ramda/ramda#equals
+//. [R.map]:            v:ramda/ramda#map
 //. [Ramda]:            http://ramdajs.com/
-//. [RegexFlags]:       https://github.com/sanctuary-js/sanctuary-def#regexflags
-//. [Semigroup]:        https://github.com/fantasyland/fantasy-land#semigroup
-//. [Traversable]:      https://github.com/fantasyland/fantasy-land#traversable
-//. [UnaryType]:        https://github.com/sanctuary-js/sanctuary-def#unarytype
+//. [RegexFlags]:       v:sanctuary-js/sanctuary-def#regexflags
+//. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
+//. [Traversable]:      v:fantasyland/fantasy-land#traversable
+//. [UnaryType]:        v:sanctuary-js/sanctuary-def#unarytype
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:    https://github.com/sanctuary-js/sanctuary-def
 //. [thrush]:           https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown

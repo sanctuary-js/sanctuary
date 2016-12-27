@@ -16,7 +16,11 @@ LICENSE:
 	sed 's/Copyright (c) .* Sanctuary/Copyright (c) $(shell git log --date=format:%Y --pretty=format:%ad | sort -r | head -n 1) Sanctuary/' '$@.orig' >'$@'
 	rm -- '$@.orig'
 
-README.md: index.js
+README.md: README.md.tmp package.json scripts/version-urls
+	scripts/version-urls '$<' >'$@'
+
+.INTERMEDIATE: README.md.tmp
+README.md.tmp: index.js
 	$(TRANSCRIBE) \
 	  --heading-level 4 \
 	  --url 'https://github.com/sanctuary-js/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
@@ -34,7 +38,7 @@ lint:
 	  -- index.js
 	$(ESLINT) \
 	  --env node \
-	  -- karma.conf.js
+	  -- karma.conf.js scripts/version-urls
 	$(ESLINT) \
 	  --env node \
 	  --global suite \
