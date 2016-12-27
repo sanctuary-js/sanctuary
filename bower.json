@@ -23,8 +23,8 @@
     "types"
   ],
   "dependencies": {
-    "ramda": "0.22.x",
-    "sanctuary-def": "0.6.x"
+    "ramda": "0.22.1",
+    "sanctuary-def": "0.6.0"
   },
   "ignore": [
     "/.git/",
