@@ -39,11 +39,11 @@ var customLaunchers = {
     browserName: 'iphone',
     version: '8.1'
   },
-  sl_ie_9: {
+  sl_ie_10: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
-    platform: 'Windows 2008',
-    version: '9'
+    platform: 'Windows 8',
+    version: '10'
   },
   sl_ie_11: {
     base: 'SauceLabs',
