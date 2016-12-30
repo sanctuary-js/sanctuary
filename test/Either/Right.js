@@ -3,7 +3,6 @@
 var S = require('../..');
 
 var eq = require('../internal/eq');
-var parseHex = require('../internal/parseHex');
 var squareRoot = require('../internal/squareRoot');
 var throws = require('../internal/throws');
 
@@ -114,25 +113,11 @@ suite('Right', function() {
     eq(S.Right(42).equals(S.Right('42')), false);
     eq(S.Right(42).equals(S.Left(42)), false);
     eq(S.Right(42).equals(null), false);
-
-    // Value-based equality:
-    eq(S.Right(0).equals(S.Right(-0)), false);
-    eq(S.Right(-0).equals(S.Right(0)), false);
-    eq(S.Right(NaN).equals(S.Right(NaN)), true);
-    eq(S.Right([1, 2, 3]).equals(S.Right([1, 2, 3])), true);
-    eq(S.Right(new Number(42)).equals(S.Right(new Number(42))), true);
-    eq(S.Right(new Number(42)).equals(42), false);
   });
 
   test('"extend" method', function() {
     eq(S.Right(42).extend.length, 1);
     eq(S.Right(42).extend(function(x) { return x.value / 2; }), S.Right(21));
-
-    // associativity
-    var w = S.Right(42);
-    function f(x) { return x.value + 1; }
-    function g(x) { return x.value * x.value; }
-    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Right('abc').extend(null); },
            TypeError,
@@ -194,79 +179,6 @@ suite('Right', function() {
   test('"inspect" method', function() {
     eq(S.Right([1, 2, 3]).inspect.length, 0);
     eq(S.Right([1, 2, 3]).inspect(), 'Right([1, 2, 3])');
-  });
-
-  test('Semigroup', function() {
-    var a = S.Right('foo');
-    var b = S.Right('bar');
-    var c = S.Right('baz');
-
-    // associativity
-    eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
-  });
-
-  test('Functor', function() {
-    var a = S.Right(9);
-    var f = S.inc;
-    var g = Math.sqrt;
-
-    // identity
-    eq(a.map(S.I).equals(a), true);
-
-    // composition
-    eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
-  });
-
-  test('Apply', function() {
-    var a = S.Right(S.inc);
-    var b = S.Right(Math.sqrt);
-    var c = S.Right(9);
-
-    // composition
-    eq(a.map(function(f) {
-      return function(g) {
-        return function(x) {
-          return f(g(x));
-        };
-      };
-    }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
-  });
-
-  test('Applicative', function() {
-    var a = S.Right(null);
-    var b = S.Right(S.inc);
-    var f = S.inc;
-    var x = 7;
-
-    // identity
-    eq(a.of(S.I).ap(b).equals(b), true);
-
-    // homomorphism
-    eq(a.of(f).ap(a.of(x)).equals(a.of(f(x))), true);
-
-    // interchange
-    eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
-  });
-
-  test('Chain', function() {
-    var a = S.Right('0x0100');
-    var f = parseHex;
-    var g = squareRoot;
-
-    // associativity
-    eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
-  });
-
-  test('Monad', function() {
-    var a = S.Right(null);
-    var f = squareRoot;
-    var x = 25;
-
-    // left identity
-    eq(a.of(x).chain(f).equals(f(x)), true);
-
-    // right identity
-    eq(a.chain(a.of).equals(a), true);
   });
 
 });

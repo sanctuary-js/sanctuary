@@ -114,25 +114,11 @@ suite('Just', function() {
     eq(S.Just(42).equals(S.Just(43)), false);
     eq(S.Just(42).equals(S.Nothing), false);
     eq(S.Just(42).equals(null), false);
-
-    // Value-based equality:
-    eq(S.Just(0).equals(S.Just(-0)), false);
-    eq(S.Just(-0).equals(S.Just(0)), false);
-    eq(S.Just(NaN).equals(S.Just(NaN)), true);
-    eq(S.Just([1, 2, 3]).equals(S.Just([1, 2, 3])), true);
-    eq(S.Just(new Number(42)).equals(S.Just(new Number(42))), true);
-    eq(S.Just(new Number(42)).equals(42), false);
   });
 
   test('"extend" method', function() {
     eq(S.Just(42).extend.length, 1);
     eq(S.Just(42).extend(function(x) { return x.value / 2; }), S.Just(21));
-
-    // associativity
-    var w = S.Just(42);
-    function f(x) { return x.value + 1; }
-    function g(x) { return x.value * x.value; }
-    eq(w.extend(g).extend(f), w.extend(function(_w) { return f(_w.extend(g)); }));
 
     throws(function() { S.Just(42).extend(null); },
            TypeError,
@@ -222,89 +208,6 @@ suite('Just', function() {
   test('"inspect" method', function() {
     eq(S.Just([1, 2, 3]).inspect.length, 0);
     eq(S.Just([1, 2, 3]).inspect(), 'Just([1, 2, 3])');
-  });
-
-  test('Semigroup', function() {
-    var a = S.Just('foo');
-    var b = S.Just('bar');
-    var c = S.Just('baz');
-
-    // associativity
-    eq(a.concat(b).concat(c).equals(a.concat(b.concat(c))), true);
-  });
-
-  test('Monoid', function() {
-    var a = S.Just([1, 2, 3]);
-
-    // left identity
-    eq(a.empty().concat(a).equals(a), true);
-
-    // right identity
-    eq(a.concat(a.empty()).equals(a), true);
-  });
-
-  test('Functor', function() {
-    var a = S.Just(9);
-    var f = S.inc;
-    var g = Math.sqrt;
-
-    // identity
-    eq(a.map(S.I).equals(a), true);
-
-    // composition
-    eq(a.map(function(x) { return f(g(x)); }).equals(a.map(g).map(f)), true);
-  });
-
-  test('Apply', function() {
-    var a = S.Just(S.inc);
-    var b = S.Just(Math.sqrt);
-    var c = S.Just(9);
-
-    // composition
-    eq(a.map(function(f) {
-      return function(g) {
-        return function(x) {
-          return f(g(x));
-        };
-      };
-    }).ap(b).ap(c).equals(a.ap(b.ap(c))), true);
-  });
-
-  test('Applicative', function() {
-    var a = S.Just(null);
-    var b = S.Just(S.inc);
-    var f = S.inc;
-    var x = 7;
-
-    // identity
-    eq(a.of(S.I).ap(b).equals(b), true);
-
-    // homomorphism
-    eq(a.of(f).ap(a.of(x)).equals(a.of(f(x))), true);
-
-    // interchange
-    eq(a.of(function(f) { return f(x); }).ap(b).equals(b.ap(a.of(x))), true);
-  });
-
-  test('Chain', function() {
-    var a = S.Just([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
-    var f = S.head;
-    var g = S.last;
-
-    // associativity
-    eq(a.chain(f).chain(g).equals(a.chain(function(x) { return f(x).chain(g); })), true);
-  });
-
-  test('Monad', function() {
-    var a = S.Just(null);
-    var f = S.head;
-    var x = [1, 2, 3];
-
-    // left identity
-    eq(a.of(x).chain(f).equals(f(x)), true);
-
-    // right identity
-    eq(a.chain(a.of).equals(a), true);
   });
 
 });
