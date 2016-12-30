@@ -1296,7 +1296,8 @@
   //. Takes a default value and a Maybe, and returns the Maybe's value
   //. if the Maybe is a Just; the default value otherwise.
   //.
-  //. See also [`maybeToNullable`](#maybeToNullable).
+  //. See also [`fromMaybe_`](#fromMaybe_) and
+  //. [`maybeToNullable`](#maybeToNullable).
   //.
   //. ```javascript
   //. > S.fromMaybe(0, S.Just(42))
@@ -1309,6 +1310,25 @@
     return maybe.isJust ? maybe.value : x;
   }
   S.fromMaybe = def('fromMaybe', {}, [a, $Maybe(a), a], fromMaybe);
+
+  //# fromMaybe_ :: (() -> a) -> Maybe a -> a
+  //.
+  //. Variant of [`fromMaybe`](#fromMaybe) which takes a thunk so the default
+  //. value is only computed if required.
+  //.
+  //. ```javascript
+  //. > function fib(n) { return n <= 1 ? n : fib(n - 2) + fib(n - 1); }
+  //.
+  //. > S.fromMaybe_(() => fib(30), S.Just(1000000))
+  //. 1000000
+  //.
+  //. > S.fromMaybe_(() => fib(30), S.Nothing)
+  //. 832040
+  //. ```
+  function fromMaybe_(thunk, maybe) {
+    return maybe.isJust ? maybe.value : thunk();
+  }
+  S.fromMaybe_ = def('fromMaybe_', {}, [$.Function, $Maybe(a), a], fromMaybe_);
 
   //# maybeToNullable :: Maybe a -> Nullable a
   //.
@@ -1373,10 +1393,7 @@
   //. is only computed if required.
   //.
   //. ```javascript
-  //. > global.fib = function fib(n) {
-  //. .   return n <= 1 ? n : fib(n - 2) + fib(n - 1);
-  //. . }
-  //. fib
+  //. > function fib(n) { return n <= 1 ? n : fib(n - 2) + fib(n - 1); }
   //.
   //. > S.maybe_(() => fib(30), Math.sqrt, S.Just(1000000))
   //. 1000
@@ -1384,8 +1401,8 @@
   //. > S.maybe_(() => fib(30), Math.sqrt, S.Nothing)
   //. 832040
   //. ```
-  function maybe_(f, g, maybe) {
-    return maybe.isJust ? g(maybe.value) : f();
+  function maybe_(thunk, f, maybe) {
+    return maybe.isJust ? f(maybe.value) : thunk();
   }
   S.maybe_ = def('maybe_', {}, [$.Function, $.Function, $Maybe(a), b], maybe_);
 
