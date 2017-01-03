@@ -3,6 +3,7 @@
 module.exports = {
   Applicative: require('./Applicative'),
   Apply: require('./Apply'),
+  Bifunctor: require('./Bifunctor'),
   Chain: require('./Chain'),
   Extend: require('./Extend'),
   Foldable: require('./Foldable'),
