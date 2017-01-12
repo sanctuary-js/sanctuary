@@ -910,7 +910,7 @@
   //. Maybe type identifier, `'sanctuary/Maybe'`.
   Maybe['@@type'] = maybeTypeIdent;
 
-  //# Maybe.empty :: () -> Maybe a
+  //# Maybe.fantasy-land/empty :: () -> Maybe a
   //.
   //. Returns Nothing.
   //.
@@ -1528,7 +1528,7 @@
   //. Either type identifier, `'sanctuary/Either'`.
   Either['@@type'] = eitherTypeIdent;
 
-  //# Either.of :: b -> Either a b
+  //# Either.fantasy-land/of :: b -> Either a b
   //.
   //. Takes a value of any type and returns a Right with the given value.
   //.
