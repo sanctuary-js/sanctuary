@@ -1,5 +1,8 @@
 'use strict';
 
+var eq = require('./test/internal/eq');
+
+
 //  depMain :: String -> String
 function depMain(name) {
   var pkg = require(name + '/package.json');
@@ -8,7 +11,10 @@ function depMain(name) {
 }
 
 //  dependencies :: Array String
-var dependencies = Object.keys(require('./package.json').dependencies);
+var dependencies = ['sanctuary-type-classes', 'sanctuary-def'];
+
+eq(dependencies.slice().sort(),
+   Object.keys(require('./package.json').dependencies).sort());
 
 //  https://saucelabs.com/platforms
 var customLaunchers = {

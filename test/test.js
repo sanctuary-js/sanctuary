@@ -3,37 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('test', function() {
 
   eq(typeof S.test, 'function');
   eq(S.test.length, 2);
-
-  throws(function() { S.test('^a'); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'test :: RegExp -> String -> Boolean\n' +
-         '        ^^^^^^\n' +
-         '          1\n' +
-         '\n' +
-         '1)  "^a" :: String\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘RegExp’.\n');
-
-  throws(function() { S.test(/^a/, [1, 2, 3]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'test :: RegExp -> String -> Boolean\n' +
-         '                  ^^^^^^\n' +
-         '                    1\n' +
-         '\n' +
-         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘String’.\n');
+  eq(S.test.toString(), 'test :: RegExp -> String -> Boolean');
 
   eq(S.test(/^a/, 'abacus'), true);
   eq(S.test(/^a/, 'banana'), false);

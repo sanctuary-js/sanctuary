@@ -13,12 +13,8 @@ process.stdout.write(fs.readFileSync(process.argv[2], 'utf8').replace(
   new RegExp(' v:(.+)/(.+)#(.+)', 'g'),
   function(_, owner, name, id) {
     if (name in deps && /^\d+[.]\d+[.]\d+$/.test(deps[name])) {
-      if (owner === 'ramda' && name === 'ramda') {
-        return ' http://ramdajs.com/' + deps[name] + '/docs/#' + id;
-      } else {
-        return ' https://github.com/' + owner + '/' + name +
-               '/tree/v' + deps[name] + '#' + id;
-      }
+      return ' https://github.com/' + owner + '/' + name +
+             '/tree/v' + deps[name] + '#' + id;
     }
     process.stderr.write('Exact version not specified for ' + name + '\n');
     process.exit(1);

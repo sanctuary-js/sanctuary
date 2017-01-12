@@ -1,10 +1,11 @@
 'use strict';
 
+var FL = require('fantasy-land');
+
 var S = require('../..');
 
 var eq = require('../internal/eq');
 var squareRoot = require('../internal/squareRoot');
-var throws = require('../internal/throws');
 
 
 suite('Right', function() {
@@ -18,186 +19,60 @@ suite('Right', function() {
     eq(S.Right(42).isRight, true);
   });
 
-  test('"ap" method', function() {
-    eq(S.Right(S.inc).ap.length, 1);
-    eq(S.Right(S.inc).ap(S.Left('abc')), S.Left('abc'));
-    eq(S.Right(S.inc).ap(S.Right(42)), S.Right(43));
-
-    throws(function() { S.Right(S.inc).ap([1, 2, 3]); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#ap :: Either a Function -> Either a b -> Either a c\n' +
-           '                                  ^^^^^^^^^^\n' +
-           '                                      1\n' +
-           '\n' +
-           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Either a b’.\n');
+  test('"fantasy-land/alt" method', function() {
+    eq(S.Right(1)[FL.alt].length, 1);
+    eq(S.Right(1)[FL.alt](S.Left(2)), S.Right(1));
+    eq(S.Right(1)[FL.alt](S.Right(2)), S.Right(1));
   });
 
-  test('"bimap" method', function() {
-    eq(S.Right(42).bimap.length, 2);
-    eq(S.Right(42).bimap(S.toUpper, S.inc), S.Right(43));
-
-    throws(function() { S.Right(42).bimap(null, null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#bimap :: Either a b -> Function -> Function -> Either c d\n' +
-           '                              ^^^^^^^^\n' +
-           '                                 1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
-
-    throws(function() { S.Right(42).bimap(S.toUpper, null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#bimap :: Either a b -> Function -> Function -> Either c d\n' +
-           '                                          ^^^^^^^^\n' +
-           '                                             1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/ap" method', function() {
+    eq(S.Right(42)[FL.ap].length, 1);
+    eq(S.Right(42)[FL.ap](S.Left('abc')), S.Left('abc'));
+    eq(S.Right(42)[FL.ap](S.Right(S.inc)), S.Right(43));
   });
 
-  test('"chain" method', function() {
-    eq(S.Right(25).chain.length, 1);
-    eq(S.Right(25).chain(squareRoot), S.Right(5));
-
-    throws(function() { S.Right(25).chain(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#chain :: Either a b -> Function -> Either a c\n' +
-           '                              ^^^^^^^^\n' +
-           '                                 1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/bimap" method', function() {
+    eq(S.Right(42)[FL.bimap].length, 2);
+    eq(S.Right(42)[FL.bimap](S.toUpper, S.inc), S.Right(43));
   });
 
-  test('"concat" method', function() {
-    eq(S.Right('abc').concat.length, 1);
-    eq(S.Right('abc').concat(S.Left('xyz')), S.Right('abc'));
-    eq(S.Right('abc').concat(S.Right('def')), S.Right('abcdef'));
-
-    throws(function() { S.Right('abc').concat([1, 2, 3]); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-           '                                                             ^^^^^^^^^^\n' +
-           '                                                                 1\n' +
-           '\n' +
-           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Either a b’.\n');
-
-    throws(function() { S.Right(/xxx/).concat(null); },
-           TypeError,
-           'Type-class constraint violation\n' +
-           '\n' +
-           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-           '                               ^^^^^^^^^^^              ^\n' +
-           '                                                        1\n' +
-           '\n' +
-           '1)  /xxx/ :: RegExp\n' +
-           '\n' +
-           '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
-
-    throws(function() { S.Right([1, 2, 3]).concat(S.Left(/xxx/)); },
-           TypeError,
-           'Type-class constraint violation\n' +
-           '\n' +
-           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-           '                  ^^^^^^^^^^^                                       ^\n' +
-           '                                                                    1\n' +
-           '\n' +
-           '1)  /xxx/ :: RegExp\n' +
-           '\n' +
-           '‘Either#concat’ requires ‘a’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
-
-    throws(function() { S.Right([1, 2, 3]).concat(S.Right(/xxx/)); },
-           TypeError,
-           'Type-class constraint violation\n' +
-           '\n' +
-           'Either#concat :: (Semigroup a, Semigroup b) => Either a b -> Either a b -> Either a b\n' +
-           '                               ^^^^^^^^^^^                            ^\n' +
-           '                                                                      1\n' +
-           '\n' +
-           '1)  /xxx/ :: RegExp\n' +
-           '\n' +
-           '‘Either#concat’ requires ‘b’ to satisfy the Semigroup type-class constraint; the value at position 1 does not.\n');
+  test('"fantasy-land/chain" method', function() {
+    eq(S.Right(25)[FL.chain].length, 1);
+    eq(S.Right(25)[FL.chain](squareRoot), S.Right(5));
   });
 
-  test('"equals" method', function() {
-    eq(S.Right(42).equals.length, 1);
-    eq(S.Right(42).equals(S.Right(42)), true);
-    eq(S.Right(42).equals(S.Right('42')), false);
-    eq(S.Right(42).equals(S.Left(42)), false);
-    eq(S.Right(42).equals(null), false);
+  test('"fantasy-land/concat" method', function() {
+    eq(S.Right('abc')[FL.concat].length, 1);
+    eq(S.Right('abc')[FL.concat](S.Left('xyz')), S.Right('abc'));
+    eq(S.Right('abc')[FL.concat](S.Right('def')), S.Right('abcdef'));
   });
 
-  test('"extend" method', function() {
-    eq(S.Right(42).extend.length, 1);
-    eq(S.Right(42).extend(function(x) { return x.value / 2; }), S.Right(21));
+  test('"fantasy-land/equals" method', function() {
+    eq(S.Right(42)[FL.equals].length, 1);
+    eq(S.Right(42)[FL.equals](S.Right(42)), true);
+    eq(S.Right(42)[FL.equals](S.Right('42')), false);
+    eq(S.Right(42)[FL.equals](S.Left(42)), false);
 
-    throws(function() { S.Right('abc').extend(null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#extend :: Either a b -> Function -> Either a b\n' +
-           '                               ^^^^^^^^\n' +
-           '                                  1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+    // Value-based equality:
+    eq(S.Right(0)[FL.equals](S.Right(-0)), false);
+    eq(S.Right(-0)[FL.equals](S.Right(0)), false);
+    eq(S.Right(NaN)[FL.equals](S.Right(NaN)), true);
+    eq(S.Right([1, 2, 3])[FL.equals](S.Right([1, 2, 3])), true);
   });
 
-  test('"map" method', function() {
-    eq(S.Right(9).map.length, 1);
-    eq(S.Right(9).map(Math.sqrt), S.Right(3));
-
-    throws(function() { S.Right(9).map([1, 2, 3]); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#map :: Either a b -> Function -> Either a c\n' +
-           '                            ^^^^^^^^\n' +
-           '                               1\n' +
-           '\n' +
-           '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/extend" method', function() {
+    eq(S.Right(42)[FL.extend].length, 1);
+    eq(S.Right(42)[FL.extend](function(x) { return x.value / 2; }), S.Right(21));
   });
 
-  test('"reduce" method', function() {
-    eq(S.Right(5).reduce.length, 2);
-    eq(S.Right(5).reduce(function(xs, x) { return xs.concat([x]); }, [42]), [42, 5]);
-
-    throws(function() { S.Right(5).reduce(null, null); },
-           TypeError,
-           'Invalid value\n' +
-           '\n' +
-           'Either#reduce :: Either a b -> Function -> c -> c\n' +
-           '                               ^^^^^^^^\n' +
-           '                                  1\n' +
-           '\n' +
-           '1)  null :: Null\n' +
-           '\n' +
-           'The value at position 1 is not a member of ‘Function’.\n');
+  test('"fantasy-land/map" method', function() {
+    eq(S.Right(9)[FL.map].length, 1);
+    eq(S.Right(9)[FL.map](Math.sqrt), S.Right(3));
   });
 
-  test('"sequence" method', function() {
-    eq(S.Right(S.Just(42)).sequence.length, 1);
-    eq(S.Right(S.Just(42)).sequence(S.Maybe.of), S.Just(S.Right(42)));
+  test('"fantasy-land/reduce" method', function() {
+    eq(S.Right(5)[FL.reduce].length, 2);
+    eq(S.Right(5)[FL.reduce](function(x, y) { return x - y; }, 42), 37);
   });
 
   test('"toString" method', function() {

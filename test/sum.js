@@ -3,61 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('sum', function() {
 
   eq(typeof S.sum, 'function');
   eq(S.sum.length, 1);
-
-  throws(function() { S.sum('xxx'); },
-         TypeError,
-         'Type-class constraint violation\n' +
-         '\n' +
-         'sum :: Foldable f => f -> FiniteNumber\n' +
-         '       ^^^^^^^^^^    ^\n' +
-         '                     1\n' +
-         '\n' +
-         '1)  "xxx" :: String\n' +
-         '\n' +
-         '‘sum’ requires ‘f’ to satisfy the Foldable type-class constraint; the value at position 1 does not.\n');
-
-  throws(function() { S.sum([1, 2, 'xxx']); },
-         TypeError,
-         'Type-variable constraint violation\n' +
-         '\n' +
-         'sum :: Foldable f => f -> FiniteNumber\n' +
-         '                     ^\n' +
-         '                     1\n' +
-         '\n' +
-         '1)  [1, 2, "xxx"] :: Array ???\n' +
-         '\n' +
-         'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n');
-
-  throws(function() { S.sum([1, Infinity]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'sum :: Foldable f => f -> FiniteNumber\n' +
-         '                          ^^^^^^^^^^^^\n' +
-         '                               1\n' +
-         '\n' +
-         '1)  Infinity :: Number, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘FiniteNumber’.\n');
-
-  throws(function() { S.sum([1, -Infinity]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'sum :: Foldable f => f -> FiniteNumber\n' +
-         '                          ^^^^^^^^^^^^\n' +
-         '                               1\n' +
-         '\n' +
-         '1)  -Infinity :: Number, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘FiniteNumber’.\n');
+  eq(S.sum.toString(), 'sum :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq(S.sum([]), 0);
   eq(S.sum([0, 1, 2, 3]), 6);

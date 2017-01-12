@@ -1,12 +1,8 @@
 'use strict';
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
+
+var curry3 = require('./curry3');
 
 //  traverse :: (Applicative f, Traversable t) => (a -> f a) -> (b -> f c) -> t b -> f (t c)
-module.exports = function traverse(pure) {
-  return function(f) {
-    return function(traversable) {
-      return R.traverse(pure, f, traversable);
-    };
-  };
-};
+module.exports = curry3(Z.traverse);

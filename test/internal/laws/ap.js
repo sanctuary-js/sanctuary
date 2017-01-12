@@ -1,10 +1,8 @@
 'use strict';
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
+
+var curry2 = require('./curry2');
 
 //  ap :: Apply f => f (a -> b) -> f a -> f b
-module.exports = function ap(applyF) {
-  return function(applyX) {
-    return R.ap(applyF, applyX);
-  };
-};
+module.exports = curry2(Z.ap);

@@ -10,6 +10,7 @@ test('encaseEither3_', function() {
 
   eq(typeof S.encaseEither3_, 'function');
   eq(S.encaseEither3_.length, 5);
+  eq(S.encaseEither3_.toString(), 'encaseEither3_ :: (Error -> l) -> ((a, b, c) -> r) -> a -> b -> c -> Either l r');
 
   eq(S.encaseEither3_(S.I, area_, 3, 4, 5), S.Right(6));
   eq(S.encaseEither3_(S.I, area_, 2, 2, 5), S.Left(new Error('Impossible triangle')));

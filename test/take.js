@@ -3,37 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('take', function() {
 
   eq(typeof S.take, 'function');
   eq(S.take.length, 2);
-
-  throws(function() { S.take(0.5); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'take :: Integer -> List a -> Maybe (List a)\n' +
-         '        ^^^^^^^\n' +
-         '           1\n' +
-         '\n' +
-         '1)  0.5 :: Number, FiniteNumber, NonZeroFiniteNumber, ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Integer’.\n');
-
-  throws(function() { S.take(0, null); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'take :: Integer -> List a -> Maybe (List a)\n' +
-         '                   ^^^^^^\n' +
-         '                     1\n' +
-         '\n' +
-         '1)  null :: Null\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘List a’.\n');
+  eq(S.take.toString(), 'take :: Integer -> List a -> Maybe (List a)');
 
   eq(S.take(0, [1, 2, 3, 4, 5]), S.Just([]));
   eq(S.take(1, [1, 2, 3, 4, 5]), S.Just([1]));
@@ -53,6 +29,5 @@ test('take', function() {
 
   eq(S.take(-1, [1, 2, 3, 4, 5]), S.Nothing);
   eq(S.take(-0, [1, 2, 3, 4, 5]), S.Nothing);
-  eq(S.take(new Number(-0), [1, 2, 3, 4, 5]), S.Nothing);
 
 });

@@ -2,10 +2,11 @@
 
 var assert = require('assert');
 
-var R = require('ramda');
+var Z = require('sanctuary-type-classes');
 
 //  eq :: (a, b) -> Undefined !
 module.exports = function eq(actual, expected) {
   assert.strictEqual(arguments.length, eq.length);
-  assert.strictEqual(R.toString(actual), R.toString(expected));
+  assert.strictEqual(Z.toString(actual), Z.toString(expected));
+  assert.strictEqual(Z.equals(actual, expected), true);
 };

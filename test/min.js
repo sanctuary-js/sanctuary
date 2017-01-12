@@ -3,49 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('min', function() {
 
   eq(typeof S.min, 'function');
   eq(S.min.length, 2);
-
-  throws(function() { S.min(/x/); },
-         TypeError,
-         'Type-class constraint violation\n' +
-         '\n' +
-         'min :: Ord a => a -> a -> a\n' +
-         '       ^^^^^    ^\n' +
-         '                1\n' +
-         '\n' +
-         '1)  /x/ :: RegExp\n' +
-         '\n' +
-         '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n');
-
-  throws(function() { S.min(NaN); },
-         TypeError,
-         'Type-class constraint violation\n' +
-         '\n' +
-         'min :: Ord a => a -> a -> a\n' +
-         '       ^^^^^    ^\n' +
-         '                1\n' +
-         '\n' +
-         '1)  NaN :: Number\n' +
-         '\n' +
-         '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n');
-
-  throws(function() { S.min(new Date('XXX')); },
-         TypeError,
-         'Type-class constraint violation\n' +
-         '\n' +
-         'min :: Ord a => a -> a -> a\n' +
-         '       ^^^^^    ^\n' +
-         '                1\n' +
-         '\n' +
-         '1)  new Date(NaN) :: Date\n' +
-         '\n' +
-         '‘min’ requires ‘a’ to satisfy the Ord type-class constraint; the value at position 1 does not.\n');
+  eq(S.min.toString(), 'min :: Ord a => a -> a -> a');
 
   eq(S.min(10, 2), 2);
   eq(S.min(2, 10), 2);

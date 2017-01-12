@@ -5,25 +5,13 @@ var vm = require('vm');
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('is', function() {
 
   eq(typeof S.is, 'function');
   eq(S.is.length, 2);
-
-  throws(function() { S.is([1, 2, 3]); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'is :: TypeRep -> Any -> Boolean\n' +
-         '      ^^^^^^^\n' +
-         '         1\n' +
-         '\n' +
-         '1)  [1, 2, 3] :: Array Number, Array FiniteNumber, Array NonZeroFiniteNumber, Array Integer, Array ValidNumber\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘TypeRep’.\n');
+  eq(S.is.toString(), 'is :: TypeRep a -> Any -> Boolean');
 
   eq(S.is(Array,    []),                  true);
   eq(S.is(Boolean,  false),               true);

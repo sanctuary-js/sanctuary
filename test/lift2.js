@@ -3,25 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('lift2', function() {
 
   eq(typeof S.lift2, 'function');
   eq(S.lift2.length, 3);
-
-  throws(function() { S.lift2('wrong'); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'lift2 :: (Apply a, Apply b, Apply c) => Function -> a -> b -> c\n' +
-         '                                        ^^^^^^^^\n' +
-         '                                           1\n' +
-         '\n' +
-         '1)  "wrong" :: String\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Function’.\n');
+  eq(S.lift2.toString(), 'lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
 
   //  positive :: Number -> Boolean
   function positive(n) { return n > 0; }

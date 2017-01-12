@@ -3,25 +3,13 @@
 var S = require('..');
 
 var eq = require('./internal/eq');
-var throws = require('./internal/throws');
 
 
 test('unfoldr', function() {
 
   eq(typeof S.unfoldr, 'function');
   eq(S.unfoldr.length, 2);
-
-  throws(function() { S.unfoldr(null); },
-         TypeError,
-         'Invalid value\n' +
-         '\n' +
-         'unfoldr :: Function -> b -> Array a\n' +
-         '           ^^^^^^^^\n' +
-         '              1\n' +
-         '\n' +
-         '1)  null :: Null\n' +
-         '\n' +
-         'The value at position 1 is not a member of ‘Function’.\n');
+  eq(S.unfoldr.toString(), 'unfoldr :: (b -> Maybe (Pair a b)) -> b -> Array a');
 
   function f(n) {
     return n >= 5 ? S.Nothing : S.Just([n, n + 1]);
