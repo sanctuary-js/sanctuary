@@ -862,7 +862,7 @@
   //. either a Just whose value is of type `a` or Nothing (with no value).
   //.
   //. The Maybe type satisfies the [Setoid][], [Monoid][], [Monad][],
-  //. [Traversable][], and [Extend][] specifications.
+  //. [Alternative][], [Traversable][], and [Extend][] specifications.
 
   //# MaybeType :: Type -> Type
   //.
@@ -929,6 +929,16 @@
   //. Just(42)
   //. ```
   Maybe['fantasy-land/of'] = Just;
+
+  //# Maybe.fantasy-land/zero :: () -> Maybe a
+  //.
+  //. Returns Nothing.
+  //.
+  //. ```javascript
+  //. > Z.zero(S.Maybe)
+  //. Nothing
+  //. ```
+  Maybe['fantasy-land/zero'] = function() { return Nothing; };
 
   //# Maybe#isNothing :: Maybe a ~> Boolean
   //.
@@ -1477,7 +1487,7 @@
   //. value is of type `b`.
   //.
   //. The Either type satisfies the [Setoid][], [Semigroup][], [Monad][],
-  //. [Traversable][], [Extend][], and [Bifunctor][] specifications.
+  //. [Alt][], [Traversable][], [Extend][], and [Bifunctor][] specifications.
 
   //# EitherType :: Type -> Type -> Type
   //.
@@ -3511,6 +3521,8 @@
 
 //. [$.Array]:          v:sanctuary-js/sanctuary-def#Array
 //. [$.String]:         v:sanctuary-js/sanctuary-def#String
+//. [Alt]:              v:fantasyland/fantasy-land#alt
+//. [Alternative]:      v:fantasyland/fantasy-land#alternative
 //. [Applicative]:      v:fantasyland/fantasy-land#applicative
 //. [Apply]:            v:fantasyland/fantasy-land#apply
 //. [Bifunctor]:        v:fantasyland/fantasy-land#bifunctor
