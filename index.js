@@ -322,7 +322,7 @@
       return R.contains(R.type(x), ['Array', 'String']);
     },
     function(list) {
-      return R.type(list) === 'String' ? [] : _slice.call(list);
+      return R.type(list) === 'String' ? [] : list;
     }
   );
 
