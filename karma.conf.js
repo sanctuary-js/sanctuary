@@ -11,7 +11,11 @@ function depMain(name) {
 }
 
 //  dependencies :: Array String
-var dependencies = ['sanctuary-type-classes', 'sanctuary-def'];
+var dependencies = [
+  'sanctuary-type-identifiers',
+  'sanctuary-type-classes',
+  'sanctuary-def'
+];
 
 eq(dependencies.slice().sort(),
    Object.keys(require('./package.json').dependencies).sort());

@@ -13,7 +13,6 @@ suite('Left', function() {
   test('data constructor', function() {
     eq(typeof S.Left, 'function');
     eq(S.Left.length, 1);
-    eq(S.Left(42)['@@type'], 'sanctuary/Either');
     eq(S.Left(42).constructor, S.Either);
     eq(S.Left(42).isLeft, true);
     eq(S.Left(42).isRight, false);

@@ -10,10 +10,7 @@ var eq = require('../internal/eq');
 suite('Nothing', function() {
 
   test('member of the "Maybe a" type', function() {
-    eq(S.Nothing['@@type'], 'sanctuary/Maybe');
-//  Revert when updating to sanctuary-type-classes@2.0.0.
-//  eq(S.Nothing.constructor, S.Maybe);
-    eq(S.Nothing.constructor === S.Maybe, true);
+    eq(S.Nothing.constructor, S.Maybe);
     eq(S.Nothing.isNothing, true);
     eq(S.Nothing.isJust, false);
   });
