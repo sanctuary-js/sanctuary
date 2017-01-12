@@ -7,8 +7,19 @@ function depMain(name) {
   return './node_modules/' + name + '/' + main;
 }
 
+//  getDeps :: String -> StrMap String String
+function getDeps(path) {
+  return Object.keys(require(path).dependencies);
+}
+
 //  dependencies :: Array String
-var dependencies = Object.keys(require('./package.json').dependencies);
+var dependencies = getDeps('./package.json')
+      .map(function(x) {
+        return [x, getDeps('./node_modules/' + x + '/package.json')];
+      })
+      .sort(function(a, b) { return a[1].indexOf(b[0]) === -1 ? -1 : 1; })
+      .sort(function(b, a) { return a[1].indexOf(b[0]) === -1 ? 1 : -1; })
+      .map(function(x) { return x[0]; });
 
 //  https://saucelabs.com/platforms
 var customLaunchers = {
@@ -53,40 +64,7 @@ var customLaunchers = {
   }
 };
 
-var options = {
-
-  browserDisconnectTimeout: 10000,
-  browserDisconnectTolerance: 2,
-  browserNoActivityTimeout: 90000,
-  captureTimeout: 120000,
-
-  client: {
-    mocha: {opts: 'test/mocha.opts'}
-  },
-
-  plugins: [
-    require('karma-browserify'),
-    require('karma-mocha'),
-    require('karma-sauce-launcher')
-  ],
-
-  frameworks: [
-    'browserify',
-    'mocha'
-  ],
-
-  files: dependencies.map(depMain).concat(['index.js', 'test/**/*.js']),
-
-  preprocessors: {
-    'test/**/*.js': ['browserify']
-  },
-
-  reporters: [
-    'dots',
-    'saucelabs'
-  ],
-
-  singleRun: true,
+var baseOptions = {
 
   browserify: {
     configure: function(bundle) {
@@ -98,18 +76,65 @@ var options = {
     }
   },
 
+  client: {
+    mocha: {opts: 'test/mocha.opts'}
+  },
+
+  files: dependencies.map(depMain).concat(['index.js', 'test/**/*.js']),
+
+  frameworks: [
+    'browserify',
+    'mocha'
+  ],
+
+  plugins: [
+    require('karma-sauce-launcher'),
+    require('karma-browserify'),
+    require('karma-mocha')
+  ],
+
+  preprocessors: {
+    'test/**/*.js': ['browserify']
+  },
+
+  singleRun: true
+
+};
+
+var remoteOptions = Object.assign({
+
+  browsers: Object.keys(customLaunchers),
+
+  browserDisconnectTimeout: 10000,
+  browserDisconnectTolerance: 2,
+  browserNoActivityTimeout: 90000,
+  captureTimeout: 120000,
+
+  customLaunchers: customLaunchers,
+
+  plugins: [
+    require('karma-browserify'),
+    require('karma-mocha'),
+    require('karma-sauce-launcher')
+  ],
+
+  reporters: [
+    'dots',
+    'saucelabs'
+  ],
+
   sauceLabs: {
     testName: 'Sanctuary',
     project: 'Sanctuary',
     name: 'Sanctuary Test Suite',
     startTunnel: true,
     timeout: 600
-  },
+  }
 
-  customLaunchers: customLaunchers,
+}, baseOptions);
 
-  browsers: Object.keys(customLaunchers)
-
+module.exports = function(config) {
+  process.env.CI === 'true' ?
+    config.set(remoteOptions) :
+    config.set(baseOptions);
 };
-
-module.exports = function(config) { config.set(options); };
