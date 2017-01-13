@@ -3532,9 +3532,9 @@
 //. [Z.map]:            v:sanctuary-js/sanctuary-type-classes#map
 //. [`of`]:             v:fantasyland/fantasy-land#of-method
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
-//. [sanctuary-def]:    https://github.com/sanctuary-js/sanctuary-def
+//. [sanctuary-def]:    v:sanctuary-js/sanctuary-def
 //. [thrush]:           https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
-//. [type identifier]:  https://github.com/sanctuary-js/sanctuary-type-identifiers
+//. [type identifier]:  v:sanctuary-js/sanctuary-type-identifiers
 //.
 //. [`Either#fantasy-land/bimap`]:      #Either.prototype.fantasy-land/bimap
 //. [`Either#fantasy-land/map`]:        #Either.prototype.fantasy-land/map
