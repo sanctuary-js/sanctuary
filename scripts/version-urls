@@ -10,11 +10,13 @@ var pkg = require('../package.json');
 var deps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
 
 process.stdout.write(fs.readFileSync(process.argv[2], 'utf8').replace(
-  new RegExp(' v:(.+)/(.+)#(.+)', 'g'),
-  function(_, owner, name, id) {
+  new RegExp(' v:(.+)/(.+)', 'g'),
+  function(_, owner, rest) {
+    var parts = rest.split(/(?=#)/);
+    var name = parts[0];
     if (name in deps && /^\d+[.]\d+[.]\d+$/.test(deps[name])) {
       return ' https://github.com/' + owner + '/' + name +
-             '/tree/v' + deps[name] + '#' + id;
+             '/tree/v' + deps[name] + parts.slice(1).join('');
     }
     process.stderr.write('Exact version not specified for ' + name + '\n');
     process.exit(1);
