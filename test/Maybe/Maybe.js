@@ -136,6 +136,58 @@ suite('Maybe', function() {
 
   });
 
+  suite('Alt laws', function() {
+
+    var altLaws = laws.Alt(Z.equals);
+
+    altLaws.associativity(
+      MaybeArb(jsc.number),
+      MaybeArb(jsc.number),
+      MaybeArb(jsc.number)
+    );
+
+    altLaws.distributivity(
+      MaybeArb(jsc.number),
+      MaybeArb(jsc.number),
+      jsc.constant(Math.sqrt)
+    );
+
+  });
+
+  suite('Plus laws', function() {
+
+    var plusLaws = laws.Plus(Z.equals, S.Maybe);
+
+    plusLaws.leftIdentity(
+      MaybeArb(jsc.number)
+    );
+
+    plusLaws.rightIdentity(
+      MaybeArb(jsc.number)
+    );
+
+    plusLaws.annihilation(
+      jsc.constant(Math.sqrt)
+    );
+
+  });
+
+  suite('Alternative laws', function() {
+
+    var alternativeLaws = laws.Alternative(Z.equals, S.Maybe);
+
+    alternativeLaws.distributivity(
+      MaybeArb(jsc.number),
+      MaybeArb(jsc.constant(Math.sqrt)),
+      MaybeArb(jsc.constant(Math.abs))
+    );
+
+    alternativeLaws.annihilation(
+      MaybeArb(jsc.number)
+    );
+
+  });
+
   suite('Foldable laws', function() {
 
     var foldableLaws = laws.Foldable(Z.equals);

@@ -10,14 +10,14 @@ module.exports = function(equals, M) {
   var empty = Z.empty(M);
   return forall({
 
-    //  (empty m) `concat` m = m
+    //  empty `concat` m = m
     leftIdentity: function(m) {
       var lhs = concat(empty)(m);
       var rhs = m;
       return equals(lhs, rhs);
     },
 
-    //  m `concat` (empty m) = m
+    //  m `concat` empty = m
     rightIdentity: function(m) {
       var lhs = concat(m)(empty);
       var rhs = m;

@@ -140,6 +140,24 @@ suite('Either', function() {
 
   });
 
+  suite('Alt laws', function() {
+
+    var altLaws = laws.Alt(Z.equals);
+
+    altLaws.associativity(
+      EitherArb(jsc.string, jsc.number),
+      EitherArb(jsc.string, jsc.number),
+      EitherArb(jsc.string, jsc.number)
+    );
+
+    altLaws.distributivity(
+      EitherArb(jsc.string, jsc.number),
+      EitherArb(jsc.string, jsc.number),
+      jsc.constant(Math.sqrt)
+    );
+
+  });
+
   suite('Foldable laws', function() {
 
     var foldableLaws = laws.Foldable(Z.equals);
