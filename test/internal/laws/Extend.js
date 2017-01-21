@@ -1,8 +1,8 @@
 'use strict';
 
-var compose = require('./compose');
-var extend = require('./extend_');
-var forall = require('./forall');
+var compose = require('../compose_');
+var extend = require('../extend');
+var forall = require('../forall');
 
 
 module.exports = function(equals) {
@@ -12,7 +12,7 @@ module.exports = function(equals) {
     associativity: function(w, f, g) {
       var lhs = compose(extend(f))(extend(g))(w);
       var rhs = extend(compose(f)(extend(g)))(w);
-      return equals(lhs, rhs);
+      return equals(lhs)(rhs);
     }
 
   });

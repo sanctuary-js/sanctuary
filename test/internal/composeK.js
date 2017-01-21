@@ -1,6 +1,6 @@
 'use strict';
 
-var chain = require('./chain_');
+var chain = require('./chain');
 
 //  composeK :: Chain m => (b -> m c) -> (a -> m b) -> a -> m c
 //

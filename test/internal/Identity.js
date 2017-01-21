@@ -2,7 +2,10 @@
 
 var FL = require('fantasy-land');
 
-var Z = require('sanctuary-type-classes');
+var concat = require('./concat');
+var equals = require('./equals');
+var map = require('./map');
+var toString = require('./toString');
 
 
 //  Identity :: a -> Identity a
@@ -16,11 +19,11 @@ Identity['@@type'] = 'sanctuary/Identity';
 Identity[FL.of] = Identity;
 
 Identity.prototype[FL.equals] = function(other) {
-  return Z.equals(this.value, other.value);
+  return equals(this.value)(other.value);
 };
 
 Identity.prototype[FL.concat] = function(other) {
-  return Identity(Z.concat(this.value, other.value));
+  return Identity(concat(this.value)(other.value));
 };
 
 Identity.prototype[FL.map] = function(f) {
@@ -28,7 +31,7 @@ Identity.prototype[FL.map] = function(f) {
 };
 
 Identity.prototype[FL.ap] = function(other) {
-  return Z.map(other.value, this);
+  return map(other.value)(this);
 };
 
 Identity.prototype[FL.chain] = function(f) {
@@ -40,7 +43,7 @@ Identity.prototype[FL.reduce] = function(f, x) {
 };
 
 Identity.prototype[FL.traverse] = function(f, of) {
-  return Z.map(Identity, f(this.value));
+  return map(Identity)(f(this.value));
 };
 
 Identity.prototype[FL.extend] = function(f) {
@@ -53,7 +56,7 @@ Identity.prototype[FL.extract] = function() {
 
 Identity.prototype.inspect =
 Identity.prototype.toString = function() {
-  return 'Identity(' + Z.toString(this.value) + ')';
+  return 'Identity(' + toString(this.value) + ')';
 };
 
 module.exports = Identity;

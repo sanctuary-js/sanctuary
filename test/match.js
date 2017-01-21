@@ -1,11 +1,11 @@
 'use strict';
 
 var jsc = require('jsverify');
-var Z = require('sanctuary-type-classes');
 
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('match', function() {
@@ -35,7 +35,7 @@ test('match', function() {
     var p = '([A-Za-z]+)';
     var lhs = S.head(S.matchAll(S.regex('g', p), s));
     var rhs = S.match(S.regex('', p), s);
-    return Z.equals(lhs, rhs);
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });
