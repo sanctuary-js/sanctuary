@@ -769,12 +769,8 @@
 
   //# compose :: (b -> c) -> (a -> b) -> a -> c
   //.
-  //. Takes two functions assumed to be unary and a value of any type,
-  //. and returns the result of applying the first function to the result
-  //. of applying the second function to the given value.
-  //.
-  //. In general terms, `compose` performs right-to-left composition of two
-  //. unary functions.
+  //. Composes two unary functions, from right to left. Equivalent to Haskell's
+  //. `(.)` function.
   //.
   //. This is the B combinator from combinatory logic.
   //.
