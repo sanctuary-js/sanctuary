@@ -593,22 +593,6 @@
   }
   S.C = def('C', {}, [Fn(a, Fn(b, c)), b, a, c], C);
 
-  //# B :: (b -> c) -> (a -> b) -> a -> c
-  //.
-  //. The B combinator. Takes two functions and a value, and returns the
-  //. result of applying the first function to the result of applying the
-  //. second to the value. Equivalent to [`compose`](#compose) and Haskell's
-  //. `(.)` function.
-  //.
-  //. ```javascript
-  //. > S.B(Math.sqrt, S.inc, 99)
-  //. 10
-  //. ```
-  function B(f, g, x) {
-    return f(g(x));
-  }
-  S.B = def('B', {}, [Fn(b, c), Fn(a, b), a, c], B);
-
   //# S :: (a -> b -> c) -> (a -> b) -> a -> c
   //.
   //. The S combinator. Takes a curried binary function, a unary function,
@@ -806,13 +790,18 @@
   //. In general terms, `compose` performs right-to-left composition of two
   //. unary functions.
   //.
-  //. See also [`B`](#B) and [`pipe`](#pipe).
+  //. This is the B combinator from combinatory logic.
+  //.
+  //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
   //. > S.compose(Math.sqrt, S.inc)(99)
   //. 10
   //. ```
-  S.compose = def('compose', {}, [Fn(b, c), Fn(a, b), a, c], B);
+  function compose(f, g, x) {
+    return f(g(x));
+  }
+  S.compose = def('compose', {}, [Fn(b, c), Fn(a, b), a, c], compose);
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
