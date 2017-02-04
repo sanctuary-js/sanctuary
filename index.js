@@ -571,28 +571,6 @@
   }
   S.T = def('T', {}, [a, Fn(a, b), b], T);
 
-  //# C :: (a -> b -> c) -> b -> a -> c
-  //.
-  //. The C combinator. Takes a curried binary function and two values, and
-  //. returns the result of applying the function to the values in reverse
-  //. order. Equivalent to Haskell's `flip` function.
-  //.
-  //. This function is very similar to [`flip`](#flip), except that its first
-  //. argument must be curried. This allows it to work with manually curried
-  //. functions.
-  //.
-  //. ```javascript
-  //. > S.C(S.concat, 'foo', 'bar')
-  //. 'barfoo'
-  //.
-  //. > Z.map(S.C(S.concat, '?'), ['foo', 'bar', 'baz'])
-  //. ['foo?', 'bar?', 'baz?']
-  //. ```
-  function C(f, x, y) {
-    return f(y)(x);
-  }
-  S.C = def('C', {}, [Fn(a, Fn(b, c)), b, a, c], C);
-
   //# S :: (a -> b -> c) -> (a -> b) -> a -> c
   //.
   //. The S combinator. Takes a curried binary function, a unary function,
@@ -711,21 +689,29 @@
       [$.Function([a, b, c, d, e, r]), a, b, c, d, e, r],
       curry5);
 
-  //# flip :: ((a, b) -> c) -> b -> a -> c
+  //# flip :: (a -> b -> c) -> b -> a -> c
   //.
-  //. Takes a binary function and two values, and returns the result of
-  //. applying the function to the values in reverse order.
+  //. Takes a curried binary function and two values, and returns the
+  //. result of applying the function to the values in reverse order.
   //.
-  //. See also [`C`](#C).
+  //. This is the C combinator from combinatory logic.
   //.
   //. ```javascript
-  //. > Z.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
-  //. [1, 4, 9, 16, 25]
+  //. > S.flip(S.concat, 'foo', 'bar')
+  //. 'barfoo'
   //. ```
   function flip(f, x, y) {
+    return f(y)(x);
+  }
+  S.flip = def('flip', {}, [Fn(a, Fn(b, c)), b, a, c], flip);
+
+  //# flip_ :: ((a, b) -> c) -> b -> a -> c
+  //.
+  //. Variant of [`flip`](#flip) which takes an uncurried binary function.
+  function flip_(f, x, y) {
     return f(y, x);
   }
-  S.flip = def('flip', {}, [$.Function([a, b, c]), b, a, c], flip);
+  S.flip_ = def('flip_', {}, [$.Function([a, b, c]), b, a, c], flip_);
 
   //# lift :: Functor f => (a -> b) -> f a -> f b
   //.
