@@ -1,7 +1,7 @@
 'use strict';
 
-var forall = require('./forall');
-var reduce = require('./reduce');
+var forall = require('../forall');
+var reduce = require('../reduce');
 
 
 module.exports = function(equals) {
@@ -11,7 +11,7 @@ module.exports = function(equals) {
     associativity: function(f, x, u) {
       var lhs = reduce(f)(x)(u);
       var rhs = reduce(f)(x)(reduce(function(xs, x) { return xs.concat([x]); })([])(u));
-      return equals(lhs, rhs);
+      return equals(lhs)(rhs);
     }
 
   });

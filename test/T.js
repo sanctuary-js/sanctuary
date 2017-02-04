@@ -1,10 +1,9 @@
 'use strict';
 
-var Z = require('sanctuary-type-classes');
-
 var S = require('..');
 
 var eq = require('./internal/eq');
+var map = require('./internal/map');
 
 
 test('T', function() {
@@ -14,6 +13,6 @@ test('T', function() {
   eq(S.T.toString(), 'T :: a -> (a -> b) -> b');
 
   eq(S.T(42, S.inc), 43);
-  eq(Z.map(S.T(100), [S.inc, Math.sqrt]), [101, 10]);
+  eq(map(S.T(100))([S.inc, Math.sqrt]), [101, 10]);
 
 });

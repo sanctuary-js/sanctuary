@@ -1,13 +1,14 @@
 'use strict';
 
 var jsc = require('jsverify');
-var Z = require('sanctuary-type-classes');
 
 var S = require('./sanctuary');
+
+var toString = require('./toString');
 
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
 module.exports = function MaybeArb(arb) {
-  return jsc.oneof(arb.smap(S.Just, S.prop('value'), Z.toString),
+  return jsc.oneof(arb.smap(S.Just, S.prop('value'), toString),
                    jsc.constant(S.Nothing));
 };

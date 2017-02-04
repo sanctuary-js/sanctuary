@@ -1,13 +1,13 @@
 'use strict';
 
 var jsc = require('jsverify');
-var Z = require('sanctuary-type-classes');
 
 var S = require('../internal/sanctuary');
 
 var EitherArb = require('../internal/EitherArb');
 var Identity = require('../internal/Identity');
 var IdentityArb = require('../internal/IdentityArb');
+var equals = require('../internal/equals');
 var laws = require('../internal/laws');
 var squareRoot = require('../internal/squareRoot');
 
@@ -37,7 +37,7 @@ suite('Either', function() {
 
   suite('Semigroup laws', function() {
 
-    var semigroupLaws = laws.Semigroup(Z.equals);
+    var semigroupLaws = laws.Semigroup(equals);
 
     semigroupLaws.associativity(
       EitherArb(jsc.string, jsc.string),
@@ -49,7 +49,7 @@ suite('Either', function() {
 
   suite('Functor laws', function() {
 
-    var functorLaws = laws.Functor(Z.equals);
+    var functorLaws = laws.Functor(equals);
 
     functorLaws.identity(
       EitherArb(jsc.string, jsc.number)
@@ -65,7 +65,7 @@ suite('Either', function() {
 
   suite('Bifunctor laws', function() {
 
-    var bifunctorLaws = laws.Bifunctor(Z.equals);
+    var bifunctorLaws = laws.Bifunctor(equals);
 
     bifunctorLaws.identity(
       EitherArb(jsc.string, jsc.number)
@@ -83,7 +83,7 @@ suite('Either', function() {
 
   suite('Apply laws', function() {
 
-    var applyLaws = laws.Apply(Z.equals);
+    var applyLaws = laws.Apply(equals);
 
     applyLaws.composition(
       EitherArb(jsc.string, jsc.constant(Math.sqrt)),
@@ -95,7 +95,7 @@ suite('Either', function() {
 
   suite('Applicative laws', function() {
 
-    var applicativeLaws = laws.Applicative(Z.equals, S.Either);
+    var applicativeLaws = laws.Applicative(equals, S.Either);
 
     applicativeLaws.identity(
       EitherArb(jsc.string, jsc.number)
@@ -115,7 +115,7 @@ suite('Either', function() {
 
   suite('Chain laws', function() {
 
-    var chainLaws = laws.Chain(Z.equals);
+    var chainLaws = laws.Chain(equals);
 
     chainLaws.associativity(
       EitherArb(jsc.string, jsc.array(jsc.number)),
@@ -127,7 +127,7 @@ suite('Either', function() {
 
   suite('Monad laws', function() {
 
-    var monadLaws = laws.Monad(Z.equals, S.Either);
+    var monadLaws = laws.Monad(equals, S.Either);
 
     monadLaws.leftIdentity(
       jsc.constant(squareRoot),
@@ -142,7 +142,7 @@ suite('Either', function() {
 
   suite('Alt laws', function() {
 
-    var altLaws = laws.Alt(Z.equals);
+    var altLaws = laws.Alt(equals);
 
     altLaws.associativity(
       EitherArb(jsc.string, jsc.number),
@@ -160,7 +160,7 @@ suite('Either', function() {
 
   suite('Foldable laws', function() {
 
-    var foldableLaws = laws.Foldable(Z.equals);
+    var foldableLaws = laws.Foldable(equals);
 
     foldableLaws.associativity(
       jsc.constant(function(x, y) { return x + y; }),
@@ -172,7 +172,7 @@ suite('Either', function() {
 
   suite('Traversable laws', function() {
 
-    var traversableLaws = laws.Traversable(Z.equals);
+    var traversableLaws = laws.Traversable(equals);
 
     traversableLaws.naturality(
       jsc.constant(S.compose(S.Just, S.prop('value'))),
@@ -196,7 +196,7 @@ suite('Either', function() {
 
   suite('Extend laws', function() {
 
-    var extendLaws = laws.Extend(Z.equals);
+    var extendLaws = laws.Extend(equals);
 
     extendLaws.associativity(
       EitherArb(jsc.string, jsc.integer),
