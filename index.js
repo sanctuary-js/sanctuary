@@ -571,44 +571,6 @@
   }
   S.T = def('T', {}, [a, Fn(a, b), b], T);
 
-  //# C :: (a -> b -> c) -> b -> a -> c
-  //.
-  //. The C combinator. Takes a curried binary function and two values, and
-  //. returns the result of applying the function to the values in reverse
-  //. order. Equivalent to Haskell's `flip` function.
-  //.
-  //. This function is very similar to [`flip`](#flip), except that its first
-  //. argument must be curried. This allows it to work with manually curried
-  //. functions.
-  //.
-  //. ```javascript
-  //. > S.C(S.concat, 'foo', 'bar')
-  //. 'barfoo'
-  //.
-  //. > Z.map(S.C(S.concat, '?'), ['foo', 'bar', 'baz'])
-  //. ['foo?', 'bar?', 'baz?']
-  //. ```
-  function C(f, x, y) {
-    return f(y)(x);
-  }
-  S.C = def('C', {}, [Fn(a, Fn(b, c)), b, a, c], C);
-
-  //# B :: (b -> c) -> (a -> b) -> a -> c
-  //.
-  //. The B combinator. Takes two functions and a value, and returns the
-  //. result of applying the first function to the result of applying the
-  //. second to the value. Equivalent to [`compose`](#compose) and Haskell's
-  //. `(.)` function.
-  //.
-  //. ```javascript
-  //. > S.B(Math.sqrt, S.inc, 99)
-  //. 10
-  //. ```
-  function B(f, g, x) {
-    return f(g(x));
-  }
-  S.B = def('B', {}, [Fn(b, c), Fn(a, b), a, c], B);
-
   //# S :: (a -> b -> c) -> (a -> b) -> a -> c
   //.
   //. The S combinator. Takes a curried binary function, a unary function,
@@ -727,21 +689,29 @@
       [$.Function([a, b, c, d, e, r]), a, b, c, d, e, r],
       curry5);
 
-  //# flip :: ((a, b) -> c) -> b -> a -> c
+  //# flip :: (a -> b -> c) -> b -> a -> c
   //.
-  //. Takes a binary function and two values, and returns the result of
-  //. applying the function to the values in reverse order.
+  //. Takes a curried binary function and two values, and returns the
+  //. result of applying the function to the values in reverse order.
   //.
-  //. See also [`C`](#C).
+  //. This is the C combinator from combinatory logic.
   //.
   //. ```javascript
-  //. > Z.map(S.flip(Math.pow)(2), [1, 2, 3, 4, 5])
-  //. [1, 4, 9, 16, 25]
+  //. > S.flip(S.concat, 'foo', 'bar')
+  //. 'barfoo'
   //. ```
   function flip(f, x, y) {
+    return f(y)(x);
+  }
+  S.flip = def('flip', {}, [Fn(a, Fn(b, c)), b, a, c], flip);
+
+  //# flip_ :: ((a, b) -> c) -> b -> a -> c
+  //.
+  //. Variant of [`flip`](#flip) which takes an uncurried binary function.
+  function flip_(f, x, y) {
     return f(y, x);
   }
-  S.flip = def('flip', {}, [$.Function([a, b, c]), b, a, c], flip);
+  S.flip_ = def('flip_', {}, [$.Function([a, b, c]), b, a, c], flip_);
 
   //# lift :: Functor f => (a -> b) -> f a -> f b
   //.
@@ -799,20 +769,21 @@
 
   //# compose :: (b -> c) -> (a -> b) -> a -> c
   //.
-  //. Takes two functions assumed to be unary and a value of any type,
-  //. and returns the result of applying the first function to the result
-  //. of applying the second function to the given value.
+  //. Composes two unary functions, from right to left. Equivalent to Haskell's
+  //. `(.)` function.
   //.
-  //. In general terms, `compose` performs right-to-left composition of two
-  //. unary functions.
+  //. This is the B combinator from combinatory logic.
   //.
-  //. See also [`B`](#B) and [`pipe`](#pipe).
+  //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
   //. > S.compose(Math.sqrt, S.inc)(99)
   //. 10
   //. ```
-  S.compose = def('compose', {}, [Fn(b, c), Fn(a, b), a, c], B);
+  function compose(f, g, x) {
+    return f(g(x));
+  }
+  S.compose = def('compose', {}, [Fn(b, c), Fn(a, b), a, c], compose);
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
