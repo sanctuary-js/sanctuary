@@ -14,9 +14,18 @@
 //. [![CircleCI](https://img.shields.io/circleci/project/github/sanctuary-js/sanctuary/master.svg)](https://circleci.com/gh/sanctuary-js/sanctuary/tree/master)
 //. [![Gitter](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/sanctuary-js/sanctuary)
 //.
-//. Sanctuary is a functional programming library inspired by Haskell
-//. and PureScript. It's stricter and more opinionated than [Ramda][],
-//. and provides a similar suite of functions.
+//. Sanctuary is a JavaScript functional programming library inspired by
+//. Haskell and PureScript. It's stricter than [Ramda][], and provides a
+//. similar suite of functions.
+//.
+//. Sanctuary promotes programs composed of simple, pure functions. Such
+//. programs are easier to comprehend, test, and maintain &ndash; they are
+//. also a pleasure to write.
+//.
+//. Sanctuary provides two data types, [Maybe][] and [Either][], both of
+//. which are compatible with [Fantasy Land][]. Thanks to these data types
+//. even Sanctuary functions which may fail, such as [`head`](#head), are
+//. composable.
 //.
 //. Sanctuary makes it possible to write safe code without null checks.
 //. In JavaScript it's trivial to introduce a possible run-time type error:
@@ -3498,9 +3507,12 @@
 //. [Apply]:            v:fantasyland/fantasy-land#apply
 //. [Bifunctor]:        v:fantasyland/fantasy-land#bifunctor
 //. [BinaryType]:       v:sanctuary-js/sanctuary-def#BinaryType
+//. [Either]:           #either-type
 //. [Extend]:           v:fantasyland/fantasy-land#extend
+//. [Fantasy Land]:     v:fantasyland/fantasy-land
 //. [Foldable]:         v:fantasyland/fantasy-land#foldable
 //. [Functor]:          v:fantasyland/fantasy-land#functor
+//. [Maybe]:            #maybe-type
 //. [Monad]:            v:fantasyland/fantasy-land#monad
 //. [Monoid]:           v:fantasyland/fantasy-land#monoid
 //. [Nullable]:         v:sanctuary-js/sanctuary-def#Nullable
