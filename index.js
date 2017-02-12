@@ -282,7 +282,7 @@
 
   //  readmeUrl :: String -> String
   function readmeUrl(id) {
-    var version = '0.11.1';  // updated programmatically
+    var version = '0.12.0';  // updated programmatically
     return 'https://github.com/sanctuary-js/sanctuary/tree/v' + version +
            '#' + id;
   }
