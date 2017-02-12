@@ -42,7 +42,7 @@ Identity.prototype[FL.reduce] = function(f, x) {
   return f(x, this.value);
 };
 
-Identity.prototype[FL.traverse] = function(f, of) {
+Identity.prototype[FL.traverse] = function(typeRep, f) {
   return map(Identity)(f(this.value));
 };
 

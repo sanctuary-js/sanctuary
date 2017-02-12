@@ -9,7 +9,7 @@ var of = require('./of');
 var toString = require('./toString');
 
 
-//  Compose :: (Apply f, Apply g) => { of :: b -> f b } -> { of :: c -> g c } -> f (g a) -> Compose f g a
+//  Compose :: (Apply f, Apply g) => TypeRep f -> TypeRep g -> f (g a) -> Compose f g a
 module.exports = function Compose(F) {
   return function ComposeF(G) {
     function ComposeFG(value) {
