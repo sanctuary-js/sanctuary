@@ -207,18 +207,16 @@
 
   'use strict';
 
-  //  deps :: Array String
-  var deps = [
-    'sanctuary-def',
-    'sanctuary-type-classes',
-    'sanctuary-type-identifiers'
-  ];
-
   /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = f(require(deps[0]), require(deps[1]), require(deps[2]));
+    module.exports = f(require('sanctuary-def'),
+                       require('sanctuary-type-classes'),
+                       require('sanctuary-type-identifiers'));
   } else if (typeof define === 'function' && define.amd != null) {
-    define(deps, f);
+    define(['sanctuary-def',
+            'sanctuary-type-classes',
+            'sanctuary-type-identifiers'],
+           f);
   } else {
     self.sanctuary = f(self.sanctuaryDef,
                        self.sanctuaryTypeClasses,
