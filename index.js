@@ -480,7 +480,7 @@
 
   //# type :: Any -> String
   //.
-  //. Takes a value, `x`, of any type and returns its [type identifier][].
+  //. Returns the [type identifier][] of the given value.
   //.
   //. ```javascript
   //. > S.type(S.Just(42))
