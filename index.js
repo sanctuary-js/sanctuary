@@ -2560,6 +2560,8 @@
   //.
   //. Boolean "not".
   //.
+  //. See also [`complement`](#complement).
+  //.
   //. ```javascript
   //. > S.not(false)
   //. true
@@ -2571,6 +2573,25 @@
     return !x.valueOf();
   }
   S.not = def('not', {}, [$.Boolean, $.Boolean], not);
+
+  //# complement :: (a -> Boolean) -> a -> Boolean
+  //.
+  //. Takes a unary predicate and a value of any type, and returns the logical
+  //. negation of applying the predicate to the value.
+  //.
+  //. See also [`not`](#not).
+  //.
+  //. ```javascript
+  //. > Number.isInteger(42)
+  //. true
+  //.
+  //. > S.complement(Number.isInteger, 42)
+  //. false
+  //. ```
+  function complement(pred, x) {
+    return !pred(x);
+  }
+  S.complement = def('complement', {}, [Pred(a), a, $.Boolean], complement);
 
   //# ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b
   //.
