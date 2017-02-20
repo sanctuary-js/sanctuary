@@ -3009,21 +3009,30 @@
         [a, f(a), f(a)],
         append);
 
-  //# prepend :: a -> Array a -> Array a
+  //# prepend :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
-  //. Takes a value of any type and an array of values of that type, and
-  //. returns the result of prepending the value to the array.
+  //. Returns the result of prepending the first argument to the second.
   //.
   //. See also [`append`](#append).
   //.
   //. ```javascript
   //. > S.prepend(1, [2, 3])
   //. [1, 2, 3]
+  //.
+  //. > S.prepend([1], S.Nothing)
+  //. Just([1])
+  //.
+  //. > S.prepend([1], S.Just([2, 3]))
+  //. Just([1, 2, 3])
   //. ```
   function prepend(x, xs) {
-    return Z.concat([x], xs);
+    return Z.concat(Z.of(xs.constructor, x), xs);
   }
-  S.prepend = def('prepend', {}, [a, $.Array(a), $.Array(a)], prepend);
+  S.prepend =
+  def('prepend',
+      {f: [Z.Applicative, Z.Semigroup]},
+      [a, f(a), f(a)],
+      prepend);
 
   //# joinWith :: String -> Array String -> String
   //.
