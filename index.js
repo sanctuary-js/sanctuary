@@ -2984,21 +2984,30 @@
 
   //. ### Array
 
-  //# append :: a -> Array a -> Array a
+  //# append :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
-  //. Takes a value of any type and an array of values of that type, and
-  //. returns the result of appending the value to the array.
+  //. Returns the result of appending the first argument to the second.
   //.
   //. See also [`prepend`](#prepend).
   //.
   //. ```javascript
   //. > S.append(3, [1, 2])
   //. [1, 2, 3]
+  //.
+  //. > S.append([1], S.Nothing)
+  //. Just([1])
+  //.
+  //. > S.append([3], S.Just([1, 2]))
+  //. Just([1, 2, 3])
   //. ```
   function append(x, xs) {
-    return Z.concat(xs, [x]);
+    return Z.concat(xs, Z.of(xs.constructor, x));
   }
-  S.append = def('append', {}, [a, $.Array(a), $.Array(a)], append);
+  S.append =
+    def('append',
+        {f: [Z.Applicative, Z.Semigroup]},
+        [a, f(a), f(a)],
+        append);
 
   //# prepend :: a -> Array a -> Array a
   //.
