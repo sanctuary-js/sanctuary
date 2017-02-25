@@ -2613,6 +2613,42 @@
   }
   S.ifElse = def('ifElse', {}, [Pred(a), Fn(a, b), Fn(a, b), a, b], ifElse);
 
+  //# when :: (a -> Boolean) -> (a -> a) -> a -> a
+  //.
+  //. Takes a unary predicate, a unary function, and a value of any type, and
+  //. returns the result of applying the function to the value if the value
+  //. satisfies the predicate; the value otherwise.
+  //.
+  //. ```javascript
+  //. > S.when(x => x >= 0, Math.sqrt, 16)
+  //. 4
+  //.
+  //. > S.when(x => x >= 0, Math.sqrt, -1)
+  //. -1
+  //. ```
+  function when(pred, f, x) {
+    return ifElse(pred, f, I, x);
+  }
+  S.when = def('when', {}, [Pred(a), Fn(a, a), a, a], when);
+
+  //# unless :: (a -> Boolean) -> (a -> a) -> a -> a
+  //.
+  //. Takes a unary predicate, a unary function, and a value of any type, and
+  //. returns the result of applying the function to the value if the value
+  //. does not satisfy the predicate; the value otherwise.
+  //.
+  //. ```javascript
+  //. > S.unless(x => x < 0, Math.sqrt, 16)
+  //. 4
+  //.
+  //. > S.unless(x => x < 0, Math.sqrt, -1)
+  //. -1
+  //. ```
+  function unless(pred, f, x) {
+    return ifElse(pred, I, f, x);
+  }
+  S.unless = def('unless', {}, [Pred(a), Fn(a, a), a, a], unless);
+
   //# allPass :: Array (a -> Boolean) -> a -> Boolean
   //.
   //. Takes an array of unary predicates and a value of any type
