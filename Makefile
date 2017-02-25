@@ -1,10 +1,10 @@
 DOCTEST = node_modules/.bin/doctest --module commonjs --prefix .
 ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-es3.json --env es3
 ISTANBUL = node_modules/.bin/istanbul
-NPM = npm
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
 XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
+YARN = yarn
 
 
 .PHONY: all
@@ -46,6 +46,7 @@ lint:
 	  --rule 'dot-notation: [error, {allowKeywords: true}]' \
 	  --rule 'max-len: [off]' \
 	  -- test
+	$(YARN) check
 	$(REMEMBER_BOWER) $(shell pwd)
 	@echo 'Checking for missing link definitions...'
 	grep -o '\[[^]]*\]\[[^]]*\]' index.js \
@@ -63,7 +64,10 @@ release-major release-minor release-patch:
 
 .PHONY: setup
 setup:
-	$(NPM) install
+	$(YARN) --pure-lockfile
+
+yarn.lock: package.json
+	$(YARN)
 
 
 .PHONY: test
