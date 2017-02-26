@@ -349,13 +349,13 @@
   var defaultEnv = Z.concat($.env, [
     $.FiniteNumber,
     $.NonZeroFiniteNumber,
-    $Either,
+    $Either($.Unknown, $.Unknown),
     Fn($.Unknown, $.Unknown),
     $.GlobalRegExp,
     $.NonGlobalRegExp,
     $.Integer,
-    $Maybe,
-    $.Pair,
+    $Maybe($.Unknown),
+    $.Pair($.Unknown, $.Unknown),
     $.RegexFlags,
     $.ValidDate,
     $.ValidNumber
