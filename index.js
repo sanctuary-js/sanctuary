@@ -280,7 +280,7 @@
 
   //  readmeUrl :: String -> String
   function readmeUrl(id) {
-    var version = '0.12.1';  // updated programmatically
+    var version = '0.12.2';  // updated programmatically
     return 'https://github.com/sanctuary-js/sanctuary/tree/v' + version +
            '#' + id;
   }
@@ -349,13 +349,13 @@
   var defaultEnv = Z.concat($.env, [
     $.FiniteNumber,
     $.NonZeroFiniteNumber,
-    $Either,
+    $Either($.Unknown, $.Unknown),
     Fn($.Unknown, $.Unknown),
     $.GlobalRegExp,
     $.NonGlobalRegExp,
     $.Integer,
-    $Maybe,
-    $.Pair,
+    $Maybe($.Unknown),
+    $.Pair($.Unknown, $.Unknown),
     $.RegexFlags,
     $.ValidDate,
     $.ValidNumber
