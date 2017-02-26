@@ -29,7 +29,7 @@
     "mocha": "3.x.x",
     "remember-bower": "0.1.x",
     "sanctuary-style": "0.4.x",
-    "transcribe": "0.5.x",
+    "transcribe": "1.0.x",
     "xyz": "2.0.x"
   },
   "files": [
