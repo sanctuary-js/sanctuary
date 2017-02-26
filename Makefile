@@ -4,7 +4,7 @@ ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
-XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
+XYZ = node_modules/.bin/xyz --branch 0.12.x --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
 
 
 .PHONY: all
