@@ -2719,23 +2719,6 @@
   //. It's then apparent that the first argument needn't be a single-character
   //. string; the correspondence between arrays and strings does not hold.
 
-  //# concat :: Semigroup a => a -> a -> a
-  //.
-  //. Concatenates two (homogeneous) arrays, two strings, or two values of any
-  //. other type which satisfies the [Semigroup][] specification.
-  //.
-  //. ```javascript
-  //. > S.concat([1, 2, 3], [4, 5, 6])
-  //. [1, 2, 3, 4, 5, 6]
-  //.
-  //. > S.concat('foo', 'bar')
-  //. 'foobar'
-  //.
-  //. > S.concat(S.Just('foo'), S.Just('bar'))
-  //. Just('foobar')
-  //. ```
-  S.concat = def('concat', {a: [Z.Semigroup]}, [a, a, a], Z.concat);
-
   //# slice :: Integer -> Integer -> List a -> Maybe (List a)
   //.
   //. Returns Just a list containing the elements from the supplied list
