@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euf -o pipefail
-
-node_modules/.bin/sanctuary-prepublish "$@"
-
-sed "s/ version = '.*';/ version = '$VERSION';/" index.js >index.js.updated
-mv index.js.updated index.js
-git add index.js

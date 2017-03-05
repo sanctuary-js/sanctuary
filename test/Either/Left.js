@@ -97,9 +97,4 @@ suite ('Left', function() {
     eq (S.show (S.Left ('abc'))) ('Left ("abc")');
   });
 
-  test ('"inspect" method', function() {
-    eq ((S.Left ('abc')).inspect.length) (0);
-    eq ((S.Left ('abc')).inspect ()) ('Left ("abc")');
-  });
-
 });

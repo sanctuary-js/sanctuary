@@ -76,9 +76,4 @@ suite ('Nothing', function() {
     eq (S.show (S.Nothing)) ('Nothing');
   });
 
-  test ('"inspect" method', function() {
-    eq (S.Nothing.inspect.length) (0);
-    eq (S.Nothing.inspect ()) ('Nothing');
-  });
-
 });

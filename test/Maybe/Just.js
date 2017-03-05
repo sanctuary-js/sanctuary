@@ -89,9 +89,4 @@ suite ('Just', function() {
     eq (S.show (S.Just ([1, 2, 3]))) ('Just ([1, 2, 3])');
   });
 
-  test ('"inspect" method', function() {
-    eq ((S.Just ([1, 2, 3])).inspect.length) (0);
-    eq ((S.Just ([1, 2, 3])).inspect ()) ('Just ([1, 2, 3])');
-  });
-
 });

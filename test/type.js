@@ -43,13 +43,13 @@ test ('type', function() {
      ({namespace: S.Nothing, name: 'String', version: 0});
 
   eq (S.type (S.Left (42)))
-     ({namespace: S.Just ('sanctuary'), name: 'Either', version: 0});
+     ({namespace: S.Just ('sanctuary-either'), name: 'Either', version: 1});
   eq (S.type (S.Right (42)))
-     ({namespace: S.Just ('sanctuary'), name: 'Either', version: 0});
+     ({namespace: S.Just ('sanctuary-either'), name: 'Either', version: 1});
   eq (S.type (S.Nothing))
-     ({namespace: S.Just ('sanctuary'), name: 'Maybe', version: 0});
+     ({namespace: S.Just ('sanctuary-maybe'), name: 'Maybe', version: 1});
   eq (S.type (S.Just (42)))
-     ({namespace: S.Just ('sanctuary'), name: 'Maybe', version: 0});
+     ({namespace: S.Just ('sanctuary-maybe'), name: 'Maybe', version: 1});
 
   function Gizmo() {}
   Gizmo['@@type'] = 'gadgets/Gizmo@42';
