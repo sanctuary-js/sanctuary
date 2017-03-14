@@ -1039,6 +1039,70 @@
       [Fn(a, $.Boolean), m(a), m(a)],
       Z.filterM);
 
+  //# takeWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
+  //.
+  //. Discards the first inner value which does not satisfy the predicate, and
+  //. all subsequent inner values.
+  //.
+  //. ```javascript
+  //. > S.takeWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7]
+  //.
+  //. > S.takeWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. []
+  //. ```
+  function Array$takeWhile(pred, xs) {
+    var idx = 0;
+    while (idx < xs.length && pred(xs[idx])) idx += 1;
+    return xs.slice(0, idx);
+  }
+
+  function takeWhile(pred, xs) {
+    if (Array.isArray(xs)) return Array$takeWhile(pred, xs);
+    var done = false;
+    function takeWhileReducer(xs, x) {
+      return !done && pred(x) ? append(x, xs) : (done = true, xs);
+    }
+    return Z.reduce(takeWhileReducer, Z.empty(xs.constructor), xs);
+  }
+  S.takeWhile =
+  def('takeWhile',
+      {f: [Z.Foldable, Z.Alternative]},
+      [Pred(a), f(a), f(a)],
+      takeWhile);
+
+  //# dropWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
+  //.
+  //. Retains the first inner value which does not satisfy the predicate, and
+  //. all subsequent inner values.
+  //.
+  //. ```javascript
+  //. > S.dropWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [6, 3, 5, 4]
+  //.
+  //. > S.dropWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7, 6, 3, 5, 4]
+  //. ```
+  function Array$dropWhile(pred, xs) {
+    var idx = 0;
+    while (idx < xs.length && pred(xs[idx])) idx += 1;
+    return xs.slice(idx);
+  }
+
+  function dropWhile(pred, xs) {
+    if (Array.isArray(xs)) return Array$dropWhile(pred, xs);
+    var done = false;
+    function dropWhileReducer(xs, x) {
+      return !done && pred(x) ? xs : (done = true, append(x, xs));
+    }
+    return Z.reduce(dropWhileReducer, Z.empty(xs.constructor), xs);
+  }
+  S.dropWhile =
+  def('dropWhile',
+      {f: [Z.Foldable, Z.Alternative]},
+      [Pred(a), f(a), f(a)],
+      dropWhile);
+
   //. ### Combinator
 
   //# I :: a -> a
