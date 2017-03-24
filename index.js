@@ -349,7 +349,7 @@
   var Ordering = $.EnumType(
     'sanctuary/Ordering',
     readmeUrl('Ordering'),
-    ['LT', 'EQ', 'GT']
+    [-1, 0, 1]
   );
 
   //  defaultEnv :: Array Type
@@ -4037,82 +4037,27 @@
   S.splitOn =
   def('splitOn', {}, [$.String, $.String, $.Array($.String)], splitOn);
 
-  // TODO: Separate this in a diferent PR
-  //# compare :: a -> a -> Ordering
+  //# sortBy :: (a -> a -> Ordering) -> Array a -> Array a
   //.
-  //. Compares two values by JavaScript comparison operators and
-  //. returns an Ordering value.
-  //.
-  //. ```javascript
-  //. > S.compare(2, 3)
-  //. 'LT'
-  //. > S.compare(3, 2)
-  //. 'GT'
-  //. > S.compare(3, 3)
-  //. 'EQ'
-  //. ```
-  function compare(a1, a2) {
-    if (a1 < a2) {
-        return 'LT';
-    }
-    if (a1 > a2) {
-        return 'GT';
-    }
-    return 'EQ';
-  }
-  S.compare =
-  def('compare', {}, [a, a, Ordering], compare);
-
-  // TODO: Separate this in a diferent PR
-  //# insertBy :: (Applicative f, Foldable f, Monoid f) => (a -> a -> Ordering) -> a -> f a -> f a
-  //.
-  //. TODO: Write the documentation
+  //. Returns a copy of the array, sorted according to the comparator
+  //. function. The comparator function is expected to be curried,
+  //. and will receive two values at a time. The comparator must return:
+  //. - 'LT': if the first value is **less** than the second value.
+  //. - 'GT': if the first value is **greater** than the second value.
+  //. - 'EQ': if the first value is **equal** to the second value.
   //.
   //. ```javascript
-  //. > S.insertBy(S.compare, 6, [4, 2, 7, 5])
-  //. [4, 2, 6, 7, 5]
-  //. ```
-  function insertBy(cmp, x, ys) {
-    if (ys.length === 0) {
-        return S.prepend(x, ys);
-    }
-    var y = S.head(ys).value;
-    var ys_ = S.tail(ys).value;
-    var result = cmp(x)(y);
-    if (result === 'GT') {
-        return S.prepend(y, insertBy(cmp, x, ys_));
-    }
-    return S.prepend(x, ys);
-  }
-  S.insertBy =
-  def('insertBy', {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-      [Fn(a, Fn(a, Ordering)), a, f(a), f(a)], insertBy);
-
-  //# sortBy :: (Applicative f, Foldable f, Monoid f) => (a -> a -> Ordering) -> f a -> f a
+  //. > function cmp(a) { return function(b) { return a < b ? -1 : 1; }; }
   //.
-  //. Returns a copy of the list, sorted according to the comparator
-  //. function, which should accept two values at a time and return a
-  //. negative number if the first value is smaller, a positive number if
-  //. it's larger, and zero if they are equal. Please note that this is a
-  //. **copy** of the list. It does not modify the original.
-  //.
-  //. ```javascript
-  //. > S.sortBy(S.compare, [4, 2, 7, 5])
+  //. > S.sortBy(cmp)([4, 2, 7, 5]);
   //. [2, 4, 5, 7]
   //. ```
   function sortBy(cmp, xs) {
-    // TODO: Should we separate foldr?
-    // sortBy cmp = foldr (insertBy cmp) []
-    if (xs.length <= 1) {
-        return xs;
-    }
-    var x = S.head(xs).value;
-    var xs_ = S.tail(xs).value;
-    return S.insertBy(cmp, x, sortBy(cmp, xs_));
+    return xs.slice().sort(uncurry2(cmp));
   }
   S.sortBy =
-  def('sortBy', {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-      [Fn(a, Fn(a, Ordering)), f(a), f(a)], sortBy);
+  def('sortBy', {}, [Fn(a, Fn(a, Ordering)), $.Array(a), $.Array(a)], sortBy);
+
 
   return S;
 
