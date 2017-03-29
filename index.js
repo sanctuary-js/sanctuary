@@ -4052,12 +4052,10 @@
 //. [Extend]:           v:fantasyland/fantasy-land#extend
 //. [Fantasy Land]:     v:fantasyland/fantasy-land
 //. [Foldable]:         v:fantasyland/fantasy-land#foldable
-//. [Functor]:          v:fantasyland/fantasy-land#functor
 //. [Maybe]:            #maybe-type
 //. [Monad]:            v:fantasyland/fantasy-land#monad
 //. [Monoid]:           v:fantasyland/fantasy-land#monoid
 //. [Nullable]:         v:sanctuary-js/sanctuary-def#Nullable
-//. [Object#toString]:  https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
