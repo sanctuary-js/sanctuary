@@ -3282,6 +3282,57 @@
   S.range =
   def('range', {}, [$.Integer, $.Integer, $.Array($.Integer)], range);
 
+  //# groupBy :: (a -> a -> Boolean) -> Array a -> Array (Array a)
+  //.
+  //. Splits its array argument into an array of arrays of equal,
+  //. adjacent elements. Equality is determined by the function
+  //. provided as the first argument. Its behaviour can be surprising
+  //. for functions that aren't reflexive, transitive, and symmetric
+  //. (see [equivalence][] relation).
+  //.
+  //. See also [`groupBy_`](#groupBy_).
+  //.
+  //. Properties:
+  //.
+  //.   - `forall f :: a -> a -> Boolean, xs :: Array a.
+  //.      S.join(S.groupBy(f, xs)) = xs`
+  //.
+  //. ```javascript
+  //. > S.groupBy(S.equals, [1, 1, 2, 1, 1])
+  //. [[1, 1], [2], [1, 1]]
+  //.
+  //. > S.groupBy(x => y => x + y === 0, [2, -3, 3, 3, 3, 4, -4, 4])
+  //. [[2], [-3, 3, 3, 3], [4, -4], [4]]
+  //. ```
+  function groupBy(f, xs) {
+    return groupBy_(uncurry2(f), xs);
+  }
+  S.groupBy =
+  def('groupBy',
+      {},
+      [Fn(a, Fn(a, $.Boolean)), $.Array(a), $.Array($.Array(a))],
+      groupBy);
+
+  //# groupBy_ :: ((a, a) -> Boolean) -> Array a -> Array (Array a)
+  //.
+  //. Variant of [`groupBy`](#groupBy) which takes an uncurried function.
+  function groupBy_(f, xs) {
+    if (xs.length === 0) return [];
+    var x0 = xs[0];         // :: a
+    var active = [x0];      // :: Array a
+    var result = [active];  // :: Array (Array a)
+    for (var idx = 1; idx < xs.length; idx += 1) {
+      var x = xs[idx];
+      if (f(x0, x)) active.push(x); else result.push(active = [x0 = x]);
+    }
+    return result;
+  }
+  S.groupBy_ =
+  def('groupBy_',
+      {},
+      [$.Function([a, a, $.Boolean]), $.Array(a), $.Array($.Array(a))],
+      groupBy_);
+
   //. ### Object
 
   //# prop :: Accessible a => String -> a -> b
@@ -4180,6 +4231,7 @@
 //. [`Z.traverse`]:     v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:         v:sanctuary-js/sanctuary-type-classes#zero
 //. [`of`]:             v:fantasyland/fantasy-land#of-method
+//. [equivalence]:      https://en.wikipedia.org/wiki/Equivalence_relation
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:    v:sanctuary-js/sanctuary-def
 //. [thrush]:           https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
