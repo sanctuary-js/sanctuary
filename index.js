@@ -785,6 +785,9 @@
   //. > S.ap([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
   //. [1, 2, 3, 4, 5, 1, 16, 81, 256, 625]
   //.
+  //. > S.ap({x: Math.sqrt, y: S.inc, z: S.dec}, {w: 4, x: 4, y: 4})
+  //. {x: 2, y: 5}
+  //.
   //. > S.ap(S.Just(Math.sqrt), S.Just(64))
   //. Just(8)
   //. ```
