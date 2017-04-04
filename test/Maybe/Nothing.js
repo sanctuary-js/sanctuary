@@ -1,6 +1,7 @@
 'use strict';
 
 var FL = require('fantasy-land');
+var Z = require('sanctuary-type-classes');
 
 var S = require('../..');
 
@@ -36,6 +37,8 @@ suite('Nothing', function() {
     eq(S.Nothing[FL.concat].length, 1);
     eq(S.Nothing[FL.concat](S.Nothing), S.Nothing);
     eq(S.Nothing[FL.concat](S.Just('foo')), S.Just('foo'));
+
+    eq(Z.Semigroup.test(S.Nothing), true);
   });
 
   test('"fantasy-land/equals" method', function() {
