@@ -998,6 +998,20 @@
   S.extract =
   def('extract', {w: [Z.Comonad]}, [w(a), a], Z.extract);
 
+  //# contramap :: Contravariant f => (b -> a) -> f a -> f b
+  //.
+  //. [Type-safe][sanctuary-def] version of [`Z.contramap`][].
+  //.
+  //. ```javascript
+  //. > S.contramap(s => s.length, Math.sqrt)('Sanctuary')
+  //. 3
+  //. ```
+  S.contramap =
+  def('contramap',
+      {f: [Z.Contravariant]},
+      [Fn(b, a), f(a), f(b)],
+      Z.contramap);
+
   //# filter :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean) -> f a -> f a
   //.
   //. Curried version of [`Z.filter`][].
@@ -1020,7 +1034,7 @@
       [Fn(a, $.Boolean), f(a), f(a)],
       Z.filter);
 
-  //# filterM :: (Monad m, Monoid (m a)) => (a -> Boolean) -> m a -> m a
+  //# filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a
   //.
   //. Curried version of [`Z.filterM`][].
   //.
@@ -1038,7 +1052,7 @@
   //. ```
   S.filterM =
   def('filterM',
-      {m: [Z.Monad, Z.Monoid]},
+      {m: [Z.Alternative, Z.Monad]},
       [Fn(a, $.Boolean), m(a), m(a)],
       Z.filterM);
 
@@ -4075,6 +4089,7 @@
 //. [`Z.chain`]:        v:sanctuary-js/sanctuary-type-classes#chain
 //. [`Z.chainRec`]:     v:sanctuary-js/sanctuary-type-classes#chainRec
 //. [`Z.concat`]:       v:sanctuary-js/sanctuary-type-classes#concat
+//. [`Z.contramap`]:    v:sanctuary-js/sanctuary-type-classes#contramap
 //. [`Z.empty`]:        v:sanctuary-js/sanctuary-type-classes#empty
 //. [`Z.equals`]:       v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.extend`]:       v:sanctuary-js/sanctuary-type-classes#extend

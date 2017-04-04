@@ -9,7 +9,7 @@ test('filterM', function() {
 
   eq(typeof S.filterM, 'function');
   eq(S.filterM.length, 2);
-  eq(S.filterM.toString(), 'filterM :: (Monad m, Monoid m) => (a -> Boolean) -> m a -> m a');
+  eq(S.filterM.toString(), 'filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a');
 
   eq(S.filterM(S.odd, []), []);
   eq(S.filterM(S.odd, [0, 2, 4, 6, 8]), []);
