@@ -3163,6 +3163,31 @@
   S.joinWith =
   def('joinWith', {}, [$.String, $.Array($.String), $.String], joinWith);
 
+  //# zipWith :: (a -> b -> c) -> Array a -> Array b -> Array c
+  //.
+  //. Takes a curried binary function and two arrays, and returns the result
+  //. of zipping the arrays with the function. If the arrays are not of equal
+  //. length, the longer is truncated to the length of the shorter.
+  //.
+  //. ```javascript
+  //. > S.zipWith(exp => n => Math.pow(n, exp), [1, 2, 3], [7, 6, 5, 4])
+  //. [7, 36, 125]
+  //.
+  //. > S.zipWith(S.take, [1, 2, 3, 4], ['foo', 'bar', 'baz'])
+  //. [S.Just('f'), S.Just('ba'), S.Just('baz')]
+  //. ```
+  S.zipWith =
+  def('zipWith',
+      {},
+      [$.Function, $.Array(a), $.Array(b), $.Array(c)],
+      function(f, xs, ys) {
+        var result = new Array(Math.min(xs.length, ys.length));
+        for (var idx = 0; idx < result.length; idx += 1) {
+          result[idx] = f(xs[idx])(ys[idx]);
+        }
+        return result;
+      });
+
   //# find :: (a -> Boolean) -> Array a -> Maybe a
   //.
   //. Takes a predicate and an array and returns Just the leftmost element of
