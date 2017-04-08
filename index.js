@@ -1351,6 +1351,8 @@
   //. Takes a binary function `f`, a unary function `g`, and two
   //. values `x` and `y`. Returns `f(g(x))(g(y))`.
   //.
+  //. This is the P combinator from combinatory logic.
+  //.
   //. See also [`on_`](#on_).
   //.
   //. ```javascript
