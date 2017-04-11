@@ -2487,6 +2487,26 @@
   }
   S.rights = def('rights', {}, [$.Array($Either(a, b)), $.Array(b)], rights);
 
+  //# tagBy :: (a -> Boolean) -> a -> Either a a
+  //.
+  //. Takes a predicate and a value, and returns a Right of the value if it
+  //. satisfies the predicate; a Left of the value otherwise.
+  //.
+  //. ```javascript
+  //. > S.tagBy(S.odd, 0)
+  //. Left(0)
+  //
+  //. > S.tagBy(S.odd, 1)
+  //. Right(1)
+  //
+  //. > S.compose(S.bimap(S.dec, S.inc), S.tagBy(S.odd))(5)
+  //. Right(6)
+  //. ```
+  function tagBy(pred, a) {
+    return pred(a) ? Right(a) : Left(a);
+  }
+  S.tagBy = def('tagBy', {}, [Fn(a, $.Boolean), a, $Either(a, a)], tagBy);
+
   //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
   //. Takes two unary functions, `f` and `g`, the second of which may throw,
