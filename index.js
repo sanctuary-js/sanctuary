@@ -3419,6 +3419,35 @@
   S.pairs =
   def('pairs', {}, [$.StrMap(a), $.Array($.Pair($.String, a))], pairs);
 
+  //# mergeStrMaps :: Array (StrMap a) -> StrMap a
+  //.
+  //. Merges an array of string maps into one string map. Precedence is given
+  //. to later string maps in the array.
+  //.
+  //. ```javascript
+  //. > S.mergeStrMaps([{a: 1}, {b: 2}])
+  //. {a: 1, b: 2}
+  //.
+  //. > S.mergeStrMaps([{a: 1}, {b: 2}, {b: 3}])
+  //. {a: 1, b: 3}
+  //. ```
+  S.mergeStrMaps =
+  def('mergeStrMaps',
+      {},
+      [$.Array($.StrMap(a)), $.StrMap(a)],
+      function(xs) {
+        var strMap = {};
+        for (var idx = 0; idx < xs.length; idx += 1) {
+          var obj = xs[idx];
+          var keys = Object.keys(obj);
+          for (var idx1 = 0; idx1 < keys.length; idx1 += 1) {
+            var key = keys[idx1];
+            strMap[key] = obj[key];
+          }
+        }
+        return strMap;
+      });
+
   //. ### Number
 
   //# negate :: ValidNumber -> ValidNumber
