@@ -3209,7 +3209,7 @@
   }
   S.find = def('find', {}, [Pred(a), $.Array(a), $Maybe(a)], find);
 
-  //# pluck :: Accessible a => String -> Array a -> Array b
+  //# pluck :: (Accessible a, Functor f) => String -> f a -> f b
   //.
   //. Combines [`map`](#map) and [`prop`](#prop). `pluck(k, xs)` is equivalent
   //. to `map(prop(k), xs)`.
@@ -3217,19 +3217,21 @@
   //. ```javascript
   //. > S.pluck('x', [{x: 1}, {x: 2}, {x: 3}])
   //. [1, 2, 3]
+  //.
+  //. > S.pluck('x', S.Just({x: 1, y: 2, z: 3}))
+  //. Just(1)
   //. ```
   function pluck(key, xs) {
-    return xs.map(function(x, idx) {
+    return Z.map(function(x) {
       if (key in Object(x)) return x[key];
-      throw new TypeError('‘pluck’ expected object at index ' + idx +
-                          ' to have a property named ‘' + key + '’; ' +
-                          Z.toString(x) + ' does not');
-    });
+      throw new TypeError('‘pluck’ expected object to have a property named ' +
+                          '‘' + key + '’; ' + Z.toString(x) + ' does not');
+    }, xs);
   }
   S.pluck =
   def('pluck',
-      {a: [Accessible]},
-      [$.String, $.Array(a), $.Array(b)],
+      {a: [Accessible], f: [Z.Functor]},
+      [$.String, f(a), f(b)],
       pluck);
 
   //# unfoldr :: (b -> Maybe (Pair a b)) -> b -> Array a
