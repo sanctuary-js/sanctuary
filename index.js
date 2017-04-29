@@ -3995,6 +3995,50 @@
   }
   S.trim = def('trim', {}, [$.String, $.String], trim);
 
+  //# stripPrefix :: String -> String -> Maybe String
+  //.
+  //. Returns Just the portion of the given string (the second argument) left
+  //. after removing the given prefix (the first argument) if the string starts
+  //. with the prefix; Nothing otherwise.
+  //.
+  //. See also [`stripSuffix`](#stripSuffix).
+  //.
+  //. ```javascript
+  //. > S.stripPrefix('https://', 'https://sanctuary.js.org')
+  //. Just('sanctuary.js.org')
+  //.
+  //. > S.stripPrefix('https://', 'http://sanctuary.js.org')
+  //. Nothing
+  //. ```
+  function stripPrefix(prefix, s) {
+    var idx = prefix.length;
+    return s.slice(0, idx) === prefix ? Just(s.slice(idx)) : Nothing;
+  }
+  S.stripPrefix =
+  def('stripPrefix', {}, [$.String, $.String, $Maybe($.String)], stripPrefix);
+
+  //# stripSuffix :: String -> String -> Maybe String
+  //.
+  //. Returns Just the portion of the given string (the second argument) left
+  //. after removing the given suffix (the first argument) if the string ends
+  //. with the suffix; Nothing otherwise.
+  //.
+  //. See also [`stripPrefix`](#stripPrefix).
+  //.
+  //. ```javascript
+  //. > S.stripSuffix('.md', 'README.md')
+  //. Just('README')
+  //.
+  //. > S.stripSuffix('.md', 'README')
+  //. Nothing
+  //. ```
+  function stripSuffix(suffix, s) {
+    var idx = s.length - suffix.length;  // value may be negative
+    return s.slice(idx) === suffix ? Just(s.slice(0, idx)) : Nothing;
+  }
+  S.stripSuffix =
+  def('stripSuffix', {}, [$.String, $.String, $Maybe($.String)], stripSuffix);
+
   //# words :: String -> Array String
   //.
   //. Takes a string and returns the array of words the string contains
