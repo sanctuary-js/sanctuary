@@ -5,14 +5,14 @@ var $ = require('sanctuary-def');
 var S = require('../..');
 
 
-//  UnaryType :: String -> (Type -> Type)
+//  UnaryType :: String -> Type
 function UnaryType(typeIdent) {
   return $.UnaryType(
     typeIdent,
     '',
     function(x) { return S.type(x) === typeIdent; },
     function(v) { return [v.value]; }
-  );
+  )($.Unknown);
 }
 
 //  env :: Array Type
