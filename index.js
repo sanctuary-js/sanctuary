@@ -247,6 +247,11 @@
     };
   }
 
+  //  negativeZero :: Number -> Boolean
+  function negativeZero(n) {
+    return n === 0 && 1 / n === -Infinity;
+  }
+
   //  typeEq :: String -> a -> Boolean
   function typeEq(typeIdent) {
     return function(x) {
@@ -276,17 +281,6 @@
     'sanctuary/Accessible',
     [],
     function(x) { return x != null; }
-  );
-
-  //  Ord :: TypeClass
-  var Ord = Z.TypeClass(
-    'sanctuary/Ord',
-    [],
-    function(x) {
-      return $.String._test(x) ||
-             $.ValidDate._test(x) ||
-             $.ValidNumber._test(x);
-    }
   );
 
   //  readmeUrl :: String -> String
@@ -565,15 +559,180 @@
   //.
   //. ```javascript
   //. > S.equals(0, -0)
-  //. false
+  //. true
   //.
   //. > S.equals(NaN, NaN)
   //. true
   //.
   //. > S.equals(S.Just([1, 2, 3]), S.Just([1, 2, 3]))
   //. true
+  //.
+  //. > S.equals(S.Just([1, 2, 3]), S.Just([1, 2, 4]))
+  //. false
   //. ```
   S.equals = def('equals', {a: [Z.Setoid]}, [a, a, $.Boolean], Z.equals);
+
+  //# lt :: Ord a => a -> (a -> Boolean)
+  //.
+  //. Flipped version of [`Z.lt`][] intended for partial application.
+  //.
+  //. See also [`lt_`](#lt_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.lt(3), [1, 2, 3, 4, 5])
+  //. [1, 2]
+  //. ```
+  S.lt = def('lt', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.lt));
+
+  //# lt_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Curried version of [`Z.lt`][].
+  //.
+  //. See also [`lt`](#lt).
+  //.
+  //. ```javascript
+  //. > S.lt_([1, 2, 3], [1, 2, 3])
+  //. false
+  //.
+  //. > S.lt_([1, 2, 3], [1, 2, 4])
+  //. true
+  //.
+  //. > S.lt_([1, 2, 3], [1, 2])
+  //. false
+  //. ```
+  S.lt_ = def('lt_', {a: [Z.Ord]}, [a, a, $.Boolean], Z.lt);
+
+  //# lte :: Ord a => a -> (a -> Boolean)
+  //.
+  //. Flipped version of [`Z.lte`][] intended for partial application.
+  //.
+  //. See also [`lte_`](#lte_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.lte(3), [1, 2, 3, 4, 5])
+  //. [1, 2, 3]
+  //. ```
+  S.lte = def('lte', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.lte));
+
+  //# lte_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Curried version of [`Z.lte`][].
+  //.
+  //. See also [`lte`](#lte).
+  //.
+  //. ```javascript
+  //. > S.lte_([1, 2, 3], [1, 2, 3])
+  //. true
+  //.
+  //. > S.lte_([1, 2, 3], [1, 2, 4])
+  //. true
+  //.
+  //. > S.lte_([1, 2, 3], [1, 2])
+  //. false
+  //. ```
+  S.lte_ = def('lte_', {a: [Z.Ord]}, [a, a, $.Boolean], Z.lte);
+
+  //# gt :: Ord a => a -> (a -> Boolean)
+  //.
+  //. Flipped version of [`Z.gt`][] intended for partial application.
+  //.
+  //. See also [`gt_`](#gt_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.gt(3), [1, 2, 3, 4, 5])
+  //. [4, 5]
+  //. ```
+  S.gt = def('gt', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.gt));
+
+  //# gt_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Curried version of [`Z.gt`][].
+  //.
+  //. See also [`gt`](#gt).
+  //.
+  //. ```javascript
+  //. > S.gt_([1, 2, 3], [1, 2, 3])
+  //. false
+  //.
+  //. > S.gt_([1, 2, 3], [1, 2, 4])
+  //. false
+  //.
+  //. > S.gt_([1, 2, 3], [1, 2])
+  //. true
+  //. ```
+  S.gt_ = def('gt_', {a: [Z.Ord]}, [a, a, $.Boolean], Z.gt);
+
+  //# gte :: Ord a => a -> (a -> Boolean)
+  //.
+  //. Flipped version of [`Z.gte`][] intended for partial application.
+  //.
+  //. See also [`gte_`](#gte_).
+  //.
+  //. ```javascript
+  //. > S.filter(S.gte(3), [1, 2, 3, 4, 5])
+  //. [3, 4, 5]
+  //. ```
+  S.gte = def('gte', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.gte));
+
+  //# gte_ :: Ord a => a -> a -> Boolean
+  //.
+  //. Curried version of [`Z.gte`][].
+  //.
+  //. See also [`gte`](#gte).
+  //.
+  //. ```javascript
+  //. > S.gte_([1, 2, 3], [1, 2, 3])
+  //. true
+  //.
+  //. > S.gte_([1, 2, 3], [1, 2, 4])
+  //. false
+  //.
+  //. > S.gte_([1, 2, 3], [1, 2])
+  //. true
+  //. ```
+  S.gte_ = def('gte_', {a: [Z.Ord]}, [a, a, $.Boolean], Z.gte);
+
+  //# min :: Ord a => a -> a -> a
+  //.
+  //. Returns the smaller of its two arguments (according to [`Z.lte`][]).
+  //.
+  //. See also [`max`](#max).
+  //.
+  //. ```javascript
+  //. > S.min(10, 2)
+  //. 2
+  //.
+  //. > S.min(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('1999-12-31')
+  //.
+  //. > S.min('10', '2')
+  //. '10'
+  //. ```
+  function min(x, y) {
+    return Z.lte(x, y) ? x : y;
+  }
+  S.min = def('min', {a: [Z.Ord]}, [a, a, a], min);
+
+  //# max :: Ord a => a -> a -> a
+  //.
+  //. Returns the larger of its two arguments (according to [`Z.lte`][]).
+  //.
+  //. See also [`min`](#min).
+  //.
+  //. ```javascript
+  //. > S.max(10, 2)
+  //. 10
+  //.
+  //. > S.max(new Date('1999-12-31'), new Date('2000-01-01'))
+  //. new Date('2000-01-01')
+  //.
+  //. > S.max('10', '2')
+  //. '2'
+  //. ```
+  function max(x, y) {
+    return Z.lte(x, y) ? y : x;
+  }
+  S.max = def('max', {a: [Z.Ord]}, [a, a, a], max);
 
   //# concat :: Semigroup a => a -> a -> a
   //.
@@ -1036,7 +1195,7 @@
   S.filter =
   def('filter',
       {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-      [Fn(a, $.Boolean), f(a), f(a)],
+      [Pred(a), f(a), f(a)],
       Z.filter);
 
   //# filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a
@@ -1058,7 +1217,7 @@
   S.filterM =
   def('filterM',
       {m: [Z.Alternative, Z.Monad]},
-      [Fn(a, $.Boolean), m(a), m(a)],
+      [Pred(a), m(a), m(a)],
       Z.filterM);
 
   //# takeWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
@@ -1413,6 +1572,14 @@
     if (this.isNothing || Z.Semigroup.test(this.value)) {
       this['fantasy-land/concat'] = Maybe$prototype$concat;
     }
+
+    if (this.isNothing || Z.Setoid.test(this.value)) {
+      this['fantasy-land/equals'] = Maybe$prototype$equals;
+    }
+
+    if (this.isNothing || Z.Ord.test(this.value)) {
+      this['fantasy-land/lte'] = Maybe$prototype$lte;
+    }
   }
 
   //# Nothing :: Maybe a
@@ -1528,14 +1695,14 @@
   //. ```
   Maybe.prototype.inspect = function() { return this.toString(); };
 
-  //# Maybe#fantasy-land/equals :: Maybe a ~> Maybe a -> Boolean
+  //# Maybe#fantasy-land/equals :: Setoid a => Maybe a ~> Maybe a -> Boolean
   //.
-  //. Takes a value of the same type and returns `true` if:
+  //. Takes a value `m` of the same type and returns `true` if:
   //.
-  //.   - it is Nothing and `this` is Nothing; or
+  //.   - `this` and `m` are both Nothing; or
   //.
-  //.   - it is a Just and `this` is a Just, and their values are equal
-  //.     according to [`equals`](#equals).
+  //.   - `this` and `m` are both Justs, and their values are equal according
+  //.     to [`Z.equals`][].
   //.
   //. ```javascript
   //. > S.equals(S.Nothing, S.Nothing)
@@ -1550,10 +1717,39 @@
   //. > S.equals(S.Just([1, 2, 3]), S.Nothing)
   //. false
   //. ```
-  Maybe.prototype['fantasy-land/equals'] = function(other) {
+  function Maybe$prototype$equals(other) {
     return this.isNothing ? other.isNothing
-                          : other.isJust && Z.equals(other.value, this.value);
-  };
+                          : other.isJust && Z.equals(this.value, other.value);
+  }
+
+  //# Maybe#fantasy-land/lte :: Ord a => Maybe a ~> Maybe a -> Boolean
+  //.
+  //. Takes a value `m` of the same type and returns `true` if:
+  //.
+  //.   - `this` is Nothing; or
+  //.
+  //.   - `this` and `m` are both Justs and the value of `this` is less than
+  //.     or equal to the value of `m` according to [`Z.lte`][].
+  //.
+  //. ```javascript
+  //. > S.lte_(S.Nothing, S.Nothing)
+  //. true
+  //.
+  //. > S.lte_(S.Nothing, S.Just(0))
+  //. true
+  //.
+  //. > S.lte_(S.Just(0), S.Nothing)
+  //. false
+  //.
+  //. > S.lte_(S.Just(0), S.Just(1))
+  //. true
+  //.
+  //. > S.lte_(S.Just(1), S.Just(0))
+  //. false
+  //. ```
+  function Maybe$prototype$lte(other) {
+    return this.isNothing || other.isJust && Z.lte(this.value, other.value);
+  }
 
   //# Maybe#fantasy-land/concat :: Semigroup a => Maybe a ~> Maybe a -> Maybe a
   //.
@@ -2043,6 +2239,14 @@
     if (Z.Semigroup.test(this.value)) {
       this['fantasy-land/concat'] = Either$prototype$concat;
     }
+
+    if (Z.Setoid.test(this.value)) {
+      this['fantasy-land/equals'] = Either$prototype$equals;
+    }
+
+    if (Z.Ord.test(this.value)) {
+      this['fantasy-land/lte'] = Either$prototype$lte;
+    }
   }
 
   //# Left :: a -> Either a b
@@ -2142,15 +2346,12 @@
   //. ```
   Either.prototype.inspect = function() { return this.toString(); };
 
-  //# Either#fantasy-land/equals :: Either a b ~> Either a b -> Boolean
+  //# Either#fantasy-land/equals :: (Setoid a, Setoid b) => Either a b ~> Either a b -> Boolean
   //.
-  //. Takes a value of the same type and returns `true` if:
+  //. Takes a value `e` of the same type and returns `true` if:
   //.
-  //.   - it is a Left and `this` is a Left, and their values are equal
-  //.     according to [`equals`](#equals); or
-  //.
-  //.   - it is a Right and `this` is a Right, and their values are equal
-  //.     according to [`equals`](#equals).
+  //.   - `this` and `e` are both Lefts or both Rights, and their values are
+  //.     equal according to [`Z.equals`][].
   //.
   //. ```javascript
   //. > S.equals(S.Right([1, 2, 3]), S.Right([1, 2, 3]))
@@ -2159,9 +2360,37 @@
   //. > S.equals(S.Right([1, 2, 3]), S.Left([1, 2, 3]))
   //. false
   //. ```
-  Either.prototype['fantasy-land/equals'] = function(other) {
-    return other.isLeft === this.isLeft && Z.equals(other.value, this.value);
-  };
+  function Either$prototype$equals(other) {
+    return this.isLeft === other.isLeft && Z.equals(this.value, other.value);
+  }
+
+  //# Either#fantasy-land/lte :: (Ord a, Ord b) => Either a b ~> Either a b -> Boolean
+  //.
+  //. Takes a value `e` of the same type and returns `true` if:
+  //.
+  //.   - `this` is a Left and `e` is a Right; or
+  //.
+  //.   - `this` and `e` are both Lefts or both Rights, and the value of `this`
+  //.     is less than or equal to the value of `e` according to [`Z.lte`][].
+  //.
+  //. ```javascript
+  //. > S.lte_(S.Left(10), S.Right(0))
+  //. true
+  //.
+  //. > S.lte_(S.Right(0), S.Left(10))
+  //. false
+  //.
+  //. > S.lte_(S.Right(0), S.Right(1))
+  //. true
+  //.
+  //. > S.lte_(S.Right(1), S.Right(0))
+  //. false
+  //. ```
+  function Either$prototype$lte(other) {
+    return this.isLeft === other.isLeft ?
+      Z.lte(this.value, other.value) :
+      this.isLeft;
+  }
 
   //# Either#fantasy-land/concat :: (Semigroup a, Semigroup b) => Either a b ~> Either a b -> Either a b
   //.
@@ -2513,7 +2742,7 @@
   function tagBy(pred, a) {
     return pred(a) ? Right(a) : Left(a);
   }
-  S.tagBy = def('tagBy', {}, [Fn(a, $.Boolean), a, $Either(a, a)], tagBy);
+  S.tagBy = def('tagBy', {}, [Pred(a), a, $Either(a, a)], tagBy);
 
   //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
@@ -2866,8 +3095,8 @@
   //. ```
   function slice(start, end, xs) {
     var len = xs.length;
-    var fromIdx = Z.equals(start, -0) ? len : start < 0 ? start + len : start;
-    var toIdx = Z.equals(end, -0) ? len : end < 0 ? end + len : end;
+    var fromIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
+    var toIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
 
     return Math.abs(start) <= len && Math.abs(end) <= len && fromIdx <= toIdx ?
       Just(xs.slice(fromIdx, toIdx)) :
@@ -3318,7 +3547,7 @@
   S.groupBy =
   def('groupBy',
       {},
-      [Fn(a, Fn(a, $.Boolean)), $.Array(a), $.Array($.Array(a))],
+      [Fn(a, Pred(a)), $.Array(a), $.Array($.Array(a))],
       groupBy);
 
   //# groupBy_ :: ((a, a) -> Boolean) -> Array a -> Array (Array a)
@@ -3656,56 +3885,6 @@
       {f: [Z.Foldable]},
       [f($.FiniteNumber), $Maybe($.FiniteNumber)],
       mean);
-
-  //# min :: Ord a => a -> a -> a
-  //.
-  //. Returns the smaller of its two arguments.
-  //.
-  //. Strings are compared lexicographically. Specifically, the Unicode
-  //. code point value of each character in the first string is compared
-  //. to the value of the corresponding character in the second string.
-  //.
-  //. See also [`max`](#max).
-  //.
-  //. ```javascript
-  //. > S.min(10, 2)
-  //. 2
-  //.
-  //. > S.min(new Date('1999-12-31'), new Date('2000-01-01'))
-  //. new Date('1999-12-31')
-  //.
-  //. > S.min('10', '2')
-  //. '10'
-  //. ```
-  function min(x, y) {
-    return x < y ? x : y;
-  }
-  S.min = def('min', {a: [Ord]}, [a, a, a], min);
-
-  //# max :: Ord a => a -> a -> a
-  //.
-  //. Returns the larger of its two arguments.
-  //.
-  //. Strings are compared lexicographically. Specifically, the Unicode
-  //. code point value of each character in the first string is compared
-  //. to the value of the corresponding character in the second string.
-  //.
-  //. See also [`min`](#min).
-  //.
-  //. ```javascript
-  //. > S.max(10, 2)
-  //. 10
-  //.
-  //. > S.max(new Date('1999-12-31'), new Date('2000-01-01'))
-  //. new Date('2000-01-01')
-  //.
-  //. > S.max('10', '2')
-  //. '2'
-  //. ```
-  function max(x, y) {
-    return x > y ? x : y;
-  }
-  S.max = def('max', {a: [Ord]}, [a, a, a], max);
 
   //. ### Integer
 
@@ -4265,7 +4444,11 @@
 //. [`Z.extract`]:      v:sanctuary-js/sanctuary-type-classes#extract
 //. [`Z.filter`]:       v:sanctuary-js/sanctuary-type-classes#filter
 //. [`Z.filterM`]:      v:sanctuary-js/sanctuary-type-classes#filterM
+//. [`Z.gt`]:           v:sanctuary-js/sanctuary-type-classes#gt
+//. [`Z.gte`]:          v:sanctuary-js/sanctuary-type-classes#gte
 //. [`Z.join`]:         v:sanctuary-js/sanctuary-type-classes#join
+//. [`Z.lt`]:           v:sanctuary-js/sanctuary-type-classes#lt
+//. [`Z.lte`]:          v:sanctuary-js/sanctuary-type-classes#lte
 //. [`Z.map`]:          v:sanctuary-js/sanctuary-type-classes#map
 //. [`Z.of`]:           v:sanctuary-js/sanctuary-type-classes#of
 //. [`Z.promap`]:       v:sanctuary-js/sanctuary-type-classes#promap

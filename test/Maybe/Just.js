@@ -3,8 +3,9 @@
 var FL = require('fantasy-land');
 var Z = require('sanctuary-type-classes');
 
-var S = require('../..');
+var S = require('../internal/sanctuary');
 
+var Useless = require('../internal/Useless');
 var eq = require('../internal/eq');
 
 
@@ -51,15 +52,29 @@ suite('Just', function() {
     eq(S.Just(42)[FL.equals](S.Nothing), false);
 
     // Value-based equality:
-    eq(S.Just(0)[FL.equals](S.Just(-0)), false);
-    eq(S.Just(-0)[FL.equals](S.Just(0)), false);
+    eq(S.Just(0)[FL.equals](S.Just(-0)), true);
+    eq(S.Just(-0)[FL.equals](S.Just(0)), true);
     eq(S.Just(NaN)[FL.equals](S.Just(NaN)), true);
     eq(S.Just([1, 2, 3])[FL.equals](S.Just([1, 2, 3])), true);
+
+    eq(Z.Setoid.test(S.Just(1)), true);
+    eq(Z.Setoid.test(S.Just(Useless)), false);
   });
 
   test('"fantasy-land/extend" method', function() {
     eq(S.Just(42)[FL.extend].length, 1);
     eq(S.Just(42)[FL.extend](function(x) { return x.value / 2; }), S.Just(21));
+  });
+
+  test('"fantasy-land/lte" method', function() {
+    eq(S.Just(1)[FL.lte].length, 1);
+    eq(S.Just(1)[FL.lte](S.Nothing), false);
+    eq(S.Just(1)[FL.lte](S.Just(0)), false);
+    eq(S.Just(1)[FL.lte](S.Just(1)), true);
+    eq(S.Just(1)[FL.lte](S.Just(2)), true);
+
+    eq(Z.Ord.test(S.Just(1)), true);
+    eq(Z.Ord.test(S.Just(Math.sqrt)), false);
   });
 
   test('"fantasy-land/map" method', function() {

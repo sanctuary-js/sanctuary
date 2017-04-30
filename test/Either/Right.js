@@ -3,8 +3,9 @@
 var FL = require('fantasy-land');
 var Z = require('sanctuary-type-classes');
 
-var S = require('../..');
+var S = require('../internal/sanctuary');
 
+var Useless = require('../internal/Useless');
 var eq = require('../internal/eq');
 var squareRoot = require('../internal/squareRoot');
 
@@ -57,15 +58,31 @@ suite('Right', function() {
     eq(S.Right(42)[FL.equals](S.Left(42)), false);
 
     // Value-based equality:
-    eq(S.Right(0)[FL.equals](S.Right(-0)), false);
-    eq(S.Right(-0)[FL.equals](S.Right(0)), false);
+    eq(S.Right(0)[FL.equals](S.Right(-0)), true);
+    eq(S.Right(-0)[FL.equals](S.Right(0)), true);
     eq(S.Right(NaN)[FL.equals](S.Right(NaN)), true);
     eq(S.Right([1, 2, 3])[FL.equals](S.Right([1, 2, 3])), true);
+
+    eq(Z.Setoid.test(S.Right(1)), true);
+    eq(Z.Setoid.test(S.Right(Useless)), false);
   });
 
   test('"fantasy-land/extend" method', function() {
     eq(S.Right(42)[FL.extend].length, 1);
     eq(S.Right(42)[FL.extend](function(x) { return x.value / 2; }), S.Right(21));
+  });
+
+  test('"fantasy-land/lte" method', function() {
+    eq(S.Right(1)[FL.lte].length, 1);
+    eq(S.Right(1)[FL.lte](S.Left(0)), false);
+    eq(S.Right(1)[FL.lte](S.Left(1)), false);
+    eq(S.Right(1)[FL.lte](S.Left(2)), false);
+    eq(S.Right(1)[FL.lte](S.Right(0)), false);
+    eq(S.Right(1)[FL.lte](S.Right(1)), true);
+    eq(S.Right(1)[FL.lte](S.Right(2)), true);
+
+    eq(Z.Ord.test(S.Right(1)), true);
+    eq(Z.Ord.test(S.Right(Math.sqrt)), false);
   });
 
   test('"fantasy-land/map" method', function() {
