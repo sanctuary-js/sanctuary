@@ -28,12 +28,12 @@ suite('Right', function() {
   test('"fantasy-land/ap" method', function() {
     eq(S.Right(42)[FL.ap].length, 1);
     eq(S.Right(42)[FL.ap](S.Left('abc')), S.Left('abc'));
-    eq(S.Right(42)[FL.ap](S.Right(S.inc)), S.Right(43));
+    eq(S.Right(42)[FL.ap](S.Right(S.add(1))), S.Right(43));
   });
 
   test('"fantasy-land/bimap" method', function() {
     eq(S.Right(42)[FL.bimap].length, 2);
-    eq(S.Right(42)[FL.bimap](S.toUpper, S.inc), S.Right(43));
+    eq(S.Right(42)[FL.bimap](S.toUpper, S.add(1)), S.Right(43));
   });
 
   test('"fantasy-land/chain" method', function() {

@@ -167,23 +167,25 @@
 //. silent failures due to type coercion (at worst). For example:
 //.
 //. ```javascript
-//. S.inc('XXX');
+//. S.add(2, true);
 //. // ! TypeError: Invalid value
 //. //
-//. //   inc :: FiniteNumber -> FiniteNumber
-//. //          ^^^^^^^^^^^^
-//. //               1
+//. //   add :: FiniteNumber -> FiniteNumber -> FiniteNumber
+//. //                          ^^^^^^^^^^^^
+//. //                               1
 //. //
-//. //   1)  "XXX" :: String
+//. //   1)  true :: Boolean
 //. //
 //. //   The value at position 1 is not a member of ‘FiniteNumber’.
+//. //
+//. //   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.11.0#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
 //. ```
 //.
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
 //.
 //. ```javascript
-//. R.inc('XXX');
-//. // => NaN
+//. R.add(2, true);
+//. // => 3
 //. ```
 //.
 //. There is a performance cost to run-time type checking. One may wish to
@@ -235,6 +237,15 @@
 
   //  Thunk :: Type -> Type
   function Thunk(x) { return $.Function([x]); }
+
+  //  flip$ :: ((a, b) -> c) -> b -> a -> c
+  function flip$(f) {
+    return function(x) {
+      return function(y) {
+        return f(y, x);
+      };
+    };
+  }
 
   //  typeEq :: String -> a -> Boolean
   function typeEq(typeIdent) {
@@ -628,7 +639,7 @@
   //.     (b -> c) -> (a -> b) -> (a -> c)
   //.
   //. ```javascript
-  //. > S.map(Math.sqrt, S.inc)(99)
+  //. > S.map(Math.sqrt, S.add(1))(99)
   //. 10
   //. ```
   S.map = def('map', {f: [Z.Functor]}, [Fn(a, b), f(a), f(b)], Z.map);
@@ -655,7 +666,7 @@
   //. Curried version of [`Z.promap`][].
   //.
   //. ```javascript
-  //. > S.promap(Math.abs, S.inc, Math.sqrt)(-100)
+  //. > S.promap(Math.abs, S.add(1), Math.sqrt)(-100)
   //. 11
   //. ```
   S.promap =
@@ -785,7 +796,7 @@
   //. > S.ap([Math.sqrt, x => x * x], [1, 4, 9, 16, 25])
   //. [1, 2, 3, 4, 5, 1, 16, 81, 256, 625]
   //.
-  //. > S.ap({x: Math.sqrt, y: S.inc, z: S.dec}, {w: 4, x: 4, y: 4})
+  //. > S.ap({x: Math.sqrt, y: S.add(1), z: S.sub(1)}, {w: 4, x: 4, y: 4})
   //. {x: 2, y: 5}
   //.
   //. > S.ap(S.Just(Math.sqrt), S.Just(64))
@@ -1154,10 +1165,10 @@
   //. function.
   //.
   //. ```javascript
-  //. > S.A(S.inc, 42)
+  //. > S.A(S.add(1), 42)
   //. 43
   //.
-  //. > S.map(S.A(S.__, 100), [S.inc, Math.sqrt])
+  //. > S.map(S.A(S.__, 100), [S.add(1), Math.sqrt])
   //. [101, 10]
   //. ```
   function A(f, x) {
@@ -1172,10 +1183,10 @@
   //. `(&)` function.
   //.
   //. ```javascript
-  //. > S.T(42, S.inc)
+  //. > S.T(42, S.add(1))
   //. 43
   //.
-  //. > S.map(S.T(100), [S.inc, Math.sqrt])
+  //. > S.map(S.T(100), [S.add(1), Math.sqrt])
   //. [101, 10]
   //. ```
   function T(x, f) {
@@ -1320,7 +1331,7 @@
   //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
-  //. > S.compose(Math.sqrt, S.inc)(99)
+  //. > S.compose(Math.sqrt, S.add(1), 99)
   //. 10
   //. ```
   function compose(f, g, x) {
@@ -1338,7 +1349,7 @@
   //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
   //.
   //. ```javascript
-  //. > S.pipe([S.inc, Math.sqrt, S.dec])(99)
+  //. > S.pipe([S.add(1), Math.sqrt, S.sub(1)], 99)
   //. 9
   //. ```
   function pipe(fs, x) {
@@ -2219,10 +2230,10 @@
   //. left side as well as the right side.
   //.
   //. ```javascript
-  //. > S.bimap(S.toUpper, S.inc, S.Left('abc'))
+  //. > S.bimap(S.toUpper, S.add(1), S.Left('abc'))
   //. Left('ABC')
   //.
-  //. > S.bimap(S.toUpper, S.inc, S.Right(42))
+  //. > S.bimap(S.toUpper, S.add(1), S.Right(42))
   //. Right(43)
   //. ```
   Either.prototype['fantasy-land/bimap'] = function(f, g) {
@@ -2498,9 +2509,6 @@
   //
   //. > S.tagBy(S.odd, 1)
   //. Right(1)
-  //
-  //. > S.compose(S.bimap(S.dec, S.inc), S.tagBy(S.odd))(5)
-  //. Right(6)
   //. ```
   function tagBy(pred, a) {
     return pred(a) ? Right(a) : Left(a);
@@ -3527,45 +3535,37 @@
   S.sum =
   def('sum', {f: [Z.Foldable]}, [f($.FiniteNumber), $.FiniteNumber], sum);
 
-  //# sub :: FiniteNumber -> FiniteNumber -> FiniteNumber
+  //# sub :: FiniteNumber -> (FiniteNumber -> FiniteNumber)
+  //.
+  //. Takes a finite number `n` and returns the _subtract `n`_ function.
+  //.
+  //. See also [`sub_`](#sub_).
+  //.
+  //. ```javascript
+  //. > S.map(S.sub(1), [1, 2, 3])
+  //. [0, 1, 2]
+  //. ```
+  S.sub =
+  def('sub',
+      {},
+      [$.FiniteNumber, Fn($.FiniteNumber, $.FiniteNumber)],
+      flip$(sub_));
+
+  //# sub_ :: FiniteNumber -> FiniteNumber -> FiniteNumber
   //.
   //. Returns the difference between two (finite) numbers.
   //.
+  //. See also [`sub`](#sub).
+  //.
   //. ```javascript
-  //. > S.sub(4, 2)
+  //. > S.sub_(4, 2)
   //. 2
   //. ```
-  function sub(x, y) {
+  function sub_(x, y) {
     return x - y;
   }
-  S.sub =
-  def('sub', {}, [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber], sub);
-
-  //# inc :: FiniteNumber -> FiniteNumber
-  //.
-  //. Increments a (finite) number by one.
-  //.
-  //. ```javascript
-  //. > S.inc(1)
-  //. 2
-  //. ```
-  function inc(x) {
-    return x + 1;
-  }
-  S.inc = def('inc', {}, [$.FiniteNumber, $.FiniteNumber], inc);
-
-  //# dec :: FiniteNumber -> FiniteNumber
-  //.
-  //. Decrements a (finite) number by one.
-  //.
-  //. ```javascript
-  //. > S.dec(2)
-  //. 1
-  //. ```
-  function dec(x) {
-    return x - 1;
-  }
-  S.dec = def('dec', {}, [$.FiniteNumber, $.FiniteNumber], dec);
+  S.sub_ =
+  def('sub_', {}, [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber], sub_);
 
   //# mult :: FiniteNumber -> FiniteNumber -> FiniteNumber
   //.

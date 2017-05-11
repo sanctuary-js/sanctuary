@@ -27,7 +27,7 @@ suite('Just', function() {
   test('"fantasy-land/ap" method', function() {
     eq(S.Just(42)[FL.ap].length, 1);
     eq(S.Just(42)[FL.ap](S.Nothing), S.Nothing);
-    eq(S.Just(42)[FL.ap](S.Just(S.inc)), S.Just(43));
+    eq(S.Just(42)[FL.ap](S.Just(S.add(1))), S.Just(43));
   });
 
   test('"fantasy-land/chain" method', function() {

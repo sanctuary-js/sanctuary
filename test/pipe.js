@@ -13,8 +13,8 @@ test('pipe', function() {
 
   eq(S.pipe([], '99'), '99');
   eq(S.pipe([parseInt], '99'), 99);
-  eq(S.pipe([parseInt, S.inc], '99'), 100);
-  eq(S.pipe([parseInt, S.inc, Math.sqrt], '99'), 10);
-  eq(S.pipe([parseInt, S.inc, Math.sqrt, S.dec], '99'), 9);
+  eq(S.pipe([parseInt, S.add(1)], '99'), 100);
+  eq(S.pipe([parseInt, S.add(1), Math.sqrt], '99'), 10);
+  eq(S.pipe([parseInt, S.add(1), Math.sqrt, S.sub(1)], '99'), 9);
 
 });

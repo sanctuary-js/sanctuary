@@ -32,8 +32,8 @@ test('create', function() {
   eq(Object.keys(uncheckedDefaultEnv).sort(), expected);
   eq(Object.keys(uncheckedCustomEnv).sort(), expected);
 
-  eq(uncheckedDefaultEnv.inc(42), S.inc(42));
-  eq(uncheckedDefaultEnv.inc('XXX'), 'XXX1');
+  eq(uncheckedDefaultEnv.add(1, 42), S.add(1, 42));
+  eq(uncheckedDefaultEnv.add(1, 'XXX'), '1XXX');
 
   throws(function() { S.I(['foo', 'foo', 42]); },
          TypeError,

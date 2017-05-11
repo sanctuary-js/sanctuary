@@ -11,7 +11,7 @@ test('ifElse', function() {
   eq(S.ifElse.length, 4);
   eq(S.ifElse.toString(), 'ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b');
 
-  eq(S.ifElse(S.odd, S.dec, S.inc, 9), 8);
-  eq(S.ifElse(S.odd, S.dec, S.inc, 0), 1);
+  eq(S.ifElse(S.odd, S.sub(1), S.add(1), 9), 8);
+  eq(S.ifElse(S.odd, S.sub(1), S.add(1), 0), 1);
 
 });

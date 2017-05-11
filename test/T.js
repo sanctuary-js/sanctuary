@@ -12,7 +12,7 @@ test('T', function() {
   eq(S.T.length, 2);
   eq(S.T.toString(), 'T :: a -> (a -> b) -> b');
 
-  eq(S.T(42, S.inc), 43);
-  eq(map(S.T(100))([S.inc, Math.sqrt]), [101, 10]);
+  eq(S.T(42, S.add(1)), 43);
+  eq(map(S.T(100))([S.add(1), Math.sqrt]), [101, 10]);
 
 });

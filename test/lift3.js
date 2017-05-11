@@ -21,6 +21,6 @@ test('lift3', function() {
   eq(S.lift3(S.reduce, [S.add], [0], [[1, 2, 3]]), [6]);
   eq(S.lift3(S.reduce, [S.add], [0], []), []);
 
-  eq(S.lift3(area, S.dec, S.I, S.inc)(4), 6);
+  eq(S.lift3(area, S.sub(1), S.I, S.add(1))(4), 6);
 
 });
