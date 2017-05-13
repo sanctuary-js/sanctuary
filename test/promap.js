@@ -15,6 +15,6 @@ test('promap', function() {
   var after = S.flip_(Math.pow)(2);
   eq(S.promap(before, after, S.sum)(['foo', 'bar', 'baz', 'quux']), 169);
 
-  eq(S.promap(Math.abs, S.inc, Math.sqrt)(-100), 11);
+  eq(S.promap(Math.abs, S.add(1), Math.sqrt)(-100), 11);
 
 });
