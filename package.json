@@ -11,7 +11,7 @@
     "test": "make lint test"
   },
   "dependencies": {
-    "sanctuary-def": "0.10.1",
+    "sanctuary-def": "0.11.0",
     "sanctuary-type-classes": "4.0.0",
     "sanctuary-type-identifiers": "1.0.0"
   },
