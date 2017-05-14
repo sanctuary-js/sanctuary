@@ -4175,6 +4175,25 @@
   S.splitOn =
   def('splitOn', {}, [$.String, $.String, $.Array($.String)], splitOn);
 
+  //# sort :: ((a, a) -> Number) -> Array a -> Array a
+  //.
+  //. Returns a copy of the list, sorted according to the comparator
+  //. function, which should accept two values at a time and return a
+  //. negative number if the first value is smaller, a positive number if
+  //. it's larger, and zero if they are equal. Please note that this is a
+  //. **copy** of the list. It does not modify the original.
+  //.
+  //. ```javascript
+  //. > S.sort(S.sub, [4, 2, 7, 5])
+  //. [2, 4, 5, 7]
+  //. ```
+  function sort(f, a) {
+    return a.sort(f);
+  }
+  S.sort =
+  def('sort', {},
+      [$.Function([a, a, $.Number]), $.Array(a), $.Array(a)], sort);
+
   return S;
 
   /* eslint-enable indent */
