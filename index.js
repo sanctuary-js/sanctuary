@@ -4163,7 +4163,7 @@
   //. Returns the substrings of its second argument separated by occurrences
   //. of its first argument.
   //.
-  //. See also [`joinWith`](#joinWith).
+  //. See also [`joinWith`](#joinWith) and [`splitOnRegex`](#splitOnRegex).
   //.
   //. ```javascript
   //. > S.splitOn('::', 'foo::bar::baz')
@@ -4174,6 +4174,49 @@
   }
   S.splitOn =
   def('splitOn', {}, [$.String, $.String, $.Array($.String)], splitOn);
+
+  //# splitOnRegex :: GlobalRegExp -> String -> Array String
+  //.
+  //. Takes a pattern and a string, and returns the result of splitting the
+  //. string at every non-overlapping occurrence of the pattern.
+  //.
+  //. Properties:
+  //.
+  //.   - `forall s :: forall s :: String, t :: String.
+  //.     S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t)) = t
+  //.
+  //. See also [`splitOn`](#splitOn).
+  //.
+  //. ```javascript
+  //. > S.splitOnRegex(/[,;][ ]*/g, 'foo, bar, baz')
+  //. ['foo', 'bar', 'baz']
+  //.
+  //. > S.splitOnRegex(/[,;][ ]*/g, 'foo;bar;baz')
+  //. ['foo', 'bar', 'baz']
+  //. ```
+  function splitOnRegex(pattern, s) {
+    return withRegex(pattern, function() {
+      var result = [];
+      var lastIndex = 0;
+      var match;
+      while ((match = pattern.exec(s)) != null) {
+        if (pattern.lastIndex === lastIndex && match[0] === '') {
+          if (pattern.lastIndex === s.length) return result;
+          pattern.lastIndex += 1;
+        } else {
+          result.push(s.slice(lastIndex, match.index));
+          lastIndex = match.index + match[0].length;
+        }
+      }
+      result.push(s.slice(lastIndex));
+      return result;
+    });
+  }
+  S.splitOnRegex =
+  def('splitOnRegex',
+      {},
+      [$.GlobalRegExp, $.String, $.Array($.String)],
+      splitOnRegex);
 
   return S;
 
