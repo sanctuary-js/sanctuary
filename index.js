@@ -920,6 +920,12 @@
   //.
   //. > S.traverse(S.Maybe, S.parseInt(16), ['A', 'B', 'C', 'X'])
   //. Nothing
+  //.
+  //. > S.traverse(S.Maybe, S.parseInt(16), {a: 'A', b: 'B', c: 'C'})
+  //. Just({a: 10, b: 11, c: 12})
+  //.
+  //. > S.traverse(S.Maybe, S.parseInt(16), {a: 'A', b: 'B', c: 'C', x: 'X'})
+  //. Nothing
   //. ```
   S.traverse =
   def('traverse',
@@ -939,6 +945,12 @@
   //. Just([1, 2, 3])
   //.
   //. > S.sequence(S.Maybe, [S.Just(1), S.Just(2), S.Nothing])
+  //. Nothing
+  //.
+  //. > S.sequence(S.Maybe, {a: S.Just(1), b: S.Just(2), c: S.Just(3)})
+  //. Just({a: 1, b: 2, c: 3})
+  //.
+  //. > S.sequence(S.Maybe, {a: S.Just(1), b: S.Just(2), c: S.Nothing})
   //. Nothing
   //. ```
   S.sequence =

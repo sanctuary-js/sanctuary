@@ -14,6 +14,8 @@ test('traverse', function() {
 
   eq(S.traverse(S.Maybe, S.parseInt(16), ['A', 'B', 'C']), S.Just([10, 11, 12]));
   eq(S.traverse(S.Maybe, S.parseInt(16), ['A', 'B', 'C', 'X']), S.Nothing);
+  eq(S.traverse(S.Maybe, S.parseInt(16), {a: 'A', b: 'B', c: 'C'}), S.Just({a: 10, b: 11, c: 12}));
+  eq(S.traverse(S.Maybe, S.parseInt(16), {a: 'A', b: 'B', c: 'C', x: 'X'}), S.Nothing);
 
   eq(S.traverse(Array, S.I, []), [[]]);
   eq(S.traverse(Array, S.I, [['A', 'a']]), [['A'], ['a']]);
