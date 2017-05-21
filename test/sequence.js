@@ -14,6 +14,8 @@ test('sequence', function() {
 
   eq(S.sequence(Identity, []), Identity([]));
   eq(S.sequence(Identity, [Identity(1), Identity(2), Identity(3)]), Identity([1, 2, 3]));
+  eq(S.sequence(Identity, {}), Identity({}));
+  eq(S.sequence(Identity, {a: Identity(1), b: Identity(2), c: Identity(3)}), Identity({a: 1, b: 2, c: 3}));
   eq(S.sequence(Identity, S.Nothing), Identity(S.Nothing));
   eq(S.sequence(Identity, S.Just(Identity(0))), Identity(S.Just(0)));
   eq(S.sequence(Identity, S.Left('A')), Identity(S.Left('A')));
