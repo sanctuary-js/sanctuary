@@ -3,7 +3,7 @@
 var FL = require('fantasy-land');
 var Z = require('sanctuary-type-classes');
 
-var S = require('../..');
+var S = require('../internal/sanctuary');
 
 var eq = require('../internal/eq');
 
@@ -45,11 +45,21 @@ suite('Nothing', function() {
     eq(S.Nothing[FL.equals].length, 1);
     eq(S.Nothing[FL.equals](S.Nothing), true);
     eq(S.Nothing[FL.equals](S.Just(42)), false);
+
+    eq(Z.Setoid.test(S.Nothing), true);
   });
 
   test('"fantasy-land/extend" method', function() {
     eq(S.Nothing[FL.extend].length, 1);
     eq(S.Nothing[FL.extend](function(x) { return x.value / 2; }), S.Nothing);
+  });
+
+  test('"fantasy-land/lte" method', function() {
+    eq(S.Nothing[FL.lte].length, 1);
+    eq(S.Nothing[FL.lte](S.Nothing), true);
+    eq(S.Nothing[FL.lte](S.Just(0)), true);
+
+    eq(Z.Ord.test(S.Nothing), true);
   });
 
   test('"fantasy-land/map" method', function() {
