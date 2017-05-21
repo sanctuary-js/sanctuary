@@ -3434,11 +3434,11 @@
   S.joinWith =
   def('joinWith', {}, [$.String, $.Array($.String), $.String], joinWith);
 
-  //# find :: (a -> Boolean) -> Array a -> Maybe a
+  //# find :: Foldable f => (a -> Boolean) -> f a -> Maybe a
   //.
-  //. Takes a predicate and an array and returns Just the leftmost element of
-  //. the array which satisfies the predicate; Nothing if none of the array's
-  //. elements satisfies the predicate.
+  //. Takes a predicate and a structure and returns Just the leftmost element
+  //. of the structure which satisfies the predicate; Nothing if there is no
+  //. such element.
   //.
   //. ```javascript
   //. > S.find(n => n < 0, [1, -2, 3, -4, 5])
@@ -3448,15 +3448,13 @@
   //. Nothing
   //. ```
   function find(pred, xs) {
-    var result = Nothing;
-    xs.some(function(x) {
-      var ok = pred(x);
-      if (ok) result = Just(x);
-      return ok;
-    });
-    return result;
+    return Z.reduce(
+      function(m, x) { return m.isJust ? m : pred(x) ? Just(x) : Nothing; },
+      Nothing,
+      xs
+    );
   }
-  S.find = def('find', {}, [Pred(a), $.Array(a), $Maybe(a)], find);
+  S.find = def('find', {f: [Z.Foldable]}, [Pred(a), f(a), $Maybe(a)], find);
 
   //# pluck :: (Accessible a, Functor f) => String -> f a -> f b
   //.
