@@ -13,7 +13,7 @@
   "dependencies": {
     "sanctuary-def": "0.11.0",
     "sanctuary-type-classes": "5.2.0",
-    "sanctuary-type-identifiers": "1.0.0"
+    "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
     "browserify": "13.1.x",
