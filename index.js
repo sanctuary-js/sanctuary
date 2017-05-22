@@ -15,8 +15,8 @@
 //. [![Gitter](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/sanctuary-js/sanctuary)
 //.
 //. Sanctuary is a JavaScript functional programming library inspired by
-//. Haskell and PureScript. It's stricter than [Ramda][], and provides a
-//. similar suite of functions.
+//. [Haskell][] and [PureScript][]. It's stricter than [Ramda][], and provides
+//. a similar suite of functions.
 //.
 //. Sanctuary promotes programs composed of simple, pure functions. Such
 //. programs are easier to comprehend, test, and maintain &ndash; they are
@@ -4429,10 +4429,12 @@
 //. [Extend]:           v:fantasyland/fantasy-land#extend
 //. [Fantasy Land]:     v:fantasyland/fantasy-land
 //. [Foldable]:         v:fantasyland/fantasy-land#foldable
+//. [Haskell]:          https://www.haskell.org/
 //. [Maybe]:            #maybe-type
 //. [Monad]:            v:fantasyland/fantasy-land#monad
 //. [Monoid]:           v:fantasyland/fantasy-land#monoid
 //. [Nullable]:         v:sanctuary-js/sanctuary-def#Nullable
+//. [PureScript]:       http://www.purescript.org/
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
