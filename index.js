@@ -307,6 +307,7 @@
 
   //  :: Type -> Type -> Type
   var p = $.BinaryTypeVariable('p');
+  var s = $.BinaryTypeVariable('s');
 
   //  eitherTypeIdent :: String
   var eitherTypeIdent = 'sanctuary/Either';
@@ -733,6 +734,16 @@
     return Z.lte(x, y) ? y : x;
   }
   S.max = def('max', {a: [Z.Ord]}, [a, a, a], max);
+
+  //# id :: Category c => TypeRep c -> c
+  //.
+  //. [Type-safe][sanctuary-def] version of [`Z.id`][].
+  //.
+  //. ```javascript
+  //. > S.id(Function)(42)
+  //. 42
+  //. ```
+  S.id = def('id', {c: [Z.Category]}, [TypeRep(c), c], Z.id);
 
   //# concat :: Semigroup a => a -> a -> a
   //.
@@ -1492,23 +1503,27 @@
 
   //. ### Composition
 
-  //# compose :: (b -> c) -> (a -> b) -> a -> c
+  //# compose :: Semigroupoid s => s b c -> s a b -> s a c
   //.
-  //. Composes two unary functions, from right to left. Equivalent to Haskell's
-  //. `(.)` function.
+  //. Curried version of [`Z.compose`][].
   //.
-  //. This is the B combinator from combinatory logic.
+  //. When specialized to Function, `compose` composes two unary functions,
+  //. from right to left (this is the B combinator from combinatory logic).
+  //.
+  //. The generalized type signature indicates that `compose` is compatible
+  //. with any [Semigroupoid][].
   //.
   //. See also [`pipe`](#pipe).
   //.
   //. ```javascript
-  //. > S.compose(Math.sqrt, S.add(1), 99)
+  //. > S.compose(Math.sqrt, S.add(1))(99)
   //. 10
   //. ```
-  function compose(f, g, x) {
-    return f(g(x));
-  }
-  S.compose = def('compose', {}, [Fn(b, c), Fn(a, b), a, c], compose);
+  S.compose =
+  def('compose',
+      {s: [Z.Semigroupoid]},
+      [s(b, c), s(a, b), s(a, c)],
+      Z.compose);
 
   //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
   //.
@@ -4438,6 +4453,7 @@
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
+//. [Semigroupoid]:     v:fantasyland/fantasy-land#semigroupoid
 //. [Setoid]:           v:fantasyland/fantasy-land#setoid
 //. [Traversable]:      v:fantasyland/fantasy-land#traversable
 //. [UnaryType]:        v:sanctuary-js/sanctuary-def#UnaryType
@@ -4448,6 +4464,7 @@
 //. [`Z.bimap`]:        v:sanctuary-js/sanctuary-type-classes#bimap
 //. [`Z.chain`]:        v:sanctuary-js/sanctuary-type-classes#chain
 //. [`Z.chainRec`]:     v:sanctuary-js/sanctuary-type-classes#chainRec
+//. [`Z.compose`]:      v:sanctuary-js/sanctuary-type-classes#compose
 //. [`Z.concat`]:       v:sanctuary-js/sanctuary-type-classes#concat
 //. [`Z.contramap`]:    v:sanctuary-js/sanctuary-type-classes#contramap
 //. [`Z.empty`]:        v:sanctuary-js/sanctuary-type-classes#empty
@@ -4458,6 +4475,7 @@
 //. [`Z.filterM`]:      v:sanctuary-js/sanctuary-type-classes#filterM
 //. [`Z.gt`]:           v:sanctuary-js/sanctuary-type-classes#gt
 //. [`Z.gte`]:          v:sanctuary-js/sanctuary-type-classes#gte
+//. [`Z.id`]:           v:sanctuary-js/sanctuary-type-classes#id
 //. [`Z.join`]:         v:sanctuary-js/sanctuary-type-classes#join
 //. [`Z.lt`]:           v:sanctuary-js/sanctuary-type-classes#lt
 //. [`Z.lte`]:          v:sanctuary-js/sanctuary-type-classes#lte
