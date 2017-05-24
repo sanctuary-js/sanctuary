@@ -484,18 +484,29 @@
 
   //. ### Classify
 
-  //# type :: Any -> String
+  //# type :: Any -> { namespace :: Maybe String, name :: String, version :: Integer }
   //.
-  //. Returns the [type identifier][] of the given value.
+  //. Returns the result of parsing the [type identifier][] of the given value.
   //.
   //. ```javascript
   //. > S.type(S.Just(42))
-  //. 'sanctuary/Maybe'
+  //. {namespace: Just('sanctuary'), name: 'Maybe', version: 0}
   //.
   //. > S.type([1, 2, 3])
-  //. 'Array'
+  //. {namespace: Nothing, name: 'Array', version: 0}
   //. ```
-  S.type = def('type', {}, [$.Any, $.String], type);
+  S.type =
+  def('type',
+      {},
+      [$.Any,
+       $.RecordType({namespace: $Maybe($.String),
+                     name: $.String,
+                     version: $.Integer})],
+      function(x) {
+        var r = type.parse(type(x));
+        r.namespace = toMaybe(r.namespace);
+        return r;
+      });
 
   //# is :: TypeRep a -> Any -> Boolean
   //.

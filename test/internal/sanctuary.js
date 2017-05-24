@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('sanctuary-def');
+var type = require('sanctuary-type-identifiers');
 
 var S = require('../..');
 
@@ -10,7 +11,7 @@ function UnaryType(typeIdent) {
   return $.UnaryType(
     typeIdent,
     '',
-    function(x) { return S.type(x) === typeIdent; },
+    function(x) { return type(x) === typeIdent; },
     function(v) { return [v.value]; }
   )($.Unknown);
 }
@@ -19,7 +20,7 @@ function UnaryType(typeIdent) {
 var UselessType = $.NullaryType(
   'sanctuary/Useless',
   '',
-  function(x) { return S.type(x) === 'sanctuary/Useless'; }
+  function(x) { return type(x) === 'sanctuary/Useless'; }
 );
 
 //  env :: Array Type
