@@ -3606,6 +3606,94 @@
       [$.Function([a, a, $.Boolean]), $.Array(a), $.Array($.Array(a))],
       groupBy_);
 
+  //# sort :: (Ord a, Applicative m, Foldable m, Monoid (m a)) => m a -> m a
+  //.
+  //. Performs a [stable sort][] of the elements of the given structure, using
+  //. [`Z.lte`][] for comparisons.
+  //.
+  //. Properties:
+  //.
+  //.   - `S.sort(S.sort(m)) = S.sort(m)` (idempotence)
+  //.
+  //. See also [`sortBy`](#sortBy).
+  //.
+  //. ```javascript
+  //. > S.sort(['foo', 'bar', 'baz'])
+  //. ['bar', 'baz', 'foo']
+  //.
+  //. > S.sort([S.Left(4), S.Right(3), S.Left(2), S.Right(1)])
+  //. [Left(2), Left(4), Right(1), Right(3)]
+  //. ```
+  function sort(m) {
+    return sortBy(I, m);
+  }
+  S.sort =
+  def('sort',
+      {a: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
+      [m(a), m(a)],
+      sort);
+
+  //# sortBy :: (Ord b, Applicative m, Foldable m, Monoid (m a)) => (a -> b) -> m a -> m a
+  //.
+  //. Performs a [stable sort][] of the elements of the given structure, using
+  //. [`Z.lte`][] to compare the values produced by applying the given function
+  //. to each element of the structure.
+  //.
+  //. Properties:
+  //.
+  //.   - `S.sortBy(f, S.sortBy(f, m)) = S.sortBy(f, m)` (idempotence)
+  //.
+  //. See also [`sort`](#sort).
+  //.
+  //. ```javascript
+  //. > S.sortBy(S.prop('rank'), [
+  //. .   {rank: 7, suit: 'spades'},
+  //. .   {rank: 5, suit: 'hearts'},
+  //. .   {rank: 2, suit: 'hearts'},
+  //. .   {rank: 5, suit: 'spades'},
+  //. . ])
+  //. [ {rank: 2, suit: 'hearts'},
+  //. . {rank: 5, suit: 'hearts'},
+  //. . {rank: 5, suit: 'spades'},
+  //. . {rank: 7, suit: 'spades'} ]
+  //.
+  //. > S.sortBy(S.prop('suit'), [
+  //. .   {rank: 7, suit: 'spades'},
+  //. .   {rank: 5, suit: 'hearts'},
+  //. .   {rank: 2, suit: 'hearts'},
+  //. .   {rank: 5, suit: 'spades'},
+  //. . ])
+  //. [ {rank: 5, suit: 'hearts'},
+  //. . {rank: 2, suit: 'hearts'},
+  //. . {rank: 7, suit: 'spades'},
+  //. . {rank: 5, suit: 'spades'} ]
+  //. ```
+  function sortBy(f, m) {
+    var rs = Z.reduce(function(xs, x) {
+      var fx = f(x);
+      var lower = 0;
+      var upper = xs.length;
+      while (lower < upper) {
+        var idx = Math.floor((lower + upper) / 2);
+        if (Z.lte(xs[idx].fx, fx)) lower = idx + 1; else upper = idx;
+      }
+      xs.splice(lower, 0, {x: x, fx: fx});
+      return xs;
+    }, [], m);
+
+    var M = m.constructor;
+    var result = Z.empty(M);
+    for (var idx = 0; idx < rs.length; idx += 1) {
+      result = Z.concat(result, Z.of(M, rs[idx].x));
+    }
+    return result;
+  }
+  S.sortBy =
+  def('sortBy',
+      {b: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
+      [Fn(a, b), m(a), m(a)],
+      sortBy);
+
   //. ### Object
 
   //# prop :: Accessible a => String -> a -> b
@@ -4501,6 +4589,7 @@
 //. [equivalence]:      https://en.wikipedia.org/wiki/Equivalence_relation
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:    v:sanctuary-js/sanctuary-def
+//. [stable sort]:      https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [thrush]:           https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
 //. [type identifier]:  v:sanctuary-js/sanctuary-type-identifiers
 //.
