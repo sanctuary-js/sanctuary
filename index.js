@@ -3,7 +3,7 @@
  ####   ###   ####
 #####   ###########   sanctuary
 ########   ########   noun
-###########   #####   1 [ mass noun ] refuge from unsafe JavaScript
+###########   #####   1 [ mass noun ] refuge from unprincipled JavaScript
  ####   ###   ####
    ####     ####
       #######    */
