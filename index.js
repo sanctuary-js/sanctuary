@@ -279,6 +279,7 @@
   //  Accessible :: TypeClass
   var Accessible = Z.TypeClass(
     'sanctuary/Accessible',
+    readmeUrl('accessible-pseudotype'),
     [],
     function(x) { return x != null; }
   );
@@ -1190,8 +1191,8 @@
   //. Curried version of [`Z.extend`][].
   //.
   //. ```javascript
-  //. > S.extend(xs => xs.length, ['foo', 'bar', 'baz', 'quux'])
-  //. [4]
+  //. > S.extend(S.joinWith(''), ['x', 'y', 'z'])
+  //. ['xyz', 'yz', 'z']
   //. ```
   S.extend =
   def('extend', {w: [Z.Extend]}, [Fn(w(a), b), w(a), w(b)], Z.extend);
