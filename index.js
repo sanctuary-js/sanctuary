@@ -2983,6 +2983,8 @@
   //. the predicate; the result of applying the "else" function to the
   //. value otherwise.
   //.
+  //. See also [`when`](#when) and [`unless`](#unless).
+  //.
   //. ```javascript
   //. > S.ifElse(x => x < 0, Math.abs, Math.sqrt, -1)
   //. 1
@@ -3001,6 +3003,8 @@
   //. returns the result of applying the function to the value if the value
   //. satisfies the predicate; the value otherwise.
   //.
+  //. See also [`unless`](#unless) and [`ifElse`](#ifElse).
+  //.
   //. ```javascript
   //. > S.when(x => x >= 0, Math.sqrt, 16)
   //. 4
@@ -3018,6 +3022,8 @@
   //. Takes a unary predicate, a unary function, and a value of any type, and
   //. returns the result of applying the function to the value if the value
   //. does not satisfy the predicate; the value otherwise.
+  //.
+  //. See also [`when`](#when) and [`ifElse`](#ifElse).
   //.
   //. ```javascript
   //. > S.unless(x => x < 0, Math.sqrt, 16)
@@ -4289,7 +4295,7 @@
   //. Properties:
   //.
   //.   - `forall p :: Pattern, s :: String.
-  //.      S.head(S.matchAll(S.regex("g", p), s)) = S.match(S.regex("", p), s)`
+  //.      S.head(S.matchAll(S.regex('g', p), s)) = S.match(S.regex('', p), s)`
   //.
   //. See also [`matchAll`](#matchAll).
   //.
@@ -4518,7 +4524,8 @@
   //. Properties:
   //.
   //.   - `forall s :: String, t :: String.
-  //.     S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t)) = t
+  //.      S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t))
+  //.      = t`
   //.
   //. See also [`splitOn`](#splitOn).
   //.
