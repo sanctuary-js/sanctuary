@@ -15,8 +15,8 @@
 //. [![Gitter](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/sanctuary-js/sanctuary)
 //.
 //. Sanctuary is a JavaScript functional programming library inspired by
-//. [Haskell][] and [PureScript][]. It's stricter than [Ramda][], and provides
-//. a similar suite of functions.
+//. [Haskell][] and [PureScript][]. It's stricter than [Ramda][], and
+//. provides a similar suite of functions.
 //.
 //. Sanctuary promotes programs composed of simple, pure functions. Such
 //. programs are easier to comprehend, test, and maintain &ndash; they are
@@ -178,7 +178,7 @@
 //. //
 //. //   The value at position 1 is not a member of ‘FiniteNumber’.
 //. //
-//. //   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.11.0#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
+//. //   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.12.0#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
 //. ```
 //.
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
@@ -200,7 +200,7 @@
 //. const {create, env} = require('sanctuary');
 //.
 //. const checkTypes = process.env.NODE_ENV !== 'production';
-//. const S = create({checkTypes: checkTypes, env: env});
+//. const S = create({checkTypes, env});
 //. ```
 //.
 //. ## API
@@ -398,39 +398,33 @@
   //. const $ = require('sanctuary-def');
   //. const type = require('sanctuary-type-identifiers');
   //.
-  //. //    identityTypeIdent :: String
-  //. const identityTypeIdent = 'my-package/Identity';
-  //.
   //. //    Identity :: a -> Identity a
-  //. function Identity(x) {
+  //. const Identity = function Identity(x) {
   //.   if (!(this instanceof Identity)) return new Identity(x);
   //.   this.value = x;
-  //. }
+  //. };
   //.
-  //. Identity['@@type'] = identityTypeIdent;
+  //. Identity['@@type'] = 'my-package/Identity@1';
   //.
   //. Identity.prototype['fantasy-land/map'] = function(f) {
   //.   return Identity(f(this.value));
   //. };
   //.
-  //. Identity.prototype['fantasy-land/chain'] = function(f) {
-  //.   return f(this.value);
-  //. };
-  //.
-  //. //    isIdentity :: a -> Boolean
-  //. const isIdentity = x => type(x) === identityTypeIdent;
-  //.
-  //. //    identityToArray :: Identity a -> Array a
-  //. const identityToArray = identity => [identity.value];
-  //.
-  //. //    IdentityType :: Type
-  //. const IdentityType =
-  //. $.UnaryType(identityTypeIdent, isIdentity, identityToArray);
+  //. //    IdentityType :: Type -> Type
+  //. const IdentityType = $.UnaryType(
+  //.   Identity['@@type'],
+  //.   'http://example.com/my-package#Identity',
+  //.   x => type(x) === Identity['@@type'],
+  //.   identity => [identity.value]
+  //. );
   //.
   //. const S = create({
   //.   checkTypes: process.env.NODE_ENV !== 'production',
-  //.   env: env.concat([IdentityType]),
+  //.   env: env.concat([IdentityType($.Unknown)]),
   //. });
+  //.
+  //. S.map(S.sub(1), Identity(43));
+  //. // => Identity(42)
   //. ```
   //.
   //. See also [`env`](#env).
@@ -3411,10 +3405,10 @@
     return Z.concat(xs, Z.of(xs.constructor, x));
   }
   S.append =
-    def('append',
-        {f: [Z.Applicative, Z.Semigroup]},
-        [a, f(a), f(a)],
-        append);
+  def('append',
+      {f: [Z.Applicative, Z.Semigroup]},
+      [a, f(a), f(a)],
+      append);
 
   //# prepend :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
@@ -4523,7 +4517,7 @@
   //.
   //. Properties:
   //.
-  //.   - `forall s :: forall s :: String, t :: String.
+  //.   - `forall s :: String, t :: String.
   //.     S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t)) = t
   //.
   //. See also [`splitOn`](#splitOn).

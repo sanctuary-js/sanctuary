@@ -27,9 +27,8 @@ test('groupBy_', function() {
   eq(S.groupBy_(zeroSum)([2, -3, 3, 3, 3, 4, -4, 4]), [[2], [-3, 3, 3, 3], [4, -4], [4]]);
 
   jsc.assert(jsc.forall('nat -> nat -> bool', 'array nat', function(f, xs) {
-    return S.equals(S.join(S.groupBy_(function(x, y) {
-      return f(x)(y);
-    }, xs)), xs);
+    return S.equals(S.join(S.groupBy_(function(x, y) { return f(x)(y); }, xs)),
+                    xs);
   }), {tests: 100});
 
 });
