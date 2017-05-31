@@ -3461,11 +3461,48 @@
   S.joinWith =
   def('joinWith', {}, [$.String, $.Array($.String), $.String], joinWith);
 
+  //# elem :: (Setoid a, Foldable f) => a -> f a -> Boolean
+  //.
+  //. Takes a value and a structure and returns `true` if the value is an
+  //. element of the structure; `false` otherwise.
+  //.
+  //. See also [`find`](#find).
+  //.
+  //. ```javascript
+  //. > S.elem('c', ['a', 'b', 'c'])
+  //. true
+  //.
+  //. > S.elem('x', ['a', 'b', 'c'])
+  //. false
+  //.
+  //. > S.elem(3, {x: 1, y: 2, z: 3})
+  //. true
+  //.
+  //. > S.elem(8, {x: 1, y: 2, z: 3})
+  //. false
+  //.
+  //. > S.elem(0, S.Just(0))
+  //. true
+  //.
+  //. > S.elem(0, S.Just(1))
+  //. false
+  //.
+  //. > S.elem(0, S.Nothing)
+  //. false
+  //. ```
+  function elem(x, xs) {
+    return Z.reduce(function(b, y) { return b || Z.equals(x, y); }, false, xs);
+  }
+  S.elem =
+  def('elem', {a: [Z.Setoid], f: [Z.Foldable]}, [a, f(a), $.Boolean], elem);
+
   //# find :: Foldable f => (a -> Boolean) -> f a -> Maybe a
   //.
   //. Takes a predicate and a structure and returns Just the leftmost element
   //. of the structure which satisfies the predicate; Nothing if there is no
   //. such element.
+  //.
+  //. See also [`elem`](#elem).
   //.
   //. ```javascript
   //. > S.find(n => n < 0, [1, -2, 3, -4, 5])
