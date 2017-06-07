@@ -4084,7 +4084,7 @@
 
   //. ### Parse
 
-  //# parseDate :: String -> Maybe Date
+  //# parseDate :: String -> Maybe ValidDate
   //.
   //. Takes a string and returns Just the date represented by the string
   //. if it does in fact represent a date; Nothing otherwise.
@@ -4100,7 +4100,8 @@
     var date = new Date(s);
     return isNaN(date.valueOf()) ? Nothing : Just(date);
   }
-  S.parseDate = def('parseDate', {}, [$.String, $Maybe($.Date)], parseDate);
+  S.parseDate =
+  def('parseDate', {}, [$.String, $Maybe($.ValidDate)], parseDate);
 
   //  requiredNonCapturingGroup :: Array String -> String
   function requiredNonCapturingGroup(xs) {
