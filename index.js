@@ -3088,24 +3088,7 @@
   //.
   //.     'abc' :: String, List String, List (List String), ...
   //.
-  //. Every member of `String` is also a member of `List String`! This
-  //. affects the interpretation of type signatures. Consider the type of
-  //. [`indexOf`](#indexOf):
-  //.
-  //.     a -> List a -> Maybe Integer
-  //.
-  //. Assume the second argument is `'hello' :: List String`. `a` must then be
-  //. replaced with `String`:
-  //.
-  //.     String -> List String -> Maybe Integer
-  //.
-  //. Since `List String` and `String` are interchangeable, the former can be
-  //. replaced with the latter:
-  //.
-  //.     String -> String -> Maybe Integer
-  //.
-  //. It's then apparent that the first argument needn't be a single-character
-  //. string; the correspondence between arrays and strings does not hold.
+  //. Every member of `String` is also a member of `List String`!
 
   //# slice :: Integer -> Integer -> List a -> Maybe (List a)
   //.
@@ -3337,57 +3320,6 @@
                               : xs.slice().reverse();
   }
   S.reverse = def('reverse', {}, [List(a), List(a)], reverse);
-
-  //# indexOf :: a -> List a -> Maybe Integer
-  //.
-  //. Takes a value of any type and a list, and returns Just the index
-  //. of the first occurrence of the value in the list, if applicable;
-  //. Nothing otherwise.
-  //.
-  //. ```javascript
-  //. > S.indexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Just(1)
-  //.
-  //. > S.indexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Nothing
-  //.
-  //. > S.indexOf('an', 'banana')
-  //. Just(1)
-  //.
-  //. > S.indexOf('ax', 'banana')
-  //. Nothing
-  //. ```
-  function indexOf(x, xs) {
-    var idx = xs.indexOf(x);
-    return idx >= 0 ? Just(idx) : Nothing;
-  }
-  S.indexOf = def('indexOf', {}, [a, List(a), $Maybe($.Integer)], indexOf);
-
-  //# lastIndexOf :: a -> List a -> Maybe Integer
-  //.
-  //. Takes a value of any type and a list, and returns Just the index
-  //. of the last occurrence of the value in the list, if applicable;
-  //. Nothing otherwise.
-  //.
-  //. ```javascript
-  //. > S.lastIndexOf('a', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Just(5)
-  //.
-  //. > S.lastIndexOf('x', ['b', 'a', 'n', 'a', 'n', 'a'])
-  //. Nothing
-  //.
-  //. > S.lastIndexOf('an', 'banana')
-  //. Just(3)
-  //.
-  //. > S.lastIndexOf('ax', 'banana')
-  //. Nothing
-  //. ```
-  function lastIndexOf(x, xs) {
-    var idx = xs.lastIndexOf(x);
-    return idx >= 0 ? Just(idx) : Nothing;
-  }
-  S.lastIndexOf =
-  def('lastIndexOf', {}, [a, List(a), $Maybe($.Integer)], lastIndexOf);
 
   //. ### Array
 
