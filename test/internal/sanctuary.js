@@ -5,6 +5,8 @@ var type = require('sanctuary-type-identifiers');
 
 var S = require('../..');
 
+var List = require('./List');
+
 
 //  UnaryType :: String -> Type
 function UnaryType(typeIdent) {
@@ -27,6 +29,7 @@ var UselessType = $.NullaryType(
 var env = S.env.concat([
   UnaryType('sanctuary/Compose'),
   UnaryType('sanctuary/Identity'),
+  List.Type($.Unknown),
   UselessType
 ]);
 

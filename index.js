@@ -376,6 +376,12 @@
 
   /* eslint-disable indent */
 
+  //  checkTypes :: Boolean
+  var checkTypes = opts.checkTypes;
+
+  //  env :: Array Type
+  var env = opts.env;
+
   var S = {};
 
   //# create :: { checkTypes :: Boolean, env :: Array Type } -> Module
@@ -429,10 +435,10 @@
   //.
   //. See also [`env`](#env).
   S.create =
-  $.create({checkTypes: opts.checkTypes, env: defaultEnv})('create',
-                                                           {},
-                                                           [Options, $.Object],
-                                                           createSanctuary);
+  $.create({checkTypes: checkTypes, env: defaultEnv})('create',
+                                                      {},
+                                                      [Options, $.Object],
+                                                      createSanctuary);
 
   //# env :: Array Type
   //.
@@ -440,7 +446,15 @@
   //. custom environment in conjunction with [`create`](#create).
   S.env = defaultEnv;
 
-  var def = $.create(opts);
+  /* istanbul ignore if */
+  if (typeof __doctest !== 'undefined') {
+    var _List = require('./test/internal/List');
+    var Cons = _List.Cons;  // eslint-disable-line no-unused-vars
+    var Nil = _List.Nil;    // eslint-disable-line no-unused-vars
+    env = Z.concat(env, [_List.Type($.Unknown)]);
+  }
+
+  var def = $.create({checkTypes: checkTypes, env: env});
 
   //. ### Placeholder
   //.
@@ -3304,23 +3318,6 @@
   S.dropLast =
   def('dropLast', {}, [$.Integer, List(a), $Maybe(List(a))], dropLast);
 
-  //# reverse :: List a -> List a
-  //.
-  //. Returns the elements of the given list in reverse order.
-  //.
-  //. ```javascript
-  //. > S.reverse([1, 2, 3])
-  //. [3, 2, 1]
-  //.
-  //. > S.reverse('abc')
-  //. 'cba'
-  //. ```
-  function reverse(xs) {
-    return $.String._test(xs) ? xs.split('').reverse().join('')
-                              : xs.slice().reverse();
-  }
-  S.reverse = def('reverse', {}, [List(a), List(a)], reverse);
-
   //. ### Array
 
   //# append :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
@@ -3575,6 +3572,34 @@
       {},
       [$.Function([a, a, $.Boolean]), $.Array(a), $.Array($.Array(a))],
       groupBy_);
+
+  //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
+  //.
+  //. Reverses the elements of the given structure.
+  //.
+  //. ```javascript
+  //. > S.reverse([1, 2, 3])
+  //. [3, 2, 1]
+  //.
+  //. > S.reverse(Cons(1, Cons(2, Cons(3, Nil))))
+  //. Cons(3, Cons(2, Cons(1, Nil)))
+  //.
+  //. > S.pipe([S.splitOn(''), S.reverse, S.joinWith('')], 'abc')
+  //. 'cba'
+  //. ```
+  function reverse(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray(foldable)) return foldable.slice().reverse();
+    var F = foldable.constructor;
+    return Z.reduce(function(xs, x) { return Z.concat(Z.of(F, x), xs); },
+                    Z.empty(F),
+                    foldable);
+  }
+  S.reverse =
+  def('reverse',
+      {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+      [f(a), f(a)],
+      reverse);
 
   //# sort :: (Ord a, Applicative m, Foldable m, Monoid (m a)) => m a -> m a
   //.
