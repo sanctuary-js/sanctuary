@@ -28,6 +28,5 @@ test('take', function() {
   eq(S.take(6, '12345'), S.Nothing);
 
   eq(S.take(-1, [1, 2, 3, 4, 5]), S.Nothing);
-  eq(S.take(-0, [1, 2, 3, 4, 5]), S.Nothing);
 
 });

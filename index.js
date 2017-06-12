@@ -247,11 +247,6 @@
     };
   }
 
-  //  negativeZero :: Number -> Boolean
-  function negativeZero(n) {
-    return n === 0 && 1 / n === -Infinity;
-  }
-
   //  typeEq :: String -> a -> Boolean
   function typeEq(typeIdent) {
     return function(x) {
@@ -272,9 +267,6 @@
       return f(x)(y)(z);
     };
   }
-
-  //  unsafeHead :: Array a -> a?
-  function unsafeHead(xs) { return xs[0]; }
 
   //  Accessible :: TypeClass
   var Accessible = Z.TypeClass(
@@ -3113,15 +3105,15 @@
   //. Accepts negative indices, which indicate an offset from the end of
   //. the list.
   //.
+  //. See also [`take`](#take), [`drop`](#drop), [`takeLast`](#takeLast),
+  //. and [`dropLast`](#dropLast).
+  //.
   //. ```javascript
   //. > S.slice(1, 3, ['a', 'b', 'c', 'd', 'e'])
   //. Just(['b', 'c'])
   //.
-  //. > S.slice(-2, -0, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(['d', 'e'])
-  //.
-  //. > S.slice(2, -0, ['a', 'b', 'c', 'd', 'e'])
-  //. Just(['c', 'd', 'e'])
+  //. > S.slice(-3, -1, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(['c', 'd'])
   //.
   //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
@@ -3131,8 +3123,8 @@
   //. ```
   function slice(start, end, xs) {
     var len = xs.length;
-    var fromIdx = negativeZero(start) ? len : start < 0 ? start + len : start;
-    var toIdx = negativeZero(end) ? len : end < 0 ? end + len : end;
+    var fromIdx = start < 0 ? start + len : start;
+    var toIdx = end < 0 ? end + len : end;
 
     return Math.abs(start) <= len && Math.abs(end) <= len && fromIdx <= toIdx ?
       Just(xs.slice(fromIdx, toIdx)) :
@@ -3158,7 +3150,8 @@
   //. Just('d')
   //. ```
   function at(n, xs) {
-    return Z.map(unsafeHead, slice(n, n === -1 ? -0 : n + 1, xs));
+    var idx = n < 0 ? xs.length + n : n;
+    return idx < 0 || idx >= xs.length ? Nothing : Just(xs[idx]);
   }
   S.at = def('at', {}, [$.Integer, List(a), $Maybe(a)], at);
 
@@ -3210,7 +3203,7 @@
   //. Nothing
   //. ```
   function tail(xs) {
-    return slice(1, -0, xs);
+    return xs.length > 0 ? Just(xs.slice(1)) : Nothing;
   }
   S.tail = def('tail', {}, [List(a), $Maybe(List(a))], tail);
 
@@ -3228,7 +3221,7 @@
   //. Nothing
   //. ```
   function init(xs) {
-    return slice(0, -1, xs);
+    return xs.length > 0 ? Just(xs.slice(0, -1)) : Nothing;
   }
   S.init = def('init', {}, [List(a), $Maybe(List(a))], init);
 
@@ -3249,7 +3242,7 @@
   //. Nothing
   //. ```
   function take(n, xs) {
-    return n < 0 || 1 / n < 0 ? Nothing : slice(0, n, xs);
+    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(0, n));
   }
   S.take = def('take', {}, [$.Integer, List(a), $Maybe(List(a))], take);
 
@@ -3270,7 +3263,7 @@
   //. Nothing
   //. ```
   function takeLast(n, xs) {
-    return n < 0 || 1 / n < 0 ? Nothing : slice(-n, -0, xs);
+    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(xs.length - n));
   }
   S.takeLast =
   def('takeLast', {}, [$.Integer, List(a), $Maybe(List(a))], takeLast);
@@ -3292,7 +3285,7 @@
   //. Nothing
   //. ```
   function drop(n, xs) {
-    return n < 0 || 1 / n < 0 ? Nothing : slice(n, -0, xs);
+    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(n));
   }
   S.drop = def('drop', {}, [$.Integer, List(a), $Maybe(List(a))], drop);
 
@@ -3313,7 +3306,7 @@
   //. Nothing
   //. ```
   function dropLast(n, xs) {
-    return n < 0 || 1 / n < 0 ? Nothing : slice(0, -n, xs);
+    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(0, xs.length - n));
   }
   S.dropLast =
   def('dropLast', {}, [$.Integer, List(a), $Maybe(List(a))], dropLast);

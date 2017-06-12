@@ -15,7 +15,6 @@ test('odd', function() {
   eq(S.odd(-1), true);
 
   eq(S.odd(0), false);
-  eq(S.odd(-0), false);
   eq(S.odd(2), false);
   eq(S.odd(-2), false);
 

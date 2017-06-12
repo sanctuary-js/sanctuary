@@ -13,7 +13,6 @@ test('product', function() {
 
   eq(S.product([]), 1);
   eq(S.product([0, 1, 2, 3]), 0);
-  eq(S.product([-0, 1, 2, 3]), -0);
   eq(S.product([1, 2, 3, 4, 5]), 120);
   eq(S.product([1, 2, 3, 4, -5]), -120);
 

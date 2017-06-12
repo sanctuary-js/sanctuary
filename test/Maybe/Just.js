@@ -52,8 +52,6 @@ suite('Just', function() {
     eq(S.Just(42)[FL.equals](S.Nothing), false);
 
     // Value-based equality:
-    eq(S.Just(0)[FL.equals](S.Just(-0)), true);
-    eq(S.Just(-0)[FL.equals](S.Just(0)), true);
     eq(S.Just(NaN)[FL.equals](S.Just(NaN)), true);
     eq(S.Just([1, 2, 3])[FL.equals](S.Just([1, 2, 3])), true);
 

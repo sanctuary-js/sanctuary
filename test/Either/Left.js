@@ -58,8 +58,6 @@ suite('Left', function() {
     eq(S.Left(42)[FL.equals](S.Right(42)), false);
 
     // Value-based equality:
-    eq(S.Left(0)[FL.equals](S.Left(-0)), true);
-    eq(S.Left(-0)[FL.equals](S.Left(0)), true);
     eq(S.Left(NaN)[FL.equals](S.Left(NaN)), true);
     eq(S.Left([1, 2, 3])[FL.equals](S.Left([1, 2, 3])), true);
 
