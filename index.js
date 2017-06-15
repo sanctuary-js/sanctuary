@@ -3320,6 +3320,36 @@
 
   //. ### Array
 
+  //# size :: Foldable f => f a -> Integer
+  //.
+  //. Returns the number of elements of the given structure.
+  //.
+  //. ```javascript
+  //. > S.size([])
+  //. 0
+  //.
+  //. > S.size(['foo', 'bar', 'baz'])
+  //. 3
+  //.
+  //. > S.size(Nil)
+  //. 0
+  //.
+  //. > S.size(Cons('foo', Cons('bar', Cons('baz', Nil))))
+  //. 3
+  //.
+  //. > S.size(S.Nothing)
+  //. 0
+  //.
+  //. > S.size(S.Just('quux'))
+  //. 1
+  //. ```
+  function size(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray(foldable)) return foldable.length;
+    return Z.reduce(function(n, _) { return n + 1; }, 0, foldable);
+  }
+  S.size = def('size', {f: [Z.Foldable]}, [f(a), $.Integer], size);
+
   //# append :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
   //. Returns the result of appending the first argument to the second.
