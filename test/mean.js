@@ -14,8 +14,6 @@ test('mean', function() {
   eq(S.mean([]), S.Nothing);
   eq(S.mean([1, 2, 3]), S.Just(2));
   eq(S.mean([0.1, 0.3]), S.Just(0.2));
-  eq(S.mean([-0]), S.Just(0));
-  eq(S.mean([-0, 0]), S.Just(0));
 
   eq(S.mean(S.Nothing), S.Nothing);
   eq(S.mean(S.Just(42)), S.Just(42));

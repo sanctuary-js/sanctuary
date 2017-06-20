@@ -13,7 +13,5 @@ test('negate', function() {
 
   eq(S.negate(0.5), -0.5);
   eq(S.negate(-0.5), 0.5);
-  eq(S.negate(0), -0);
-  eq(S.negate(-0), 0);
 
 });

@@ -12,7 +12,6 @@ test('even', function() {
   eq(S.even.toString(), 'even :: Integer -> Boolean');
 
   eq(S.even(0), true);
-  eq(S.even(-0), true);
   eq(S.even(2), true);
   eq(S.even(-2), true);
 

@@ -28,6 +28,5 @@ test('drop', function() {
   eq(S.drop(6, '12345'), S.Nothing);
 
   eq(S.drop(-1, [1, 2, 3, 4, 5]), S.Nothing);
-  eq(S.drop(-0, [1, 2, 3, 4, 5]), S.Nothing);
 
 });
