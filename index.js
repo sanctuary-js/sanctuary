@@ -261,13 +261,6 @@
     };
   }
 
-  //  uncurry3 :: (a -> b -> c -> d) -> ((a, b, c) -> d)
-  function uncurry3(f) {
-    return function(x, y, z) {
-      return f(x)(y)(z);
-    };
-  }
-
   //  Accessible :: TypeClass
   var Accessible = Z.TypeClass(
     'sanctuary/Accessible',
@@ -903,8 +896,6 @@
   //. value if the Foldable is empty; the result of the final application
   //. otherwise.
   //.
-  //. See also [`reduce_`](#reduce_).
-  //.
   //. ```javascript
   //. > S.reduce(S.add, 0, [1, 2, 3, 4, 5])
   //. 15
@@ -917,15 +908,6 @@
   }
   S.reduce =
   def('reduce', {f: [Z.Foldable]}, [Fn(a, Fn(b, a)), a, f(b), a], reduce);
-
-  //# reduce_ :: Foldable f => ((b, a) -> b) -> b -> f a -> b
-  //.
-  //. Variant of [`reduce`](#reduce) which takes an uncurried binary function.
-  S.reduce_ =
-  def('reduce_',
-      {f: [Z.Foldable]},
-      [$.Function([a, b, a]), a, f(b), a],
-      Z.reduce);
 
   //# traverse :: (Applicative f, Traversable t) => TypeRep f -> (a -> f b) -> t a -> f (t b)
   //.
@@ -1505,14 +1487,6 @@
   }
   S.flip = def('flip', {}, [Fn(a, Fn(b, c)), b, a, c], flip);
 
-  //# flip_ :: ((a, b) -> c) -> b -> a -> c
-  //.
-  //. Variant of [`flip`](#flip) which takes an uncurried binary function.
-  function flip_(f, x, y) {
-    return f(y, x);
-  }
-  S.flip_ = def('flip_', {}, [$.Function([a, b, c]), b, a, c], flip_);
-
   //. ### Composition
 
   //# compose :: Semigroupoid s => s b c -> s a b -> s a c
@@ -1562,24 +1536,14 @@
   //.
   //. This is the P combinator from combinatory logic.
   //.
-  //. See also [`on_`](#on_).
-  //.
   //. ```javascript
   //. > S.on(S.concat, S.reverse, [1, 2, 3], [4, 5, 6])
   //. [3, 2, 1, 6, 5, 4]
   //. ```
   function on(f, g, x, y) {
-    return on_(uncurry2(f), g, x, y);
+    return f(g(x))(g(y));
   }
   S.on = def('on', {}, [Fn(b, Fn(b, c)), Fn(a, b), a, a, c], on);
-
-  //# on_ :: ((b, b) -> c) -> (a -> b) -> a -> a -> c
-  //.
-  //. Variant of [`on`](#on) which takes an uncurried binary function.
-  function on_(f, g, x, y) {
-    return f(g(x), g(y));
-  }
-  S.on_ = def('on_', {}, [$.Function([b, b, c]), Fn(a, b), a, a, c], on_);
 
   //. ### Maybe type
   //.
@@ -1914,10 +1878,10 @@
   //.     Just's value.
   //.
   //. ```javascript
-  //. > S.reduce_(Math.pow, 10, S.Nothing)
+  //. > Z.reduce(Math.pow, 10, S.Nothing)
   //. 10
   //.
-  //. > S.reduce_(Math.pow, 10, S.Just(3))
+  //. > Z.reduce(Math.pow, 10, S.Just(3))
   //. 1000
   //. ```
   Maybe.prototype['fantasy-land/reduce'] = function(f, x) {
@@ -2177,54 +2141,27 @@
   //# encase2 :: (a -> b -> c) -> a -> b -> Maybe c
   //.
   //. Binary version of [`encase`](#encase).
-  //.
-  //. See also [`encase2_`](#encase2_).
   function encase2(f, x, y) {
-    return encase2_(uncurry2(f), x, y);
-  }
-  S.encase2 = def('encase2', {}, [Fn(a, Fn(b, c)), a, b, $Maybe(c)], encase2);
-
-  //# encase2_ :: ((a, b) -> c) -> a -> b -> Maybe c
-  //.
-  //. Variant of [`encase2`](#encase2) which takes an uncurried binary
-  //. function.
-  function encase2_(f, x, y) {
     try {
-      return Just(f(x, y));
+      return Just(f(x)(y));
     } catch (err) {
       return Nothing;
     }
   }
-  S.encase2_ =
-  def('encase2_', {}, [$.Function([a, b, c]), a, b, $Maybe(c)], encase2_);
+  S.encase2 = def('encase2', {}, [Fn(a, Fn(b, c)), a, b, $Maybe(c)], encase2);
 
   //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
   //.
   //. Ternary version of [`encase`](#encase).
-  //.
-  //. See also [`encase3_`](#encase3_).
   function encase3(f, x, y, z) {
-    return encase3_(uncurry3(f), x, y, z);
-  }
-  S.encase3 =
-  def('encase3', {}, [Fn(a, Fn(b, Fn(c, d))), a, b, c, $Maybe(d)], encase3);
-
-  //# encase3_ :: ((a, b, c) -> d) -> a -> b -> c -> Maybe d
-  //.
-  //. Variant of [`encase3`](#encase3) which takes an uncurried ternary
-  //. function.
-  function encase3_(f, x, y, z) {
     try {
-      return Just(f(x, y, z));
+      return Just(f(x)(y)(z));
     } catch (err) {
       return Nothing;
     }
   }
-  S.encase3_ =
-  def('encase3_',
-      {},
-      [$.Function([a, b, c, d]), a, b, c, $Maybe(d)],
-      encase3_);
+  S.encase3 =
+  def('encase3', {}, [Fn(a, Fn(b, Fn(c, d))), a, b, c, $Maybe(d)], encase3);
 
   //# maybeToEither :: a -> Maybe b -> Either a b
   //.
@@ -2587,10 +2524,10 @@
   //.     Right's value.
   //.
   //. ```javascript
-  //. > S.reduce_(Math.pow, 10, S.Left('Cannot divide by zero'))
+  //. > Z.reduce(Math.pow, 10, S.Left('Cannot divide by zero'))
   //. 10
   //.
-  //. > S.reduce_(Math.pow, 10, S.Right(3))
+  //. > Z.reduce(Math.pow, 10, S.Right(3))
   //. 1000
   //. ```
   Either.prototype['fantasy-land/reduce'] = function(f, x) {
@@ -2819,10 +2756,12 @@
   //# encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r
   //.
   //. Binary version of [`encaseEither`](#encaseEither).
-  //.
-  //. See also [`encaseEither2_`](#encaseEither2_).
   function encaseEither2(f, g, x, y) {
-    return encaseEither2_(f, uncurry2(g), x, y);
+    try {
+      return Right(g(x)(y));
+    } catch (err) {
+      return Left(f(err));
+    }
   }
   S.encaseEither2 =
   def('encaseEither2',
@@ -2830,53 +2769,21 @@
       [Fn($.Error, l), Fn(a, Fn(b, r)), a, b, $Either(l, r)],
       encaseEither2);
 
-  //# encaseEither2_ :: (Error -> l) -> ((a, b) -> r) -> a -> b -> Either l r
-  //.
-  //. Variant of [`encaseEither2`](#encaseEither2) which takes an uncurried
-  //. binary function.
-  function encaseEither2_(f, g, x, y) {
-    try {
-      return Right(g(x, y));
-    } catch (err) {
-      return Left(f(err));
-    }
-  }
-  S.encaseEither2_ =
-  def('encaseEither2_',
-      {},
-      [Fn($.Error, l), $.Function([a, b, r]), a, b, $Either(l, r)],
-      encaseEither2_);
-
   //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
   //.
   //. Ternary version of [`encaseEither`](#encaseEither).
-  //.
-  //. See also [`encaseEither3_`](#encaseEither3_).
   function encaseEither3(f, g, x, y, z) {
-    return encaseEither3_(f, uncurry3(g), x, y, z);
+    try {
+      return Right(g(x)(y)(z));
+    } catch (err) {
+      return Left(f(err));
+    }
   }
   S.encaseEither3 =
   def('encaseEither3',
       {},
       [Fn($.Error, l), Fn(a, Fn(b, Fn(c, r))), a, b, c, $Either(l, r)],
       encaseEither3);
-
-  //# encaseEither3_ :: (Error -> l) -> ((a, b, c) -> r) -> a -> b -> c -> Either l r
-  //.
-  //. Variant of [`encaseEither3`](#encaseEither3) which takes an uncurried
-  //. ternary function.
-  function encaseEither3_(f, g, x, y, z) {
-    try {
-      return Right(g(x, y, z));
-    } catch (err) {
-      return Left(f(err));
-    }
-  }
-  S.encaseEither3_ =
-  def('encaseEither3_',
-      {},
-      [Fn($.Error, l), $.Function([a, b, c, r]), a, b, c, $Either(l, r)],
-      encaseEither3_);
 
   //# eitherToMaybe :: Either a b -> Maybe b
   //.
@@ -3523,8 +3430,6 @@
   //. for functions that aren't reflexive, transitive, and symmetric
   //. (see [equivalence][] relation).
   //.
-  //. See also [`groupBy_`](#groupBy_).
-  //.
   //. Properties:
   //.
   //.   - `forall f :: a -> a -> Boolean, xs :: Array a.
@@ -3538,33 +3443,21 @@
   //. [[2], [-3, 3, 3, 3], [4, -4], [4]]
   //. ```
   function groupBy(f, xs) {
-    return groupBy_(uncurry2(f), xs);
-  }
-  S.groupBy =
-  def('groupBy',
-      {},
-      [Fn(a, Pred(a)), $.Array(a), $.Array($.Array(a))],
-      groupBy);
-
-  //# groupBy_ :: ((a, a) -> Boolean) -> Array a -> Array (Array a)
-  //.
-  //. Variant of [`groupBy`](#groupBy) which takes an uncurried function.
-  function groupBy_(f, xs) {
     if (xs.length === 0) return [];
     var x0 = xs[0];         // :: a
     var active = [x0];      // :: Array a
     var result = [active];  // :: Array (Array a)
     for (var idx = 1; idx < xs.length; idx += 1) {
       var x = xs[idx];
-      if (f(x0, x)) active.push(x); else result.push(active = [x0 = x]);
+      if (f(x0)(x)) active.push(x); else result.push(active = [x0 = x]);
     }
     return result;
   }
-  S.groupBy_ =
-  def('groupBy_',
+  S.groupBy =
+  def('groupBy',
       {},
-      [$.Function([a, a, $.Boolean]), $.Array(a), $.Array($.Array(a))],
-      groupBy_);
+      [Fn(a, Pred(a)), $.Array(a), $.Array($.Array(a))],
+      groupBy);
 
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
   //.
