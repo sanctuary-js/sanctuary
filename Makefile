@@ -55,6 +55,7 @@ lint:
 	  --use remark-lint-no-unused-definitions \
 	  -- README.md
 	git checkout README.md
+	scripts/commit-message
 
 
 .PHONY: release-major release-minor release-patch
