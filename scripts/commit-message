@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+fail() {
+  (echo && sed 's/^/! /' <<<"$1" && echo) >&2
+  exit 1
+}
+
+# Find the number of the most recently opened pull request merged so far.
+# Add 1 to this to get the smallest possible number of the next pull request,
+# then add an arbitrary buffer to allow for issues and pull requests opened
+# since the creation of the most recently opened pull request merged so far.
+# This provides an estimate of the number that will appear in the summary of
+# the merge commit so its length can be taken into account.
+message="$(
+  printf 'Merge pull request #%s from %s/%s'                                  \
+         "$(git log --grep '^Merge pull request #[1-9]' --pretty=format:%s    \
+            | awk '{ print substr($4, 2) }'                                   \
+            | sort --numeric-sort --reverse                                   \
+            | head -n 1                                                       \
+            | xargs expr 1 + 25 +)"                                           \
+         "$(git config --get remote.origin.url                                \
+            | sed -e 's,^git@github[.]com:,,' -e 's,^https://github[.]com/,,' \
+            | cut -d / -f 1)"                                                 \
+         "$(git rev-parse --abbrev-ref HEAD)"                                 \
+)"
+max_length=72
+if (("${#message}" > max_length)) ; then
+  fail "Branch name is too long. Merge commit summary would exceed $max_length characters:"$'\n\n'"  $message"
+fi
+printf '%s (%s characters)\n' "$message" "${#message}"
