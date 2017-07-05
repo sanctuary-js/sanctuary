@@ -10,7 +10,7 @@ test('parseInt', function() {
 
   eq(typeof S.parseInt, 'function');
   eq(S.parseInt.length, 2);
-  eq(S.parseInt.toString(), 'parseInt :: Integer -> String -> Maybe Integer');
+  eq(S.parseInt.toString(), 'parseInt :: Radix -> String -> Maybe Integer');
 
   eq(S.parseInt(10, '42'), S.Just(42));
   eq(S.parseInt(16, '2A'), S.Just(42));
@@ -90,8 +90,29 @@ test('parseInt', function() {
   eq(S.parseInt(36, '['), S.Nothing);
 
   // Throws if radix is not in [2 .. 36]
-  throws(function() { S.parseInt(1, ''); }, RangeError, 'Radix not in [2 .. 36]');
-  throws(function() { S.parseInt(37, ''); }, RangeError, 'Radix not in [2 .. 36]');
+  throws(function() { S.parseInt(1, ''); },
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'parseInt :: Radix -> String -> Maybe Integer\n' +
+         '            ^^^^^\n' +
+         '              1\n' +
+         '\n' +
+         '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, NonNegativeInteger, ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Radix’.\n');
+
+  throws(function() { S.parseInt(37, ''); },
+         TypeError,
+         'Invalid value\n' +
+         '\n' +
+         'parseInt :: Radix -> String -> Maybe Integer\n' +
+         '            ^^^^^\n' +
+         '              1\n' +
+         '\n' +
+         '1)  37 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, NonNegativeInteger, ValidNumber\n' +
+         '\n' +
+         'The value at position 1 is not a member of ‘Radix’.\n');
 
   // Is not case-sensitive
   eq(S.parseInt(16, 'FF'), S.Just(255));
