@@ -12,7 +12,7 @@ test('promap', function() {
   eq(S.promap.toString(), 'promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
 
   var before = S.map(S.prop('length'));
-  var after = S.flip_(Math.pow)(2);
+  var after = S.join(S.mult);
   eq(S.promap(before, after, S.sum)(['foo', 'bar', 'baz', 'quux']), 169);
 
   eq(S.promap(Math.abs, S.add(1), Math.sqrt)(-100), 11);
