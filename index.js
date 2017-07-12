@@ -1550,7 +1550,7 @@
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either a Just whose value is of type `a` or Nothing (with no value).
   //.
-  //. The Maybe type satisfies the [Setoid][], [Monoid][], [Monad][],
+  //. The Maybe type satisfies the [Ord][], [Monoid][], [Monad][],
   //. [Alternative][], [Traversable][], and [Extend][] specifications.
 
   //# MaybeType :: Type -> Type
@@ -2189,7 +2189,7 @@
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
   //. value is of type `b`.
   //.
-  //. The Either type satisfies the [Setoid][], [Semigroup][], [Monad][],
+  //. The Either type satisfies the [Ord][], [Semigroup][], [Monad][],
   //. [Alt][], [Traversable][], [Extend][], and [Bifunctor][] specifications.
 
   //# EitherType :: Type -> Type -> Type
@@ -4431,12 +4431,12 @@
 //. [Monad]:            v:fantasyland/fantasy-land#monad
 //. [Monoid]:           v:fantasyland/fantasy-land#monoid
 //. [Nullable]:         v:sanctuary-js/sanctuary-def#Nullable
+//. [Ord]:              v:fantasyland/fantasy-land#ord
 //. [PureScript]:       http://www.purescript.org/
 //. [Ramda]:            http://ramdajs.com/
 //. [RegexFlags]:       v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroup]:        v:fantasyland/fantasy-land#semigroup
 //. [Semigroupoid]:     v:fantasyland/fantasy-land#semigroupoid
-//. [Setoid]:           v:fantasyland/fantasy-land#setoid
 //. [Traversable]:      v:fantasyland/fantasy-land#traversable
 //. [UnaryType]:        v:sanctuary-js/sanctuary-def#UnaryType
 //. [`Z.alt`]:          v:sanctuary-js/sanctuary-type-classes#alt
