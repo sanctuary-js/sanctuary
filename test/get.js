@@ -2,6 +2,8 @@
 
 var vm = require('vm');
 
+var $ = require('sanctuary-def');
+
 var S = require('..');
 
 var eq = require('./internal/eq');
@@ -11,7 +13,7 @@ test('get', function() {
 
   eq(typeof S.get, 'function');
   eq(S.get.length, 3);
-  eq(S.get.toString(), 'get :: (b -> Boolean) -> String -> a -> Maybe c');
+  eq(S.get.toString(), 'get :: (Any -> Boolean) -> String -> a -> Maybe b');
 
   eq(S.get(S.is(Number), 'x', {x: 0, y: 42}), S.Just(0));
   eq(S.get(S.is(Number), 'y', {x: 0, y: 42}), S.Just(42));
@@ -24,5 +26,8 @@ test('get', function() {
 
   eq(S.get(S.K(true), 'valueOf', null), S.Nothing);
   eq(S.get(S.K(true), 'valueOf', undefined), S.Nothing);
+
+  eq(S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2]}), S.Just([1, 2]));
+  eq(S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, null]}), S.Nothing);
 
 });

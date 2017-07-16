@@ -3600,7 +3600,7 @@
   }
   S.props = def('props', {}, [$.Array($.String), a, b], props);
 
-  //# get :: (b -> Boolean) -> String -> a -> Maybe c
+  //# get :: (Any -> Boolean) -> String -> a -> Maybe b
   //.
   //. Takes a predicate, a property name, and an object and returns Just the
   //. value of the specified object property if it exists and the value
@@ -3617,6 +3617,12 @@
   //.
   //. > S.get(S.is(Number), 'x', {})
   //. Nothing
+  //.
+  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3]})
+  //. Just([1, 2, 3])
+  //.
+  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3, null]})
+  //. Nothing
   //. ```
   function get(pred, key, x) {
     var obj = toObject(x);
@@ -3626,9 +3632,9 @@
     }
     return Nothing;
   }
-  S.get = def('get', {}, [$.Predicate(b), $.String, a, $Maybe(c)], get);
+  S.get = def('get', {}, [$.Predicate($.Any), $.String, a, $Maybe(b)], get);
 
-  //# gets :: (b -> Boolean) -> Array String -> a -> Maybe c
+  //# gets :: (Any -> Boolean) -> Array String -> a -> Maybe b
   //.
   //. Takes a predicate, a property path (an array of property names), and
   //. an object and returns Just the value at the given path if such a path
@@ -3655,7 +3661,7 @@
     }, Just(x), keys));
   }
   S.gets =
-  def('gets', {}, [$.Predicate(b), $.Array($.String), a, $Maybe(c)], gets);
+  def('gets', {}, [$.Predicate($.Any), $.Array($.String), a, $Maybe(b)], gets);
 
   //# keys :: StrMap a -> Array String
   //.
@@ -4020,27 +4026,30 @@
   S.parseInt =
   def('parseInt', {}, [Radix, $.String, $Maybe($.Integer)], parseInt_);
 
-  //# parseJson :: (a -> Boolean) -> String -> Maybe b
+  //# parseJson :: (Any -> Boolean) -> String -> Maybe a
   //.
   //. Takes a predicate and a string which may or may not be valid JSON, and
   //. returns Just the result of applying `JSON.parse` to the string *if* the
   //. result satisfies the predicate; Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.parseJson(S.is(Array), '["foo","bar","baz"]')
-  //. Just(['foo', 'bar', 'baz'])
-  //.
-  //. > S.parseJson(S.is(Array), '[')
+  //. > S.parseJson($.test([], $.Array($.Integer)), '[')
   //. Nothing
   //.
-  //. > S.parseJson(S.is(Object), '["foo","bar","baz"]')
+  //. > S.parseJson($.test([], $.Array($.Integer)), '["1","2","3"]')
   //. Nothing
+  //.
+  //. > S.parseJson($.test([], $.Array($.Integer)), '[0,1.5,3,4.5]')
+  //. Nothing
+  //.
+  //. > S.parseJson($.test([], $.Array($.Integer)), '[1,2,3]')
+  //. Just([1, 2, 3])
   //. ```
   function parseJson(pred, s) {
     return Z.filter(pred, encase(JSON.parse, s));
   }
   S.parseJson =
-  def('parseJson', {}, [$.Predicate(a), $.String, $Maybe(b)], parseJson);
+  def('parseJson', {}, [$.Predicate($.Any), $.String, $Maybe(a)], parseJson);
 
   //. ### RegExp
 
