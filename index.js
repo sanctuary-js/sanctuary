@@ -128,16 +128,6 @@
 //. type signature, separated from the rest of the signature by a fat arrow
 //. (`=>`).
 //.
-//. ### Accessible pseudotype
-//.
-//. What is the type of values which support property access? In other words,
-//. what is the type of which every value except `null` and `undefined` is a
-//. member? Object is close, but `Object.create(null)` produces a value which
-//. supports property access but which is not a member of the Object type.
-//.
-//. Sanctuary uses the Accessible pseudotype to represent the set of values
-//. which support property access.
-//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -234,6 +224,11 @@
     };
   }
 
+  //  toObject :: a -> Object
+  function toObject(x) {
+    return x == null ? Object.create(null) : Object(x);
+  }
+
   //  typeEq :: String -> a -> Boolean
   function typeEq(typeIdent) {
     return function(x) {
@@ -247,14 +242,6 @@
       return f(x)(y);
     };
   }
-
-  //  Accessible :: TypeClass
-  var Accessible = Z.TypeClass(
-    'sanctuary/Accessible',
-    readmeUrl('accessible-pseudotype'),
-    [],
-    function(x) { return x != null; }
-  );
 
   //  readmeUrl :: String -> String
   function readmeUrl(id) {
@@ -3342,7 +3329,7 @@
   S.find =
   def('find', {f: [Z.Foldable]}, [$.Predicate(a), f(a), $Maybe(a)], find);
 
-  //# pluck :: (Accessible a, Functor f) => String -> f a -> f b
+  //# pluck :: Functor f => String -> f a -> f b
   //.
   //. Combines [`map`](#map) and [`prop`](#prop). `pluck(k, xs)` is equivalent
   //. to `map(prop(k), xs)`.
@@ -3356,16 +3343,13 @@
   //. ```
   function pluck(key, xs) {
     return Z.map(function(x) {
-      if (key in Object(x)) return x[key];
+      var obj = toObject(x);
+      if (key in obj) return obj[key];
       throw new TypeError('‘pluck’ expected object to have a property named ' +
                           '‘' + key + '’; ' + Z.toString(x) + ' does not');
     }, xs);
   }
-  S.pluck =
-  def('pluck',
-      {a: [Accessible], f: [Z.Functor]},
-      [$.String, f(a), f(b)],
-      pluck);
+  S.pluck = def('pluck', {f: [Z.Functor]}, [$.String, f(a), f(b)], pluck);
 
   //# unfoldr :: (b -> Maybe (Pair a b)) -> b -> Array a
   //.
@@ -3570,7 +3554,7 @@
 
   //. ### Object
 
-  //# prop :: Accessible a => String -> a -> b
+  //# prop :: String -> a -> b
   //.
   //. Takes a property name and an object with known properties and returns
   //. the value of the specified property. If for some reason the object
@@ -3584,14 +3568,15 @@
   //. > S.prop('a', {a: 1, b: 2})
   //. 1
   //. ```
-  function prop(key, obj) {
-    if (key in Object(obj)) return obj[key];
+  function prop(key, x) {
+    var obj = toObject(x);
+    if (key in obj) return obj[key];
     throw new TypeError('‘prop’ expected object to have a property named ‘' +
-                        key + '’; ' + Z.toString(obj) + ' does not');
+                        key + '’; ' + Z.toString(x) + ' does not');
   }
-  S.prop = def('prop', {a: [Accessible]}, [$.String, a, b], prop);
+  S.prop = def('prop', {}, [$.String, a, b], prop);
 
-  //# props :: Accessible a => Array String -> a -> b
+  //# props :: Array String -> a -> b
   //.
   //. Takes a property path (an array of property names) and an object with
   //. known structure and returns the value at the given path. If for some
@@ -3604,17 +3589,18 @@
   //. > S.props(['a', 'b', 'c'], {a: {b: {c: 1}}})
   //. 1
   //. ```
-  function props(path, obj) {
-    return path.reduce(function(memo, key) {
-      if (key in memo) return memo[key];
+  function props(path, x) {
+    return path.reduce(function(x, key) {
+      var obj = toObject(x);
+      if (key in obj) return obj[key];
       throw new TypeError('‘props’ expected object to have a property at ' +
                           Z.toString(path) + '; ' +
-                          Z.toString(obj) + ' does not');
-    }, Object(obj));
+                          Z.toString(x) + ' does not');
+    }, x);
   }
-  S.props = def('props', {a: [Accessible]}, [$.Array($.String), a, b], props);
+  S.props = def('props', {}, [$.Array($.String), a, b], props);
 
-  //# get :: Accessible a => (b -> Boolean) -> String -> a -> Maybe c
+  //# get :: (b -> Boolean) -> String -> a -> Maybe c
   //.
   //. Takes a predicate, a property name, and an object and returns Just the
   //. value of the specified object property if it exists and the value
@@ -3632,14 +3618,17 @@
   //. > S.get(S.is(Number), 'x', {})
   //. Nothing
   //. ```
-  function get(pred, key, obj) {
-    var x = null;
-    return key in obj && pred(x = obj[key]) ? Just(x) : Nothing;
+  function get(pred, key, x) {
+    var obj = toObject(x);
+    if (key in obj) {
+      var val = obj[key];
+      if (pred(val)) return Just(val);
+    }
+    return Nothing;
   }
-  S.get =
-  def('get', {a: [Accessible]}, [$.Predicate(b), $.String, a, $Maybe(c)], get);
+  S.get = def('get', {}, [$.Predicate(b), $.String, a, $Maybe(c)], get);
 
-  //# gets :: Accessible a => (b -> Boolean) -> Array String -> a -> Maybe c
+  //# gets :: (b -> Boolean) -> Array String -> a -> Maybe c
   //.
   //. Takes a predicate, a property path (an array of property names), and
   //. an object and returns Just the value at the given path if such a path
@@ -3657,18 +3646,16 @@
   //. > S.gets(S.is(Number), ['a', 'b', 'c'], {})
   //. Nothing
   //. ```
-  function gets(pred, keys, obj) {
-    return Z.filter(pred, Z.reduce(function(m, k) {
+  function gets(pred, keys, x) {
+    return Z.filter(pred, Z.reduce(function(m, key) {
       return Z.chain(function(x) {
-        return x != null && k in x ? Just(x[k]) : Nothing;
+        var obj = toObject(x);
+        return key in obj ? Just(obj[key]) : Nothing;
       }, m);
-    }, Just(obj), keys));
+    }, Just(x), keys));
   }
   S.gets =
-  def('gets',
-      {a: [Accessible]},
-      [$.Predicate(b), $.Array($.String), a, $Maybe(c)],
-      gets);
+  def('gets', {}, [$.Predicate(b), $.Array($.String), a, $Maybe(c)], gets);
 
   //# keys :: StrMap a -> Array String
   //.

@@ -10,7 +10,7 @@ test('prop', function() {
 
   eq(typeof S.prop, 'function');
   eq(S.prop.length, 2);
-  eq(S.prop.toString(), 'prop :: Accessible a => String -> a -> b');
+  eq(S.prop.toString(), 'prop :: String -> a -> b');
 
   throws(function() { S.prop('xxx', [1, 2, 3]); },
          TypeError,
@@ -21,5 +21,13 @@ test('prop', function() {
   eq(S.prop('length', 'abc'), 3);
   eq(S.prop('x', Object.create({x: 1, y: 2})), 1);
   eq(S.prop('global', /x/g), true);
+
+  throws(function() { S.prop('valueOf', null); },
+         TypeError,
+         '‘prop’ expected object to have a property named ‘valueOf’; null does not');
+
+  throws(function() { S.prop('valueOf', undefined); },
+         TypeError,
+         '‘prop’ expected object to have a property named ‘valueOf’; undefined does not');
 
 });
