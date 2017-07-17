@@ -3342,6 +3342,30 @@
   S.find =
   def('find', {f: [Z.Foldable]}, [$.Predicate(a), f(a), $Maybe(a)], find);
 
+  //# partition :: (Applicative f, Foldable f, Semigroup (f b), Semigroup (f c)) => (a -> Either b c) -> f a -> Pair (f b) (f c)
+  //.
+  //. Partitions a [Foldable][] into a [`Pair`][$.Pair] of Foldables, the first
+  //. comprising all the Left values returned by the given function, the second
+  //. comprising all the Right values returned by the given function.
+  //.
+  //. ```javascript
+  //. > S.partition(S.tagBy(S.even), [1, 2, 3, 4, 5])
+  //. [[1, 3, 5], [2, 4]]
+  //. ```
+  function partition(f, foldable) {
+    var empty = Z.empty(foldable.constructor);
+    return Z.reduce(function(pair, x) {
+      return either(function(x) { return [append(x, pair[0]), pair[1]]; },
+                    function(x) { return [pair[0], append(x, pair[1])]; },
+                    f(x));
+    }, [empty, empty], foldable);
+  }
+  S.partition =
+  def('partition',
+      {f: [Z.Applicative, Z.Foldable, Z.Semigroup]},
+      [Fn(a, $Either(b, c)), f(a), $.Pair(f(b), f(c))],
+      partition);
+
   //# pluck :: (Accessible a, Functor f) => String -> f a -> f b
   //.
   //. Combines [`map`](#map) and [`prop`](#prop). `pluck(k, xs)` is equivalent
@@ -4411,6 +4435,7 @@
 }));
 
 //. [$.Array]:          v:sanctuary-js/sanctuary-def#Array
+//. [$.Pair]:           v:sanctuary-js/sanctuary-def#Pair
 //. [$.String]:         v:sanctuary-js/sanctuary-def#String
 //. [Alt]:              v:fantasyland/fantasy-land#alt
 //. [Alternative]:      v:fantasyland/fantasy-land#alternative
