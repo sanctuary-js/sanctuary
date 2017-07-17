@@ -138,13 +138,6 @@
 //. Sanctuary uses the Accessible pseudotype to represent the set of values
 //. which support property access.
 //.
-//. ### Integer pseudotype
-//.
-//. The Integer pseudotype represents integers in the range (-2^53 .. 2^53).
-//. It is a pseudotype because each Integer is represented by a Number value.
-//. Sanctuary's run-time type checking asserts that a valid Number value is
-//. provided wherever an Integer value is required.
-//.
 //. ### Type representatives
 //.
 //. What is the type of `Number`? One answer is `a -> Number`, since it's a
@@ -231,12 +224,6 @@
 
   //  Fn :: (Type, Type) -> Type
   function Fn(x, y) { return $.Function([x, y]); }
-
-  //  Pred :: Type -> Type
-  function Pred(x) { return Fn(x, $.Boolean); }
-
-  //  Thunk :: Type -> Type
-  function Thunk(x) { return $.Function([x]); }
 
   //  flip$ :: ((a, b) -> c) -> b -> a -> c
   function flip$(f) {
@@ -346,6 +333,7 @@
     $.GlobalRegExp,
     $.NonGlobalRegExp,
     $.Integer,
+    $.NonNegativeInteger,
     $Maybe($.Unknown),
     $.Pair($.Unknown, $.Unknown),
     $.RegexFlags,
@@ -478,7 +466,7 @@
 
   //. ### Classify
 
-  //# type :: Any -> { namespace :: Maybe String, name :: String, version :: Integer }
+  //# type :: Any -> { namespace :: Maybe String, name :: String, version :: NonNegativeInteger }
   //.
   //. Returns the result of parsing the [type identifier][] of the given value.
   //.
@@ -495,7 +483,7 @@
       [$.Any,
        $.RecordType({namespace: $Maybe($.String),
                      name: $.String,
-                     version: $.Integer})],
+                     version: $.NonNegativeInteger})],
       function(x) {
         var r = type.parse(type(x));
         r.namespace = toMaybe(r.namespace);
@@ -588,7 +576,7 @@
   //. > S.filter(S.lt(3), [1, 2, 3, 4, 5])
   //. [1, 2]
   //. ```
-  S.lt = def('lt', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.lt));
+  S.lt = def('lt', {a: [Z.Ord]}, [a, $.Predicate(a)], flip$(Z.lt));
 
   //# lt_ :: Ord a => a -> a -> Boolean
   //.
@@ -618,7 +606,7 @@
   //. > S.filter(S.lte(3), [1, 2, 3, 4, 5])
   //. [1, 2, 3]
   //. ```
-  S.lte = def('lte', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.lte));
+  S.lte = def('lte', {a: [Z.Ord]}, [a, $.Predicate(a)], flip$(Z.lte));
 
   //# lte_ :: Ord a => a -> a -> Boolean
   //.
@@ -648,7 +636,7 @@
   //. > S.filter(S.gt(3), [1, 2, 3, 4, 5])
   //. [4, 5]
   //. ```
-  S.gt = def('gt', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.gt));
+  S.gt = def('gt', {a: [Z.Ord]}, [a, $.Predicate(a)], flip$(Z.gt));
 
   //# gt_ :: Ord a => a -> a -> Boolean
   //.
@@ -678,7 +666,7 @@
   //. > S.filter(S.gte(3), [1, 2, 3, 4, 5])
   //. [3, 4, 5]
   //. ```
-  S.gte = def('gte', {a: [Z.Ord]}, [a, Pred(a)], flip$(Z.gte));
+  S.gte = def('gte', {a: [Z.Ord]}, [a, $.Predicate(a)], flip$(Z.gte));
 
   //# gte_ :: Ord a => a -> a -> Boolean
   //.
@@ -1212,7 +1200,7 @@
   S.filter =
   def('filter',
       {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-      [Pred(a), f(a), f(a)],
+      [$.Predicate(a), f(a), f(a)],
       Z.filter);
 
   //# filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a
@@ -1234,7 +1222,7 @@
   S.filterM =
   def('filterM',
       {m: [Z.Alternative, Z.Monad]},
-      [Pred(a), m(a), m(a)],
+      [$.Predicate(a), m(a), m(a)],
       Z.filterM);
 
   //# takeWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
@@ -1266,7 +1254,7 @@
   S.takeWhile =
   def('takeWhile',
       {f: [Z.Foldable, Z.Alternative]},
-      [Pred(a), f(a), f(a)],
+      [$.Predicate(a), f(a), f(a)],
       takeWhile);
 
   //# dropWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
@@ -1298,7 +1286,7 @@
   S.dropWhile =
   def('dropWhile',
       {f: [Z.Foldable, Z.Alternative]},
-      [Pred(a), f(a), f(a)],
+      [$.Predicate(a), f(a), f(a)],
       dropWhile);
 
   //. ### Combinator
@@ -1996,7 +1984,7 @@
   function fromMaybe_(thunk, maybe) {
     return maybe.isJust ? maybe.value : thunk();
   }
-  S.fromMaybe_ = def('fromMaybe_', {}, [Thunk(a), $Maybe(a), a], fromMaybe_);
+  S.fromMaybe_ = def('fromMaybe_', {}, [$.Thunk(a), $Maybe(a), a], fromMaybe_);
 
   //# maybeToNullable :: Maybe a -> Nullable a
   //.
@@ -2072,7 +2060,7 @@
   function maybe_(thunk, f, maybe) {
     return maybe.isJust ? f(maybe.value) : thunk();
   }
-  S.maybe_ = def('maybe_', {}, [Thunk(b), Fn(a, b), $Maybe(a), b], maybe_);
+  S.maybe_ = def('maybe_', {}, [$.Thunk(b), Fn(a, b), $Maybe(a), b], maybe_);
 
   //# justs :: Array (Maybe a) -> Array a
   //.
@@ -2718,7 +2706,7 @@
   function tagBy(pred, a) {
     return pred(a) ? Right(a) : Left(a);
   }
-  S.tagBy = def('tagBy', {}, [Pred(a), a, $Either(a, a)], tagBy);
+  S.tagBy = def('tagBy', {}, [$.Predicate(a), a, $Either(a, a)], tagBy);
 
   //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
   //.
@@ -2886,7 +2874,8 @@
   function complement(pred, x) {
     return !pred(x);
   }
-  S.complement = def('complement', {}, [Pred(a), a, $.Boolean], complement);
+  S.complement =
+  def('complement', {}, [$.Predicate(a), a, $.Boolean], complement);
 
   //# ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b
   //.
@@ -2908,7 +2897,8 @@
   function ifElse(pred, f, g, x) {
     return pred(x) ? f(x) : g(x);
   }
-  S.ifElse = def('ifElse', {}, [Pred(a), Fn(a, b), Fn(a, b), a, b], ifElse);
+  S.ifElse =
+  def('ifElse', {}, [$.Predicate(a), Fn(a, b), Fn(a, b), a, b], ifElse);
 
   //# when :: (a -> Boolean) -> (a -> a) -> a -> a
   //.
@@ -2928,7 +2918,7 @@
   function when(pred, f, x) {
     return ifElse(pred, f, I, x);
   }
-  S.when = def('when', {}, [Pred(a), Fn(a, a), a, a], when);
+  S.when = def('when', {}, [$.Predicate(a), Fn(a, a), a, a], when);
 
   //# unless :: (a -> Boolean) -> (a -> a) -> a -> a
   //.
@@ -2948,7 +2938,7 @@
   function unless(pred, f, x) {
     return ifElse(pred, I, f, x);
   }
-  S.unless = def('unless', {}, [Pred(a), Fn(a, a), a, a], unless);
+  S.unless = def('unless', {}, [$.Predicate(a), Fn(a, a), a, a], unless);
 
   //# allPass :: Array (a -> Boolean) -> a -> Boolean
   //.
@@ -2967,7 +2957,8 @@
   function allPass(preds, x) {
     return preds.every(function(p) { return p(x); });
   }
-  S.allPass = def('allPass', {}, [$.Array(Pred(a)), a, $.Boolean], allPass);
+  S.allPass =
+  def('allPass', {}, [$.Array($.Predicate(a)), a, $.Boolean], allPass);
 
   //# anyPass :: Array (a -> Boolean) -> a -> Boolean
   //.
@@ -2986,7 +2977,8 @@
   function anyPass(preds, x) {
     return preds.some(function(p) { return p(x); });
   }
-  S.anyPass = def('anyPass', {}, [$.Array(Pred(a)), a, $.Boolean], anyPass);
+  S.anyPass =
+  def('anyPass', {}, [$.Array($.Predicate(a)), a, $.Boolean], anyPass);
 
   //. ### List
   //.
@@ -3347,7 +3339,8 @@
       xs
     );
   }
-  S.find = def('find', {f: [Z.Foldable]}, [Pred(a), f(a), $Maybe(a)], find);
+  S.find =
+  def('find', {f: [Z.Foldable]}, [$.Predicate(a), f(a), $Maybe(a)], find);
 
   //# pluck :: (Accessible a, Functor f) => String -> f a -> f b
   //.
@@ -3456,7 +3449,7 @@
   S.groupBy =
   def('groupBy',
       {},
-      [Fn(a, Pred(a)), $.Array(a), $.Array($.Array(a))],
+      [Fn(a, $.Predicate(a)), $.Array(a), $.Array($.Array(a))],
       groupBy);
 
   //# reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -> f a
@@ -3644,7 +3637,7 @@
     return key in obj && pred(x = obj[key]) ? Just(x) : Nothing;
   }
   S.get =
-  def('get', {a: [Accessible]}, [Pred(b), $.String, a, $Maybe(c)], get);
+  def('get', {a: [Accessible]}, [$.Predicate(b), $.String, a, $Maybe(c)], get);
 
   //# gets :: Accessible a => (b -> Boolean) -> Array String -> a -> Maybe c
   //.
@@ -3674,7 +3667,7 @@
   S.gets =
   def('gets',
       {a: [Accessible]},
-      [Pred(b), $.Array($.String), a, $Maybe(c)],
+      [$.Predicate(b), $.Array($.String), a, $Maybe(c)],
       gets);
 
   //# keys :: StrMap a -> Array String
@@ -3998,7 +3991,14 @@
   S.parseFloat =
   def('parseFloat', {}, [$.String, $Maybe($.Number)], parseFloat_);
 
-  //# parseInt :: Integer -> String -> Maybe Integer
+  //  Radix :: Type
+  var Radix = $.NullaryType(
+    'sanctuary/Radix',
+    '',
+    function(x) { return $.Integer._test(x) && x >= 2 && x <= 36; }
+  );
+
+  //# parseInt :: Radix -> String -> Maybe Integer
   //.
   //. Takes a radix (an integer between 2 and 36 inclusive) and a string,
   //. and returns Just the number represented by the string if it does in
@@ -4020,10 +4020,6 @@
   //. Nothing
   //. ```
   function parseInt_(radix, s) {
-    if (radix < 2 || radix > 36) {
-      throw new RangeError('Radix not in [2 .. 36]');
-    }
-
     var charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.slice(0, radix);
     var pattern = new RegExp('^[' + charset + ']+$', 'i');
 
@@ -4035,7 +4031,7 @@
     return Nothing;
   }
   S.parseInt =
-  def('parseInt', {}, [$.Integer, $.String, $Maybe($.Integer)], parseInt_);
+  def('parseInt', {}, [Radix, $.String, $Maybe($.Integer)], parseInt_);
 
   //# parseJson :: (a -> Boolean) -> String -> Maybe b
   //.
@@ -4057,7 +4053,7 @@
     return Z.filter(pred, encase(JSON.parse, s));
   }
   S.parseJson =
-  def('parseJson', {}, [Pred(a), $.String, $Maybe(b)], parseJson);
+  def('parseJson', {}, [$.Predicate(a), $.String, $Maybe(b)], parseJson);
 
   //. ### RegExp
 
