@@ -11,7 +11,7 @@ test('get', function() {
 
   eq(typeof S.get, 'function');
   eq(S.get.length, 3);
-  eq(S.get.toString(), 'get :: Accessible a => (b -> Boolean) -> String -> a -> Maybe c');
+  eq(S.get.toString(), 'get :: (b -> Boolean) -> String -> a -> Maybe c');
 
   eq(S.get(S.is(Number), 'x', {x: 0, y: 42}), S.Just(0));
   eq(S.get(S.is(Number), 'y', {x: 0, y: 42}), S.Just(42));
@@ -21,5 +21,8 @@ test('get', function() {
 
   eq(S.get(S.is(RegExp), 'x', {x: vm.runInNewContext('/.*/')}), S.Just(/.*/));
   eq(S.get(S.is(vm.runInNewContext('RegExp')), 'x', {x: /.*/}), S.Just(/.*/));
+
+  eq(S.get(S.K(true), 'valueOf', null), S.Nothing);
+  eq(S.get(S.K(true), 'valueOf', undefined), S.Nothing);
 
 });

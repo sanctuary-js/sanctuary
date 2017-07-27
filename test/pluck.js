@@ -10,7 +10,7 @@ test('pluck', function() {
 
   eq(typeof S.pluck, 'function');
   eq(S.pluck.length, 2);
-  eq(S.pluck.toString(), 'pluck :: (Accessible a, Functor f) => String -> f a -> f b');
+  eq(S.pluck.toString(), 'pluck :: Functor f => String -> f a -> f b');
 
   throws(function() { S.pluck('a', [{a: 1}, {b: 2}]); },
          TypeError,
@@ -21,5 +21,13 @@ test('pluck', function() {
 
   eq(S.pluck('x', S.Nothing), S.Nothing);
   eq(S.pluck('x', S.Just({x: 1, y: 2, z: 3})), S.Just(1));
+
+  throws(function() { S.pluck('valueOf', [null]); },
+         TypeError,
+         '‘pluck’ expected object to have a property named ‘valueOf’; null does not');
+
+  throws(function() { S.pluck('valueOf', [undefined]); },
+         TypeError,
+         '‘pluck’ expected object to have a property named ‘valueOf’; undefined does not');
 
 });
