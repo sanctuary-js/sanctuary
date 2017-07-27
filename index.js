@@ -110,10 +110,11 @@
 //. the `map` method takes an implicit argument `x` in addition to the explicit
 //. argument `y`. The type of the value upon which a method is invoked appears
 //. at the beginning of the signature, separated from the arguments and return
-//. value by a squiggly arrow (`~>`). The type of the `map` method of the Maybe
-//. type is written `Maybe a ~> (a -> b) -> Maybe b`. One could read this as:
+//. value by a squiggly arrow (`~>`). The type of the `fantasy-land/map` method
+//. of the Maybe type is written `Maybe a ~> (a -> b) -> Maybe b`. One could
+//. read this as:
 //.
-//. _When the `map` method is invoked on a value of type `Maybe a`
+//. _When the `fantasy-land/map` method is invoked on a value of type `Maybe a`
 //. (for any type `a`) with an argument of type `a -> b` (for any type `b`),
 //. it returns a value of type `Maybe b`._
 //.
