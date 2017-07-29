@@ -10,6 +10,7 @@
   "scripts": {
     "test": "make lint test"
   },
+  "types": "index.d.ts",
   "dependencies": {
     "sanctuary-def": "0.13.0",
     "sanctuary-type-classes": "6.0.0",
@@ -38,6 +39,7 @@
   "files": [
     "/LICENSE",
     "/README.md",
+    "/index.d.ts",
     "/index.js",
     "/package.json"
   ]
