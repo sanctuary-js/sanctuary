@@ -352,8 +352,8 @@ export function parseFloat(s: string): Maybe<number>;
 export function parseInt(radix: Integer, s: string): Maybe<Integer>;
 export function parseInt(radix: Integer): (s: string) => Maybe<Integer>;
 
-export function parseJson<A, B>(pred: (A) => boolean, s: string): Maybe<B>;
-export function parseJson<A, B>(pred: (A) => boolean): (s: string) => Maybe<B>;
+export function parseJson<A>(pred: (any) => boolean, s: string): Maybe<A>;
+export function parseJson<A>(pred: (any) => boolean): (s: string) => Maybe<A>;
 
 //  RegExp
 
