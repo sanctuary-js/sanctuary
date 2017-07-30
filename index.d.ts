@@ -145,8 +145,31 @@ export function toString(x: any): string;
 
 //  Fantasy Land
 
+export function equals<A>(x: null, y: null): boolean;
+export function equals<A>(x: null): (y: null) => boolean;
+export function equals<A>(x: undefined, y: undefined): boolean;
+export function equals<A>(x: undefined): (y: undefined) => boolean;
+export function equals<A>(x: boolean, y: boolean): boolean;
+export function equals<A>(x: boolean): (y: boolean) => boolean;
 export function equals<A>(x: number, y: number): boolean;
 export function equals<A>(x: number): (y: number) => boolean;
+export function equals<A>(x: Date, y: Date): boolean;
+export function equals<A>(x: Date): (y: Date) => boolean;
+export function equals<A>(x: RegExp, y: RegExp): boolean;
+export function equals<A>(x: RegExp): (y: RegExp) => boolean;
+export function equals<A>(x: string, y: string): boolean;
+export function equals<A>(x: string): (y: string) => boolean;
+export function equals<A>(x: Array<A>, y: Array<A>): boolean;
+export function equals<A>(x: Array<A>): (y: Array<A>) => boolean;
+export function equals<A>(x: IArguments, y: IArguments): boolean;
+export function equals<A>(x: IArguments): (y: IArguments) => boolean;
+export function equals<A>(x: Error, y: Error): boolean;
+export function equals<A>(x: Error): (y: Error) => boolean;
+//  XXX: This is too general. Can we match "plain" objects only?
+//  export function equals<A>(x: Object, y: Object): boolean;
+//  export function equals<A>(x: Object): (y: Object) => boolean;
+export function equals<A>(x: Function, y: Function): boolean;
+export function equals<A>(x: Function): (y: Function) => boolean;
 export function equals<A>(x: Setoid<A>, y: Setoid<A>): boolean;
 export function equals<A>(x: Setoid<A>): (y: Setoid<A>) => boolean;
 
