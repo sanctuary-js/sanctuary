@@ -136,7 +136,7 @@ export function Right<A, B>(value: B): Either<A, B>;
 //  Placeholder
 
 interface Placeholder {
-  '@@functional/placeholder': boolean
+  '@@functional/placeholder': true
 }
 
 export const __: Placeholder;
