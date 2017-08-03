@@ -395,12 +395,18 @@ export function concat<A>(p: Semigroup<A>): (q: Semigroup<A>)                   
 
 export function empty<A>(p: TypeRep): Monoid<A>;
 
-export function map<A>   (p: Placeholder,   r: Array<A>):   <B>(p: (q: A) => B) => Array<B>;
-export function map<A, B>(p: (q: A) => B,   r: Array<A>):                          Array<B>;
-export function map<A, B>(p: (q: A) => B): (r: Array<A>)                        => Array<B>;
-export function map<A>   (p: Placeholder,   r: Functor<A>): <B>(p: (q: A) => B) => Functor<B>;
-export function map<A, B>(p: (q: A) => B,   r: Functor<A>):                        Functor<B>;
-export function map<A, B>(p: (q: A) => B): (r: Functor<A>)                      => Functor<B>;
+export function map<A>   (p: Placeholder,   r: Array<A>):       <B>(p: (q: A) => B) => Array<B>;
+export function map<A, B>(p: (q: A) => B,   r: Array<A>):                              Array<B>;
+export function map<A, B>(p: (q: A) => B): (r: Array<A>)                            => Array<B>;
+export function map<A>   (p: Placeholder,   r: Maybe<A>):       <B>(p: (q: A) => B) => Maybe<B>;
+export function map<A, B>(p: (q: A) => B,   r: Maybe<A>):                              Maybe<B>;
+export function map<A, B>(p: (q: A) => B): (r: Maybe<A>)                            => Maybe<B>;
+export function map<A>   (p: Placeholder,   r: Either<any, A>): <B>(p: (q: A) => B) => Either<any, B>;
+export function map<A, B>(p: (q: A) => B,   r: Either<any, A>):                        Either<any, B>;
+export function map<A, B>(p: (q: A) => B): (r: Either<any, A>)                      => Either<any, B>;
+export function map<A>   (p: Placeholder,   r: Functor<A>):     <B>(p: (q: A) => B) => Functor<B>;
+export function map<A, B>(p: (q: A) => B,   r: Functor<A>):                            Functor<B>;
+export function map<A, B>(p: (q: A) => B): (r: Functor<A>)                          => Functor<B>;
 
 export function bimap<A, B, C, D>(p: Placeholder, r: Placeholder,   t: Bifunctor<A, C>): AwaitingTwo<(q: A) => B, (s: C) => D, Bifunctor<B, D>>;
 export function bimap<A, B, C, D>(p: Placeholder, r: (s: C) => D,   t: Bifunctor<A, C>):         (p: (q: A) => B)           => Bifunctor<B, D>;
@@ -543,6 +549,52 @@ export function chain<A, B>(p: (q: A) => Array<B>,   r: Array<A>):   Array<B>;
 export function chain<A, B>(p: (q: A) => Array<B>): (r: Array<A>) => Array<B>;
 export function chain<A, B>(p: (q: A) => Chain<B>,   r: Chain<A>):   Chain<B>;
 export function chain<A, B>(p: (q: A) => Chain<B>): (r: Chain<A>) => Chain<B>;
+
+export function join<A>(p: Array<Array<A>>): Array<A>;
+export function join<A>(p: Maybe<Maybe<A>>): Maybe<A>;
+export function join<A>(p: Chain<Chain<A>>): Chain<A>;
+
+export function chainRec<A>   (p: Placeholder, q: Placeholder, s: A): {
+  <B>(p: Placeholder, q: (r: A) =>    Array<Either<A, B>>): (p: TypeRep) =>    Array<B>;
+  <B>(p: Placeholder, q: (r: A) =>    Maybe<Either<A, B>>): (p: TypeRep) =>    Maybe<B>;
+  <B>(p: Placeholder, q: (r: A) => ChainRec<Either<A, B>>): (p: TypeRep) => ChainRec<B>;
+  <B>(p: TypeRep,     q: (r: A) =>    Array<Either<A, B>>):                    Array<B>;
+  <B>(p: TypeRep,     q: (r: A) =>    Maybe<Either<A, B>>):                    Maybe<B>;
+  <B>(p: TypeRep,     q: (r: A) => ChainRec<Either<A, B>>):                 ChainRec<B>;
+  <B>(p: TypeRep):   (q: (r: A) =>    Array<Either<A, B>>)               =>    Array<B>;
+  <B>(p: TypeRep):   (q: (r: A) =>    Maybe<Either<A, B>>)               =>    Maybe<B>;
+  <B>(p: TypeRep):   (q: (r: A) => ChainRec<Either<A, B>>)               => ChainRec<B>;
+}
+export function chainRec<A, B>(p: TypeRep, q: (r: A) =>    Array<Either<A, B>>,   s: A):      Array<B>;
+export function chainRec<A, B>(p: TypeRep, q: (r: A) =>    Maybe<Either<A, B>>,   s: A):      Maybe<B>;
+export function chainRec<A, B>(p: TypeRep, q: (r: A) => ChainRec<Either<A, B>>,   s: A):   ChainRec<B>;
+export function chainRec<A, B>(p: TypeRep, q: (r: A) =>    Array<Either<A, B>>): (s: A) =>    Array<B>;
+export function chainRec<A, B>(p: TypeRep, q: (r: A) =>    Maybe<Either<A, B>>): (s: A) =>    Maybe<B>;
+export function chainRec<A, B>(p: TypeRep, q: (r: A) => ChainRec<Either<A, B>>): (s: A) => ChainRec<B>;
+export function chainRec      (p: TypeRep): {
+  <A, B>(q: (r: A) =>    Array<Either<A, B>>,   s: A):      Array<B>;
+  <A, B>(q: (r: A) =>    Maybe<Either<A, B>>,   s: A):      Maybe<B>;
+  <A, B>(q: (r: A) => ChainRec<Either<A, B>>,   s: A):   ChainRec<B>;
+  <A, B>(q: (r: A) =>    Array<Either<A, B>>): (s: A) =>    Array<B>;
+  <A, B>(q: (r: A) =>    Maybe<Either<A, B>>): (s: A) =>    Maybe<B>;
+  <A, B>(q: (r: A) => ChainRec<Either<A, B>>): (s: A) => ChainRec<B>;
+}
+
+//  Combinator
+
+export function I<A>(p: A): A;
+
+export function K<A>(p: Placeholder, q: any): (p: A) => A;
+export function K<A>(p: A,           q: any):           A;
+export function K<A>(p: A):         (q: any)         => A;
+
+export function A<A>   (p: Placeholder,   r: A): <B>(p: (q: A) => B) => B;
+export function A<A, B>(p: (q: A) => B,   r: A):                        B;
+export function A<A, B>(p: (q: A) => B): (r: A)                      => B;
+
+export function T<A, B>(p: Placeholder,   q: (r: A) => B): (p: A) => B;
+export function T<A, B>(p: A,             q: (r: A) => B):           B;
+export function T<A, B>(p: A):           (q: (r: A) => B)         => B;
 
 //  Number
 
