@@ -3827,24 +3827,49 @@
       [f($.FiniteNumber), $.FiniteNumber],
       product);
 
-  //# div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber
+  //# div :: NonZeroFiniteNumber -> (FiniteNumber -> FiniteNumber)
+  //.
+  //. Takes a non-zero finite number `n` and returns the _divide by `n`_
+  //. function.
+  //.
+  //. See also [`div_`](#div_).
+  //.
+  //. ```javascript
+  //. > S.map(S.div(2), [0, 1, 2, 3])
+  //. [0, 0.5, 1, 1.5]
+  //. ```
+  S.div =
+  def('div',
+      {},
+      [$.NonZeroFiniteNumber, Fn($.FiniteNumber, $.FiniteNumber)],
+      flip$(div_));
+
+  //# div_ :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber
   //.
   //. Returns the result of dividing its first argument (a finite number) by
   //. its second argument (a non-zero finite number).
   //.
+  //. See also [`div`](#div).
+  //.
   //. ```javascript
-  //. > S.div(7, 2)
+  //. > S.div_(7, 2)
   //. 3.5
+  //.
+  //. > S.map(S.div_(24), [1, 2, 3, 4])
+  //. [24, 12, 8, 6]
   //. ```
-  function div(x, y) {
+  function div_(x, y) {
     return x / y;
   }
-  S.div =
-  def('div', {}, [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber], div);
+  S.div_ =
+  def('div_',
+      {},
+      [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber],
+      div_);
 
   //# pow :: FiniteNumber -> (FiniteNumber -> FiniteNumber)
   //.
-  //. Takes a finite number `n` and returns the _`n` squared_ function.
+  //. Takes a finite number `n` and returns the _power of `n`_ function.
   //.
   //. See also [`pow_`](#pow_).
   //.
