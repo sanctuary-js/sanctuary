@@ -3842,6 +3842,38 @@
   S.div =
   def('div', {}, [$.FiniteNumber, $.NonZeroFiniteNumber, $.FiniteNumber], div);
 
+  //# pow :: FiniteNumber -> (FiniteNumber -> FiniteNumber)
+  //.
+  //. Takes a finite number `n` and returns the _`n` squared_ function.
+  //.
+  //. See also [`pow_`](#pow_).
+  //.
+  //. ```javascript
+  //. > S.map(S.pow(2), [-3, -2, -1, 0, 1, 2, 3])
+  //. [9, 4, 1, 0, 1, 4, 9]
+  //.
+  //. > S.map(S.pow(0.5), [1, 4, 9, 16, 25])
+  //. [1, 2, 3, 4, 5]
+  //. ```
+  S.pow =
+  def('pow',
+      {},
+      [$.FiniteNumber, Fn($.FiniteNumber, $.FiniteNumber)],
+      flip$(Math.pow));
+
+  //# pow_ :: FiniteNumber -> FiniteNumber -> FiniteNumber
+  //.
+  //. Curried version of [`Math.pow`][].
+  //.
+  //. See also [`pow`](#pow).
+  //.
+  //. ```javascript
+  //. > S.map(S.pow_(10), [-3, -2, -1, 0, 1, 2, 3])
+  //. [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+  //. ```
+  S.pow_ =
+  def('pow_', {}, [$.FiniteNumber, $.FiniteNumber, $.FiniteNumber], Math.pow);
+
   //# mean :: Foldable f => f FiniteNumber -> Maybe FiniteNumber
   //.
   //. Returns the mean of the given array of (finite) numbers.
@@ -4431,6 +4463,7 @@
 //. [Semigroupoid]:     v:fantasyland/fantasy-land#semigroupoid
 //. [Traversable]:      v:fantasyland/fantasy-land#traversable
 //. [UnaryType]:        v:sanctuary-js/sanctuary-def#UnaryType
+//. [`Math.pow`]:       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow
 //. [`Z.alt`]:          v:sanctuary-js/sanctuary-type-classes#alt
 //. [`Z.ap`]:           v:sanctuary-js/sanctuary-type-classes#ap
 //. [`Z.apFirst`]:      v:sanctuary-js/sanctuary-type-classes#apFirst
