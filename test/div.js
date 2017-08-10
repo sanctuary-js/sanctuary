@@ -8,14 +8,9 @@ var eq = require('./internal/eq');
 test('div', function() {
 
   eq(typeof S.div, 'function');
-  eq(S.div.length, 2);
-  eq(S.div.toString(), 'div :: FiniteNumber -> NonZeroFiniteNumber -> FiniteNumber');
+  eq(S.div.length, 1);
+  eq(S.div.toString(), 'div :: NonZeroFiniteNumber -> (FiniteNumber -> FiniteNumber)');
 
-  eq(S.div(8, 2), 4);
-  eq(S.div(8, -2), -4);
-  eq(S.div(-8, -2), 4);
-  eq(S.div(1.5, 2), 0.75);
-  eq(S.div(1.5, -2), -0.75);
-  eq(S.div(-1.5, -2), 0.75);
+  eq(S.map(S.div(2), [0, 1, 2, 3]), [0, 0.5, 1, 1.5]);
 
 });
