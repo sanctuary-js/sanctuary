@@ -3757,6 +3757,51 @@
   }
   S.singleton = def('singleton', {}, [$.String, a, $.StrMap(a)], singleton);
 
+  //# insert :: String -> a -> StrMap a -> StrMap a
+  //.
+  //. Takes a string, a value of any type, and a string map, and returns a
+  //. string map comprising all the entries of the given string map plus the
+  //. entry specified by the first two arguments (which takes precedence).
+  //.
+  //. Equivalent to Haskell's `insert` function. Similar to Clojure's `assoc`
+  //. function.
+  //.
+  //. ```javascript
+  //. > S.insert('c', 3, {a: 1, b: 2})
+  //. {a: 1, b: 2, c: 3}
+  //.
+  //. > S.insert('a', 4, {a: 1, b: 2})
+  //. {a: 4, b: 2}
+  //. ```
+  function insert(key, val, strMap) {
+    return Z.concat(strMap, singleton(key, val));
+  }
+  S.insert =
+  def('insert', {}, [$.String, a, $.StrMap(a), $.StrMap(a)], insert);
+
+  //# remove :: String -> StrMap a -> StrMap a
+  //.
+  //. Takes a string and a string map, and returns a string map comprising all
+  //. the entries of the given string map except the one whose key matches the
+  //. given string (if such a key exists).
+  //.
+  //. Equivalent to Haskell's `delete` function. Similar to Clojure's `dissoc`
+  //. function.
+  //.
+  //. ```javascript
+  //. > S.remove('c', {a: 1, b: 2, c: 3})
+  //. {a: 1, b: 2}
+  //.
+  //. > S.remove('c', {})
+  //. {}
+  //. ```
+  function remove(key, strMap) {
+    var result = Z.concat(strMap, {});
+    delete result[key];
+    return result;
+  }
+  S.remove = def('remove', {}, [$.String, $.StrMap(a), $.StrMap(a)], remove);
+
   //# keys :: StrMap a -> Array String
   //.
   //. Returns the keys of the given string map, in arbitrary order.
