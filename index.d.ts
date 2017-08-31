@@ -532,8 +532,8 @@ export function apSecond<A>(p: Array<A>): <B>(q: Array<B>) => Array<B>;
 export function apSecond<A, B>(p: Apply<A>,   q: Apply<B>):   Apply<B>;
 export function apSecond<A>(p: Apply<A>): <B>(q: Apply<B>) => Apply<B>;
 
-export function of<A>(p: TypeRep,   q: A):   (any) => A;
-export function of<A>(p: TypeRep): (q: A) => (any) => A;
+export function of<A>(p: TypeRep,   q: A):   (a: any) => A;
+export function of<A>(p: TypeRep): (q: A) => (a: any) => A;
 export function of<A>(p: TypeRep,   q: A):   Applicative<A>;
 export function of<A>(p: TypeRep): (q: A) => Applicative<A>;
 
@@ -591,9 +591,9 @@ export function parseInt(radix: Placeholder, s: string): (radix: Integer) => May
 export function parseInt(radix: Integer,   s: string):   Maybe<Integer>;
 export function parseInt(radix: Integer): (s: string) => Maybe<Integer>;
 
-export function parseJson<A>(pred: Placeholder,        s: string): (pred: (any) => boolean) => Maybe<A>;
-export function parseJson<A>(pred: (any) => boolean,   s: string):   Maybe<A>;
-export function parseJson<A>(pred: (any) => boolean): (s: string) => Maybe<A>;
+export function parseJson<A>(pred: Placeholder,        s: string): (pred: (a: any) => boolean) => Maybe<A>;
+export function parseJson<A>(pred: (a: any) => boolean,   s: string):   Maybe<A>;
+export function parseJson<A>(pred: (a: any) => boolean): (s: string) => Maybe<A>;
 
 //  RegExp
 
