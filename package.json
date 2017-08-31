@@ -34,6 +34,10 @@
     "remember-bower": "0.1.x",
     "sanctuary-style": "1.0.x",
     "transcribe": "1.0.x",
+    "tslint": "5.7.0",
+    "tslint-config-standard": "6.0.1",
+    "typescript": "2.5.2",
+    "typings-checker": "2.0.0",
     "xyz": "2.0.x"
   },
   "files": [
