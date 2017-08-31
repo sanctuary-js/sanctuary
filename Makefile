@@ -36,11 +36,11 @@ lint:
 	$(ESLINT) -- index.js karma.conf.js scripts/version-urls test
 	$(TSLINT) \
 	  --type-check \
-	  --project \
-	  tsconfig.json
+	  --project tsconfig.json \
+	  -- index.d.ts
 	$(TSLINT) \
-	  --project \
-	  test/typescript/tsconfig.json
+	  --project test/typescript/tsconfig.json \
+	  -- test/typescript/*.ts
 	$(REMEMBER_BOWER) $(shell pwd)
 	rm -f README.md
 	VERSION=0.0.0 make README.md
