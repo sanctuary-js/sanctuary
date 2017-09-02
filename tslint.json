@@ -7,6 +7,15 @@
     "semicolon": false,
     "space-before-function-paren": false,
     "typedef-whitespace": false,
-    "unified-signatures": false
+    "unified-signatures": false,
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-type",
+      "check-typecast",
+      "check-preblock"
+    ]
   }
 }

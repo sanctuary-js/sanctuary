@@ -580,6 +580,12 @@ export function chainRec      (p: TypeRep): {
   <A, B>(q: (r: A) => ChainRec<Either<A, B>>): (s: A) => ChainRec<B>;
 }
 
+//  TODO: Fantasy Land / extend, extract, contramap
+
+export function filter<A>(p: (q: A) => boolean,   r: Array<A>):   Array<A>;
+export function filter<A>(p: (q: A) => boolean): (r: Array<A>) => Array<A>;
+//  TODO: filter non-array types
+
 //  Combinator
 
 export function I<A>(p: A): A;
@@ -595,6 +601,52 @@ export function A<A, B>(p: (q: A) => B): (r: A)                      => B;
 export function T<A, B>(p: Placeholder,   q: (r: A) => B): (p: A) => B;
 export function T<A, B>(p: A,             q: (r: A) => B):           B;
 export function T<A, B>(p: A):           (q: (r: A) => B)         => B;
+
+//  Function
+
+export function curry2<A, B, C>(fn: (a: A, b: B) => C, p: A): (q: B) => C;
+export function curry2<A, B, C>(fn: (a: A, b: B) => C):       AwaitingTwo<A, B, C>;
+
+export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D, p: A, q: B): (r: C) => D;
+export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D, p: A):       AwaitingTwo<B, C, D>;
+export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D):             AwaitingThree<A, B, C, D>;
+//  TODO: curry4, curry5 (AwaitingFive?!)
+
+export function flip<A, B, C>(fn: (a: A) => (b: B) => C, p: B, q: A): C;
+
+export function flip_<A, B, C>(fn: (a: A, b: B) => C, p: B, q: A): C;
+
+//  TODO: Composition
+
+//  TODO: Maybe
+
+//  TODO: Either
+
+//  Logic
+
+export function and(x: boolean, y: boolean): boolean;
+
+export function or(x: boolean, y: boolean): boolean;
+
+export function not(x: boolean): boolean;
+
+export function complement<A>(pred: (q: A) => boolean, a: A): boolean;
+
+export function ifElse<A, B>(pred: (q: A) => boolean, fIf: (r: A) => B, fElse: (r: A) => B, a: A): B;
+
+export function when<A>(pred: (q: A) => boolean, fWhen: (r: A) => A, a: A): A;
+
+export function unless<A>(pred: (q: A) => boolean, fWhen: (r: A) => A, a: A): A;
+
+export function allPass<A>(preds: Array<(q: A) => boolean>, a: A): boolean;
+
+export function anyPass<A>(preds: Array<(q: A) => boolean>, a: A): boolean;
+
+//  TODO: List
+
+//  TODO: Array
+
+//  TODO: Object
 
 //  Number
 
