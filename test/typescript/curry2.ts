@@ -1,19 +1,20 @@
-import {and, curry2} from '../..';
+import {__, curry2} from '../..';
 
-// $ExpectType boolean
-curry2(and)(false)(true);
+function add(a: number, b: number): number {
+  return a + b;
+}
 
-// $ExpectType boolean
-curry2(and, false)(true);
+// $ExpectType number
+curry2(add)(1)(2);
 
-// $ExpectType boolean
-curry2(and)(false, true);
+// $ExpectType number
+curry2(add, 1)(2);
 
-// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'boolean'.
-curry2(and)('x');
+// $ExpectType number
+curry2(add)(__, 2)(1);
 
-// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'boolean'.
-curry2(and)(false)('x');
+// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
+curry2(add)('x');
 
-// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'boolean'.
-curry2(and, false)('x');
+// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
+curry2(add)(1)('x');

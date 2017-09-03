@@ -13,6 +13,9 @@ curried(1)(2)(3);
 curried(1, 2)(3);
 
 // $ExpectType number
+curried(1)(2, 3);
+
+// $ExpectType number
 curried(1, 2, 3);
 
 // $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.

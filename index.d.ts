@@ -624,23 +624,49 @@ export function flip_<A, B, C>(fn: (a: A, b: B) => C, p: B, q: A): C;
 
 //  Logic
 
-export function and(x: boolean, y: boolean): boolean;
+export type Predicate<A> = (a: A) => boolean;
+export type PredicateArray<A> = Array<Predicate<A>>
 
-export function or(x: boolean, y: boolean): boolean;
+export function and(x: boolean,     y: boolean):                 boolean;
+export function and(x: boolean):   (y: boolean)               => boolean;
+export function and(p: Placeholder, y: boolean): (x: boolean) => boolean;
+
+export function or(x: boolean,     y: boolean):                 boolean;
+export function or(x: boolean):   (y: boolean)               => boolean;
+export function or(p: Placeholder, y: boolean): (x: boolean) => boolean;
 
 export function not(x: boolean): boolean;
 
-export function complement<A>(pred: (q: A) => boolean, a: A): boolean;
+export function complement<A>(pred: Predicate<A>):                          Predicate<A>;
+export function complement<A>(pred: Predicate<A>, a: A):                         boolean;
+export function complement<A>(p: Placeholder,     a: A): (pred: Predicate<A>) => boolean;
 
 export function ifElse<A, B>(pred: (q: A) => boolean, fIf: (r: A) => B, fElse: (r: A) => B, a: A): B;
+//  TODO: curried ifElse
 
-export function when<A>(pred: (q: A) => boolean, fWhen: (r: A) => A, a: A): A;
+export function when<A>(pred: Predicate<A>, fWhen: (r: A) => A,   a: A):                                        A;
+export function when<A>(pred: Predicate<A>, fWhen: (r: A) => A):         (a: A)                              => A;
+export function when<A>(pred: Predicate<A>, fWhen: Placeholder,   a: A): (fWhen: (r: A) => A)                => A;
+export function when<A>(pred: Placeholder,  fWhen: (r: A) => A,   a: A): (pred: Predicate<A>)                => A;
+export function when<A>(pred: Predicate<A>):                             AwaitingTwo<(r: A) => A,  A,           A>;
+export function when<A>(pred: Placeholder,  fWhen: (r: A) => A):         AwaitingTwo<Predicate<A>, A,           A>;
+export function when<A>(pred: Placeholder,  fWhen: Placeholder,   a: A): AwaitingTwo<Predicate<A>, (r: A) => A, A>;
 
-export function unless<A>(pred: (q: A) => boolean, fWhen: (r: A) => A, a: A): A;
+export function unless<A>(pred: Predicate<A>, fUnless: (r: A) => A,   a: A):                                        A;
+export function unless<A>(pred: Predicate<A>, fUnless: (r: A) => A):         (a: A)                              => A;
+export function unless<A>(pred: Predicate<A>, fUnless: Placeholder,   a: A): (fUnless: (r: A) => A)              => A;
+export function unless<A>(pred: Placeholder,  fUnless: (r: A) => A,   a: A): (pred: Predicate<A>)                => A;
+export function unless<A>(pred: Predicate<A>):                               AwaitingTwo<(r: A) => A,  A,           A>;
+export function unless<A>(pred: Placeholder,  fUnless: (r: A) => A):         AwaitingTwo<Predicate<A>, A,           A>;
+export function unless<A>(pred: Placeholder,  fUnless: Placeholder,   a: A): AwaitingTwo<Predicate<A>, (r: A) => A, A>;
 
-export function allPass<A>(preds: Array<(q: A) => boolean>, a: A): boolean;
+export function allPass<A>(preds: PredicateArray<A>):                                Predicate<A>;
+export function allPass<A>(preds: PredicateArray<A>, a: A):                               boolean;
+export function allPass<A>(p: Placeholder,           a: A): (preds: PredicateArray<A>) => boolean;
 
-export function anyPass<A>(preds: Array<(q: A) => boolean>, a: A): boolean;
+export function anyPass<A>(preds: PredicateArray<A>):                                Predicate<A>;
+export function anyPass<A>(preds: PredicateArray<A>, a: A):                               boolean;
+export function anyPass<A>(p: Placeholder,           a: A): (preds: PredicateArray<A>) => boolean;
 
 //  TODO: List
 
