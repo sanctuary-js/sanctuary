@@ -610,13 +610,43 @@ export function curry2<A, B, C>(fn: (a: A, b: B) => C):       AwaitingTwo<A, B, 
 export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D, p: A, q: B): (r: C) => D;
 export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D, p: A):       AwaitingTwo<B, C, D>;
 export function curry3<A, B, C, D>(fn: (a: A, b: B, c: C) => D):             AwaitingThree<A, B, C, D>;
-//  TODO: curry4, curry5 (AwaitingFive?!)
 
-export function flip<A, B, C>(fn: (a: A) => (b: B) => C, p: B, q: A): C;
+//  TODO: Full currying support
+export function curry4<A, B, C, D, E>(fn: (a: A, b: B, c: C, d: D) => E): (a: A) => (b: B) => (c: C) => (d: D) => E;
 
-export function flip_<A, B, C>(fn: (a: A, b: B) => C, p: B, q: A): C;
+//  TODO: Full currying support (needs automation)
+export function curry5<A, B, C, D, E, F>(fn: (a: A, b: B, c: C, d: D, e: E) => F): (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => F;
 
-//  TODO: Composition
+//  TODO: Placeholder support
+export function flip<A, B, C>(fn: (a: A) => (b: B) => C,   p: B,     q: A):   C;
+export function flip<A, B, C>(fn: (a: A) => (b: B) => C,   p: B):   (q: A) => C;
+export function flip<A, B, C>(fn: (a: A) => (b: B) => C): (p: B) => (q: A) => C;
+
+//  TODO: Placeholder support
+export function flip_<A, B, C>(fn: (a: A, b: B) => C,   p: B,     q: A):   C;
+export function flip_<A, B, C>(fn: (a: A, b: B) => C,   p: B):   (q: A) => C;
+export function flip_<A, B, C>(fn: (a: A, b: B) => C): (p: B) => (q: A) => C;
+
+//  Composition
+
+//  TODO: Full currying support
+export function compose<A, B, C>(f: (b: B) => C,   g: (a: A) => B,     x: A):   C;
+export function compose<A, B, C>(f: (b: B) => C,   g: (a: A) => B):   (x: A) => C;
+export function compose<A, B, C>(f: (b: B) => C): (g: (a: A) => B) => (x: A) => C;
+
+export function pipe<A>(fns: Array<(a: A) => A>,   x: A):                              A;
+export function pipe<A>(fns: Array<(a: A) => A>): (x: A)                            => A;
+export function pipe<A>(fns: Placeholder,          x: A): (fns: Array<(a: A) => A>) => A;
+
+//  TODO: Full currying support
+export function on<A, B, C>(f: (x: B) => (y: B) => C,             g: (x: A) => B, x: A, y: A):       C;
+export function on<A, B, C>(f: (x: B) => (y: B) => C,             g: (x: A) => B): AwaitingTwo<A, A, C>;
+export function on<A, B, C>(f: (x: B) => (y: B) => C): AwaitingThree<(x: A) => B,              A, A, C>;
+
+//  TODO: Full currying support
+export function on_<A, B, C>(f: (x: B, y: B) => C,             g: (x: A) => B, x: A, y: A):       C;
+export function on_<A, B, C>(f: (x: B, y: B) => C,             g: (x: A) => B): AwaitingTwo<A, A, C>;
+export function on_<A, B, C>(f: (x: B, y: B) => C): AwaitingThree<(x: A) => B,              A, A, C>;
 
 //  TODO: Maybe
 
@@ -629,20 +659,21 @@ export type PredicateArray<A> = Array<Predicate<A>>
 
 export function and(x: boolean,     y: boolean):                 boolean;
 export function and(x: boolean):   (y: boolean)               => boolean;
-export function and(p: Placeholder, y: boolean): (x: boolean) => boolean;
+export function and(x: Placeholder, y: boolean): (x: boolean) => boolean;
 
 export function or(x: boolean,     y: boolean):                 boolean;
 export function or(x: boolean):   (y: boolean)               => boolean;
-export function or(p: Placeholder, y: boolean): (x: boolean) => boolean;
+export function or(x: Placeholder, y: boolean): (x: boolean) => boolean;
 
 export function not(x: boolean): boolean;
 
 export function complement<A>(pred: Predicate<A>):                          Predicate<A>;
 export function complement<A>(pred: Predicate<A>, a: A):                         boolean;
-export function complement<A>(p: Placeholder,     a: A): (pred: Predicate<A>) => boolean;
+export function complement<A>(pred: Placeholder,  a: A): (pred: Predicate<A>) => boolean;
 
-export function ifElse<A, B>(pred: (q: A) => boolean, fIf: (r: A) => B, fElse: (r: A) => B, a: A): B;
-//  TODO: curried ifElse
+//  TODO: Full currying support
+export function ifElse<A, B>(pred: (q: A) => boolean,   fIf: (r: A) => B,     fElse: (r: A) => B,     a: A):   B;
+export function ifElse<A, B>(pred: (q: A) => boolean): (fIf: (r: A) => B) => (fElse: (r: A) => B) => (a: A) => B;
 
 export function when<A>(pred: Predicate<A>, fWhen: (r: A) => A,   a: A):                                        A;
 export function when<A>(pred: Predicate<A>, fWhen: (r: A) => A):         (a: A)                              => A;
@@ -662,11 +693,11 @@ export function unless<A>(pred: Placeholder,  fUnless: Placeholder,   a: A): Awa
 
 export function allPass<A>(preds: PredicateArray<A>):                                Predicate<A>;
 export function allPass<A>(preds: PredicateArray<A>, a: A):                               boolean;
-export function allPass<A>(p: Placeholder,           a: A): (preds: PredicateArray<A>) => boolean;
+export function allPass<A>(preds: Placeholder,       a: A): (preds: PredicateArray<A>) => boolean;
 
 export function anyPass<A>(preds: PredicateArray<A>):                                Predicate<A>;
 export function anyPass<A>(preds: PredicateArray<A>, a: A):                               boolean;
-export function anyPass<A>(p: Placeholder,           a: A): (preds: PredicateArray<A>) => boolean;
+export function anyPass<A>(preds: Placeholder,       a: A): (preds: PredicateArray<A>) => boolean;
 
 //  TODO: List
 

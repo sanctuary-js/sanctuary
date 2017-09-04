@@ -4,4 +4,4 @@ import {add, ifElse, odd, sub} from '../..';
 ifElse(odd, sub(1), add(1), 9);
 
 // $ExpectType number
-ifElse(odd, sub(1), add(1), 8);
+ifElse<number, number>(odd)(sub(1))(add(1))(8);
