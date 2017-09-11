@@ -3663,6 +3663,14 @@
   S.gets =
   def('gets', {}, [$.Predicate($.Any), $.Array($.String), a, $Maybe(b)], gets);
 
+  //. ### StrMap
+  //.
+  //. StrMap is an abbreviation of _string map_. A string map is an object,
+  //. such as `{foo: 1, bar: 2, baz: 3}`, whose values are all members of
+  //. the same type. Formally, a value is a member of type `StrMap a` if its
+  //. [type identifier][] is `'Object'` and the values of its enumerable own
+  //. properties are all members of type `a`.
+
   //# keys :: StrMap a -> Array String
   //.
   //. Returns the keys of the given string map, in arbitrary order.
