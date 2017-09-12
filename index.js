@@ -58,7 +58,7 @@
 //. ```
 //.
 //. You can also try Sanctuary in your browser right now in the
-//. [Ramda REPL](https://goo.gl/pUU9Ye)
+//. [Ramda REPL](https://goo.gl/pUU9Ye).
 //.
 //. If you ever need any help getting started, the Sanctuary community is
 //. always happy to help.
