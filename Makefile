@@ -65,7 +65,7 @@ release-major release-minor release-patch:
 .PHONY: bundle
 bundle:
 	mkdir dist || echo "Directory already exists"
-	browserify index.js > dist/sanctuary.js
+	browserify --standalone S index.js > dist/sanctuary.js
 	cat dist/sanctuary-js | uglifyjs -mc > dist/sanctuary.min.js
 
 .PHONY: setup
