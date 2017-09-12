@@ -8,8 +8,6 @@ Sanctuary is a JavaScript functional programming library inspired by
 [Haskell][] and [PureScript][]. It's stricter than [Ramda][], and
 provides a similar suite of functions.
 
-## Sanctuary
-
 Sanctuary promotes programs composed of simple, pure functions. Such
 programs are easier to comprehend, test, and maintain &ndash; they are
 also a pleasure to write.
