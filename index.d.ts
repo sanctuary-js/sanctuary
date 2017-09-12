@@ -699,7 +699,54 @@ export function anyPass<A>(preds: PredicateArray<A>):                           
 export function anyPass<A>(preds: PredicateArray<A>, a: A):                               boolean;
 export function anyPass<A>(preds: Placeholder,       a: A): (preds: PredicateArray<A>) => boolean;
 
-//  TODO: List
+//  List
+//  TODO: Non-curried versions
+
+export interface ListToMaybeList<A> {
+  (xs: string): Maybe<string>;
+  (xs: Array<A>): Maybe<Array<A>>;
+}
+
+export interface ListToMaybeElement<A> {
+  (xs: string): Maybe<string>;
+  (xs: Array<A>): Maybe<A>;
+}
+
+export interface ListToMaybeIndex<A> {
+  (xs: string): Maybe<Integer>;
+  (xs: Array<A>): Maybe<Integer>;
+}
+
+export function slice<A>(beg: Integer): (end: Integer) => ListToMaybeList<A>;
+
+export function at<A>(n: Integer): ListToMaybeElement<A>;
+
+export function head(xs: string): Maybe<string>;
+export function head<A>(xs: Array<A>): Maybe<A>;
+
+export function last(xs: string): Maybe<string>;
+export function last<A>(xs: Array<A>): Maybe<A>;
+
+export function tail(xs: string): Maybe<string>;
+export function tail<A>(xs: Array<A>): Maybe<Array<A>>;
+
+export function init(xs: string): Maybe<string>;
+export function init<A>(xs: Array<A>): Maybe<Array<A>>;
+
+export function take<A>(n: Integer): ListToMaybeList<A>;
+
+export function takeLast<A>(n: Integer): ListToMaybeList<A>;
+
+export function drop<A>(n: Integer): ListToMaybeList<A>;
+
+export function dropLast<A>(n: Integer): ListToMaybeList<A>;
+
+export function reverse(xs: string): string;
+export function reverse<A>(xs: Array<A>): Array<A>;
+
+export function indexOf<A>(a: A): ListToMaybeIndex<A>;
+
+export function lastIndexOf<A>(a: A): ListToMaybeIndex<A>;
 
 //  TODO: Array
 
