@@ -77,15 +77,13 @@ bundle:
 .PHONY: bundle
 bundle: dist/sanctuary.js dist/sanctuary.min.js
 
-.PHONY: dist/sanctuary.js
-dist/sanctuary.js:
+dist/sanctuary.js: \
+		node_modules/sanctuary-type-identifiers/index.js \
+		node_modules/sanctuary-type-classes/index.js \
+		node_modules/sanctuary-def/index.js \
+		index.js
 	mkdir -p -- '$(@D)'
-	cat \
-  node_modules/sanctuary-type-identifiers/index.js \
-  node_modules/sanctuary-type-classes/index.js \
-  node_modules/sanctuary-def/index.js \
-  index.js \
-  >dist/sanctuary.js
+	cat -- $^ >'$@'
 
 dist/sanctuary.min.js: dist/sanctuary.js
 	mkdir -p -- '$(@D)'
