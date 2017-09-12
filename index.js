@@ -54,7 +54,7 @@
 //. Or simply include a script tag in your html document:
 //.
 //. ```html
-//. <script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"><script>
+//. <script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"></script>
 //. ```
 //.
 //. You can also try sanctuary in your browser right now in the [Ramda REPL](https://goo.gl/pUU9Ye)
