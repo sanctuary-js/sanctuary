@@ -8,7 +8,8 @@
     "url": "git://github.com/sanctuary-js/sanctuary.git"
   },
   "scripts": {
-    "test": "make lint test"
+    "test": "make lint test",
+    "prepublish": "make bundle"
   },
   "dependencies": {
     "sanctuary-def": "0.13.1",
@@ -33,6 +34,7 @@
     "remember-bower": "0.1.x",
     "sanctuary-style": "0.5.x",
     "transcribe": "1.0.x",
+    "uglify-js": "^3.1.0",
     "xyz": "2.0.x"
   },
   "files": [

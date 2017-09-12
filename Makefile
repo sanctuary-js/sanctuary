@@ -62,6 +62,11 @@ lint:
 release-major release-minor release-patch:
 	@$(XYZ) --increment $(@:release-%=%)
 
+.PHONY: bundle
+bundle:
+	mkdir dist || echo "Directory already exists"
+	browserify index.js > dist/sanctuary.js
+	cat dist/sanctuary-js | uglifyjs -mc > dist/sanctuary.min.js
 
 .PHONY: setup
 setup:

@@ -8,6 +8,29 @@ Sanctuary is a JavaScript functional programming library inspired by
 [Haskell][] and [PureScript][]. It's stricter than [Ramda][], and
 provides a similar suite of functions.
 
+## Installation
+
+Sanctuary can be installed via npm
+
+```
+npm install sanctuary
+```
+
+Or simply include a script tag in your html page
+
+```html
+<script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"><script>
+```
+
+You can also try sanctuary in your browser right now in the [Ramda REPL](https://goo.gl/pUU9Ye)
+
+If you ever need any help getting started, the sanctuary community is always happy to help.
+
+We're an inclusive community, every question is valid and every level of experience is welcome.  [Chat with us!](https://gitter.im/sanctuary-js/sanctuary)
+
+
+## Sanctuary
+
 Sanctuary promotes programs composed of simple, pure functions. Such
 programs are easier to comprehend, test, and maintain &ndash; they are
 also a pleasure to write.
