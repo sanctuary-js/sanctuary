@@ -3,7 +3,6 @@ ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-e
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 REMARK = node_modules/.bin/remark --frail --no-stdout
-BROWSERIFY = node_modules/.bin/browserify
 UGLIFYJS = node_modules/.bin/uglifyjs
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
@@ -67,7 +66,12 @@ release-major release-minor release-patch:
 .PHONY: bundle
 bundle:
 	mkdir dist || echo "Directory already exists"
-	$(BROWSERIFY) --standalone S index.js > dist/sanctuary.js
+	cat \
+  node_modules/sanctuary-type-identifiers/index.js \
+  node_modules/sanctuary-type-classes/index.js \
+  node_modules/sanctuary-def/index.js \
+  index.js \
+  >dist/sanctuary.js
 	cat dist/sanctuary.js | $(UGLIFYJS) -mc > dist/sanctuary.min.js
 
 .PHONY: setup
