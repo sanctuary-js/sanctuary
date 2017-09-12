@@ -43,15 +43,15 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
-//. ## Installation
+//. ## Installation:
 //.
-//. Sanctuary can be installed via npm
+//. Sanctuary can be installed via npm:
 //.
+//. ```console
+//. $ npm install sanctuary
 //. ```
-//. npm install sanctuary
-//. ```
 //.
-//. Or simply include a script tag in your html page
+//. Or simply include a script tag in your html document:
 //.
 //. ```html
 //. <script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"><script>
