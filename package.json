@@ -34,7 +34,7 @@
     "remember-bower": "0.1.x",
     "sanctuary-style": "0.5.x",
     "transcribe": "1.0.x",
-    "uglify-js": "^3.1.0",
+    "uglify-js": "3.1.x",
     "xyz": "2.0.x"
   },
   "files": [
