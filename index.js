@@ -57,11 +57,15 @@
 //. <script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"></script>
 //. ```
 //.
-//. You can also try sanctuary in your browser right now in the [Ramda REPL](https://goo.gl/pUU9Ye)
+//. You can also try Sanctuary in your browser right now in the
+//. [Ramda REPL](https://goo.gl/pUU9Ye)
 //.
-//. If you ever need any help getting started, the sanctuary community is always happy to help.
+//. If you ever need any help getting started, the sanctuary community is
+//. always happy to help.
 //.
-//. We're an inclusive community, every question is valid and every level of experience is welcome.  [Chat with us!](https://gitter.im/sanctuary-js/sanctuary)
+//. We're an inclusive community, every question is valid and every level of
+//. experience is welcome.
+//. [Chat with us!](https://gitter.im/sanctuary-js/sanctuary)
 //.
 //. ## Types
 //.
