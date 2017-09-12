@@ -43,7 +43,7 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
-//. ## Installation:
+//. ## Installation
 //.
 //. Sanctuary can be installed via npm:
 //.
