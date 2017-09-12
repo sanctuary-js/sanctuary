@@ -41,6 +41,8 @@
     "/LICENSE",
     "/README.md",
     "/index.js",
+    "/dist/sanctuary.js",
+    "/dist/sanctuary.min.js",
     "/package.json"
   ]
 }
