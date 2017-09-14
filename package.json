@@ -8,8 +8,8 @@
     "url": "git://github.com/sanctuary-js/sanctuary.git"
   },
   "scripts": {
-    "test": "make lint test",
-    "prepublish": "make bundle"
+    "prepublish": "make dist",
+    "test": "make lint test"
   },
   "dependencies": {
     "sanctuary-def": "0.13.1",
@@ -40,9 +40,9 @@
   "files": [
     "/LICENSE",
     "/README.md",
-    "/index.js",
     "/dist/sanctuary.js",
     "/dist/sanctuary.min.js",
+    "/index.js",
     "/package.json"
   ]
 }

@@ -10,7 +10,7 @@ XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --s
 
 
 .PHONY: all
-all: LICENSE README.md
+all: LICENSE README.md dist
 
 .PHONY: LICENSE
 LICENSE:
@@ -28,6 +28,21 @@ README.md.tmp: index.js
 	  --url 'https://github.com/sanctuary-js/sanctuary/blob/v$(VERSION)/{filename}#L{line}' \
 	  -- $^ \
 	| LC_ALL=C sed 's/<h4 name="\(.*\)#\(.*\)">\(.*\)\1#\2/<h4 name="\1.prototype.\2">\3\1#\2/' >'$@'
+
+
+.PHONY: dist
+dist: dist/sanctuary.js dist/sanctuary.min.js
+
+dist/sanctuary.js: \
+		node_modules/sanctuary-type-identifiers/index.js \
+		node_modules/sanctuary-type-classes/index.js \
+		node_modules/sanctuary-def/index.js \
+		index.js
+	mkdir -p -- '$(@D)'
+	cat -- $^ >'$@'
+
+%.min.js: %.js
+	$(UGLIFYJS) --compress --mangle -- '$<' >'$@'
 
 
 .PHONY: lint
@@ -63,31 +78,6 @@ lint:
 release-major release-minor release-patch:
 	@$(XYZ) --increment $(@:release-%=%)
 
-.PHONY: bundle
-bundle:
-	mkdir dist || echo "Directory already exists"
-	cat \
-  node_modules/sanctuary-type-identifiers/index.js \
-  node_modules/sanctuary-type-classes/index.js \
-  node_modules/sanctuary-def/index.js \
-  index.js \
-  >dist/sanctuary.js
-	cat dist/sanctuary.js | $(UGLIFYJS) -mc > dist/sanctuary.min.js
-
-.PHONY: bundle
-bundle: dist/sanctuary.js dist/sanctuary.min.js
-
-dist/sanctuary.js: \
-		node_modules/sanctuary-type-identifiers/index.js \
-		node_modules/sanctuary-type-classes/index.js \
-		node_modules/sanctuary-def/index.js \
-		index.js
-	mkdir -p -- '$(@D)'
-	cat -- $^ >'$@'
-
-dist/sanctuary.min.js: dist/sanctuary.js
-	mkdir -p -- '$(@D)'
-	cat '$<' | $(UGLIFYJS) -mc >'$@'
 
 .PHONY: setup
 setup:
