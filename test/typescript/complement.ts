@@ -1,4 +1,4 @@
-import {__, complement, odd} from '../..';
+import {complement, odd} from '../..';
 
 // $ExpectType boolean
 complement(odd, 1);
@@ -9,8 +9,5 @@ complement(odd, 2);
 // $ExpectType boolean
 complement(odd)(2);
 
-// $ExpectType boolean
-complement(__, 2)(odd);
-
-// $ExpectError Argument of type '(n: number) => boolean' is not assignable to parameter of type 'Placeholder'.
+// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
 complement(odd, 'x');

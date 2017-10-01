@@ -1,10 +1,7 @@
-import {__, or} from '../..';
+import {or} from '../..';
 
 // $ExpectType boolean
 or(false, false);
-
-// $ExpectType boolean
-or(__, true)(false);
 
 // $ExpectType boolean
 or(true)(false);

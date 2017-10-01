@@ -1,4 +1,4 @@
-import {__, when} from '../..';
+import {when} from '../..';
 
 function gte0(x: number): boolean {
   return x >= 0;
@@ -19,17 +19,5 @@ when(gte0)(Math.sqrt, -1);
 // $ExpectType number
 when(gte0)(Math.sqrt)(-1);
 
-// $ExpectType number
-when(__, Math.sqrt, -1)(gte0);
-
-// $ExpectType number
-when(__, Math.sqrt)(gte0)(-1);
-
-// $ExpectType number
-when(gte0, __, -1)(Math.sqrt);
-
-// $ExpectType number
-when(__, __, -1)(gte0)(Math.sqrt);
-
-// $ExpectError Argument of type '(x: number) => boolean' is not assignable to parameter of type 'Placeholder'.
+// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
 when(gte0, Math.sqrt, 'x');

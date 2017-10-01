@@ -1,4 +1,4 @@
-import {__, curry2} from '../..';
+import {curry2} from '../..';
 
 function add(a: number, b: number): number {
   return a + b;
@@ -9,9 +9,6 @@ curry2(add)(1)(2);
 
 // $ExpectType number
 curry2(add, 1)(2);
-
-// $ExpectType number
-curry2(add)(__, 2)(1);
 
 // $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
 curry2(add)('x');

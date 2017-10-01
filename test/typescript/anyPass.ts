@@ -1,4 +1,4 @@
-import {__, anyPass, test} from '../..';
+import {anyPass, test} from '../..';
 
 // $ExpectType boolean
 anyPass([], 'abacus');
@@ -9,8 +9,5 @@ anyPass([test(/a/), test(/b/), test(/c/)], 'abacus');
 // $ExpectType boolean
 anyPass([test(/a/), test(/b/), test(/c/)])('abacus');
 
-// $ExpectType boolean
-anyPass(__, 'abacus')([test(/a/), test(/b/), test(/c/)]);
-
-// $ExpectError Argument of type '((s: string) => boolean)[]' is not assignable to parameter of type 'Placeholder'.
+// $ExpectError Argument of type '1' is not assignable to parameter of type 'string'.
 anyPass([test(/a/), test(/b/), test(/c/)], 1);
