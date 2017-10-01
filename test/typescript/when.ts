@@ -5,19 +5,10 @@ function gte0(x: number): boolean {
 }
 
 // $ExpectType number
-when(gte0, Math.sqrt, 16);
-
-// $ExpectType number
-when(gte0, Math.sqrt, -1);
-
-// $ExpectType number
-when(gte0, Math.sqrt)(-1);
-
-// $ExpectType number
-when(gte0)(Math.sqrt, -1);
+when(gte0)(Math.sqrt)(16);
 
 // $ExpectType number
 when(gte0)(Math.sqrt)(-1);
 
 // $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
-when(gte0, Math.sqrt, 'x');
+when(gte0)(Math.sqrt)('x');

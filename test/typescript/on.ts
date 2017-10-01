@@ -5,15 +5,6 @@ const add = (x: number) => (y: number) => x + y;
 const double = (x: number) => x * 2;
 
 // $ExpectType number
-on(add, double, 5, 10);
-
-// $ExpectType number
-on(add, double)(5, 10);
-
-// // $ExpectType number
-on(add, double)(5)(10);
-
-// $ExpectType number
 on(add)(double)(5)(10);
 
 // These typecheck without explicit types. Blame parameter bivariance.

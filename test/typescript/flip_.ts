@@ -5,4 +5,4 @@ function concat(a: string, b: string): string {
 }
 
 // $ExpectType string
-flip_(concat, 'foo', 'bar');
+flip_(concat)('foo')('bar');

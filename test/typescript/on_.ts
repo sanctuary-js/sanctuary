@@ -9,15 +9,6 @@ function double(x: number): number {
 }
 
 // $ExpectType number
-on_(add, double, 5, 10);
-
-// $ExpectType number
-on_(add, double)(5, 10);
-
-// // $ExpectType number
-on_(add, double)(5)(10);
-
-// $ExpectType number
 on_(add)(double)(5)(10);
 
 // These typecheck without explicit types. Blame parameter bivariance.
