@@ -325,8 +325,16 @@ export function chainRec(p: TypeRep): {
 
 //  TODO: Fantasy Land / extend, extract, contramap
 
-export function filter<A>(p: Predicate<A>): (q: Array<A>) => Array<A>;
-//  TODO: filter non-array types
+export function filter<A>(p: Predicate<A>): {
+  (q: Array<A>): Array<A>;
+  (q: Foldable<A>): Foldable<A>;
+};
+
+export function filterM<A>(p: Predicate<A>): {
+  (q: Maybe<A>): Maybe<A>;
+  (q: Array<A>): Array<A>;
+  (q: Foldable<A>): Foldable<A>;
+};
 
 //  Combinator
 
