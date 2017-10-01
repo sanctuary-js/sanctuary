@@ -534,14 +534,14 @@ export function anyPass<A>(preds: PredicateArray<A>, a: A):                     
 //  List
 //  TODO: Non-curried versions
 
-export interface ListToMaybeList<A> {
+export interface ListToMaybeList {
   (xs: string): Maybe<string>;
-  (xs: Array<A>): Maybe<Array<A>>;
+  <A>(xs: Array<A>): Maybe<Array<A>>;
 }
 
-export interface ListToMaybeElement<A> {
+export interface ListToMaybeElement {
   (xs: string): Maybe<string>;
-  (xs: Array<A>): Maybe<A>;
+  <A>(xs: Array<A>): Maybe<A>;
 }
 
 export interface ListToMaybeIndex<A> {
@@ -549,9 +549,9 @@ export interface ListToMaybeIndex<A> {
   (xs: Array<A>): Maybe<Integer>;
 }
 
-export function slice<A>(beg: Integer): (end: Integer) => ListToMaybeList<A>;
+export function slice(beg: Integer): (end: Integer) => ListToMaybeList;
 
-export function at<A>(n: Integer): ListToMaybeElement<A>;
+export function at(n: Integer): ListToMaybeElement;
 
 export function head(xs: string): Maybe<string>;
 export function head<A>(xs: Array<A>): Maybe<A>;
@@ -565,13 +565,13 @@ export function tail<A>(xs: Array<A>): Maybe<Array<A>>;
 export function init(xs: string): Maybe<string>;
 export function init<A>(xs: Array<A>): Maybe<Array<A>>;
 
-export function take<A>(n: Integer): ListToMaybeList<A>;
+export function take(n: Integer): ListToMaybeList;
 
-export function takeLast<A>(n: Integer): ListToMaybeList<A>;
+export function takeLast(n: Integer): ListToMaybeList;
 
-export function drop<A>(n: Integer): ListToMaybeList<A>;
+export function drop(n: Integer): ListToMaybeList;
 
-export function dropLast<A>(n: Integer): ListToMaybeList<A>;
+export function dropLast(n: Integer): ListToMaybeList;
 
 export function reverse(xs: string): string;
 export function reverse<A>(xs: Array<A>): Array<A>;
@@ -580,7 +580,33 @@ export function indexOf<A>(a: A): ListToMaybeIndex<A>;
 
 export function lastIndexOf<A>(a: A): ListToMaybeIndex<A>;
 
-//  TODO: Array
+//  Array
+//  TODO: Fantasyland overloads, non-curried versions
+
+export function append<A>(x: A): (xs: Array<A>) => Array<A>;
+
+export function prepend<A>(x: A): (xs: Array<A>) => Array<A>;
+
+export function joinWith(sep: string): (xs: Array<string>) => string;
+
+export function elem<A>(x: A): Predicate<Array<A> | {[s: string]: A}>;
+
+export function find<A>(p: Predicate<A>): Predicate<Array<A>>;
+
+export function pluck(k: string): <A>(xs: Array<{[s: string]: A}>) => Array<A>;
+
+export function unfoldr<A, B>(f: (b: B) => Maybe<[A, B]>): (b: B) => Array<A>;
+
+export function range(start: Integer): (end: Integer) => Array<Integer>;
+
+export function groupBy<A>(eq: (x1: A) => (x2: A) => boolean): (xs: Array<A>) => Array<Array<A>>;
+
+export function groupBy_<A>(eq: (x1: A, x2: A) => boolean): (xs: Array<A>) => Array<Array<A>>;
+
+export function sort<A>(xs: Array<A>): Array<A>;
+
+export function sortBy<A, B>(comp: (a: A) => B): (xs: Array<A>) => Array<A>;
+
 
 //  TODO: Object
 
