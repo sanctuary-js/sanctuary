@@ -1,3 +1,8 @@
+export type Nullable<A> = A | null;
+
+export type Pair<A, B> = [A, B];
+
+export type Fn0<A>                  = () => A;
 export type Fn1<A, B>               = (a: A) => B;
 export type Fn2<A, B, C>            = (a: A) => Fn1<B, C>;
 export type Fn3<A, B, C, D>         = (a: A) => Fn2<B, C, D>;
@@ -9,6 +14,8 @@ export type Fn4_<A, B, C, D, E>     = (a: A, b: B, c: C, d: D) => E;
 export type Fn5_<A, B, C, D, E, F>  = (a: A, b: B, c: C, d: D, e: E) => F;
 
 export type Predicate<A> = (a: A) => boolean;
+
+export interface StrMap<A> { [k: string]: A; }
 
 export interface Maybe<A> {
   'fantasy-land/equals': (p: Maybe<A>) => boolean
@@ -323,7 +330,11 @@ export function chainRec(p: TypeRep): {
   <A, B>(q: (r: A) => ChainRec<Either<A, B>>): (s: A) => ChainRec<B>;
 }
 
-//  TODO: Fantasy Land / extend, extract, contramap
+export function extend<A, B>(p: Fn1<Extend<A>, B>): Fn1<Extend<A>, Extend<B>>;
+
+export function extract<A>(p: Comonad<A>): A;
+
+export function contramap<A, B>(p: Fn1<B, A>): Fn1<Contravariant<A>, Contravariant<B>>;
 
 export function filter<A>(p: Predicate<A>): {
   (q: Array<A>): Array<A>;
@@ -331,6 +342,18 @@ export function filter<A>(p: Predicate<A>): {
 };
 
 export function filterM<A>(p: Predicate<A>): {
+  (q: Maybe<A>): Maybe<A>;
+  (q: Array<A>): Array<A>;
+  (q: Foldable<A>): Foldable<A>;
+};
+
+export function takeWhile<A>(p: Predicate<A>): {
+  (q: Maybe<A>): Maybe<A>;
+  (q: Array<A>): Array<A>;
+  (q: Foldable<A>): Foldable<A>;
+};
+
+export function dropWhile<A>(p: Predicate<A>): {
   (q: Maybe<A>): Maybe<A>;
   (q: Array<A>): Array<A>;
   (q: Foldable<A>): Foldable<A>;
@@ -371,7 +394,59 @@ export function on_<A, B, C>(p: (q: B, r: B) => C): (s: (t: A) => B) => (u: A) =
 
 //  TODO: Maybe
 
+export function isNothing<A>(p: Maybe<A>): boolean;
+
+export function isJust<A>(p: Maybe<A>): boolean;
+
+export function fromMaybe<A>(p: A): Fn1<Maybe<A>, A>;
+
+export function fromMaybe_<A>(p: Fn0<A>): Fn1<Maybe<A>, A>;
+
+export function maybeToNullable<A>(p: Maybe<A>): Nullable<A>;
+
+export function toMaybe<A>(p: A | null | undefined): Maybe<A>;
+
+export function maybe<B>(p: B): <A>(q: Fn1<A, B>) => Fn1<Maybe<A>, B>;
+
+export function maybe_<B>(p: Fn0<B>): <A>(q: Fn1<A, B>) => Fn1<Maybe<A>, B>;
+
+export function justs<A>(p: Array<Maybe<A>>): Array<A>;
+
+export function mapMaybe<A, B>(p: Fn1<A, Maybe<B>>): Fn1<Array<A>, Array<B>>;
+
+export function encase<A, B>(p: Fn1<A, B>): Fn1<A, Maybe<B>>;
+
+export function encase2<A, B, C>(p: Fn2<A, B, C>): Fn2<A, B, Maybe<C>>;
+
+export function encase3<A, B, C, D>(p: Fn3<A, B, C, D>): Fn3<A, B, C, Maybe<D>>;
+
+export function maybeToEither<A>(p: A): <B>(q: Maybe<B>) => Either<A, B>;
+
 //  TODO: Either
+
+export function isLeft<A, B>(p: Either<A, B>): boolean;
+
+export function isRight<A, B>(p: Either<A, B>): boolean;
+
+export function fromEither<B>(p: B): <A>(q: Either<A, B>) => B;
+
+export function toEither<A>(p: A): <B>(q: B | null | undefined) => Either<A, B>;
+
+export function either<A, C>(p: Fn1<A, C>): <B>(q: Fn1<B, C>) => Fn1<Either<A, B>, C>;
+
+export function lefts<A, B>(p: Array<Either<A, B>>): Array<A>;
+
+export function rights<A, B>(p: Array<Either<A, B>>): Array<B>;
+
+export function tagBy<A>(p: Predicate<A>): Fn1<A, Either<A, A>>;
+
+export function encaseEither<L>(p: Fn1<Error, L>): <A, R>(q: Fn1<A, R>) => Fn1<A, Either<L, R>>;
+
+export function encaseEither2<L>(p: Fn1<Error, L>): <A, B, R>(q: Fn2<A, B, R>) => Fn2<A, B, Either<L, R>>;
+
+export function encaseEither3<L>(p: Fn1<Error, L>): <A, B, C, R>(q: Fn3<A, B, C, R>) => Fn3<A, B, C, Either<L, R>>;
+
+export function eitherToMaybe<A, B>(p: Either<A, B>): Maybe<B>;
 
 //  Logic
 
@@ -434,13 +509,6 @@ export function drop(n: Integer): ListToMaybeList;
 
 export function dropLast(n: Integer): ListToMaybeList;
 
-export function reverse(xs: string): string;
-export function reverse<A>(xs: Array<A>): Array<A>;
-
-export function indexOf<A>(a: A): ListToMaybeIndex<A>;
-
-export function lastIndexOf<A>(a: A): ListToMaybeIndex<A>;
-
 //  Array
 //  TODO: Fantasyland overloads, non-curried versions
 
@@ -456,20 +524,36 @@ export function find<A>(p: Predicate<A>): Predicate<Array<A>>;
 
 export function pluck(k: string): <A>(xs: Array<{[s: string]: A}>) => Array<A>;
 
-export function unfoldr<A, B>(p: Fn1<B, Maybe<[A, B]>>): Fn1<B, Array<A>>;
+export function unfoldr<A, B>(p: Fn1<B, Maybe<Pair<A, B>>>): Fn1<B, Array<A>>;
 
 export function range(start: Integer): Fn1<Integer, Array<Integer>>;
 
 export function groupBy<A>(p: Fn2<A, A, boolean>): Fn1<Array<A>, Array<Array<A>>>;
 
-export function groupBy_<A>(eq: (x1: A, x2: A) => boolean): (xs: Array<A>) => Array<Array<A>>;
+export function reverse(xs: string): string;
+export function reverse<A>(xs: Array<A>): Array<A>;
 
 export function sort<A>(xs: Array<A>): Array<A>;
 
 export function sortBy<A, B>(p: Fn1<A, B>): Fn1<Array<A>, Array<A>>;
 
+//  Object
 
-//  TODO: Object
+export function prop(p: string): <A, B>(q: A) => B;
+
+export function props(p: Array<string>): <A, B>(q: A) => B;
+
+export function get(p: Predicate<any>): <A, B>(q: string) => Fn1<A, Maybe<B>>;
+
+export function gets(p: Predicate<any>): <A, B>(q: Array<string>) => Fn1<A, Maybe<B>>;
+
+//  StrMap
+
+export function keys<A>(p: StrMap<A>): Array<string>;
+
+export function values<A>(p: StrMap<A>): Array<A>;
+
+export function pairs<A>(p: StrMap<A>): Array<Pair<string, A>>;
 
 //  Number
 
@@ -489,7 +573,13 @@ export function mult(x: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 export function product(p: Array<FiniteNumber>): FiniteNumber;
 export function product(p: Foldable<FiniteNumber>): FiniteNumber;
 
-export function div(x: FiniteNumber): Fn1<NonZeroFiniteNumber, FiniteNumber>;
+export function div(p: NonZeroFiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
+
+export function div_(p: FiniteNumber): Fn1<NonZeroFiniteNumber, FiniteNumber>;
+
+export function pow(p: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
+
+export function pow_(p: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
 export function mean(p: Array<FiniteNumber>): Maybe<FiniteNumber>;
 export function mean(p: Foldable<FiniteNumber>): Maybe<FiniteNumber>;
