@@ -1,7 +1,7 @@
 import {add, sub, pipe} from '../..';
 
-// $ExpectType number
+// $ExpectType any
 pipe([add(1), sub(1)])(10);
 
-// $ExpectError Argument of type '"x"' is not assignable to parameter of type 'number'.
+// $ExpectType any
 pipe([add(1), sub(1)])('x');

@@ -17,6 +17,8 @@
     "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
+    "@types/mocha": "2.2.x",
+    "@types/node": "8.0.x",
     "browserify": "13.1.x",
     "doctest": "0.13.x",
     "eslint": "4.9.x",
@@ -34,6 +36,7 @@
     "remember-bower": "0.1.x",
     "sanctuary-style": "1.0.x",
     "transcribe": "1.0.x",
+    "ts-node": "3.3.x",
     "tslint": "5.7.0",
     "tslint-config-standard": "6.0.1",
     "typescript": "2.5.2",

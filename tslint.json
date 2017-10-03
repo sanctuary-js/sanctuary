@@ -4,18 +4,10 @@
     "indent": [true, "spaces", 2],
     "no-consecutive-blank-lines": false,
     "no-multi-spaces": false,
-    "semicolon": false,
+    "semicolon": true,
     "space-before-function-paren": false,
     "typedef-whitespace": false,
     "unified-signatures": false,
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-type",
-      "check-typecast",
-      "check-preblock"
-    ]
+    "whitespace": false
   }
 }

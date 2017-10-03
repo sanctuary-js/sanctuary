@@ -1,0 +1,4 @@
+--require ts-node/register
+--recursive
+--timeout 20000
+--ui tdd

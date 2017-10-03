@@ -18,24 +18,24 @@ export type Predicate<A> = (a: A) => boolean;
 export interface StrMap<A> { [k: string]: A; }
 
 export interface Maybe<A> {
-  'fantasy-land/equals': (p: Maybe<A>) => boolean
-  'fantasy-land/map': <B>(p: (q: A) => B) => Maybe<B>
-  'fantasy-land/ap': <B>(p: Maybe<(q: A) => B>) => Maybe<B>
-  'fantasy-land/chain': <B>(p: (q: A) => Maybe<B>) => Maybe<B>
-  'fantasy-land/alt': (p: Maybe<A>) => Maybe<A>
-  'fantasy-land/reduce': <B>(p: Fn2_<B, A, B>, s: B) => B
-  'fantasy-land/traverse': <B>(p: TypeRep, q: (r: A) => Applicative<B>) => Applicative<Maybe<B>>
+  'fantasy-land/equals': (p: Maybe<A>) => boolean;
+  'fantasy-land/map': <B>(p: (q: A) => B) => Maybe<B>;
+  'fantasy-land/ap': <B>(p: Maybe<(q: A) => B>) => Maybe<B>;
+  'fantasy-land/chain': <B>(p: (q: A) => Maybe<B>) => Maybe<B>;
+  'fantasy-land/alt': (p: Maybe<A>) => Maybe<A>;
+  'fantasy-land/reduce': <B>(p: Fn2_<B, A, B>, s: B) => B;
+  'fantasy-land/traverse': <B>(p: TypeRep, q: (r: A) => Applicative<B>) => Applicative<Maybe<B>>;
 }
 
 export interface Either<A, B> {
-  'fantasy-land/equals': (p: Either<A, B>) => boolean
-  'fantasy-land/map': <C>(p: (q: B) => C) => Either<A, C>
-  'fantasy-land/bimap': <C, D>(p: Fn1<A, C>, q: Fn1<B, D>) => Either<C, D>
-  'fantasy-land/ap': <C>(p: Either<A, (q: B) => C>) => Either<A, C>
-  'fantasy-land/chain': <C>(p: (q: B) => Either<A, C>) => Either<A, C>
-  'fantasy-land/alt': (p: Either<A, B>) => Either<A, B>
-  'fantasy-land/reduce': <C>(p: Fn2_<C, B, C>, s: C) => C
-  'fantasy-land/traverse': <C>(p: TypeRep, q: (r: B) => Applicative<C>) => Applicative<Either<A, C>>
+  'fantasy-land/equals': (p: Either<A, B>) => boolean;
+  'fantasy-land/map': <C>(p: (q: B) => C) => Either<A, C>;
+  'fantasy-land/bimap': <C, D>(p: Fn1<A, C>, q: Fn1<B, D>) => Either<C, D>;
+  'fantasy-land/ap': <C>(p: Either<A, (q: B) => C>) => Either<A, C>;
+  'fantasy-land/chain': <C>(p: (q: B) => Either<A, C>) => Either<A, C>;
+  'fantasy-land/alt': (p: Either<A, B>) => Either<A, B>;
+  'fantasy-land/reduce': <C>(p: Fn2_<C, B, C>, s: C) => C;
+  'fantasy-land/traverse': <C>(p: TypeRep, q: (r: B) => Applicative<C>) => Applicative<Either<A, C>>;
 }
 
 
@@ -50,80 +50,80 @@ interface TypeRep {}
 
 
 interface Setoid<A> {
-  'fantasy-land/equals': (other: Setoid<A>) => boolean
+  'fantasy-land/equals': (other: Setoid<A>) => boolean;
 }
 interface Ord<A> extends Setoid<A> {
-  'fantasy-land/lte': (other: Ord<A>) => boolean
+  'fantasy-land/lte': (other: Ord<A>) => boolean;
 }
 interface Semigroupoid<A, B> {
-  'fantasy-land/compose': <C>(other: Semigroupoid<B, C>) => Semigroupoid<A, C>
+  'fantasy-land/compose': <C>(other: Semigroupoid<B, C>) => Semigroupoid<A, C>;
 }
 interface Category<A> extends Semigroupoid<A, A> {
   constructor: {
     'fantasy-land/id': () => Category<A>
-  }
+  };
 }
 interface Semigroup<A> {
-  'fantasy-land/concat': (other: Semigroup<A>) => Semigroup<A>
+  'fantasy-land/concat': (other: Semigroup<A>) => Semigroup<A>;
 }
 interface Monoid<A> extends Semigroup<A> {
   constructor: {
     'fantasy-land/empty': () => Monoid<A>
-  }
+  };
 }
 interface Functor<A> {
-  'fantasy-land/map': <B>(p: (q: A) => B) => Functor<B>
+  'fantasy-land/map': <B>(p: (q: A) => B) => Functor<B>;
 }
 interface Bifunctor<A, C> extends Functor<C> {
-  'fantasy-land/bimap': <B, D>(p: Fn1<A, B>, q: Fn1<C, D>) => Bifunctor<B, D>
+  'fantasy-land/bimap': <B, D>(p: Fn1<A, B>, q: Fn1<C, D>) => Bifunctor<B, D>;
 }
 interface Profunctor<B, C> extends Functor<C> {
-  'fantasy-land/promap': <A, D>(p: Fn1<A, B>, q: Fn1<C, D>) => Profunctor<A, D>
+  'fantasy-land/promap': <A, D>(p: Fn1<A, B>, q: Fn1<C, D>) => Profunctor<A, D>;
 }
 interface Apply<A> extends Functor<A> {
-  'fantasy-land/ap': <B>(p: Apply<(q: A) => B>) => Apply<B>
+  'fantasy-land/ap': <B>(p: Apply<(q: A) => B>) => Apply<B>;
 }
 interface ApplicativeTypeRep<A> {
-  'fantasy-land/of': (value: A) => Applicative<A>
+  'fantasy-land/of': (value: A) => Applicative<A>;
 }
 interface Applicative<A> extends Apply<A> {
-  constructor: ApplicativeTypeRep<A>
+  constructor: ApplicativeTypeRep<A>;
 }
 interface Chain<A> extends Apply<A> {
-  'fantasy-land/chain': <B>(p: (q: A) => Chain<B>) => Chain<B>
+  'fantasy-land/chain': <B>(p: (q: A) => Chain<B>) => Chain<B>;
 }
 interface ChainRec<A> extends Chain<A> {
   constructor: {
     'fantasy-land/chainRec': <B, C>(p: (q: (r: A) => C, s: (t: B) => C, u: A) => ChainRec<C>, v: A) => ChainRec<B>
-  }
+  };
 }
 interface Monad<A> extends Applicative<A>, Chain<A> {}
 interface Alt<A> extends Functor<A> {
-  'fantasy-land/alt': (other: Alt<A>) => Alt<A>
+  'fantasy-land/alt': (other: Alt<A>) => Alt<A>;
 }
 interface PlusTypeRep<A> {
-  'fantasy-land/zero': () => Plus<A>
+  'fantasy-land/zero': () => Plus<A>;
 }
 interface Plus<A> extends Alt<A> {
-  constructor: PlusTypeRep<A>
+  constructor: PlusTypeRep<A>;
 }
 interface Alternative<A> extends Applicative<A>, Plus<A> {
-  constructor: ApplicativeTypeRep<A> & PlusTypeRep<A>
+  constructor: ApplicativeTypeRep<A> & PlusTypeRep<A>;
 }
 interface Foldable<A> {
-  'fantasy-land/reduce': <B>(p: Fn2_<B, A, B>, s: B) => B
+  'fantasy-land/reduce': <B>(p: Fn2_<B, A, B>, s: B) => B;
 }
 interface Traversable<A> extends Functor<A>, Foldable<A> {
-  'fantasy-land/traverse': <B>(p: TypeRep, q: (r: A) => Applicative<B>) => Applicative<Traversable<B>>
+  'fantasy-land/traverse': <B>(p: TypeRep, q: (r: A) => Applicative<B>) => Applicative<Traversable<B>>;
 }
 interface Extend<A> extends Functor<A> {
-  'fantasy-land/extend': <B>(p: (q: Extend<A>) => B) => Extend<B>
+  'fantasy-land/extend': <B>(p: (q: Extend<A>) => B) => Extend<B>;
 }
 interface Comonad<A> extends Extend<A> {
-  'fantasy-land/extract': () => A
+  'fantasy-land/extract': () => A;
 }
 interface Contravariant<A> {
-  'fantasy-land/contramap': <B>(p: (q: B) => A) => Contravariant<B>
+  'fantasy-land/contramap': <B>(p: (q: B) => A) => Contravariant<B>;
 }
 
 
@@ -132,8 +132,13 @@ export const Nothing: Maybe<any>;
 export function Just<A>(value: A): Maybe<A>;
 
 export const Either: TypeRep;
-export function Left<A, B>(value: A): Either<A, B>;
-export function Right<A, B>(value: B): Either<A, B>;
+export function Left<A>(value: A): Either<A, any>;
+export function Right<A>(value: A): Either<any, A>;
+
+//  TODO: Specify return type
+export function create(p: {checkTypes: boolean, env: any[]}): {};
+
+export const env: any[];
 
 //  Classify
 
@@ -261,50 +266,78 @@ export function max<A>(p: Ord<A>): Fn1<Ord<A>, Ord<A>>;
 export function id<A>(p: TypeRep): Fn1<A, A>;
 export function id<A>(p: TypeRep): Category<A>;
 
-export function concat<A>(p: string): Fn1<string, string>;
 export function concat<A>(p: Array<A>): Fn1<Array<A>, Array<A>>;
+export function concat<A>(p: Maybe<A>): Fn1<Maybe<A>, Maybe<A>>;
 export function concat<A>(p: Semigroup<A>): Fn1<Semigroup<A>, Semigroup<A>>;
+export function concat   (p: string): Fn1<string, string>;
 
 export function empty<A>(p: TypeRep): Monoid<A>;
 
-export function map<A, B>(p: Fn1<A, B>): Fn1<Array<A>, Array<B>>;
-export function map<A, B>(p: Fn1<A, B>): Fn1<Maybe<A>, Maybe<B>>;
-export function map<A, B, C>(p: Fn1<B, C>): Fn1<Either<A, B>, Either<A, C>>;
-export function map<A, B>(p: Fn1<A, B>): Fn1<Functor<A>, Functor<B>>;
+export function map<A, B>(p: Fn1<A, B>): {
+  (q:   Functor<A>): Functor<B>;
+  <C>(q: Fn1<C, A>):  Fn1<C, B>;
+  (q:    StrMap<A>):  StrMap<B>;
+  (q:     Maybe<A>):   Maybe<B>;
+  (q:     Array<A>):   Array<B>;
+};
 
-export function bimap<A, B, C, D>(p: Fn1<A, B>): Fn2<Fn1<C, D>, Bifunctor<A, C>, Bifunctor<B, D>>;
+export function bimap<A, B>(p: Fn1<A, B>): {
+  <C, D>(q: Fn1<C, D>): Fn1<Bifunctor<A, C>, Bifunctor<B, D>>;
+};
 
-export function promap<A, B, C, D>(p: Fn1<A, B>): Fn2<Fn1<C, D>,        Fn1<B, C>,        Fn1<A, D>>;
-export function promap<A, B, C, D>(p: Fn1<A, B>): Fn2<Fn1<C, D>, Profunctor<B, C>, Profunctor<A, D>>;
+export function promap<A, B>(p: Fn1<A, B>): <C, D>(q: Fn1<C, D>) => {
+  (r:        Fn1<B, C>):        Fn1<A, D>;
+  (r: Profunctor<B, C>): Profunctor<A, D>;
+};
 
+export function alt<A>(p: Array<A>): Fn1<Array<A>, Array<A>>;
+export function alt<A>(p: StrMap<A>): Fn1<StrMap<A>, StrMap<A>>;
 export function alt<A>(p: Alt<A>): Fn1<Alt<A>, Alt<A>>;
 
 export function zero<A>(p: TypeRep): Plus<A>;
 
-export function reduce<A, B>(p: Fn2<B, A, B>): (q: B) => {
-  (r: Array<A>): B;
-  (r: Foldable<A>): B;
-};
+export function reduce<A, B>(p: Fn2<B, A, B>): (q: B) => <X>(r: Array<A> | StrMap<A> | Maybe<A> | Either<X, A> | Foldable<A>) => B;
 
-export function traverse<A, B>(p: TypeRep): (q: Fn1<A, Array<B>>) => (r: Traversable<A>) => Array<Traversable<B>>;
-export function traverse<A, B>(p: TypeRep): (q: Fn1<A, Applicative<B>>) => (r: Traversable<A>) => Applicative<Traversable<B>>;
+export function traverse(p: TypeRep): {
+  <A, B>(q: Fn1<A, Array<B>>): {
+    (r:       Array<A>):       Array<      Array<B>>;
+    (r:      StrMap<A>):       Array<     StrMap<B>>;
+    (r: Traversable<A>):       Array<Traversable<B>>;
+  };
+  <A, B>(q: Fn1<A, Maybe<B>>): {
+    (r:       Array<A>):       Maybe<      Array<B>>;
+    (r:      StrMap<A>):       Maybe<     StrMap<B>>;
+    (r: Traversable<A>):       Maybe<Traversable<B>>;
+  };
+  <A, B>(q: Fn1<A, Applicative<B>>): {
+    (r:       Array<A>): Applicative<      Array<B>>;
+    (r:      StrMap<A>): Applicative<     StrMap<B>>;
+    (r: Traversable<A>): Applicative<Traversable<B>>;
+  };
+};
 
 export function sequence<A>(p: TypeRep): (q: Traversable<Array<A>>) => Array<Traversable<A>>;
 export function sequence<A>(p: TypeRep): (q: Traversable<Applicative<A>>) => Applicative<Traversable<A>>;
 
 export function ap<A, B>(p: Array<Fn1<A, B>>): (q: Array<A>) => Array<B>;
+export function ap<A, B>(p: StrMap<Fn1<A, B>>): (q: StrMap<A>) => StrMap<B>;
+export function ap<A, B>(p: Maybe<Fn1<A, B>>): (q: Maybe<A>) => Maybe<B>;
 export function ap<A, B>(p: Apply<Fn1<A, B>>): (q: Apply<A>) => Apply<B>;
 
-export function lift2<A, B, C>(p: (q: A) => (r: B) => C): {
-  (s: Array<A>): Fn1<Array<B>, Array<C>>;
-  (s: Maybe<A>): Fn1<Maybe<B>, Maybe<C>>;
-  (s: Apply<A>): Fn1<Apply<B>, Apply<C>>;
+export function lift2<A, B, C>(p: Fn2<A, B, C>): {
+  <X>(q:    Fn1<X, A>): Fn1<   Fn1<X, B>,    Fn1<X, C>>;
+  (q:        Array<A>): Fn1<    Array<B>,     Array<C>>;
+  (q:        Maybe<A>): Fn1<    Maybe<B>,     Maybe<C>>;
+  <X>(q: Either<X, A>): Fn1<Either<X, B>, Either<X, C>>;
+  (q:        Apply<A>): Fn1<    Apply<B>,     Apply<C>>;
 };
 
-export function lift3<A, B, C, D>(p: (q: A) => (r: B) => (s: C) => D): {
-  (t: Array<A>): Fn2<Array<B>, Array<C>, Array<D>>;
-  (t: Maybe<A>): Fn2<Maybe<B>, Maybe<C>, Maybe<D>>;
-  (t: Apply<A>): Fn2<Apply<B>, Apply<C>, Apply<D>>;
+export function lift3<A, B, C, D>(p: Fn3<A, B, C, D>): {
+  <X>(q:    Fn1<X, A>): Fn2<   Fn1<X, B>,    Fn1<X, C>,    Fn1<X, D>>;
+  (q:        Array<A>): Fn2<    Array<B>,     Array<C>,     Array<D>>;
+  (q:        Maybe<A>): Fn2<    Maybe<B>,     Maybe<C>,     Maybe<D>>;
+  <X>(q: Either<X, A>): Fn2<Either<X, B>, Either<X, C>, Either<X, D>>;
+  (q:        Apply<A>): Fn2<    Apply<B>,     Apply<C>,     Apply<D>>;
 };
 
 export function apFirst<A>(p: Array<A>): <B>(q: Array<B>) => Array<A>;
@@ -316,25 +349,29 @@ export function apSecond<A>(p: Apply<A>): <B>(q: Apply<B>) => Apply<B>;
 export function of<A>(p: TypeRep): (q: A) => Fn1<any, A>;
 export function of<A>(p: TypeRep): (q: A) => Applicative<A>;
 
-export function chain<A, B, C>(p: Fn2<B, A, C>): (q: Fn1<A, B>) => Fn1<A, C>;
-export function chain<A, B>(p: Fn1<A, Array<B>>): (q: Array<A>) => Array<B>;
-export function chain<A, B>(p: Fn1<A, Chain<B>>): (q: Chain<A>) => Chain<B>;
+export function chain<A, B, C>(p: Fn1<A, Fn1<C, B>>): Fn1<Fn1<C, A>, Fn1<C, B>>;
+export function chain<A, B>   (p: Fn1<A,  Array<B>>): Fn1< Array<A>,  Array<B>>;
+export function chain<A, B>   (p: Fn1<A,  Chain<B>>): Fn1< Chain<A>,  Chain<B>>;
 
-export function join<A>(p: Array<Array<A>>): Array<A>;
-export function join<A>(p: Maybe<Maybe<A>>): Maybe<A>;
-export function join<A>(p: Chain<Chain<A>>): Chain<A>;
+export function join<A, B>(p: Fn1<B, Fn1<B, A>>): Fn1<B, A>;
+export function join<A>   (p:   Array<Array<A>>):  Array<A>;
+export function join<A>   (p:   Maybe<Maybe<A>>):  Maybe<A>;
+export function join<A>   (p:   Chain<Chain<A>>):  Chain<A>;
 
 export function chainRec(p: TypeRep): {
-  <A, B>(q: (r: A) =>    Array<Either<A, B>>): (s: A) =>    Array<B>;
-  <A, B>(q: (r: A) =>    Maybe<Either<A, B>>): (s: A) =>    Maybe<B>;
-  <A, B>(q: (r: A) => ChainRec<Either<A, B>>): (s: A) => ChainRec<B>;
-}
+  <A, B, C>(q: Fn1<A,   Fn1<C, Either<A, B>>>): Fn1<A,   Fn1<C, B>>;
+  <A, B>   (q: Fn1<A,    Array<Either<A, B>>>): Fn1<A,    Array<B>>;
+  <A, B>   (q: Fn1<A,    Maybe<Either<A, B>>>): Fn1<A,    Maybe<B>>;
+  <A, B>   (q: Fn1<A, ChainRec<Either<A, B>>>): Fn1<A, ChainRec<B>>;
+};
 
+export function extend<A, B>(p: Fn1<Array<A>, B>): Fn1<Array<A>, Array<B>>;
 export function extend<A, B>(p: Fn1<Extend<A>, B>): Fn1<Extend<A>, Extend<B>>;
 
 export function extract<A>(p: Comonad<A>): A;
 
-export function contramap<A, B>(p: Fn1<B, A>): Fn1<Contravariant<A>, Contravariant<B>>;
+export function contramap<A, B, C>(p: Fn1<B, A>): Fn1<       Fn1<A, C>,        Fn1<B, C>>;
+export function contramap<A, B>   (p: Fn1<B, A>): Fn1<Contravariant<A>, Contravariant<B>>;
 
 export function filter<A>(p: Predicate<A>): {
   (q: Array<A>): Array<A>;
@@ -385,8 +422,7 @@ export function flip_<A, B, C>(p: (q: A, r: B) => C): (s: B) => (t: A) => C;
 
 export function compose<A, B, C>(p: Fn1<B, C>): (q: Fn1<A, B>) => Fn1<A, C>;
 
-//  TODO: Allow functions of types other than ‘a -> a’
-export function pipe<A>(fns: Array<(a: A) => A>): (x: A) => A;
+export function pipe(p: Array<Fn1<any, any>>): Fn1<any, any>;
 
 export function on<A, B, C>(p: Fn2<B, B, C>): Fn3<Fn1<A, B>, A, A, C>;
 
@@ -512,17 +548,31 @@ export function dropLast(n: Integer): ListToMaybeList;
 //  Array
 //  TODO: Fantasyland overloads, non-curried versions
 
-export function append<A>(x: A): Fn1<Array<A>, Array<A>>;
+export function append<A>(p: A): {
+  (q: Applicative<A>): Applicative<A>;
+  (q: Maybe<A>): Maybe<A>;
+  <X>(q: Either<X, A>): Either<X, A>;
+  (q: Array<A>): Array<A>;
+};
 
-export function prepend<A>(x: A): Fn1<Array<A>, Array<A>>;
+export function prepend<A>(p: A): {
+  (q: Applicative<A>): Applicative<A>;
+  (q: Maybe<A>): Maybe<A>;
+  <X>(q: Either<X, A>): Either<X, A>;
+  (q: Array<A>): Array<A>;
+};
 
 export function joinWith(sep: string): Fn1<Array<string>, string>;
 
-export function elem<A>(x: A): Predicate<Array<A> | {[s: string]: A}>;
+export function elem<A>(p: A): (q: Array<A> | StrMap<A> | Foldable<A>) => boolean;
 
-export function find<A>(p: Predicate<A>): Predicate<Array<A>>;
+export function find<A>(p: Predicate<A>): (q: Array<A> | StrMap<A> | Foldable<A>) => Maybe<A>;
 
-export function pluck(k: string): <A>(xs: Array<{[s: string]: A}>) => Array<A>;
+export function pluck(p: string): {
+  (q:   Array<any>):   Array<any>;
+  (q:   Maybe<any>):   Maybe<any>;
+  (q: Functor<any>): Functor<any>;
+};
 
 export function unfoldr<A, B>(p: Fn1<B, Maybe<Pair<A, B>>>): Fn1<B, Array<A>>;
 
@@ -543,9 +593,9 @@ export function prop(p: string): <A, B>(q: A) => B;
 
 export function props(p: Array<string>): <A, B>(q: A) => B;
 
-export function get(p: Predicate<any>): <A, B>(q: string) => Fn1<A, Maybe<B>>;
+export function get(p: Predicate<any>): Fn2<string, any, Maybe<any>>;
 
-export function gets(p: Predicate<any>): <A, B>(q: Array<string>) => Fn1<A, Maybe<B>>;
+export function gets(p: Predicate<any>): Fn2<Array<string>, any, Maybe<any>>;
 
 //  StrMap
 
@@ -561,8 +611,8 @@ export function negate(n: ValidNumber): ValidNumber;
 
 export function add(x: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
-export function sum(p: Array<FiniteNumber>): FiniteNumber;
 export function sum(p: Foldable<FiniteNumber>): FiniteNumber;
+export function sum(p: Array<FiniteNumber>): FiniteNumber;
 
 export function sub(x: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
@@ -570,8 +620,8 @@ export function sub_(x: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
 export function mult(x: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
-export function product(p: Array<FiniteNumber>): FiniteNumber;
 export function product(p: Foldable<FiniteNumber>): FiniteNumber;
+export function product(p: Array<FiniteNumber>): FiniteNumber;
 
 export function div(p: NonZeroFiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
@@ -581,8 +631,8 @@ export function pow(p: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
 export function pow_(p: FiniteNumber): Fn1<FiniteNumber, FiniteNumber>;
 
-export function mean(p: Array<FiniteNumber>): Maybe<FiniteNumber>;
 export function mean(p: Foldable<FiniteNumber>): Maybe<FiniteNumber>;
+export function mean(p: Array<FiniteNumber>): Maybe<FiniteNumber>;
 
 //  Integer
 
@@ -609,8 +659,8 @@ export function regexEscape(s: string): string;
 export function test(pattern: RegExp): Predicate<string>;
 
 interface MatchObj {
-  match: string
-  groups: Array<Maybe<string>>
+  match: string;
+  groups: Array<Maybe<string>>;
 }
 
 export function match(pattern: RegExp): Fn1<string, Array<Maybe<MatchObj>>>;

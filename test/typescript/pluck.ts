@@ -1,7 +1,7 @@
 import {pluck} from '../..';
 
-// $ExpectType number[]
+// $ExpectType any[]
 pluck('x')([{x: 1}, {x: 2, y: 3}]);
 
-// $ExpectType string[]
+// $ExpectType any[]
 pluck('x')([{x: 'foo'}, {x: 'bar', y: 'baz'}]);
