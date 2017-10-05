@@ -83,11 +83,10 @@ interface Profunctor<B, C> extends Functor<C> {
 interface Apply<A> extends Functor<A> {
   'fantasy-land/ap': <B>(p: Apply<(q: A) => B>) => Apply<B>;
 }
-interface ApplicativeTypeRep<A> {
-  'fantasy-land/of': (value: A) => Applicative<A>;
+interface ApplicativeTypeRep {
+  'fantasy-land/of': (value: any) => any;
 }
-interface Applicative<A> extends Apply<A> {
-  constructor: ApplicativeTypeRep<A>;
+export interface Applicative<A> extends Apply<A> {
 }
 interface Chain<A> extends Apply<A> {
   'fantasy-land/chain': <B>(p: (q: A) => Chain<B>) => Chain<B>;
@@ -108,7 +107,7 @@ interface Plus<A> extends Alt<A> {
   constructor: PlusTypeRep<A>;
 }
 interface Alternative<A> extends Applicative<A>, Plus<A> {
-  constructor: ApplicativeTypeRep<A> & PlusTypeRep<A>;
+  constructor: ApplicativeTypeRep & PlusTypeRep<A>;
 }
 interface Foldable<A> {
   'fantasy-land/reduce': <B>(p: Fn2_<B, A, B>, s: B) => B;
@@ -117,7 +116,7 @@ interface Traversable<A> extends Functor<A>, Foldable<A> {
   'fantasy-land/traverse': <B>(p: TypeRep, q: (r: A) => Applicative<B>) => Applicative<Traversable<B>>;
 }
 interface Extend<A> extends Functor<A> {
-  'fantasy-land/extend': <B>(p: (q: Extend<A>) => B) => Extend<B>;
+  'fantasy-land/extend': (p: any) => any;
 }
 interface Comonad<A> extends Extend<A> {
   'fantasy-land/extract': () => A;
@@ -300,24 +299,26 @@ export function reduce<A, B>(p: Fn2<B, A, B>): (q: B) => <X>(r: Array<A> | StrMa
 
 export function traverse(p: TypeRep): {
   <A, B>(q: Fn1<A, Array<B>>): {
-    (r:       Array<A>):       Array<      Array<B>>;
-    (r:      StrMap<A>):       Array<     StrMap<B>>;
     (r: Traversable<A>):       Array<Traversable<B>>;
+    (r:      StrMap<A>):       Array<     StrMap<B>>;
+    (r:       Array<A>):       Array<      Array<B>>;
   };
   <A, B>(q: Fn1<A, Maybe<B>>): {
-    (r:       Array<A>):       Maybe<      Array<B>>;
-    (r:      StrMap<A>):       Maybe<     StrMap<B>>;
     (r: Traversable<A>):       Maybe<Traversable<B>>;
+    (r:      StrMap<A>):       Maybe<     StrMap<B>>;
+    (r:       Array<A>):       Maybe<      Array<B>>;
   };
   <A, B>(q: Fn1<A, Applicative<B>>): {
-    (r:       Array<A>): Applicative<      Array<B>>;
-    (r:      StrMap<A>): Applicative<     StrMap<B>>;
     (r: Traversable<A>): Applicative<Traversable<B>>;
+    (r:      StrMap<A>): Applicative<     StrMap<B>>;
+    (r:       Array<A>): Applicative<      Array<B>>;
   };
 };
 
-export function sequence<A>(p: TypeRep): (q: Traversable<Array<A>>) => Array<Traversable<A>>;
-export function sequence<A>(p: TypeRep): (q: Traversable<Applicative<A>>) => Applicative<Traversable<A>>;
+export function sequence(p: TypeRep): {
+  <A>(q: Traversable<Applicative<A>>): Applicative<Traversable<A>>;
+  <A>(q: Traversable<Array<A>>): Array<Traversable<A>>;
+};
 
 export function ap<A, B>(p: Array<Fn1<A, B>>): (q: Array<A>) => Array<B>;
 export function ap<A, B>(p: StrMap<Fn1<A, B>>): (q: StrMap<A>) => StrMap<B>;
