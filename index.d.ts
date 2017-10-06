@@ -249,23 +249,23 @@ export function gte_<A>(p: Array<A>):   Predicate<Array<A>>;
 export function gte_<A>(p: IArguments): Predicate<IArguments>;
 export function gte_<A>(p: Ord<A>):     Predicate<Ord<A>>;
 
-export function min<A>(p: Date): Fn<Date, Date>;
-export function min<A>(p: number): Fn<number, number>;
-export function min<A>(p: string): Fn<string, string>;
-export function min<A>(p: Ord<A>): Fn<Ord<A>, Ord<A>>;
+export function min<A>(p:   Date): (q:   Date) =>   Date;
+export function min<A>(p: number): (q: number) => number;
+export function min<A>(p: string): (q: string) => string;
+export function min<A>(p: Ord<A>): (q: Ord<A>) => Ord<A>;
 
-export function max<A>(p: Date): Fn<Date, Date>;
-export function max<A>(p: number): Fn<number, number>;
-export function max<A>(p: string): Fn<string, string>;
-export function max<A>(p: Ord<A>): Fn<Ord<A>, Ord<A>>;
+export function max<A>(p:   Date): (q:   Date) =>   Date;
+export function max<A>(p: number): (q: number) => number;
+export function max<A>(p: string): (q: string) => string;
+export function max<A>(p: Ord<A>): (q: Ord<A>) => Ord<A>;
 
-export function id<A>(p: TypeRep): Fn<A, A>;
+export function id<A>(p: TypeRep):    Fn<A, A>;
 export function id<A>(p: TypeRep): Category<A>;
 
-export function concat<A>(p: Array<A>): Fn<Array<A>, Array<A>>;
-export function concat<A>(p: Maybe<A>): Fn<Maybe<A>, Maybe<A>>;
-export function concat<A>(p: Semigroup<A>): Fn<Semigroup<A>, Semigroup<A>>;
-export function concat   (p: string): Fn<string, string>;
+export function concat<A>(p:     Array<A>): (q:     Array<A>) =>     Array<A>;
+export function concat<A>(p:     Maybe<A>): (q:     Maybe<A>) =>     Maybe<A>;
+export function concat<A>(p: Semigroup<A>): (q: Semigroup<A>) => Semigroup<A>;
+export function concat   (p:       string): (q:       string) =>       string;
 
 export function empty<A>(p: TypeRep): Monoid<A>;
 
@@ -277,9 +277,7 @@ export function map<A, B>(p: Fn<A, B>): {
   (q:    Array<A>):   Array<B>;
 };
 
-export function bimap<A, B>(p: Fn<A, B>): {
-  <C, D>(q: Fn<C, D>): Fn<Bifunctor<A, C>, Bifunctor<B, D>>;
-};
+export function bimap<A, B>(p: Fn<A, B>): <C, D>(q: Fn<C, D>) => (r: Bifunctor<A, C>) => Bifunctor<B, D>;
 
 export function promap<A, B>(p: Fn<A, B>): <C, D>(q: Fn<C, D>) => {
   (r:         Fn<B, C>):         Fn<A, D>;
@@ -369,8 +367,8 @@ export function extend<A, B>(p: Fn<Extend<A>, B>): Fn<Extend<A>, Extend<B>>;
 export function extract<A>(p: Comonad<A>): A;
 
 export function contramap<A, B>(p: Fn<B, A>): {
-  (q:         Fn<A, C>):         Fn<B, C>;
-  (q: Contravariant<A>): Contravariant<B>;
+  (   q: Contravariant<A>): Contravariant<B>;
+  <C>(q:         Fn<A, C>):         Fn<B, C>;
 };
 
 export function filter<A>(p: Predicate<A>): {
