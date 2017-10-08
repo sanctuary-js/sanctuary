@@ -25,10 +25,10 @@ test('groupBy', () => {
 
   eq(S.groupBy(productsOf3)([]), []);
   eq(S.groupBy(productsOf3)([1, 2, 3, 4, 5, 6, 7, 8, 9]), [[1], [2, 3], [4], [5, 6], [7], [8, 9]]);
-  eq(S.groupBy<number>(S.equals)([1, 1, 2, 1, 1]), [[1, 1], [2], [1, 1]]);
+  eq(S.groupBy(S.equals)([1, 1, 2, 1, 1]), [[1, 1], [2], [1, 1]]);
   eq(S.groupBy(zeroSum)([2, -3, 3, 3, 3, 4, -4, 4]), [[2], [-3, 3, 3, 3], [4, -4], [4]]);
 
-  jsc.assert(jsc.forall('nat -> nat -> bool', 'array nat', function(f: (x: number) => (y: number) => boolean, xs: number[]) {
+  jsc.assert(jsc.forall('nat -> nat -> bool', 'array nat', function(f: (x: number) => (y: number) => boolean, xs: Array<number>) {
     return S.equals(S.join(S.groupBy(f)(xs)))(xs);
   }), {tests: 100});
 

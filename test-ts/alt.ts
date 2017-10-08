@@ -10,8 +10,7 @@ test('alt', () => {
   eq(S.alt.toString(), 'alt :: Alt f => f a -> f a -> f a');
 
   eq(S.alt([])([]), []);
-  const empty: number[] = [];  // Microsoft/TypeScript#8944
-  eq(S.alt(empty)([1, 2, 3]), [1, 2, 3]);
+  eq(S.alt([])([1, 2, 3]), [1, 2, 3]);
   eq(S.alt([1, 2, 3])([]), [1, 2, 3]);
   eq(S.alt([1, 2, 3])([4, 5, 6]), [1, 2, 3, 4, 5, 6]);
   eq(S.alt({})({}), {});

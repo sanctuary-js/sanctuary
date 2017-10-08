@@ -11,7 +11,7 @@ test('concat', () => {
 
   eq(S.concat([])([]), []);
   eq(S.concat([1, 2, 3])([]), [1, 2, 3]);
-  eq(S.concat<number>([])([4, 5, 6]), [4, 5, 6]);
+  eq(S.concat([])([4, 5, 6]), [4, 5, 6]);
   eq(S.concat([1, 2, 3])([4, 5, 6]), [1, 2, 3, 4, 5, 6]);
 
   eq(S.concat('')(''), '');
@@ -19,7 +19,7 @@ test('concat', () => {
   eq(S.concat('')('bar'), 'bar');
   eq(S.concat('foo')('bar'), 'foobar');
 
-  eq(S.concat<S.Maybe<string>>(S.Nothing)(S.Nothing), S.Nothing);
+  eq(S.concat(S.Nothing)(S.Nothing), S.Nothing);
   eq(S.concat(S.Just('foo'))(S.Nothing), S.Just('foo'));
   eq(S.concat(S.Nothing)(S.Just('bar')), S.Just('bar'));
   eq(S.concat(S.Just('foo'))(S.Just('bar')), S.Just('foobar'));

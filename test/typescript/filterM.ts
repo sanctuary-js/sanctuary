@@ -9,8 +9,8 @@ filterM(odd)([1, 2, 3]);
 // $ExpectError Argument of type '(n: number) => 0' is not assignable to parameter of type 'Predicate<number>'.
 filterM((n: number) => 0)([1, 2, 3]);
 
-// $ExpectType Maybe<number>
+// $ExpectType Foldable<number>
 filterM(odd)(Nothing);
 
-// $ExpectType Maybe<number>
+// $ExpectType Foldable<number>
 filterM(odd)(Just(1));

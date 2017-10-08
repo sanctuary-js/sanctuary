@@ -1,7 +1,28 @@
-import {add, sub, pipe} from '../..';
+import {add, pipe} from '../..';
 
-// $ExpectType any
-pipe([add(1), sub(1)])(10);
+// $ExpectType {}
+pipe([])(0);
 
-// $ExpectType any
-pipe([add(1), sub(1)])('x');
+// $ExpectType number
+pipe([add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1), add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1), add(1), add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1), add(1), add(1), add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1), add(1), add(1), add(1), add(1)])(0);
+
+// $ExpectType number
+pipe([add(1), add(1), add(1), add(1), add(1), add(1), add(1)])(0);
+
+// $ExpectType string
+pipe([(s: string) => s.length, add(1), add(1), (n: number) => n.toFixed(2)])('');

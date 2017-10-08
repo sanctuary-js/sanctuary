@@ -15,6 +15,6 @@ test('reduce', () => {
   eq(S.reduce(S.concat)('x')({a: 'A', b: 'B', c: 'C'}), 'xABC');
   eq(S.reduce(S.concat)('x')({c: 'C', b: 'B', a: 'A'}), 'xABC');
   eq(S.reduce(S.concat)('x')(S.Just('A')), 'xA');
-  eq(S.reduce(S.lift2<string, string, string>(S.concat))(S.Just('x'))([S.Just('A'), S.Just('B'), S.Just('C')]), S.Just('xABC'));
+  eq(S.reduce(S.lift2(S.concat))(S.Just('x'))([S.Just('A'), S.Just('B'), S.Just('C')]), S.Just('xABC'));
 
 });
