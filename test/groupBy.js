@@ -5,6 +5,7 @@ var jsc = require('jsverify');
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('groupBy', function() {
@@ -27,11 +28,11 @@ test('groupBy', function() {
 
   eq(S.groupBy(productsOf3, []), []);
   eq(S.groupBy(productsOf3, [1, 2, 3, 4, 5, 6, 7, 8, 9]), [[1], [2, 3], [4], [5, 6], [7], [8, 9]]);
-  eq(S.groupBy(S.equals, [1, 1, 2, 1, 1]), [[1, 1], [2], [1, 1]]);
+  eq(S.groupBy(equals, [1, 1, 2, 1, 1]), [[1, 1], [2], [1, 1]]);
   eq(S.groupBy(zeroSum, [2, -3, 3, 3, 3, 4, -4, 4]), [[2], [-3, 3, 3, 3], [4, -4], [4]]);
 
   jsc.assert(jsc.forall('nat -> nat -> bool', 'array nat', function(f, xs) {
-    return S.equals(S.join(S.groupBy(f, xs)), xs);
-  }), {tests: 100});
+    return equals(S.join(S.groupBy(f, xs)))(xs);
+  }), {tests: 1000});
 
 });
