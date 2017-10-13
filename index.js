@@ -480,9 +480,9 @@
 
   //# is :: TypeRep a -> Any -> Boolean
   //.
-  //. Takes a [type representative](#type-representatives) and a value of
-  //. any type and returns `true` if the given value is of the specified
-  //. type; `false` otherwise. Subtyping is not respected.
+  //. Takes a [type representative](#type-representatives) and a value of any
+  //. type and returns `true` [iff][] the given value is of the specified type.
+  //. Subtyping is not respected.
   //.
   //. ```javascript
   //. > S.is(Number, 42)
@@ -556,7 +556,8 @@
 
   //# lt :: Ord a => a -> (a -> Boolean)
   //.
-  //. Flipped version of [`Z.lt`][] intended for partial application.
+  //. Returns `true` [iff][] the *second* argument is less than the first
+  //. according to [`Z.lt`][]. The arguments must be provided one at a time.
   //.
   //. See also [`lt_`](#lt_).
   //.
@@ -568,7 +569,8 @@
 
   //# lt_ :: Ord a => a -> a -> Boolean
   //.
-  //. Curried version of [`Z.lt`][].
+  //. Returns `true` [iff][] the first argument is less than the second
+  //. according to [`Z.lt`][].
   //.
   //. See also [`lt`](#lt).
   //.
@@ -586,7 +588,9 @@
 
   //# lte :: Ord a => a -> (a -> Boolean)
   //.
-  //. Flipped version of [`Z.lte`][] intended for partial application.
+  //. Returns `true` [iff][] the *second* argument is less than or equal to
+  //. the first according to [`Z.lte`][]. The arguments must be provided one
+  //. at a time.
   //.
   //. See also [`lte_`](#lte_).
   //.
@@ -598,7 +602,8 @@
 
   //# lte_ :: Ord a => a -> a -> Boolean
   //.
-  //. Curried version of [`Z.lte`][].
+  //. Returns `true` [iff][] the first argument is less than or equal to the
+  //. second according to [`Z.lte`][].
   //.
   //. See also [`lte`](#lte).
   //.
@@ -616,7 +621,8 @@
 
   //# gt :: Ord a => a -> (a -> Boolean)
   //.
-  //. Flipped version of [`Z.gt`][] intended for partial application.
+  //. Returns `true` [iff][] the *second* argument is greater than the first
+  //. according to [`Z.gt`][]. The arguments must be provided one at a time.
   //.
   //. See also [`gt_`](#gt_).
   //.
@@ -628,7 +634,8 @@
 
   //# gt_ :: Ord a => a -> a -> Boolean
   //.
-  //. Curried version of [`Z.gt`][].
+  //. Returns `true` [iff][] the first argument is greater than the second
+  //. according to [`Z.gt`][].
   //.
   //. See also [`gt`](#gt).
   //.
@@ -646,7 +653,9 @@
 
   //# gte :: Ord a => a -> (a -> Boolean)
   //.
-  //. Flipped version of [`Z.gte`][] intended for partial application.
+  //. Returns `true` [iff][] the *second* argument is greater than or equal
+  //. to the first according to [`Z.gte`][]. The arguments must be provided
+  //. one at a time.
   //.
   //. See also [`gte_`](#gte_).
   //.
@@ -658,7 +667,8 @@
 
   //# gte_ :: Ord a => a -> a -> Boolean
   //.
-  //. Curried version of [`Z.gte`][].
+  //. Returns `true` [iff][] the first argument is greater than or equal to
+  //. the second according to [`Z.gte`][].
   //.
   //. See also [`gte`](#gte).
   //.
@@ -690,10 +700,7 @@
   //. > S.min('10', '2')
   //. '10'
   //. ```
-  function min(x, y) {
-    return Z.lte(x, y) ? x : y;
-  }
-  S.min = def('min', {a: [Z.Ord]}, [a, a, a], min);
+  S.min = def('min', {a: [Z.Ord]}, [a, a, a], Z.min);
 
   //# max :: Ord a => a -> a -> a
   //.
@@ -711,10 +718,7 @@
   //. > S.max('10', '2')
   //. '2'
   //. ```
-  function max(x, y) {
-    return Z.lte(x, y) ? y : x;
-  }
-  S.max = def('max', {a: [Z.Ord]}, [a, a, a], max);
+  S.max = def('max', {a: [Z.Ord]}, [a, a, a], Z.max);
 
   //# id :: Category c => TypeRep c -> c
   //.
@@ -916,7 +920,8 @@
 
   //# sequence :: (Applicative f, Traversable t) => TypeRep f -> t (f a) -> f (t a)
   //.
-  //. Curried version of [`Z.sequence`][].
+  //. Curried version of [`Z.sequence`][]. Inverts the given `t (f a)`
+  //. to produce an `f (t a)`.
   //.
   //. ```javascript
   //. > S.sequence(Array, S.Just([1, 2, 3]))
@@ -1177,7 +1182,8 @@
 
   //# filter :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean) -> f a -> f a
   //.
-  //. Curried version of [`Z.filter`][].
+  //. Curried version of [`Z.filter`][]. Filters its second argument in
+  //. accordance with the given predicate.
   //.
   //. See also [`filterM`](#filterM).
   //.
@@ -1193,7 +1199,8 @@
 
   //# filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a
   //.
-  //. Curried version of [`Z.filterM`][].
+  //. Curried version of [`Z.filterM`][]. Filters its second argument in
+  //. accordance with the given predicate.
   //.
   //. See also [`filter`](#filter).
   //.
@@ -1225,25 +1232,11 @@
   //. > S.takeWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
   //. []
   //. ```
-  function Array$takeWhile(pred, xs) {
-    var idx = 0;
-    while (idx < xs.length && pred(xs[idx])) idx += 1;
-    return xs.slice(0, idx);
-  }
-
-  function takeWhile(pred, xs) {
-    if (Array.isArray(xs)) return Array$takeWhile(pred, xs);
-    var done = false;
-    function takeWhileReducer(xs, x) {
-      return !done && pred(x) ? append(x, xs) : (done = true, xs);
-    }
-    return Z.reduce(takeWhileReducer, Z.empty(xs.constructor), xs);
-  }
   S.takeWhile =
   def('takeWhile',
       {f: [Z.Foldable, Z.Alternative]},
       [$.Predicate(a), f(a), f(a)],
-      takeWhile);
+      Z.takeWhile);
 
   //# dropWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
   //.
@@ -1257,25 +1250,11 @@
   //. > S.dropWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
   //. [3, 3, 3, 7, 6, 3, 5, 4]
   //. ```
-  function Array$dropWhile(pred, xs) {
-    var idx = 0;
-    while (idx < xs.length && pred(xs[idx])) idx += 1;
-    return xs.slice(idx);
-  }
-
-  function dropWhile(pred, xs) {
-    if (Array.isArray(xs)) return Array$dropWhile(pred, xs);
-    var done = false;
-    function dropWhileReducer(xs, x) {
-      return !done && pred(x) ? xs : (done = true, append(x, xs));
-    }
-    return Z.reduce(dropWhileReducer, Z.empty(xs.constructor), xs);
-  }
   S.dropWhile =
   def('dropWhile',
       {f: [Z.Foldable, Z.Alternative]},
       [$.Predicate(a), f(a), f(a)],
-      dropWhile);
+      Z.dropWhile);
 
   //. ### Combinator
 
@@ -3003,10 +2982,10 @@
 
   //# allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
   //.
-  //. Takes a structure containing zero or more predicates, and a value of
-  //. any type. Returns `true` if the value satisfies all of the predicates;
-  //. `false` otherwise. None of the subsequent predicates will be applied
-  //. after the first predicate not satisfied.
+  //. Takes a structure containing zero or more predicates, and a value
+  //. of any type. Returns `true` [iff][] the value satisfies all of the
+  //. predicates. None of the subsequent predicates will be applied after
+  //. the first predicate not satisfied.
   //.
   //. ```javascript
   //. > S.allPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'quiessence')
@@ -3026,10 +3005,10 @@
 
   //# anyPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
   //.
-  //. Takes a structure containing zero or more predicates, and a value of
-  //. any type. Returns `true` if the value satisfies any of the predicates;
-  //. `false` otherwise. None of the subsequent predicates will be applied
-  //. after the first predicate satisfied.
+  //. Takes a structure containing zero or more predicates, and a value
+  //. of any type. Returns `true` [iff][] the value satisfies any of the
+  //. predicates. None of the subsequent predicates will be applied after
+  //. the first predicate satisfied.
   //.
   //. ```javascript
   //. > S.anyPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'incandescent')
@@ -3279,6 +3258,31 @@
 
   //. ### Array
 
+  //# size :: Foldable f => f a -> Integer
+  //.
+  //. Returns the number of elements of the given structure.
+  //.
+  //. ```javascript
+  //. > S.size([])
+  //. 0
+  //.
+  //. > S.size(['foo', 'bar', 'baz'])
+  //. 3
+  //.
+  //. > S.size(Nil)
+  //. 0
+  //.
+  //. > S.size(Cons('foo', Cons('bar', Cons('baz', Nil))))
+  //. 3
+  //.
+  //. > S.size(S.Nothing)
+  //. 0
+  //.
+  //. > S.size(S.Just('quux'))
+  //. 1
+  //. ```
+  S.size = def('size', {f: [Z.Foldable]}, [f(a), $.Integer], Z.size);
+
   //# append :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
   //. Returns the result of appending the first argument to the second.
@@ -3289,20 +3293,20 @@
   //. > S.append(3, [1, 2])
   //. [1, 2, 3]
   //.
+  //. > S.append(3, Cons(1, Cons(2, Nil)))
+  //. Cons(1, Cons(2, Cons(3, Nil)))
+  //.
   //. > S.append([1], S.Nothing)
   //. Just([1])
   //.
   //. > S.append([3], S.Just([1, 2]))
   //. Just([1, 2, 3])
   //. ```
-  function append(x, xs) {
-    return Z.concat(xs, Z.of(xs.constructor, x));
-  }
   S.append =
   def('append',
       {f: [Z.Applicative, Z.Semigroup]},
       [a, f(a), f(a)],
-      append);
+      Z.append);
 
   //# prepend :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
   //.
@@ -3314,20 +3318,20 @@
   //. > S.prepend(1, [2, 3])
   //. [1, 2, 3]
   //.
+  //. > S.prepend(1, Cons(2, Cons(3, Nil)))
+  //. Cons(1, Cons(2, Cons(3, Nil)))
+  //.
   //. > S.prepend([1], S.Nothing)
   //. Just([1])
   //.
   //. > S.prepend([1], S.Just([2, 3]))
   //. Just([1, 2, 3])
   //. ```
-  function prepend(x, xs) {
-    return Z.concat(Z.of(xs.constructor, x), xs);
-  }
   S.prepend =
   def('prepend',
       {f: [Z.Applicative, Z.Semigroup]},
       [a, f(a), f(a)],
-      prepend);
+      Z.prepend);
 
   //# joinWith :: String -> Array String -> String
   //.
@@ -3351,8 +3355,8 @@
 
   //# elem :: (Setoid a, Foldable f) => a -> f a -> Boolean
   //.
-  //. Takes a value and a structure and returns `true` if the value is an
-  //. element of the structure; `false` otherwise.
+  //. Takes a value and a structure and returns `true` [iff][] the value is an
+  //. element of the structure.
   //.
   //. See also [`find`](#find).
   //.
@@ -3378,11 +3382,8 @@
   //. > S.elem(0, S.Nothing)
   //. false
   //. ```
-  function elem(x, xs) {
-    return Z.reduce(function(b, y) { return b || Z.equals(x, y); }, false, xs);
-  }
   S.elem =
-  def('elem', {a: [Z.Setoid], f: [Z.Foldable]}, [a, f(a), $.Boolean], elem);
+  def('elem', {a: [Z.Setoid], f: [Z.Foldable]}, [a, f(a), $.Boolean], Z.elem);
 
   //# find :: Foldable f => (a -> Boolean) -> f a -> Maybe a
   //.
@@ -3530,19 +3531,11 @@
   //. > S.pipe([S.splitOn(''), S.reverse, S.joinWith('')], 'abc')
   //. 'cba'
   //. ```
-  function reverse(foldable) {
-    //  Fast path for arrays.
-    if (Array.isArray(foldable)) return foldable.slice().reverse();
-    var F = foldable.constructor;
-    return Z.reduce(function(xs, x) { return Z.concat(Z.of(F, x), xs); },
-                    Z.empty(F),
-                    foldable);
-  }
   S.reverse =
   def('reverse',
       {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
       [f(a), f(a)],
-      reverse);
+      Z.reverse);
 
   //# sort :: (Ord a, Applicative m, Foldable m, Monoid (m a)) => m a -> m a
   //.
@@ -3562,14 +3555,11 @@
   //. > S.sort([S.Left(4), S.Right(3), S.Left(2), S.Right(1)])
   //. [Left(2), Left(4), Right(1), Right(3)]
   //. ```
-  function sort(m) {
-    return sortBy(I, m);
-  }
   S.sort =
   def('sort',
       {a: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
       [m(a), m(a)],
-      sort);
+      Z.sort);
 
   //# sortBy :: (Ord b, Applicative m, Foldable m, Monoid (m a)) => (a -> b) -> m a -> m a
   //.
@@ -3606,31 +3596,11 @@
   //. . {rank: 7, suit: 'spades'},
   //. . {rank: 5, suit: 'spades'} ]
   //. ```
-  function sortBy(f, m) {
-    var rs = Z.reduce(function(xs, x) {
-      var fx = f(x);
-      var lower = 0;
-      var upper = xs.length;
-      while (lower < upper) {
-        var idx = Math.floor((lower + upper) / 2);
-        if (Z.lte(xs[idx].fx, fx)) lower = idx + 1; else upper = idx;
-      }
-      xs.splice(lower, 0, {x: x, fx: fx});
-      return xs;
-    }, [], m);
-
-    var M = m.constructor;
-    var result = Z.empty(M);
-    for (var idx = 0; idx < rs.length; idx += 1) {
-      result = Z.concat(result, Z.of(M, rs[idx].x));
-    }
-    return result;
-  }
   S.sortBy =
   def('sortBy',
       {b: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
       [Fn(a, b), m(a), m(a)],
-      sortBy);
+      Z.sortBy);
 
   //. ### Object
 
@@ -4250,8 +4220,8 @@
 
   //# test :: RegExp -> String -> Boolean
   //.
-  //. Takes a pattern and a string, and returns `true` if the pattern
-  //. matches the string; `false` otherwise.
+  //. Takes a pattern and a string, and returns `true` [iff][] the pattern
+  //. matches the string.
   //.
   //. ```javascript
   //. > S.test(/^a/, 'abacus')
@@ -4608,6 +4578,7 @@
 //. [`Z.zero`]:         v:sanctuary-js/sanctuary-type-classes#zero
 //. [`of`]:             v:fantasyland/fantasy-land#of-method
 //. [equivalence]:      https://en.wikipedia.org/wiki/Equivalence_relation
+//. [iff]:              https://en.wikipedia.org/wiki/If_and_only_if
 //. [parseInt]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 //. [sanctuary-def]:    v:sanctuary-js/sanctuary-def
 //. [stable sort]:      https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
