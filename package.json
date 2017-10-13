@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "sanctuary-def": "0.13.1",
-    "sanctuary-type-classes": "6.1.0",
+    "sanctuary-type-classes": "7.0.0",
     "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
