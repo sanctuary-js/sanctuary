@@ -3001,12 +3001,12 @@
   }
   S.unless = def('unless', {}, [$.Predicate(a), Fn(a, a), a, a], unless);
 
-  //# allPass :: Array (a -> Boolean) -> a -> Boolean
+  //# allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
   //.
-  //. Takes an array of unary predicates and a value of any type
-  //. and returns `true` if all the predicates pass; `false` otherwise.
-  //. None of the subsequent predicates will be evaluated after the
-  //. first failed predicate.
+  //. Takes a structure containing zero or more predicates, and a value of
+  //. any type. Returns `true` if the value satisfies all of the predicates;
+  //. `false` otherwise. None of the subsequent predicates will be applied
+  //. after the first predicate not satisfied.
   //.
   //. ```javascript
   //. > S.allPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'quiessence')
@@ -3016,17 +3016,20 @@
   //. false
   //. ```
   function allPass(preds, x) {
-    return preds.every(function(p) { return p(x); });
+    return Z.reduce(function(b, p) { return b && p(x); }, true, preds);
   }
   S.allPass =
-  def('allPass', {}, [$.Array($.Predicate(a)), a, $.Boolean], allPass);
+  def('allPass',
+      {f: [Z.Foldable]},
+      [f($.Predicate(a)), a, $.Boolean],
+      allPass);
 
-  //# anyPass :: Array (a -> Boolean) -> a -> Boolean
+  //# anyPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
   //.
-  //. Takes an array of unary predicates and a value of any type
-  //. and returns `true` if any of the predicates pass; `false` otherwise.
-  //. None of the subsequent predicates will be evaluated after the
-  //. first passed predicate.
+  //. Takes a structure containing zero or more predicates, and a value of
+  //. any type. Returns `true` if the value satisfies any of the predicates;
+  //. `false` otherwise. None of the subsequent predicates will be applied
+  //. after the first predicate satisfied.
   //.
   //. ```javascript
   //. > S.anyPass([S.test(/q/), S.test(/u/), S.test(/i/)], 'incandescent')
@@ -3036,10 +3039,13 @@
   //. false
   //. ```
   function anyPass(preds, x) {
-    return preds.some(function(p) { return p(x); });
+    return Z.reduce(function(b, p) { return b || p(x); }, false, preds);
   }
   S.anyPass =
-  def('anyPass', {}, [$.Array($.Predicate(a)), a, $.Boolean], anyPass);
+  def('anyPass',
+      {f: [Z.Foldable]},
+      [f($.Predicate(a)), a, $.Boolean],
+      anyPass);
 
   //. ### List
   //.
