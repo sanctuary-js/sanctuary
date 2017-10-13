@@ -51,7 +51,7 @@
 //. $ npm install sanctuary
 //. ```
 //.
-//. Or simply include a script tag in your html document:
+//. Or simply include a script tag in your HTML document:
 //.
 //. ```html
 //. <script src="https://unpkg.com/sanctuary@latest/dist/sanctuary.min.js"></script>
