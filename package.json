@@ -18,7 +18,7 @@
   "devDependencies": {
     "browserify": "13.1.x",
     "doctest": "0.12.x",
-    "eslint": "3.19.x",
+    "eslint": "4.9.x",
     "fantasy-land": "3.4.0",
     "istanbul": "0.4.x",
     "jsverify": "0.7.x",
@@ -31,7 +31,7 @@
     "remark-lint-no-undefined-references": "1.x.x",
     "remark-lint-no-unused-definitions": "1.x.x",
     "remember-bower": "0.1.x",
-    "sanctuary-style": "0.5.x",
+    "sanctuary-style": "1.0.x",
     "transcribe": "1.0.x",
     "xyz": "2.0.x"
   },
