@@ -6,6 +6,7 @@ var type = require('sanctuary-type-identifiers');
 var S = require('../..');
 
 var List = require('./List');
+var Sum = require('./Sum');
 
 
 //  UnaryType :: String -> Type
@@ -30,6 +31,7 @@ var env = S.env.concat([
   UnaryType('sanctuary/Compose'),
   UnaryType('sanctuary/Identity'),
   List.Type($.Unknown),
+  Sum.Type,
   UselessType
 ]);
 

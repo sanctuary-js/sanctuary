@@ -12,14 +12,14 @@
   },
   "dependencies": {
     "sanctuary-def": "0.13.1",
-    "sanctuary-type-classes": "7.0.0",
+    "sanctuary-type-classes": "7.1.0",
     "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
     "browserify": "13.1.x",
     "doctest": "0.12.x",
     "eslint": "3.19.x",
-    "fantasy-land": "3.3.0",
+    "fantasy-land": "3.4.0",
     "istanbul": "0.4.x",
     "jsverify": "0.7.x",
     "karma": "1.3.x",
