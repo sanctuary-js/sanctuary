@@ -27,6 +27,7 @@
     "sanctuary-type-identifiers": "2.0.1"
   },
   "ignore": [
+    "/.circleci/",
     "/.git/",
     "/bower_components/",
     "/coverage/",
@@ -36,7 +37,6 @@
     "/.*",
     "/CONTRIBUTING.md",
     "/Makefile",
-    "/circle.yml",
     "/package.json"
   ]
 }
