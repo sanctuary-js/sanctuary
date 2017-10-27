@@ -1,5 +1,5 @@
 DOCTEST = node_modules/.bin/doctest --module commonjs --prefix .
-ESLINT = node_modules/.bin/eslint --config node_modules/sanctuary-style/eslint-es3.json --env es3
+ESLINT = node_modules/.bin/eslint --report-unused-disable-directives
 ISTANBUL = node_modules/.bin/istanbul
 NPM = npm
 REMARK = node_modules/.bin/remark --frail --no-stdout
@@ -31,22 +31,7 @@ README.md.tmp: index.js
 
 .PHONY: lint
 lint:
-	$(ESLINT) \
-	  --global define \
-	  --global module \
-	  --global require \
-	  --global self \
-	  -- index.js
-	$(ESLINT) \
-	  --env node \
-	  -- karma.conf.js scripts/version-urls
-	$(ESLINT) \
-	  --env node \
-	  --global suite \
-	  --global test \
-	  --rule 'dot-notation: [error, {allowKeywords: true}]' \
-	  --rule 'max-len: [off]' \
-	  -- test
+	$(ESLINT) -- index.js karma.conf.js scripts/version-urls test
 	$(REMEMBER_BOWER) $(shell pwd)
 	rm -f README.md
 	VERSION=0.0.0 make README.md
