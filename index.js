@@ -257,6 +257,7 @@
   var c = $.TypeVariable('c');
   var d = $.TypeVariable('d');
   var e = $.TypeVariable('e');
+  var g = $.TypeVariable('g');
   var l = $.TypeVariable('l');
   var r = $.TypeVariable('r');
 
@@ -409,10 +410,13 @@
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
+    /* eslint-disable no-unused-vars */
     var _List = require('./test/internal/List');
-    var Cons = _List.Cons;  // eslint-disable-line no-unused-vars
-    var Nil = _List.Nil;    // eslint-disable-line no-unused-vars
-    env = Z.concat(env, [_List.Type($.Unknown)]);
+    var Cons = _List.Cons;
+    var Nil = _List.Nil;
+    var Sum = require('./test/internal/Sum');
+    /* eslint-enable no-unused-vars */
+    env = Z.concat(env, [_List.Type($.Unknown), Sum.Type]);
   }
 
   var def = $.create({checkTypes: checkTypes, env: env});
@@ -746,6 +750,9 @@
   //.
   //. > S.concat(S.Just([1, 2, 3]), S.Just([4, 5, 6]))
   //. Just([1, 2, 3, 4, 5, 6])
+  //.
+  //. > S.concat(Sum(18), Sum(24))
+  //. Sum(42)
   //. ```
   S.concat = def('concat', {a: [Z.Semigroup]}, [a, a, a], Z.concat);
 
@@ -762,8 +769,21 @@
   //.
   //. > S.empty(Object)
   //. {}
+  //.
+  //. > S.empty(Sum)
+  //. Sum(0)
   //. ```
   S.empty = def('empty', {a: [Z.Monoid]}, [TypeRep(a), a], Z.empty);
+
+  //# invert :: Group g => g -> g
+  //.
+  //. [Type-safe][sanctuary-def] version of [`Z.invert`][].
+  //.
+  //. ```javascript
+  //. > S.invert(Sum(5))
+  //. Sum(-5)
+  //. ```
+  S.invert = def('invert', {g: [Z.Group]}, [g, g], Z.invert);
 
   //# map :: Functor f => (a -> b) -> f a -> f b
   //.
@@ -4566,6 +4586,7 @@
 //. [`Z.gt`]:           v:sanctuary-js/sanctuary-type-classes#gt
 //. [`Z.gte`]:          v:sanctuary-js/sanctuary-type-classes#gte
 //. [`Z.id`]:           v:sanctuary-js/sanctuary-type-classes#id
+//. [`Z.invert`]:       v:sanctuary-js/sanctuary-type-classes#invert
 //. [`Z.join`]:         v:sanctuary-js/sanctuary-type-classes#join
 //. [`Z.lt`]:           v:sanctuary-js/sanctuary-type-classes#lt
 //. [`Z.lte`]:          v:sanctuary-js/sanctuary-type-classes#lte
