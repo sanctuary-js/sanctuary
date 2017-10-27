@@ -1,0 +1,37 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:6
+        environment:
+          NPM_CONFIG_COLOR: false
+          NPM_CONFIG_LOGLEVEL: warn
+          NPM_CONFIG_PROGRESS: false
+          NVM_DIR: /home/circleci/.nvm
+    parallelism: 4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - nvm-cache-{{ checksum ".circleci/config.yml" }}
+      - run: curl https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+      - save_cache:
+          key: nvm-cache-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - /home/circleci/.nvm
+      - run:
+          name: npm install && npm test
+          command: |
+            test_with_version() {
+              source "$NVM_DIR/nvm.sh"
+              nvm install $1
+              nvm exec $1 $2 install
+              nvm exec $1 $2 test
+            }
+            case $CIRCLE_NODE_INDEX in
+              0) npm install && npm test && node_modules/.bin/karma start ;;
+              1) test_with_version 4 /usr/local/bin/npm ;;
+              2) test_with_version 7 npm ;;
+              3) test_with_version 8 npm ;;
+            esac
