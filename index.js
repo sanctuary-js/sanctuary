@@ -3778,6 +3778,31 @@
   S.pairs =
   def('pairs', {}, [$.StrMap(a), $.Array($.Pair($.String, a))], pairs);
 
+  //# fromPairs :: Foldable f => f (Pair String a) -> StrMap a
+  //.
+  //. Returns a string map containing the key–value pairs specified by the
+  //. given [Foldable][]. If a key appears in multiple pairs, the rightmost
+  //. pair takes precedence.
+  //.
+  //. ```javascript
+  //. > S.fromPairs([['a', 1], ['b', 2], ['c', 3]])
+  //. {a: 1, b: 2, c: 3}
+  //.
+  //. > S.fromPairs([['x', 1], ['x', 2]])
+  //. {x: 2}
+  //. ```
+  function fromPairs(pairs) {
+    return Z.reduce(function(strMap, pair) {
+      strMap[pair[0]] = pair[1];
+      return strMap;
+    }, {}, pairs);
+  }
+  S.fromPairs =
+  def('fromPairs',
+      {f: [Z.Foldable]},
+      [f($.Pair($.String, a)), $.StrMap(a)],
+      fromPairs);
+
   //. ### Number
 
   //# negate :: ValidNumber -> ValidNumber
