@@ -3741,6 +3741,22 @@
   //. [type identifier][] is `'Object'` and the values of its enumerable own
   //. properties are all members of type `a`.
 
+  //# singleton :: String -> a -> StrMap a
+  //.
+  //. Takes a string and a value of any type, and returns a string map with
+  //. a single entry (mapping the key to the value).
+  //.
+  //. ```javascript
+  //. > S.singleton('foo', 42)
+  //. {foo: 42}
+  //. ```
+  function singleton(key, val) {
+    var strMap = {};
+    strMap[key] = val;
+    return strMap;
+  }
+  S.singleton = def('singleton', {}, [$.String, a, $.StrMap(a)], singleton);
+
   //# keys :: StrMap a -> Array String
   //.
   //. Returns the keys of the given string map, in arbitrary order.
