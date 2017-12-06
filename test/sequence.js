@@ -28,4 +28,6 @@ test('sequence', function() {
   eq(S.sequence(S.Either, Identity(S.Left('A'))), S.Left('A'));
   eq(S.sequence(S.Either, Identity(S.Right(-1))), S.Right(Identity(-1)));
 
+  eq(S.sequence(Array, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
+
 });

@@ -32,4 +32,6 @@ test('traverse', function() {
   eq(S.traverse(Identity, S.I, [Identity(1), Identity(2)]), Identity([1, 2]));
   eq(S.traverse(Identity, S.I, [Identity(1), Identity(2), Identity(3)]), Identity([1, 2, 3]));
 
+  eq(S.traverse(Array, S.I, {a: [1, 2], b: [3, 4]}), [{a: 1, b: 3}, {a: 1, b: 4}, {a: 2, b: 3}, {a: 2, b: 4}]);
+
 });
