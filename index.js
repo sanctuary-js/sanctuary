@@ -315,19 +315,9 @@
 
   //  defaultEnv :: Array Type
   var defaultEnv = Z.concat($.env, [
-    $.FiniteNumber,
-    $.NonZeroFiniteNumber,
     $Either($.Unknown, $.Unknown),
-    Fn($.Unknown, $.Unknown),
-    $.GlobalRegExp,
-    $.NonGlobalRegExp,
-    $.Integer,
-    $.NonNegativeInteger,
     $Maybe($.Unknown),
-    $.Pair($.Unknown, $.Unknown),
-    $.RegexFlags,
-    $.ValidDate,
-    $.ValidNumber
+    $.Pair($.Unknown, $.Unknown)
   ]);
 
   //  Options :: Type
