@@ -1,4 +1,7 @@
 {
   "root": true,
-  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"]
+  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
+  "rules": {
+    "indent": ["error", 2, {"SwitchCase": 1, "FunctionDeclaration": {"parameters": "first"}, "FunctionExpression": {"parameters": "first"}, "CallExpression": {"arguments": "first"}, "ArrayExpression": "first", "ObjectExpression": "first", "ignoredNodes": ["ConditionalExpression", "MemberExpression", "FunctionDeclaration[id.name=createSanctuary] > BlockStatement.body"]}]
+  }
 }
