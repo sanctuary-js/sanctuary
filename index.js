@@ -336,8 +336,6 @@
   //  createSanctuary :: Options -> Module
   function createSanctuary(opts) {
 
-  /* eslint-disable indent */
-
   //  checkTypes :: Boolean
   var checkTypes = opts.checkTypes;
 
@@ -4618,8 +4616,6 @@
       splitOnRegex);
 
   return S;
-
-  /* eslint-enable indent */
 
   }
 
