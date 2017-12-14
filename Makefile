@@ -32,6 +32,7 @@ README.md.tmp: index.js
 .PHONY: lint
 lint:
 	$(ESLINT) -- index.js karma.conf.js scripts/version-urls test
+	$(ESLINT) --config node_modules/sanctuary-style/eslint-es6.json --env node --ignore-pattern !.eslintrc.js -- .eslintrc.js
 	$(REMEMBER_BOWER) $(shell pwd)
 	rm -f README.md
 	VERSION=0.0.0 make README.md
