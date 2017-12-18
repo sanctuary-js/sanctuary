@@ -162,7 +162,7 @@
 //. //
 //. //   The value at position 1 is not a member of ‘FiniteNumber’.
 //. //
-//. //   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.12.0#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
+//. //   See v:sanctuary-js/sanctuary-def#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
 //. ```
 //.
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
