@@ -12,7 +12,7 @@ var pkg = require('../package.json');
 var deps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
 
 process.stdout.write(fs.readFileSync(process.argv[2], 'utf8').replace(
-  new RegExp(' v:(.+)/(.+)', 'g'),
+  / v:(\S+)[/](\S+)/g,
   function(_, owner, rest) {
     var parts = rest.split(/(?=#)/);
     var name = parts[0];
