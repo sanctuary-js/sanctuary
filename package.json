@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "browserify": "13.1.x",
-    "doctest": "0.12.x",
+    "doctest": "0.13.x",
     "eslint": "4.9.x",
     "fantasy-land": "3.4.0",
     "istanbul": "0.4.x",
