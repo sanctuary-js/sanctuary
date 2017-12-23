@@ -410,11 +410,12 @@
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
+    /* global __doctest:false */
     /* eslint-disable no-unused-vars */
-    var _List = require('./test/internal/List');
+    var _List = __doctest.require('./test/internal/List');
     var Cons = _List.Cons;
     var Nil = _List.Nil;
-    var Sum = require('./test/internal/Sum');
+    var Sum = __doctest.require('./test/internal/Sum');
     /* eslint-enable no-unused-vars */
     env = Z.concat(env, [_List.Type($.Unknown), Sum.Type]);
   }
