@@ -1489,9 +1489,9 @@
 
   //# pipe :: Foldable f => f (Any -> Any) -> a -> b
   //.
-  //. Takes an array of functions assumed to be unary and a value of any type,
-  //. and returns the result of applying the sequence of transformations to
-  //. the initial value.
+  //. Takes a sequence of functions assumed to be unary and a value of any
+  //. type, and returns the result of applying the sequence of transformations
+  //. to the initial value.
   //.
   //. In general terms, `pipe` performs left-to-right composition of a sequence
   //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
@@ -1504,6 +1504,29 @@
     return Z.reduce(function(x, f) { return f(x); }, x, fs);
   }
   S.pipe = def('pipe', {f: [Z.Foldable]}, [f(Fn($.Any, $.Any)), a, b], pipe);
+
+  //# pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b
+  //.
+  //. Takes a sequence of functions assumed to be unary which return values
+  //. with a [Chain][], and a value of that Chain, and returns the result
+  //. of applying the sequence of transformations to the initial value.
+  //.
+  //. In general terms, `pipeK` performs left-to-right [Kleisli][] composition
+  //. of an sequence of functions. `pipeK([f, g, h], x)` is equivalent to
+  //. `chain(h, chain(g, chain(f, x)))`.
+  //.
+  //. ```javascript
+  //. > S.pipeK([S.tail, S.tail, S.head], S.Just([1, 2, 3, 4]))
+  //. Just(3)
+  //. ```
+  function pipeK(fs, x) {
+    return Z.reduce(function(x, f) { return Z.chain(f, x); }, x, fs);
+  }
+  S.pipeK =
+  def('pipeK',
+      {f: [Z.Foldable], m: [Z.Chain]},
+      [f(Fn($.Any, m($.Any))), m(a), m(b)],
+      pipeK);
 
   //# on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
   //.
@@ -4636,11 +4659,13 @@
 //. [Apply]:            v:fantasyland/fantasy-land#apply
 //. [Bifunctor]:        v:fantasyland/fantasy-land#bifunctor
 //. [BinaryType]:       v:sanctuary-js/sanctuary-def#BinaryType
+//. [Chain]:            v:fantasyland/fantasy-land#chain
 //. [Either]:           #either-type
 //. [Extend]:           v:fantasyland/fantasy-land#extend
 //. [Fantasy Land]:     v:fantasyland/fantasy-land
 //. [Foldable]:         v:fantasyland/fantasy-land#foldable
 //. [Haskell]:          https://www.haskell.org/
+//. [Kleisli]:          https://en.wikipedia.org/wiki/Kleisli_category
 //. [Maybe]:            #maybe-type
 //. [Monad]:            v:fantasyland/fantasy-land#monad
 //. [Monoid]:           v:fantasyland/fantasy-land#monoid
