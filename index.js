@@ -1487,13 +1487,13 @@
       [s(b, c), s(a, b), s(a, c)],
       Z.compose);
 
-  //# pipe :: [(a -> b), (b -> c), ..., (m -> n)] -> a -> n
+  //# pipe :: Foldable f => f (Any -> Any) -> a -> b
   //.
   //. Takes an array of functions assumed to be unary and a value of any type,
   //. and returns the result of applying the sequence of transformations to
   //. the initial value.
   //.
-  //. In general terms, `pipe` performs left-to-right composition of an array
+  //. In general terms, `pipe` performs left-to-right composition of a sequence
   //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
   //.
   //. ```javascript
@@ -1503,7 +1503,7 @@
   function pipe(fs, x) {
     return Z.reduce(function(x, f) { return f(x); }, x, fs);
   }
-  S.pipe = def('pipe', {}, [$.Array($.AnyFunction), a, b], pipe);
+  S.pipe = def('pipe', {f: [Z.Foldable]}, [f(Fn($.Any, $.Any)), a, b], pipe);
 
   //# on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
   //.
