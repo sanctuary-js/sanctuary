@@ -1177,9 +1177,33 @@
   //. ```javascript
   //. > S.extend(S.joinWith(''), ['x', 'y', 'z'])
   //. ['xyz', 'yz', 'z']
+  //.
+  //. > S.extend(f => f([3, 4]), S.reverse)([1, 2])
+  //. [4, 3, 2, 1]
   //. ```
   S.extend =
   def('extend', {w: [Z.Extend]}, [Fn(w(a), b), w(a), w(b)], Z.extend);
+
+  //# duplicate :: Extend w => w a -> w (w a)
+  //.
+  //. [Type-safe][sanctuary-def] version of [`Z.duplicate`][].
+  //. Adds one level of nesting to a comonadic structure.
+  //.
+  //. ```javascript
+  //. > S.duplicate(S.Just(1))
+  //. S.Just(S.Just(1))
+  //.
+  //. > S.duplicate([1])
+  //. [[1]]
+  //.
+  //. > S.duplicate([1, 2, 3])
+  //. [[1, 2, 3], [2, 3], [3]]
+  //.
+  //. > S.duplicate(S.reverse)([1, 2])([3, 4])
+  //. [4, 3, 2, 1]
+  //. ```
+  S.duplicate =
+  def('duplicate', {w: [Z.Extend]}, [w(a), w(w(a))], Z.duplicate);
 
   //# extract :: Comonad w => w a -> a
   //.
@@ -4689,6 +4713,7 @@
 //. [`Z.compose`]:      v:sanctuary-js/sanctuary-type-classes#compose
 //. [`Z.concat`]:       v:sanctuary-js/sanctuary-type-classes#concat
 //. [`Z.contramap`]:    v:sanctuary-js/sanctuary-type-classes#contramap
+//. [`Z.duplicate`]:    v:sanctuary-js/sanctuary-type-classes#duplicate
 //. [`Z.empty`]:        v:sanctuary-js/sanctuary-type-classes#empty
 //. [`Z.equals`]:       v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.extend`]:       v:sanctuary-js/sanctuary-type-classes#extend
