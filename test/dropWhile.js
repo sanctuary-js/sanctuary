@@ -9,7 +9,7 @@ test('dropWhile', function() {
 
   eq(typeof S.dropWhile, 'function');
   eq(S.dropWhile.length, 2);
-  eq(S.dropWhile.toString(), 'dropWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a');
+  eq(S.dropWhile.toString(), 'dropWhile :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq(S.dropWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4]), [6, 3, 5, 4]);
   eq(S.dropWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4]), [3, 3, 3, 7, 6, 3, 5, 4]);
