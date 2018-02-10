@@ -934,6 +934,21 @@
       [Fn(a, b), Fn(c, d), p(a, c), p(b, d)],
       Z.bimap);
 
+  //# mapLeft :: Bifunctor f => (a -> b) -> f a c -> f b c
+  //.
+  //. Curried version of [`Z.mapLeft`][]. Maps the given function over the left
+  //. side of a Bifunctor.
+  //.
+  //. ```javascript
+  //. > S.mapLeft(S.toUpper, S.Left('foo'))
+  //. Left('FOO')
+  //.
+  //. > S.mapLeft(S.toUpper, S.Right(64))
+  //. Right(64)
+  //. ```
+  S.mapLeft =
+  def('mapLeft', {p: [Z.Bifunctor]}, [Fn(a, b), p(a, c), p(b, c)], Z.mapLeft);
+
   //# promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d
   //.
   //. Curried version of [`Z.promap`][].
@@ -4750,6 +4765,7 @@
 //. [`Z.lt`]:           v:sanctuary-js/sanctuary-type-classes#lt
 //. [`Z.lte`]:          v:sanctuary-js/sanctuary-type-classes#lte
 //. [`Z.map`]:          v:sanctuary-js/sanctuary-type-classes#map
+//. [`Z.mapLeft`]:      v:sanctuary-js/sanctuary-type-classes#mapLeft
 //. [`Z.of`]:           v:sanctuary-js/sanctuary-type-classes#of
 //. [`Z.promap`]:       v:sanctuary-js/sanctuary-type-classes#promap
 //. [`Z.reject`]:       v:sanctuary-js/sanctuary-type-classes#reject
