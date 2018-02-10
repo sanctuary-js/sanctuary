@@ -786,6 +786,98 @@
   //. ```
   S.invert = def('invert', {g: [Z.Group]}, [g, g], Z.invert);
 
+  //# filter :: Filterable f => (a -> Boolean) -> f a -> f a
+  //.
+  //. Curried version of [`Z.filter`][]. Discards every element which does not
+  //. satisfy the predicate.
+  //.
+  //. See also [`reject`](#reject).
+  //.
+  //. ```javascript
+  //. > S.filter(S.odd, [1, 2, 3])
+  //. [1, 3]
+  //.
+  //. > S.filter(S.odd, {x: 1, y: 2, z: 3})
+  //. {x: 1, z: 3}
+  //.
+  //. > S.filter(S.odd, S.Nothing)
+  //. Nothing
+  //.
+  //. > S.filter(S.odd, S.Just(0))
+  //. Nothing
+  //.
+  //. > S.filter(S.odd, S.Just(1))
+  //. Just(1)
+  //. ```
+  S.filter =
+  def('filter', {f: [Z.Filterable]}, [$.Predicate(a), f(a), f(a)], Z.filter);
+
+  //# reject :: Filterable f => (a -> Boolean) -> f a -> f a
+  //.
+  //. Curried version of [`Z.reject`][]. Discards every element which satisfies
+  //. the predicate.
+  //.
+  //. See also [`filter`](#filter).
+  //.
+  //. ```javascript
+  //. > S.reject(S.odd, [1, 2, 3])
+  //. [2]
+  //.
+  //. > S.reject(S.odd, {x: 1, y: 2, z: 3})
+  //. {y: 2}
+  //.
+  //. > S.reject(S.odd, S.Nothing)
+  //. Nothing
+  //.
+  //. > S.reject(S.odd, S.Just(0))
+  //. Just(0)
+  //.
+  //. > S.reject(S.odd, S.Just(1))
+  //. Nothing
+  //. ```
+  S.reject =
+  def('reject', {f: [Z.Filterable]}, [$.Predicate(a), f(a), f(a)], Z.reject);
+
+  //# takeWhile :: Filterable f => (a -> Boolean) -> f a -> f a
+  //.
+  //. Curried version of [`Z.takeWhile`][]. Discards the first element which
+  //. does not satisfy the predicate, and all subsequent elements.
+  //.
+  //. See also [`dropWhile`](#dropWhile).
+  //.
+  //. ```javascript
+  //. > S.takeWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7]
+  //.
+  //. > S.takeWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. []
+  //. ```
+  S.takeWhile =
+  def('takeWhile',
+      {f: [Z.Filterable]},
+      [$.Predicate(a), f(a), f(a)],
+      Z.takeWhile);
+
+  //# dropWhile :: Filterable f => (a -> Boolean) -> f a -> f a
+  //.
+  //. Curried version of [`Z.dropWhile`][]. Retains the first element which
+  //. does not satisfy the predicate, and all subsequent elements.
+  //.
+  //. See also [`takeWhile`](#takeWhile).
+  //.
+  //. ```javascript
+  //. > S.dropWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [6, 3, 5, 4]
+  //.
+  //. > S.dropWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7, 6, 3, 5, 4]
+  //. ```
+  S.dropWhile =
+  def('dropWhile',
+      {f: [Z.Filterable]},
+      [$.Predicate(a), f(a), f(a)],
+      Z.dropWhile);
+
   //# map :: Functor f => (a -> b) -> f a -> f b
   //.
   //. Curried version of [`Z.map`][].
@@ -1224,82 +1316,6 @@
       {f: [Z.Contravariant]},
       [Fn(b, a), f(a), f(b)],
       Z.contramap);
-
-  //# filter :: (Applicative f, Foldable f, Monoid (f a)) => (a -> Boolean) -> f a -> f a
-  //.
-  //. Curried version of [`Z.filter`][]. Filters its second argument in
-  //. accordance with the given predicate.
-  //.
-  //. See also [`filterM`](#filterM).
-  //.
-  //. ```javascript
-  //. > S.filter(S.odd, [1, 2, 3, 4, 5])
-  //. [1, 3, 5]
-  //. ```
-  S.filter =
-  def('filter',
-      {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-      [$.Predicate(a), f(a), f(a)],
-      Z.filter);
-
-  //# filterM :: (Alternative m, Monad m) => (a -> Boolean) -> m a -> m a
-  //.
-  //. Curried version of [`Z.filterM`][]. Filters its second argument in
-  //. accordance with the given predicate.
-  //.
-  //. See also [`filter`](#filter).
-  //.
-  //. ```javascript
-  //. > S.filterM(S.odd, [1, 2, 3, 4, 5])
-  //. [1, 3, 5]
-  //.
-  //. > S.filterM(S.odd, S.Just(9))
-  //. Just(9)
-  //.
-  //. > S.filterM(S.odd, S.Just(4))
-  //. Nothing
-  //. ```
-  S.filterM =
-  def('filterM',
-      {m: [Z.Alternative, Z.Monad]},
-      [$.Predicate(a), m(a), m(a)],
-      Z.filterM);
-
-  //# takeWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
-  //.
-  //. Discards the first inner value which does not satisfy the predicate, and
-  //. all subsequent inner values.
-  //.
-  //. ```javascript
-  //. > S.takeWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
-  //. [3, 3, 3, 7]
-  //.
-  //. > S.takeWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
-  //. []
-  //. ```
-  S.takeWhile =
-  def('takeWhile',
-      {f: [Z.Foldable, Z.Alternative]},
-      [$.Predicate(a), f(a), f(a)],
-      Z.takeWhile);
-
-  //# dropWhile :: (Foldable f, Alternative f) => (a -> Boolean) -> f a -> f a
-  //.
-  //. Retains the first inner value which does not satisfy the predicate, and
-  //. all subsequent inner values.
-  //.
-  //. ```javascript
-  //. > S.dropWhile(S.odd, [3, 3, 3, 7, 6, 3, 5, 4])
-  //. [6, 3, 5, 4]
-  //.
-  //. > S.dropWhile(S.even, [3, 3, 3, 7, 6, 3, 5, 4])
-  //. [3, 3, 3, 7, 6, 3, 5, 4]
-  //. ```
-  S.dropWhile =
-  def('dropWhile',
-      {f: [Z.Foldable, Z.Alternative]},
-      [$.Predicate(a), f(a), f(a)],
-      Z.dropWhile);
 
   //. ### Combinator
 
@@ -1827,6 +1843,28 @@
       other :
       other.isNothing ? this : Just(Z.concat(this.value, other.value));
   }
+
+  //# Maybe#fantasy-land/filter :: Maybe a ~> (a -> Boolean) -> Maybe a
+  //.
+  //. Takes a predicate and returns `this` if `this` is a Just and this Just's
+  //. value satisfies the given predicate; Nothing otherwise.
+  //.
+  //. It is idiomatic to use [`filter`](#filter) rather than use this method
+  //. directly.
+  //.
+  //. ```javascript
+  //. > S.filter(S.odd, S.Nothing)
+  //. Nothing
+  //.
+  //. > S.filter(S.odd, S.Just(0))
+  //. Nothing
+  //.
+  //. > S.filter(S.odd, S.Just(1))
+  //. Just(1)
+  //. ```
+  Maybe.prototype['fantasy-land/filter'] = function(pred) {
+    return this.isJust && pred(this.value) ? this : Nothing;
+  };
 
   //# Maybe#fantasy-land/map :: Maybe a ~> (a -> b) -> Maybe b
   //.
@@ -4689,13 +4727,13 @@
 //. [`Z.compose`]:      v:sanctuary-js/sanctuary-type-classes#compose
 //. [`Z.concat`]:       v:sanctuary-js/sanctuary-type-classes#concat
 //. [`Z.contramap`]:    v:sanctuary-js/sanctuary-type-classes#contramap
+//. [`Z.dropWhile`]:    v:sanctuary-js/sanctuary-type-classes#dropWhile
 //. [`Z.duplicate`]:    v:sanctuary-js/sanctuary-type-classes#duplicate
 //. [`Z.empty`]:        v:sanctuary-js/sanctuary-type-classes#empty
 //. [`Z.equals`]:       v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.extend`]:       v:sanctuary-js/sanctuary-type-classes#extend
 //. [`Z.extract`]:      v:sanctuary-js/sanctuary-type-classes#extract
 //. [`Z.filter`]:       v:sanctuary-js/sanctuary-type-classes#filter
-//. [`Z.filterM`]:      v:sanctuary-js/sanctuary-type-classes#filterM
 //. [`Z.gt`]:           v:sanctuary-js/sanctuary-type-classes#gt
 //. [`Z.gte`]:          v:sanctuary-js/sanctuary-type-classes#gte
 //. [`Z.id`]:           v:sanctuary-js/sanctuary-type-classes#id
@@ -4706,7 +4744,9 @@
 //. [`Z.map`]:          v:sanctuary-js/sanctuary-type-classes#map
 //. [`Z.of`]:           v:sanctuary-js/sanctuary-type-classes#of
 //. [`Z.promap`]:       v:sanctuary-js/sanctuary-type-classes#promap
+//. [`Z.reject`]:       v:sanctuary-js/sanctuary-type-classes#reject
 //. [`Z.sequence`]:     v:sanctuary-js/sanctuary-type-classes#sequence
+//. [`Z.takeWhile`]:    v:sanctuary-js/sanctuary-type-classes#takeWhile
 //. [`Z.toString`]:     v:sanctuary-js/sanctuary-type-classes#toString
 //. [`Z.traverse`]:     v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:         v:sanctuary-js/sanctuary-type-classes#zero

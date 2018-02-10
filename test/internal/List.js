@@ -63,6 +63,14 @@ List.prototype[FL.concat] = function(other) {
     Cons(this.head, Z.concat(this.tail, other));
 };
 
+List.prototype[FL.filter] = function(pred) {
+  return this.isNil ?
+    Nil :
+    pred(this.head) ?
+      Cons(this.head, Z.filter(pred, this.tail)) :
+      Z.filter(pred, this.tail);
+};
+
 List.prototype[FL.map] = function(f) {
   return this.isNil ?
     Nil :
