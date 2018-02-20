@@ -2195,25 +2195,28 @@
   S.justs =
   def('justs', {f: [Z.Filterable, Z.Functor]}, [f($Maybe(a)), f(a)], justs);
 
-  //# mapMaybe :: (a -> Maybe b) -> Array a -> Array b
+  //# mapMaybe :: (Filterable f, Functor f) => (a -> Maybe b) -> f a -> f b
   //.
-  //. Takes a function and an array, applies the function to each element of
-  //. the array, and returns an array of "successful" results. If the result of
-  //. applying the function to an element of the array is Nothing, the result
-  //. is discarded; if the result is a Just, the Just's value is included in
-  //. the output array.
-  //.
-  //. In general terms, `mapMaybe` filters an array while mapping over it.
+  //. Takes a function and a structure, applies the function to each element
+  //. of the structure, and returns the "successful" results. If the result of
+  //. applying the function to an element is Nothing, the result is discarded;
+  //. if the result is a Just, the Just's value is included.
   //.
   //. ```javascript
   //. > S.mapMaybe(S.head, [[], [1, 2, 3], [], [4, 5, 6], []])
   //. [1, 4]
+  //.
+  //. > S.mapMaybe(S.head, {x: [1, 2, 3], y: [], z: [4, 5, 6]})
+  //. {x: 1, z: 4}
   //. ```
-  function mapMaybe(f, xs) {
-    return justs(Z.map(f, xs));
+  function mapMaybe(f, filterable) {
+    return justs(Z.map(f, filterable));
   }
   S.mapMaybe =
-  def('mapMaybe', {}, [Fn(a, $Maybe(b)), $.Array(a), $.Array(b)], mapMaybe);
+  def('mapMaybe',
+      {f: [Z.Filterable, Z.Functor]},
+      [Fn(a, $Maybe(b)), f(a), f(b)],
+      mapMaybe);
 
   //# encase :: (a -> b) -> a -> Maybe b
   //.
