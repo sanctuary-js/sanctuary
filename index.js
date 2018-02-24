@@ -244,6 +244,11 @@
     };
   }
 
+  //  value :: { value :: a } -> a
+  function value(r) {
+    return r.value;
+  }
+
   //  readmeUrl :: String -> String
   function readmeUrl(id) {
     var version = '0.14.1';  // updated programmatically
@@ -2173,10 +2178,10 @@
   }
   S.maybe_ = def('maybe_', {}, [$.Thunk(b), Fn(a, b), $Maybe(a), b], maybe_);
 
-  //# justs :: Array (Maybe a) -> Array a
+  //# justs :: (Filterable f, Functor f) => f (Maybe a) -> f a
   //.
-  //. Takes an array of Maybes and returns an array containing each Just's
-  //. value. Equivalent to Haskell's `catMaybes` function.
+  //. Discards each element which is Nothing, and unwraps each element which is
+  //. a Just. Related to Haskell's `catMaybes` function.
   //.
   //. See also [`lefts`](#lefts) and [`rights`](#rights).
   //.
@@ -2185,12 +2190,10 @@
   //. ['foo', 'baz']
   //. ```
   function justs(maybes) {
-    return Z.reduce(function(xs, maybe) {
-      if (maybe.isJust) xs.push(maybe.value);
-      return xs;
-    }, [], maybes);
+    return Z.map(value, Z.filter(isJust, maybes));
   }
-  S.justs = def('justs', {}, [$.Array($Maybe(a)), $.Array(a)], justs);
+  S.justs =
+  def('justs', {f: [Z.Filterable, Z.Functor]}, [f($Maybe(a)), f(a)], justs);
 
   //# mapMaybe :: (a -> Maybe b) -> Array a -> Array b
   //.
@@ -2799,10 +2802,10 @@
   }
   S.either = def('either', {}, [Fn(a, c), Fn(b, c), $Either(a, b), c], either);
 
-  //# lefts :: Array (Either a b) -> Array a
+  //# lefts :: (Filterable f, Functor f) => f (Either a b) -> f a
   //.
-  //. Takes an array of Eithers and returns an array containing each Left's
-  //. value.
+  //. Discards each element which is a Right, and unwraps each element which is
+  //. a Left.
   //.
   //. See also [`rights`](#rights).
   //.
@@ -2811,17 +2814,18 @@
   //. ['foo', 'bar']
   //. ```
   function lefts(eithers) {
-    return Z.reduce(function(xs, either) {
-      if (either.isLeft) xs.push(either.value);
-      return xs;
-    }, [], eithers);
+    return Z.map(value, Z.filter(isLeft, eithers));
   }
-  S.lefts = def('lefts', {}, [$.Array($Either(a, b)), $.Array(a)], lefts);
+  S.lefts =
+  def('lefts',
+      {f: [Z.Filterable, Z.Functor]},
+      [f($Either(a, b)), f(a)],
+      lefts);
 
-  //# rights :: Array (Either a b) -> Array b
+  //# rights :: (Filterable f, Functor f) => f (Either a b) -> f b
   //.
-  //. Takes an array of Eithers and returns an array containing each Right's
-  //. value.
+  //. Discards each element which is a Left, and unwraps each element which is
+  //. a Right.
   //.
   //. See also [`lefts`](#lefts).
   //.
@@ -2830,12 +2834,13 @@
   //. [20, 10]
   //. ```
   function rights(eithers) {
-    return Z.reduce(function(xs, either) {
-      if (either.isRight) xs.push(either.value);
-      return xs;
-    }, [], eithers);
+    return Z.map(value, Z.filter(isRight, eithers));
   }
-  S.rights = def('rights', {}, [$.Array($Either(a, b)), $.Array(b)], rights);
+  S.rights =
+  def('rights',
+      {f: [Z.Filterable, Z.Functor]},
+      [f($Either(a, b)), f(b)],
+      rights);
 
   //# tagBy :: (a -> Boolean) -> a -> Either a a
   //.
