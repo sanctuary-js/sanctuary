@@ -4,7 +4,7 @@
 module.exports = function compose(f) {
   return function(g) {
     return function(x) {
-      return f(g(x));
+      return f (g (x));
     };
   };
 };

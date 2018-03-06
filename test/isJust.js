@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('isJust', function() {
+test ('isJust', function() {
 
-  eq(typeof S.isJust, 'function');
-  eq(S.isJust.length, 1);
-  eq(S.isJust.toString(), 'isJust :: Maybe a -> Boolean');
+  eq (typeof S.isJust) ('function');
+  eq (S.isJust.length) (1);
+  eq (String (S.isJust)) ('isJust :: Maybe a -> Boolean');
 
-  eq(S.isJust(S.Nothing), false);
-  eq(S.isJust(S.Just(42)), true);
+  eq (S.isJust (S.Nothing)) (false);
+  eq (S.isJust (S.Just (42))) (true);
 
 });

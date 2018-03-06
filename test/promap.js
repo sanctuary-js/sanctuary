@@ -1,20 +1,20 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('promap', function() {
+test ('promap', function() {
 
-  eq(typeof S.promap, 'function');
-  eq(S.promap.length, 3);
-  eq(S.promap.toString(), 'promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
+  eq (typeof S.promap) ('function');
+  eq (S.promap.length) (1);
+  eq (String (S.promap)) ('promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
 
-  var before = S.map(S.prop('length'));
-  var after = S.join(S.mult);
-  eq(S.promap(before, after, S.sum)(['foo', 'bar', 'baz', 'quux']), 169);
+  var before = S.map (S.prop ('length'));
+  var after = S.join (S.mult);
+  eq (S.promap (before) (after) (S.sum) (['foo', 'bar', 'baz', 'quux'])) (169);
 
-  eq(S.promap(Math.abs, S.add(1), Math.sqrt)(-100), 11);
+  eq (S.promap (Math.abs) (S.add (1)) (Math.sqrt) (-100)) (11);
 
 });

@@ -5,7 +5,7 @@ module.exports = function curry3(f) {
   return function(x) {
     return function(y) {
       return function(z) {
-        return f(x, y, z);
+        return f (x, y, z);
       };
     };
   };

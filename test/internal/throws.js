@@ -1,11 +1,14 @@
 'use strict';
 
-var assert = require('assert');
+var assert = require ('assert');
 
-//  throws :: (Function, TypeRep a, String) -> Undefined
-module.exports = function throws(f, type, message) {
-  assert.strictEqual(arguments.length, throws.length);
-  assert.throws(f, function(err) {
-    return err.constructor === type && err.message === message;
-  });
+var equals = require ('./equals');
+
+//  throws :: (() -> Undefined !) -> Error -> Undefined !
+module.exports = function throws(thunk) {
+  assert.strictEqual (arguments.length, throws.length);
+  return function throws$1(expected) {
+    assert.strictEqual (arguments.length, throws$1.length);
+    assert.throws (thunk, equals (expected));
+  };
 };

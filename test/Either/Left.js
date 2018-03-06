@@ -1,106 +1,106 @@
 'use strict';
 
-var FL = require('fantasy-land');
-var Z = require('sanctuary-type-classes');
+var FL = require ('fantasy-land');
+var Z = require ('sanctuary-type-classes');
 
-var S = require('../internal/sanctuary');
+var S = require ('../internal/sanctuary');
 
-var Useless = require('../internal/Useless');
-var eq = require('../internal/eq');
-var squareRoot = require('../internal/squareRoot');
+var Useless = require ('../internal/Useless');
+var eq = require ('../internal/eq');
+var squareRoot = require ('../internal/squareRoot');
 
 
-suite('Left', function() {
+suite ('Left', function() {
 
-  test('data constructor', function() {
-    eq(typeof S.Left, 'function');
-    eq(S.Left.length, 1);
-    eq(S.Left(42).constructor, S.Either);
-    eq(S.Left(42).isLeft, true);
-    eq(S.Left(42).isRight, false);
+  test ('data constructor', function() {
+    eq (typeof S.Left) ('function');
+    eq (S.Left.length) (1);
+    eq ((S.Left (42)).constructor) (S.Either);
+    eq ((S.Left (42)).isLeft) (true);
+    eq ((S.Left (42)).isRight) (false);
   });
 
-  test('"fantasy-land/alt" method', function() {
-    eq(S.Left(1)[FL.alt].length, 1);
-    eq(S.Left(1)[FL.alt](S.Left(2)), S.Left(2));
-    eq(S.Left(1)[FL.alt](S.Right(2)), S.Right(2));
+  test ('"fantasy-land/alt" method', function() {
+    eq ((S.Left (1))[FL.alt].length) (1);
+    eq ((S.Left (1))[FL.alt] (S.Left (2))) (S.Left (2));
+    eq ((S.Left (1))[FL.alt] (S.Right (2))) (S.Right (2));
   });
 
-  test('"fantasy-land/ap" method', function() {
-    eq(S.Left('abc')[FL.ap].length, 1);
-    eq(S.Left('abc')[FL.ap](S.Left('xyz')), S.Left('xyz'));
-    eq(S.Left('abc')[FL.ap](S.Right(S.add(1))), S.Left('abc'));
+  test ('"fantasy-land/ap" method', function() {
+    eq ((S.Left ('abc'))[FL.ap].length) (1);
+    eq ((S.Left ('abc'))[FL.ap] (S.Left ('xyz'))) (S.Left ('xyz'));
+    eq ((S.Left ('abc'))[FL.ap] (S.Right (S.add (1)))) (S.Left ('abc'));
   });
 
-  test('"fantasy-land/bimap" method', function() {
-    eq(S.Left('abc')[FL.bimap].length, 2);
-    eq(S.Left('abc')[FL.bimap](S.toUpper, S.add(1)), S.Left('ABC'));
+  test ('"fantasy-land/bimap" method', function() {
+    eq ((S.Left ('abc'))[FL.bimap].length) (2);
+    eq ((S.Left ('abc'))[FL.bimap] (S.toUpper, S.add (1))) (S.Left ('ABC'));
   });
 
-  test('"fantasy-land/chain" method', function() {
-    eq(S.Left('abc')[FL.chain].length, 1);
-    eq(S.Left('abc')[FL.chain](squareRoot), S.Left('abc'));
+  test ('"fantasy-land/chain" method', function() {
+    eq ((S.Left ('abc'))[FL.chain].length) (1);
+    eq ((S.Left ('abc'))[FL.chain] (squareRoot)) (S.Left ('abc'));
   });
 
-  test('"fantasy-land/concat" method', function() {
-    eq(S.Left('abc')[FL.concat].length, 1);
-    eq(S.Left('abc')[FL.concat](S.Left('def')), S.Left('abcdef'));
-    eq(S.Left('abc')[FL.concat](S.Right('xyz')), S.Right('xyz'));
+  test ('"fantasy-land/concat" method', function() {
+    eq ((S.Left ('abc'))[FL.concat].length) (1);
+    eq ((S.Left ('abc'))[FL.concat] (S.Left ('def'))) (S.Left ('abcdef'));
+    eq ((S.Left ('abc'))[FL.concat] (S.Right ('xyz'))) (S.Right ('xyz'));
 
-    eq(Z.Semigroup.test(S.Left('abc')), true);
-    eq(Z.Semigroup.test(S.Left(123)), false);
+    eq (Z.Semigroup.test (S.Left ('abc'))) (true);
+    eq (Z.Semigroup.test (S.Left (123))) (false);
   });
 
-  test('"fantasy-land/equals" method', function() {
-    eq(S.Left(42)[FL.equals].length, 1);
-    eq(S.Left(42)[FL.equals](S.Left(42)), true);
-    eq(S.Left(42)[FL.equals](S.Left('42')), false);
-    eq(S.Left(42)[FL.equals](S.Right(42)), false);
+  test ('"fantasy-land/equals" method', function() {
+    eq ((S.Left (42))[FL.equals].length) (1);
+    eq ((S.Left (42))[FL.equals] (S.Left (42))) (true);
+    eq ((S.Left (42))[FL.equals] (S.Left ('42'))) (false);
+    eq ((S.Left (42))[FL.equals] (S.Right (42))) (false);
 
     // Value-based equality:
-    eq(S.Left(NaN)[FL.equals](S.Left(NaN)), true);
-    eq(S.Left([1, 2, 3])[FL.equals](S.Left([1, 2, 3])), true);
+    eq ((S.Left (NaN))[FL.equals] (S.Left (NaN))) (true);
+    eq ((S.Left ([1, 2, 3]))[FL.equals] (S.Left ([1, 2, 3]))) (true);
 
-    eq(Z.Setoid.test(S.Left(1)), true);
-    eq(Z.Setoid.test(S.Left(Useless)), false);
+    eq (Z.Setoid.test (S.Left (1))) (true);
+    eq (Z.Setoid.test (S.Left (Useless))) (false);
   });
 
-  test('"fantasy-land/extend" method', function() {
-    eq(S.Left('abc')[FL.extend].length, 1);
-    eq(S.Left('abc')[FL.extend](function(x) { return x / 2; }), S.Left('abc'));
+  test ('"fantasy-land/extend" method', function() {
+    eq ((S.Left ('abc'))[FL.extend].length) (1);
+    eq ((S.Left ('abc'))[FL.extend] (function(x) { return x / 2; })) (S.Left ('abc'));
   });
 
-  test('"fantasy-land/lte" method', function() {
-    eq(S.Left(1)[FL.lte].length, 1);
-    eq(S.Left(1)[FL.lte](S.Right(0)), true);
-    eq(S.Left(1)[FL.lte](S.Right(1)), true);
-    eq(S.Left(1)[FL.lte](S.Right(2)), true);
-    eq(S.Left(1)[FL.lte](S.Left(0)), false);
-    eq(S.Left(1)[FL.lte](S.Left(1)), true);
-    eq(S.Left(1)[FL.lte](S.Left(2)), true);
+  test ('"fantasy-land/lte" method', function() {
+    eq ((S.Left (1))[FL.lte].length) (1);
+    eq ((S.Left (1))[FL.lte] (S.Right (0))) (true);
+    eq ((S.Left (1))[FL.lte] (S.Right (1))) (true);
+    eq ((S.Left (1))[FL.lte] (S.Right (2))) (true);
+    eq ((S.Left (1))[FL.lte] (S.Left (0))) (false);
+    eq ((S.Left (1))[FL.lte] (S.Left (1))) (true);
+    eq ((S.Left (1))[FL.lte] (S.Left (2))) (true);
 
-    eq(Z.Ord.test(S.Left(1)), true);
-    eq(Z.Ord.test(S.Left(Math.sqrt)), false);
+    eq (Z.Ord.test (S.Left (1))) (true);
+    eq (Z.Ord.test (S.Left (Math.sqrt))) (false);
   });
 
-  test('"fantasy-land/map" method', function() {
-    eq(S.Left('abc')[FL.map].length, 1);
-    eq(S.Left('abc')[FL.map](Math.sqrt), S.Left('abc'));
+  test ('"fantasy-land/map" method', function() {
+    eq ((S.Left ('abc'))[FL.map].length) (1);
+    eq ((S.Left ('abc'))[FL.map] (Math.sqrt)) (S.Left ('abc'));
   });
 
-  test('"fantasy-land/reduce" method', function() {
-    eq(S.Left('abc')[FL.reduce].length, 2);
-    eq(S.Left('abc')[FL.reduce](function(x, y) { return x - y; }, 42), 42);
+  test ('"fantasy-land/reduce" method', function() {
+    eq ((S.Left ('abc'))[FL.reduce].length) (2);
+    eq ((S.Left ('abc'))[FL.reduce] (function(x, y) { return x - y; }, 42)) (42);
   });
 
-  test('"toString" method', function() {
-    eq(S.Left('abc').toString.length, 0);
-    eq(S.Left('abc').toString(), 'Left("abc")');
+  test ('"toString" method', function() {
+    eq ((S.Left ('abc')).toString.length) (0);
+    eq ((S.Left ('abc')).toString ()) ('Left("abc")');
   });
 
-  test('"inspect" method', function() {
-    eq(S.Left('abc').inspect.length, 0);
-    eq(S.Left('abc').inspect(), 'Left("abc")');
+  test ('"inspect" method', function() {
+    eq ((S.Left ('abc')).inspect.length) (0);
+    eq ((S.Left ('abc')).inspect ()) ('Left("abc")');
   });
 
 });
