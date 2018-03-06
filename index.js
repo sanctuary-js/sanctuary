@@ -2982,7 +2982,7 @@
   //. true
   //. ```
   function and(x, y) {
-    return x.valueOf() && y.valueOf();
+    return x && y;
   }
   S.and = def('and', {}, [$.Boolean, $.Boolean, $.Boolean], and);
 
@@ -3004,7 +3004,7 @@
   //. true
   //. ```
   function or(x, y) {
-    return x.valueOf() || y.valueOf();
+    return x || y;
   }
   S.or = def('or', {}, [$.Boolean, $.Boolean, $.Boolean], or);
 
@@ -3022,7 +3022,7 @@
   //. false
   //. ```
   function not(x) {
-    return !x.valueOf();
+    return !x;
   }
   S.not = def('not', {}, [$.Boolean, $.Boolean], not);
 
