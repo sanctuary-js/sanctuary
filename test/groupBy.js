@@ -32,7 +32,9 @@ test('groupBy', function() {
   eq(S.groupBy(zeroSum, [2, -3, 3, 3, 3, 4, -4, 4]), [[2], [-3, 3, 3, 3], [4, -4], [4]]);
 
   jsc.assert(jsc.forall('nat -> nat -> bool', 'array nat', function(f, xs) {
-    return equals(S.join(S.groupBy(f, xs)))(xs);
+    var lhs = S.join(S.groupBy(f, xs));
+    var rhs = xs;
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });
