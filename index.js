@@ -3892,7 +3892,7 @@
   //. Returns the keys of the given string map, in arbitrary order.
   //.
   //. ```javascript
-  //. > S.keys({b: 2, c: 3, a: 1}).sort()
+  //. > S.sort(S.keys({b: 2, c: 3, a: 1}))
   //. ['a', 'b', 'c']
   //. ```
   S.keys = def('keys', {}, [$.StrMap(a), $.Array($.String)], Object.keys);
@@ -3902,7 +3902,7 @@
   //. Returns the values of the given string map, in arbitrary order.
   //.
   //. ```javascript
-  //. > S.values({a: 1, c: 3, b: 2}).sort()
+  //. > S.sort(S.values({a: 1, c: 3, b: 2}))
   //. [1, 2, 3]
   //. ```
   function values(strMap) {
@@ -3915,7 +3915,7 @@
   //. Returns the key–value pairs of the given string map, in arbitrary order.
   //.
   //. ```javascript
-  //. > S.pairs({b: 2, a: 1, c: 3}).sort()
+  //. > S.sort(S.pairs({b: 2, a: 1, c: 3}))
   //. [['a', 1], ['b', 2], ['c', 3]]
   //. ```
   function pairs(strMap) {

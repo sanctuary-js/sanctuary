@@ -26,11 +26,11 @@ test('create', function() {
   eq(S.create.length, 1);
   eq(S.create.toString(), 'create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
-  var expected = Object.keys(S).sort();
-  eq(Object.keys(checkedDefaultEnv).sort(), expected);
-  eq(Object.keys(checkedCustomEnv).sort(), expected);
-  eq(Object.keys(uncheckedDefaultEnv).sort(), expected);
-  eq(Object.keys(uncheckedCustomEnv).sort(), expected);
+  var expected = S.sort(Object.keys(S));
+  eq(S.sort(Object.keys(checkedDefaultEnv)), expected);
+  eq(S.sort(Object.keys(checkedCustomEnv)), expected);
+  eq(S.sort(Object.keys(uncheckedDefaultEnv)), expected);
+  eq(S.sort(Object.keys(uncheckedCustomEnv)), expected);
 
   eq(uncheckedDefaultEnv.add(1, 42), S.add(1, 42));
   eq(uncheckedDefaultEnv.add(1, 'XXX'), '1XXX');
