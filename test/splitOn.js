@@ -5,6 +5,7 @@ var jsc = require('jsverify');
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('splitOn', function() {
@@ -26,7 +27,9 @@ test('splitOn', function() {
     var i = jsc.random(min, max);
     var j = jsc.random(min, max);
     var s = t.slice(Math.min(i, j), Math.max(i, j));
-    return S.joinWith(s, S.splitOn(s, t)) === t;
+    var lhs = S.joinWith(s, S.splitOn(s, t));
+    var rhs = t;
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });

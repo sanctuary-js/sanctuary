@@ -5,6 +5,7 @@ var jsc = require('jsverify');
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('remove', function() {
@@ -19,7 +20,9 @@ test('remove', function() {
 
   jsc.assert(jsc.forall(jsc.string, jsc.dict(jsc.number), function(key, map) {
     var remove = S.remove(key);
-    return S.equals(remove(remove(map)), remove(map));
+    var lhs = remove(remove(map));
+    var rhs = remove(map);
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });

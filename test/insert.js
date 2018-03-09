@@ -5,6 +5,7 @@ var jsc = require('jsverify');
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('insert', function() {
@@ -19,7 +20,9 @@ test('insert', function() {
 
   jsc.assert(jsc.forall(jsc.string, jsc.number, jsc.dict(jsc.number), function(key, val, map) {
     var insert = S.insert(key, val);
-    return S.equals(insert(insert(map)), insert(map));
+    var lhs = insert(insert(map));
+    var rhs = insert(map);
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });

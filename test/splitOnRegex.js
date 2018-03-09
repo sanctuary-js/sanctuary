@@ -5,6 +5,7 @@ var jsc = require('jsverify');
 var S = require('..');
 
 var eq = require('./internal/eq');
+var equals = require('./internal/equals');
 
 
 test('splitOnRegex', function() {
@@ -53,7 +54,9 @@ test('splitOnRegex', function() {
     var i = jsc.random(min, max);
     var j = jsc.random(min, max);
     var s = t.slice(Math.min(i, j), Math.max(i, j));
-    return S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t)) === t;
+    var lhs = S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t));
+    var rhs = t;
+    return equals(lhs)(rhs);
   }), {tests: 1000});
 
 });
