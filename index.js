@@ -427,41 +427,6 @@
 
   var def = $.create({checkTypes: checkTypes, env: env});
 
-  //. ### Placeholder
-  //.
-  //. Sanctuary functions are designed with partial application in mind.
-  //. In many cases one can define a more specific function in terms of
-  //. a more general one simply by applying the more general function to
-  //. some (but not all) of its arguments. For example, one could define
-  //. `sum :: Foldable f => f Number -> Number` as `S.reduce(S.add, 0)`.
-  //.
-  //. In some cases, though, there are multiple orders in which one may
-  //. wish to provide a function's arguments. `S.concat('prefix')` is a
-  //. function which prefixes its argument, but how would one define a
-  //. function which suffixes its argument? It's possible with the help
-  //. of [`__`](#__), the special placeholder value.
-  //.
-  //. The placeholder indicates a hole to be filled at some future time.
-  //. The following are all equivalent (`_` represents the placeholder):
-  //.
-  //.   - `f(x, y, z)`
-  //.   - `f(_, y, z)(x)`
-  //.   - `f(_, _, z)(x, y)`
-  //.   - `f(_, _, z)(_, y)(x)`
-
-  //# __ :: Placeholder
-  //.
-  //. The special [placeholder](#placeholder) value.
-  //.
-  //. ```javascript
-  //. > S.map(S.concat('@'), ['foo', 'bar', 'baz'])
-  //. ['@foo', '@bar', '@baz']
-  //.
-  //. > S.map(S.concat(S.__, '?'), ['foo', 'bar', 'baz'])
-  //. ['foo?', 'bar?', 'baz?']
-  //. ```
-  S.__ = $.__;
-
   //. ### Classify
 
   //# type :: Any -> { namespace :: Maybe String, name :: String, version :: NonNegativeInteger }
@@ -1380,8 +1345,8 @@
   //. > S.A(S.add(1), 42)
   //. 43
   //.
-  //. > S.map(S.A(S.__, 100), [S.add(1), Math.sqrt])
-  //. [101, 10]
+  //. > S.A(Math.sqrt, 64)
+  //. 8
   //. ```
   function A(f, x) {
     return f(x);
