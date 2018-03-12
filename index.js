@@ -1335,24 +1335,6 @@
   }
   S.K = def('K', {}, [a, b, a], K);
 
-  //# A :: (a -> b) -> a -> b
-  //.
-  //. The A combinator. Takes a function and a value, and returns the result
-  //. of applying the function to the value. Equivalent to Haskell's `($)`
-  //. function.
-  //.
-  //. ```javascript
-  //. > S.A(S.add(1), 42)
-  //. 43
-  //.
-  //. > S.A(Math.sqrt, 64)
-  //. 8
-  //. ```
-  function A(f, x) {
-    return f(x);
-  }
-  S.A = def('A', {}, [Fn(a, b), a, b], A);
-
   //# T :: a -> (a -> b) -> b
   //.
   //. The T ([thrush][]) combinator. Takes a value and a function, and returns
