@@ -5,6 +5,8 @@ NPM = npm
 REMARK = node_modules/.bin/remark --frail --no-stdout
 REMEMBER_BOWER = node_modules/.bin/remember-bower
 TRANSCRIBE = node_modules/.bin/transcribe
+TSLINT = node_modules/.bin/tslint
+TYPINGS_CHECKER = node_modules/.bin/typings-checker
 XYZ = node_modules/.bin/xyz --repo git@github.com:sanctuary-js/sanctuary.git --script scripts/prepublish
 
 
@@ -32,6 +34,13 @@ README.md.tmp: index.js
 .PHONY: lint
 lint:
 	$(ESLINT) -- index.js karma.conf.js scripts/version-urls test
+	$(TSLINT) \
+	  --type-check \
+	  --project tsconfig.json \
+	  -- index.d.ts
+	$(TSLINT) \
+	  --project test/typescript/tsconfig.json \
+	  -- test/typescript/*.ts
 	$(REMEMBER_BOWER) $(shell pwd)
 	rm -f README.md
 	VERSION=0.0.0 make README.md
@@ -57,6 +66,7 @@ setup:
 test:
 	$(ISTANBUL) cover node_modules/.bin/_mocha
 	$(ISTANBUL) check-coverage --branches 100
+	$(TYPINGS_CHECKER) --allow-expect-error --project test/typescript/tsconfig.json test/typescript/*.ts
 ifeq ($(shell node --version | cut -d . -f 1),v6)
 	$(DOCTEST) -- index.js
 else

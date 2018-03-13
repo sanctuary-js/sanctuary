@@ -1,0 +1,11 @@
+{
+  "exclude": [
+    "node_modules/**",
+    "test/**"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true
+  }
+}

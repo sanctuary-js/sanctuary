@@ -1,0 +1,14 @@
+{
+  "extends": ["tslint-config-standard"],
+  "rules": {
+    "indent": [true, "spaces", 2],
+    "no-consecutive-blank-lines": false,
+    "no-multi-spaces": false,
+    "semicolon": true,
+    "space-before-function-paren": false,
+    "typedef-whitespace": false,
+    "unified-signatures": false,
+    "variable-name": false,
+    "whitespace": false
+  }
+}
