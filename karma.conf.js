@@ -44,10 +44,10 @@ var customLaunchers = {
     platform: 'OS X 10.11',
     version: '10'
   },
-  sl_ios_safari_8: {
+  sl_ios_safari_9: {
     base: 'SauceLabs',
     browserName: 'iphone',
-    version: '8.1'
+    version: '9.3'
   },
   sl_ie_10: {
     base: 'SauceLabs',
