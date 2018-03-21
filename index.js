@@ -216,6 +216,13 @@
   //  Fn :: (Type, Type) -> Type
   function Fn(x, y) { return $.Function([x, y]); }
 
+  //  pair :: a -> b -> Pair a b
+  function pair(x) {
+    return function(y) {
+      return [x, y];
+    };
+  }
+
   //  toObject :: a -> Object
   function toObject(x) {
     return x == null ? Object.create(null) : Object(x);
@@ -3585,6 +3592,57 @@
       {b: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
       [Fn(a, b), m(a), m(a)],
       Z.sortBy);
+
+  //# zip :: Array a -> Array b -> Array (Pair a b)
+  //.
+  //. Returns an array of pairs of corresponding elements from the given
+  //. arrays. The length of the resulting array is equal to the length of
+  //. the shorter input array.
+  //.
+  //. See also [`zipWith`](#zipWith).
+  //.
+  //. ```javascript
+  //. > S.zip(['a', 'b'], ['x', 'y', 'z'])
+  //. [['a', 'x'], ['b', 'y']]
+  //.
+  //. > S.zip([1, 3, 5], [2, 4])
+  //. [[1, 2], [3, 4]]
+  //. ```
+  function zip(xs, ys) {
+    return zipWith(pair, xs, ys);
+  }
+  S.zip =
+  def('zip',
+      {},
+      [$.Array(a), $.Array(b), $.Array($.Pair(a, b))],
+      zip);
+
+  //# zipWith :: (a -> b -> c) -> Array a -> Array b -> Array c
+  //.
+  //. Returns the result of combining, pairwise, the given arrays using the
+  //. given binary function. The length of the resulting array is equal to the
+  //. length of the shorter input array.
+  //.
+  //. See also [`zip`](#zip).
+  //.
+  //. ```javascript
+  //. > S.zipWith(a => b => a + b, ['a', 'b'], ['x', 'y', 'z'])
+  //. ['ax', 'by']
+  //.
+  //. > S.zipWith(a => b => [a, b], [1, 3, 5], [2, 4])
+  //. [[1, 2], [3, 4]]
+  //. ```
+  function zipWith(f, xs, ys) {
+    var result = [];
+    var len = Math.min(xs.length, ys.length);
+    for (var idx = 0; idx < len; idx += 1) result.push(f(xs[idx])(ys[idx]));
+    return result;
+  }
+  S.zipWith =
+  def('zipWith',
+      {},
+      [Fn(a, Fn(b, c)), $.Array(a), $.Array(b), $.Array(c)],
+      zipWith);
 
   //. ### Object
 
