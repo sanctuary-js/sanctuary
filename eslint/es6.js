@@ -25,6 +25,8 @@ module.exports = {
         Right: false,
         S: false,
         Sum: false,
+        localStorage: false,
+        sanctuary: false,
       },
       rules: {
         'array-bracket-spacing': ['off'],
