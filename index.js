@@ -451,32 +451,22 @@
         return r;
       });
 
-  //# is :: TypeRep a -> Any -> Boolean
+  //# is :: Type -> Any -> Boolean
   //.
-  //. Takes a [type representative](#type-representatives) and a value of any
-  //. type and returns `true` [iff][] the given value is of the specified type.
-  //. Subtyping is not respected.
+  //. Returns `true` [iff][] the given value is a member of the specified type.
+  //. See [`$.test`][] for details.
   //.
   //. ```javascript
-  //. > S.is(Number, 42)
+  //. > S.is($.Array($.Integer), [1, 2, 3])
   //. true
   //.
-  //. > S.is(Object, 42)
-  //. false
-  //.
-  //. > S.is(String, 42)
+  //. > S.is($.Array($.Integer), [1, 2, 3.14])
   //. false
   //. ```
-  function is(typeRep, x) {
-    var xType = type(x);
-    if ($.String._test(typeRep['@@type'])) {
-      return xType === typeRep['@@type'];
-    } else {
-      var match = /function (\w*)/.exec(typeRep);
-      return match != null && match[1] === xType;
-    }
+  function is(type, x) {
+    return $.test(env, type, x);
   }
-  S.is = def('is', {}, [TypeRep(a), $.Any, $.Boolean], is);
+  S.is = def('is', {}, [$.Type, $.Any, $.Boolean], is);
 
   //. ### Showable
 
@@ -3699,19 +3689,19 @@
   //. See also [`gets`](#gets) and [`prop`](#prop).
   //.
   //. ```javascript
-  //. > S.get(S.is(Number), 'x', {x: 1, y: 2})
+  //. > S.get(S.is($.Number), 'x', {x: 1, y: 2})
   //. Just(1)
   //.
-  //. > S.get(S.is(Number), 'x', {x: '1', y: '2'})
+  //. > S.get(S.is($.Number), 'x', {x: '1', y: '2'})
   //. Nothing
   //.
-  //. > S.get(S.is(Number), 'x', {})
+  //. > S.get(S.is($.Number), 'x', {})
   //. Nothing
   //.
-  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3]})
+  //. > S.get(S.is($.Array($.Number)), 'x', {x: [1, 2, 3]})
   //. Just([1, 2, 3])
   //.
-  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3, null]})
+  //. > S.get(S.is($.Array($.Number)), 'x', {x: [1, 2, 3, null]})
   //. Nothing
   //. ```
   function get(pred, key, x) {
@@ -3733,13 +3723,13 @@
   //. See also [`get`](#get).
   //.
   //. ```javascript
-  //. > S.gets(S.is(Number), ['a', 'b', 'c'], {a: {b: {c: 42}}})
+  //. > S.gets(S.is($.Number), ['a', 'b', 'c'], {a: {b: {c: 42}}})
   //. Just(42)
   //.
-  //. > S.gets(S.is(Number), ['a', 'b', 'c'], {a: {b: {c: '42'}}})
+  //. > S.gets(S.is($.Number), ['a', 'b', 'c'], {a: {b: {c: '42'}}})
   //. Nothing
   //.
-  //. > S.gets(S.is(Number), ['a', 'b', 'c'], {})
+  //. > S.gets(S.is($.Number), ['a', 'b', 'c'], {})
   //. Nothing
   //. ```
   function gets(pred, keys, x) {
@@ -4231,16 +4221,16 @@
   //. result satisfies the predicate; Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.parseJson($.test([], $.Array($.Integer)), '[')
+  //. > S.parseJson(S.is($.Array($.Integer)), '[')
   //. Nothing
   //.
-  //. > S.parseJson($.test([], $.Array($.Integer)), '["1","2","3"]')
+  //. > S.parseJson(S.is($.Array($.Integer)), '["1","2","3"]')
   //. Nothing
   //.
-  //. > S.parseJson($.test([], $.Array($.Integer)), '[0,1.5,3,4.5]')
+  //. > S.parseJson(S.is($.Array($.Integer)), '[0,1.5,3,4.5]')
   //. Nothing
   //.
-  //. > S.parseJson($.test([], $.Array($.Integer)), '[1,2,3]')
+  //. > S.parseJson(S.is($.Array($.Integer)), '[1,2,3]')
   //. Just([1, 2, 3])
   //. ```
   function parseJson(pred, s) {
@@ -4631,6 +4621,7 @@
 //. [Semigroupoid]:     v:fantasyland/fantasy-land#semigroupoid
 //. [Traversable]:      v:fantasyland/fantasy-land#traversable
 //. [UnaryType]:        v:sanctuary-js/sanctuary-def#UnaryType
+//. [`$.test`]:         v:sanctuary-js/sanctuary-def#test
 //. [`Z.alt`]:          v:sanctuary-js/sanctuary-type-classes#alt
 //. [`Z.ap`]:           v:sanctuary-js/sanctuary-type-classes#ap
 //. [`Z.apFirst`]:      v:sanctuary-js/sanctuary-type-classes#apFirst
