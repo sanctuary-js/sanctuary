@@ -3696,7 +3696,7 @@
   //. value of the specified object property if it exists and the value
   //. satisfies the given predicate; Nothing otherwise.
   //.
-  //. See also [`gets`](#gets) and [`prop`](#prop).
+  //. See also [`get_`](#get_), [`gets`](#gets), and [`prop`](#prop).
   //.
   //. ```javascript
   //. > S.get(S.is(Number), 'x', {x: 1, y: 2})
@@ -3706,12 +3706,6 @@
   //. Nothing
   //.
   //. > S.get(S.is(Number), 'x', {})
-  //. Nothing
-  //.
-  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3]})
-  //. Just([1, 2, 3])
-  //.
-  //. > S.get($.test([], $.Array($.Number)), 'x', {x: [1, 2, 3, null]})
   //. Nothing
   //. ```
   function get(pred, key, x) {
@@ -3724,13 +3718,30 @@
   }
   S.get = def('get', {}, [$.Predicate($.Any), $.String, a, $Maybe(b)], get);
 
+  //# get_ :: Type -> String -> a -> Maybe b
+  //.
+  //. Variant of [`get`](#get) which takes a [sanctuary-def][] `Type` value
+  //. in place of a predicate.
+  //.
+  //. ```javascript
+  //. > S.get_($.Array($.Number), 'x', {x: [1, 2, 3]})
+  //. Just([1, 2, 3])
+  //.
+  //. > S.get_($.Array($.Number), 'x', {x: [1, 2, 3, null]})
+  //. Nothing
+  //. ```
+  function get_(type, key, x) {
+    return get($.test([], type), key, x);
+  }
+  S.get_ = def('get_', {}, [$.Type, $.String, a, $Maybe(b)], get_);
+
   //# gets :: (Any -> Boolean) -> Array String -> a -> Maybe b
   //.
   //. Takes a predicate, a property path (an array of property names), and
   //. an object and returns Just the value at the given path if such a path
   //. exists and the value satisfies the given predicate; Nothing otherwise.
   //.
-  //. See also [`get`](#get).
+  //. See also [`gets_`](#gets_) and [`get`](#get).
   //.
   //. ```javascript
   //. > S.gets(S.is(Number), ['a', 'b', 'c'], {a: {b: {c: 42}}})
@@ -3752,6 +3763,26 @@
   }
   S.gets =
   def('gets', {}, [$.Predicate($.Any), $.Array($.String), a, $Maybe(b)], gets);
+
+  //# gets_ :: Type -> Array String -> a -> Maybe b
+  //.
+  //. Variant of [`gets`](#gets) which takes a [sanctuary-def][] `Type` value
+  //. in place of a predicate.
+  //.
+  //. ```javascript
+  //. > S.gets_($.Array($.Integer), ['foo', 'bar'], {foo: {bar: [1, 2, 3]}})
+  //. Just([1, 2, 3])
+  //.
+  //. > S.gets_($.Array($.Integer), ['foo', 'bar'], {foo: {bar: [1, 2, 3.14]}})
+  //. Nothing
+  //.
+  //. > S.gets_($.Array($.Integer), ['foo', 'bar'], {})
+  //. Nothing
+  //. ```
+  function gets_(type, keys, x) {
+    return gets($.test([], type), keys, x);
+  }
+  S.gets_ = def('gets_', {}, [$.Type, $.Array($.String), a, $Maybe(b)], gets_);
 
   //. ### StrMap
   //.
@@ -4230,6 +4261,8 @@
   //. returns Just the result of applying `JSON.parse` to the string *if* the
   //. result satisfies the predicate; Nothing otherwise.
   //.
+  //. See also [`parseJson_`](#parseJson_).
+  //.
   //. ```javascript
   //. > S.parseJson($.test([], $.Array($.Integer)), '[')
   //. Nothing
@@ -4248,6 +4281,30 @@
   }
   S.parseJson =
   def('parseJson', {}, [$.Predicate($.Any), $.String, $Maybe(a)], parseJson);
+
+  //# parseJson_ :: Type -> String -> Maybe a
+  //.
+  //. Variant of [`parseJson`](#parseJson) which takes a [sanctuary-def][]
+  //. `Type` value in place of a predicate.
+  //.
+  //. ```javascript
+  //. > S.parseJson_($.Array($.Integer), '[')
+  //. Nothing
+  //.
+  //. > S.parseJson_($.Array($.Integer), '["1","2","3"]')
+  //. Nothing
+  //.
+  //. > S.parseJson_($.Array($.Integer), '[0,1.5,3,4.5]')
+  //. Nothing
+  //.
+  //. > S.parseJson_($.Array($.Integer), '[1,2,3]')
+  //. Just([1, 2, 3])
+  //. ```
+  function parseJson_(type, s) {
+    return parseJson($.test([], type), s);
+  }
+  S.parseJson_ =
+  def('parseJson_', {}, [$.Type, $.String, $Maybe(a)], parseJson_);
 
   //. ### RegExp
 
