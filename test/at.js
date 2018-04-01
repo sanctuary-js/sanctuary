@@ -9,7 +9,7 @@ test('at', function() {
 
   eq(typeof S.at, 'function');
   eq(S.at.length, 2);
-  eq(S.at.toString(), 'at :: Integer -> List a -> Maybe a');
+  eq(S.at.toString(), 'at :: Integer -> Array a -> Maybe a');
 
   eq(S.at(-4, ['foo', 'bar', 'baz']), S.Nothing);
   eq(S.at(-3, ['foo', 'bar', 'baz']), S.Just('foo'));

@@ -128,7 +128,7 @@ suite('Maybe', function() {
 
     monadLaws.leftIdentity(
       jsc.constant(S.head),
-      jsc.string
+      jsc.array(jsc.number)
     );
 
     monadLaws.rightIdentity(

@@ -9,7 +9,7 @@ test('init', function() {
 
   eq(typeof S.init, 'function');
   eq(S.init.length, 1);
-  eq(S.init.toString(), 'init :: List a -> Maybe (List a)');
+  eq(S.init.toString(), 'init :: Array a -> Maybe (Array a)');
 
   eq(S.init([]), S.Nothing);
   eq(S.init(['foo']), S.Just([]));
