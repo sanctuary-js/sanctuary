@@ -305,14 +305,6 @@
     function(either) { return either.isRight ? [either.value] : []; }
   );
 
-  //  List :: Type -> Type
-  var List = $.UnaryType(
-    'sanctuary/List',
-    readmeUrl('list'),
-    function(x) { return $.String._test(x) || Array.isArray(x); },
-    function(list) { return $.String._test(list) ? [] : list; }
-  );
-
   //  maybeTypeIdent :: String
   var maybeTypeIdent = 'sanctuary/Maybe';
 
@@ -3265,29 +3257,13 @@
     impl: anyPass
   };
 
-  //. ### List
-  //.
-  //. The List type constructor enables type signatures to describe ad hoc
-  //. polymorphic functions which operate on either [`Array`][$.Array] or
-  //. [`String`][$.String] values.
-  //.
-  //. Mental gymnastics are required to treat arrays and strings similarly.
-  //. `[1, 2, 3]` is a list containing `1`, `2`, and `3`. `'abc'` is a list
-  //. containing `'a'`, `'b'`, and `'c'`. But what is the type of `'a'`?
-  //. `String`, since JavaScript has no Char type! Thus:
-  //.
-  //.     'abc' :: String, List String, List (List String), ...
-  //.
-  //. Every member of `String` is also a member of `List String`!
+  //. ### Array
 
-  //# slice :: Integer -> Integer -> List a -> Maybe (List a)
+  //# slice :: Integer -> Integer -> Array a -> Maybe (Array a)
   //.
-  //. Returns Just a list containing the elements from the supplied list
-  //. from a beginning index (inclusive) to an end index (exclusive).
-  //. Returns Nothing unless the start interval is less than or equal to
-  //. the end interval, and the list contains both (half-open) intervals.
-  //. Accepts negative indices, which indicate an offset from the end of
-  //. the list.
+  //. Takes a start index `i`, an end index `j`, and an array, and returns
+  //. Just the `[i,j)` slice of the array if possible; Nothing otherwise.
+  //. A negative index represents an offset from the length of the array.
   //.
   //. See also [`take`](#take), [`drop`](#drop), [`takeLast`](#takeLast),
   //. and [`dropLast`](#dropLast).
@@ -3301,9 +3277,6 @@
   //.
   //. > S.slice(1, 6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
-  //.
-  //. > S.slice(2, 6, 'banana')
-  //. Just('nana')
   //. ```
   function slice(start, end, xs) {
     var len = xs.length;
@@ -3316,15 +3289,15 @@
   }
   _.slice = {
     consts: {},
-    types: [$.Integer, $.Integer, List(a), $Maybe(List(a))],
+    types: [$.Integer, $.Integer, $.Array(a), $Maybe($.Array(a))],
     impl: slice
   };
 
-  //# at :: Integer -> List a -> Maybe a
+  //# at :: Integer -> Array a -> Maybe a
   //.
-  //. Takes an index and a list and returns Just the element of the list at
-  //. the index if the index is within the list's bounds; Nothing otherwise.
-  //. A negative index represents an offset from the length of the list.
+  //. Returns Just the element of the given array at the specified index if
+  //. the index is within the array's bounds; Nothing otherwise. A negative
+  //. index represents an offset from the length of the array.
   //.
   //. ```javascript
   //. > S.at(2, ['a', 'b', 'c', 'd', 'e'])
@@ -3342,14 +3315,14 @@
   }
   _.at = {
     consts: {},
-    types: [$.Integer, List(a), $Maybe(a)],
+    types: [$.Integer, $.Array(a), $Maybe(a)],
     impl: at
   };
 
-  //# head :: List a -> Maybe a
+  //# head :: Array a -> Maybe a
   //.
-  //. Takes a list and returns Just the first element of the list if the
-  //. list contains at least one element; Nothing if the list is empty.
+  //. Returns Just the first element of the given array if the array contains
+  //. at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.head([1, 2, 3])
@@ -3359,18 +3332,18 @@
   //. Nothing
   //. ```
   function head(xs) {
-    return at(0, xs);
+    return xs.length > 0 ? Just(xs[0]) : Nothing;
   }
   _.head = {
     consts: {},
-    types: [List(a), $Maybe(a)],
+    types: [$.Array(a), $Maybe(a)],
     impl: head
   };
 
-  //# last :: List a -> Maybe a
+  //# last :: Array a -> Maybe a
   //.
-  //. Takes a list and returns Just the last element of the list if the
-  //. list contains at least one element; Nothing if the list is empty.
+  //. Returns Just the last element of the given array if the array contains
+  //. at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.last([1, 2, 3])
@@ -3380,19 +3353,18 @@
   //. Nothing
   //. ```
   function last(xs) {
-    return at(-1, xs);
+    return xs.length > 0 ? Just(xs[xs.length - 1]) : Nothing;
   }
   _.last = {
     consts: {},
-    types: [List(a), $Maybe(a)],
+    types: [$.Array(a), $Maybe(a)],
     impl: last
   };
 
-  //# tail :: List a -> Maybe (List a)
+  //# tail :: Array a -> Maybe (Array a)
   //.
-  //. Takes a list and returns Just a list containing all but the first
-  //. of the list's elements if the list contains at least one element;
-  //. Nothing if the list is empty.
+  //. Returns Just all but the first of the given array's elements if the
+  //. array contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.tail([1, 2, 3])
@@ -3406,15 +3378,14 @@
   }
   _.tail = {
     consts: {},
-    types: [List(a), $Maybe(List(a))],
+    types: [$.Array(a), $Maybe($.Array(a))],
     impl: tail
   };
 
-  //# init :: List a -> Maybe (List a)
+  //# init :: Array a -> Maybe (Array a)
   //.
-  //. Takes a list and returns Just a list containing all but the last
-  //. of the list's elements if the list contains at least one element;
-  //. Nothing if the list is empty.
+  //. Returns Just all but the last of the given array's elements if the
+  //. array contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.init([1, 2, 3])
@@ -3428,111 +3399,110 @@
   }
   _.init = {
     consts: {},
-    types: [List(a), $Maybe(List(a))],
+    types: [$.Array(a), $Maybe($.Array(a))],
     impl: init
   };
 
-  //# take :: Integer -> List a -> Maybe (List a)
+  //# take :: Integer -> Array a -> Maybe (Array a)
   //.
-  //. Returns Just the first N elements of the given collection if N is
-  //. greater than or equal to zero and less than or equal to the length
-  //. of the collection; Nothing otherwise.
+  //. Returns Just the first N elements of the given array if N is greater
+  //. than or equal to zero and less than or equal to the length of the array;
+  //. Nothing otherwise.
   //.
   //. ```javascript
   //. > S.take(2, ['a', 'b', 'c', 'd', 'e'])
   //. Just(['a', 'b'])
   //.
-  //. > S.take(4, 'abcdefg')
-  //. Just('abcd')
+  //. > S.take(5, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(['a', 'b', 'c', 'd', 'e'])
   //.
-  //. > S.take(4, ['a', 'b', 'c'])
+  //. > S.take(6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
   //. ```
   function take(n, xs) {
-    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(0, n));
+    return n >= 0 && n <= xs.length ? Just(xs.slice(0, n)) : Nothing;
   }
   _.take = {
     consts: {},
-    types: [$.Integer, List(a), $Maybe(List(a))],
+    types: [$.Integer, $.Array(a), $Maybe($.Array(a))],
     impl: take
   };
 
-  //# takeLast :: Integer -> List a -> Maybe (List a)
+  //# takeLast :: Integer -> Array a -> Maybe (Array a)
   //.
-  //. Returns Just the last N elements of the given collection if N is
-  //. greater than or equal to zero and less than or equal to the length
-  //. of the collection; Nothing otherwise.
+  //. Returns Just the last N elements of the given array if N is greater
+  //. than or equal to zero and less than or equal to the length of the array;
+  //. Nothing otherwise.
   //.
   //. ```javascript
   //. > S.takeLast(2, ['a', 'b', 'c', 'd', 'e'])
   //. Just(['d', 'e'])
   //.
-  //. > S.takeLast(4, 'abcdefg')
-  //. Just('defg')
+  //. > S.takeLast(5, ['a', 'b', 'c', 'd', 'e'])
+  //. Just(['a', 'b', 'c', 'd', 'e'])
   //.
-  //. > S.takeLast(4, ['a', 'b', 'c'])
+  //. > S.takeLast(6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
   //. ```
   function takeLast(n, xs) {
-    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(xs.length - n));
+    return n >= 0 && n <= xs.length ? Just(xs.slice(xs.length - n)) : Nothing;
   }
   _.takeLast = {
     consts: {},
-    types: [$.Integer, List(a), $Maybe(List(a))],
+    types: [$.Integer, $.Array(a), $Maybe($.Array(a))],
     impl: takeLast
   };
 
-  //# drop :: Integer -> List a -> Maybe (List a)
+  //# drop :: Integer -> Array a -> Maybe (Array a)
   //.
-  //. Returns Just all but the first N elements of the given collection
-  //. if N is greater than or equal to zero and less than or equal to the
-  //. length of the collection; Nothing otherwise.
+  //. Returns Just all but the first N elements of the given array if N is
+  //. greater than or equal to zero and less than or equal to the length of
+  //. the array; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.drop(2, ['a', 'b', 'c', 'd', 'e'])
   //. Just(['c', 'd', 'e'])
   //.
-  //. > S.drop(4, 'abcdefg')
-  //. Just('efg')
+  //. > S.drop(5, ['a', 'b', 'c', 'd', 'e'])
+  //. Just([])
   //.
-  //. > S.drop(4, 'abc')
+  //. > S.drop(6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
   //. ```
   function drop(n, xs) {
-    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(n));
+    return n >= 0 && n <= xs.length ? Just(xs.slice(n)) : Nothing;
   }
   _.drop = {
     consts: {},
-    types: [$.Integer, List(a), $Maybe(List(a))],
+    types: [$.Integer, $.Array(a), $Maybe($.Array(a))],
     impl: drop
   };
 
-  //# dropLast :: Integer -> List a -> Maybe (List a)
+  //# dropLast :: Integer -> Array a -> Maybe (Array a)
   //.
-  //. Returns Just all but the last N elements of the given collection
-  //. if N is greater than or equal to zero and less than or equal to the
-  //. length of the collection; Nothing otherwise.
+  //. Returns Just all but the last N elements of the given array if N is
+  //. greater than or equal to zero and less than or equal to the length of
+  //. the array; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.dropLast(2, ['a', 'b', 'c', 'd', 'e'])
   //. Just(['a', 'b', 'c'])
   //.
-  //. > S.dropLast(4, 'abcdefg')
-  //. Just('abc')
+  //. > S.dropLast(5, ['a', 'b', 'c', 'd', 'e'])
+  //. Just([])
   //.
-  //. > S.dropLast(4, 'abc')
+  //. > S.dropLast(6, ['a', 'b', 'c', 'd', 'e'])
   //. Nothing
   //. ```
   function dropLast(n, xs) {
-    return n < 0 || n > xs.length ? Nothing : Just(xs.slice(0, xs.length - n));
+    return n >= 0 && n <= xs.length ? Just(xs.slice(0, xs.length - n))
+                                    : Nothing;
   }
   _.dropLast = {
     consts: {},
-    types: [$.Integer, List(a), $Maybe(List(a))],
+    types: [$.Integer, $.Array(a), $Maybe($.Array(a))],
     impl: dropLast
   };
-
-  //. ### Array
 
   //# size :: Foldable f => f a -> Integer
   //.
@@ -5005,8 +4975,6 @@
 
 }));
 
-//. [$.Array]:          v:sanctuary-js/sanctuary-def#Array
-//. [$.String]:         v:sanctuary-js/sanctuary-def#String
 //. [Alt]:              v:fantasyland/fantasy-land#alt
 //. [Alternative]:      v:fantasyland/fantasy-land#alternative
 //. [Applicative]:      v:fantasyland/fantasy-land#applicative

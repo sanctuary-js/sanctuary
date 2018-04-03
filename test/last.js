@@ -9,7 +9,7 @@ test('last', function() {
 
   eq(typeof S.last, 'function');
   eq(S.last.length, 1);
-  eq(S.last.toString(), 'last :: List a -> Maybe a');
+  eq(S.last.toString(), 'last :: Array a -> Maybe a');
 
   eq(S.last([]), S.Nothing);
   eq(S.last(['foo']), S.Just('foo'));
