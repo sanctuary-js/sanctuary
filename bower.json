@@ -22,7 +22,7 @@
     "types"
   ],
   "dependencies": {
-    "sanctuary-def": "0.15.0",
+    "sanctuary-def": "0.16.0",
     "sanctuary-type-classes": "8.1.1",
     "sanctuary-type-identifiers": "2.0.1"
   },
