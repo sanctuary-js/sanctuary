@@ -184,6 +184,10 @@
 //. });
 //. ```
 //.
+//. Occasionally one may wish to perform an operation which is not type safe,
+//. such as mapping over an object with heterogeneous values. This is possible
+//. via selective use of [`unchecked`](#unchecked) functions.
+//.
 //. ## API
 
 (function(f) {
@@ -404,6 +408,8 @@
     (Object.keys (_)).forEach (function(name) {
       S[name] = def (name) (_[name].consts) (_[name].types) (_[name].impl);
     });
+    S.unchecked = opts.checkTypes ? create ({checkTypes: false, env: opts.env})
+                                  : S;
     return S;
   }
   _.create = {
@@ -448,6 +454,26 @@
   //. . $.TypeClass,
   //. . $.ValidDate,
   //. . $.ValidNumber ]
+  //. ```
+
+  //# unchecked :: Module
+  //.
+  //. A complete Sanctuary module which performs no type checking. This is
+  //. useful as it permits operations which Sanctuary's type checking would
+  //. disallow, such as mapping over an object with heterogeneous values.
+  //.
+  //. See also [`create`](#create).
+  //.
+  //. ```javascript
+  //. > S.unchecked.map (S.toString) ({x: 'foo', y: true, z: 42})
+  //. {x: '"foo"', y: 'true', z: '42'}
+  //. ```
+  //.
+  //. Opting out of type checking may cause type errors to go unnoticed.
+  //.
+  //. ```javascript
+  //. > S.unchecked.add (2) ('2')
+  //. '22'
   //. ```
 
   //. ### Classify
