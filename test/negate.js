@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('negate', function() {
+test ('negate', function() {
 
-  eq(typeof S.negate, 'function');
-  eq(S.negate.length, 1);
-  eq(S.negate.toString(), 'negate :: ValidNumber -> ValidNumber');
+  eq (typeof S.negate) ('function');
+  eq (S.negate.length) (1);
+  eq (String (S.negate)) ('negate :: ValidNumber -> ValidNumber');
 
-  eq(S.negate(0.5), -0.5);
-  eq(S.negate(-0.5), 0.5);
+  eq (S.negate (0.5)) (-0.5);
+  eq (S.negate (-0.5)) (0.5);
 
 });

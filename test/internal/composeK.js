@@ -1,6 +1,6 @@
 'use strict';
 
-var chain = require('./chain');
+var chain = require ('./chain');
 
 //  composeK :: Chain m => (b -> m c) -> (a -> m b) -> a -> m c
 //
@@ -8,7 +8,7 @@ var chain = require('./chain');
 module.exports = function composeK(f) {
   return function(g) {
     return function(x) {
-      return chain(f)(g(x));
+      return chain (f) (g (x));
     };
   };
 };

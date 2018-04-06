@@ -1,16 +1,16 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('contramap', function() {
+test ('contramap', function() {
 
-  eq(typeof S.contramap, 'function');
-  eq(S.contramap.length, 2);
-  eq(S.contramap.toString(), 'contramap :: Contravariant f => (b -> a) -> f a -> f b');
+  eq (typeof S.contramap) ('function');
+  eq (S.contramap.length) (1);
+  eq (String (S.contramap)) ('contramap :: Contravariant f => (b -> a) -> f a -> f b');
 
-  eq(S.contramap(S.prop('length'), Math.sqrt)('Sanctuary'), 3);
+  eq (S.contramap (S.prop ('length')) (Math.sqrt) ('Sanctuary')) (3);
 
 });

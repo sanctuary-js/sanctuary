@@ -1,18 +1,18 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var area = require('./internal/area');
-var eq = require('./internal/eq');
+var area = require ('./internal/area');
+var eq = require ('./internal/eq');
 
 
-test('encase3', function() {
+test ('encase3', function() {
 
-  eq(typeof S.encase3, 'function');
-  eq(S.encase3.length, 4);
-  eq(S.encase3.toString(), 'encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d');
+  eq (typeof S.encase3) ('function');
+  eq (S.encase3.length) (1);
+  eq (String (S.encase3)) ('encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d');
 
-  eq(S.encase3(area, 3, 4, 5), S.Just(6));
-  eq(S.encase3(area, 2, 2, 5), S.Nothing);
+  eq (S.encase3 (area) (3) (4) (5)) (S.Just (6));
+  eq (S.encase3 (area) (2) (2) (5)) (S.Nothing);
 
 });

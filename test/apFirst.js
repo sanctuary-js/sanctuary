@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('apFirst', function() {
+test ('apFirst', function() {
 
-  eq(typeof S.apFirst, 'function');
-  eq(S.apFirst.length, 2);
-  eq(S.apFirst.toString(), 'apFirst :: Apply f => f a -> f b -> f a');
+  eq (typeof S.apFirst) ('function');
+  eq (S.apFirst.length) (1);
+  eq (String (S.apFirst)) ('apFirst :: Apply f => f a -> f b -> f a');
 
-  eq(S.apFirst([1, 2], [3, 4]), [1, 1, 2, 2]);
-  eq(S.apFirst(S.Just(1), S.Just(2)), S.Just(1));
+  eq (S.apFirst ([1, 2]) ([3, 4])) ([1, 1, 2, 2]);
+  eq (S.apFirst (S.Just (1)) (S.Just (2))) (S.Just (1));
 
 });

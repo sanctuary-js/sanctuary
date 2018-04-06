@@ -1,21 +1,21 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('unlines', function() {
+test ('unlines', function() {
 
-  eq(typeof S.unlines, 'function');
-  eq(S.unlines.length, 1);
-  eq(S.unlines.toString(), 'unlines :: Array String -> String');
+  eq (typeof S.unlines) ('function');
+  eq (S.unlines.length) (1);
+  eq (String (S.unlines)) ('unlines :: Array String -> String');
 
-  eq(S.unlines([]), '');
-  eq(S.unlines(['']), '\n');
-  eq(S.unlines(['', '']), '\n\n');
-  eq(S.unlines(['\n']), '\n\n');
-  eq(S.unlines(['\n', '\n']), '\n\n\n\n');
-  eq(S.unlines(['foo', 'bar', 'baz']), 'foo\nbar\nbaz\n');
+  eq (S.unlines ([])) ('');
+  eq (S.unlines ([''])) ('\n');
+  eq (S.unlines (['', ''])) ('\n\n');
+  eq (S.unlines (['\n'])) ('\n\n');
+  eq (S.unlines (['\n', '\n'])) ('\n\n\n\n');
+  eq (S.unlines (['foo', 'bar', 'baz'])) ('foo\nbar\nbaz\n');
 
 });

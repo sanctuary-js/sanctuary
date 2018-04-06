@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('toUpper', function() {
+test ('toUpper', function() {
 
-  eq(typeof S.toUpper, 'function');
-  eq(S.toUpper.length, 1);
-  eq(S.toUpper.toString(), 'toUpper :: String -> String');
+  eq (typeof S.toUpper) ('function');
+  eq (S.toUpper.length) (1);
+  eq (String (S.toUpper)) ('toUpper :: String -> String');
 
-  eq(S.toUpper(''), '');
-  eq(S.toUpper('ABC def 123'), 'ABC DEF 123');
+  eq (S.toUpper ('')) ('');
+  eq (S.toUpper ('ABC def 123')) ('ABC DEF 123');
 
 });

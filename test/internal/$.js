@@ -3,6 +3,6 @@
 //  $ :: a -> (a -> b) -> b
 module.exports = function $(x) {
   return function(f) {
-    return f(x);
+    return f (x);
   };
 };

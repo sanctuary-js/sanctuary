@@ -1,16 +1,16 @@
 'use strict';
 
-var FL = require('fantasy-land');
+var FL = require ('fantasy-land');
 
-var concat = require('./concat');
-var equals = require('./equals');
-var map = require('./map');
-var toString = require('./toString');
+var concat = require ('./concat');
+var equals = require ('./equals');
+var map = require ('./map');
+var toString = require ('./toString');
 
 
 //  Identity :: a -> Identity a
 function Identity(value) {
-  if (!(this instanceof Identity)) return new Identity(value);
+  if (!(this instanceof Identity)) return new Identity (value);
   this.value = value;
 }
 
@@ -19,35 +19,35 @@ Identity['@@type'] = 'sanctuary/Identity';
 Identity[FL.of] = Identity;
 
 Identity.prototype[FL.equals] = function(other) {
-  return equals(this.value)(other.value);
+  return equals (this.value) (other.value);
 };
 
 Identity.prototype[FL.concat] = function(other) {
-  return Identity(concat(this.value)(other.value));
+  return Identity (concat (this.value) (other.value));
 };
 
 Identity.prototype[FL.map] = function(f) {
-  return Identity(f(this.value));
+  return Identity (f (this.value));
 };
 
 Identity.prototype[FL.ap] = function(other) {
-  return map(other.value)(this);
+  return map (other.value) (this);
 };
 
 Identity.prototype[FL.chain] = function(f) {
-  return f(this.value);
+  return f (this.value);
 };
 
 Identity.prototype[FL.reduce] = function(f, x) {
-  return f(x, this.value);
+  return f (x, this.value);
 };
 
 Identity.prototype[FL.traverse] = function(typeRep, f) {
-  return map(Identity)(f(this.value));
+  return map (Identity) (f (this.value));
 };
 
 Identity.prototype[FL.extend] = function(f) {
-  return Identity(f(this));
+  return Identity (f (this));
 };
 
 Identity.prototype[FL.extract] = function() {
@@ -56,7 +56,7 @@ Identity.prototype[FL.extract] = function() {
 
 Identity.prototype.inspect =
 Identity.prototype.toString = function() {
-  return 'Identity(' + toString(this.value) + ')';
+  return 'Identity(' + toString (this.value) + ')';
 };
 
 module.exports = Identity;

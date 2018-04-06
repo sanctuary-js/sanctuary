@@ -1,14 +1,14 @@
 'use strict';
 
-var jsc = require('jsverify');
+var jsc = require ('jsverify');
 
-var S = require('./sanctuary');
+var S = require ('./sanctuary');
 
-var toString = require('./toString');
+var toString = require ('./toString');
 
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
 module.exports = function MaybeArb(arb) {
-  return jsc.oneof(arb.smap(S.Just, S.prop('value'), toString),
-                   jsc.constant(S.Nothing));
+  return jsc.oneof (arb.smap (S.Just, S.prop ('value'), toString),
+                    jsc.constant (S.Nothing));
 };

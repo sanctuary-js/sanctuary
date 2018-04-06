@@ -1,12 +1,16 @@
 'use strict';
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('singleton', function() {
+test ('singleton', function() {
 
-  eq(S.singleton('foo', 42), {foo: 42});
+  eq (typeof S.singleton) ('function');
+  eq (S.singleton.length) (1);
+  eq (String (S.singleton)) ('singleton :: String -> a -> StrMap a');
+
+  eq (S.singleton ('foo') (42)) ({foo: 42});
 
 });

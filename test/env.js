@@ -1,15 +1,15 @@
 'use strict';
 
-var $ = require('sanctuary-def');
+var $ = require ('sanctuary-def');
 
-var S = require('..');
+var S = require ('..');
 
-var eq = require('./internal/eq');
+var eq = require ('./internal/eq');
 
 
-test('env', function() {
+test ('env', function() {
 
-  eq(typeof S.env, 'object');
-  eq($.test([], $.Array($.Type), S.env), true);
+  eq (typeof S.env) ('object');
+  eq ($.test ([]) ($.Array ($.Type)) (S.env)) (true);
 
 });
