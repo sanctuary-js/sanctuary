@@ -172,19 +172,16 @@
 //. // => 3
 //. ```
 //.
-//. There is a performance cost to run-time type checking. One may wish to
-//. disable type checking in certain contexts to avoid paying this cost.
-//. [`create`](#create) facilitates the creation of a Sanctuary module which
-//. does not perform type checking.
-//.
-//. In Node, one could use an environment variable to determine whether to
-//. perform type checking:
+//. There is a performance cost to run-time type checking. Type checking is
+//. disabled by default if `process.env.NODE_ENV` is `'production'`. If this
+//. rule is unsuitable for a given program, one may use [`create`](#create)
+//. to create a Sanctuary module based on a different rule. For example:
 //.
 //. ```javascript
-//. const {create, env} = require ('sanctuary');
-//.
-//. const checkTypes = process.env.NODE_ENV !== 'production';
-//. const S = create ({checkTypes, env});
+//. const S = sanctuary.create ({
+//.   checkTypes: localStorage.getItem ('SANCTUARY_CHECK_TYPES') === 'true',
+//.   env: sanctuary.env,
+//. });
 //. ```
 //.
 //. ## API
@@ -5136,7 +5133,13 @@
   };
 
   return create ({
-    checkTypes: true,
+    checkTypes: (
+      /* global process:false */
+      typeof process === 'undefined'
+      || process == null
+      || process.env == null
+      || process.env.NODE_ENV !== 'production'
+    ),
     env: Z.concat ($.env, [
       $.FiniteNumber,
       $.NonZeroFiniteNumber,
