@@ -349,6 +349,8 @@
     $Maybe ($.Unknown),
     $.Array2 ($.Unknown) ($.Unknown),
     $.RegexFlags,
+    $.Type,
+    $.TypeClass,
     $.ValidDate,
     $.ValidNumber
   ]);
@@ -434,6 +436,39 @@
   //.
   //. The default environment, which may be used as is or as the basis of a
   //. custom environment in conjunction with [`create`](#create).
+  //.
+  //. ```javascript
+  //. > S.env
+  //. [ $.AnyFunction,
+  //. . $.Arguments,
+  //. . $.Array ($.Unknown),
+  //. . $.Boolean,
+  //. . $.Date,
+  //. . $.Error,
+  //. . $.Null,
+  //. . $.Number,
+  //. . $.Object,
+  //. . $.RegExp,
+  //. . $.StrMap ($.Unknown),
+  //. . $.String,
+  //. . $.Symbol,
+  //. . $.Undefined,
+  //. . $.FiniteNumber,
+  //. . $.NonZeroFiniteNumber,
+  //. . S.EitherType ($.Unknown) ($.Unknown),
+  //. . $.Function ([$.Unknown, $.Unknown]),
+  //. . $.GlobalRegExp,
+  //. . $.NonGlobalRegExp,
+  //. . $.Integer,
+  //. . $.NonNegativeInteger,
+  //. . S.MaybeType ($.Unknown),
+  //. . $.Array2 ($.Unknown) ($.Unknown),
+  //. . $.RegexFlags,
+  //. . $.Type,
+  //. . $.TypeClass,
+  //. . $.ValidDate,
+  //. . $.ValidNumber ]
+  //. ```
 
   //. ### Classify
 
