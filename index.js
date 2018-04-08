@@ -221,13 +221,15 @@
     var Cons = (__doctest.require ('./test/internal/List')).Cons;
     var Sum = __doctest.require ('./test/internal/Sum');
     var S = (function(S) {
-      return S.create ({
+      var S_ = S.create ({
         checkTypes: true,
         env: S.env.concat ([
           (__doctest.require ('./test/internal/List')).Type ($.Unknown),
           Sum.Type
         ])
       });
+      S_.env = S.env;  // see S.env doctest
+      return S_;
     } (require ('.')));
     /* eslint-enable no-unused-vars */
   }
@@ -336,25 +338,6 @@
      })
     (K ([]));
 
-  //  defaultEnv :: Array Type
-  var defaultEnv = Z.concat ($.env, [
-    $.FiniteNumber,
-    $.NonZeroFiniteNumber,
-    $Either ($.Unknown) ($.Unknown),
-    Fn ($.Unknown) ($.Unknown),
-    $.GlobalRegExp,
-    $.NonGlobalRegExp,
-    $.Integer,
-    $.NonNegativeInteger,
-    $Maybe ($.Unknown),
-    $.Array2 ($.Unknown) ($.Unknown),
-    $.RegexFlags,
-    $.Type,
-    $.TypeClass,
-    $.ValidDate,
-    $.ValidNumber
-  ]);
-
   //  Options :: Type
   var Options = $.RecordType ({checkTypes: $.Boolean, env: $.Array ($.Any)});
 
@@ -413,7 +396,7 @@
   function create(opts) {
     var def = $.create (opts);
     var S = {
-      env: defaultEnv,
+      env: opts.env,
       is: def ('is') ({}) ([$.Type, $.Any, $.Boolean]) ($.test (opts.env)),
       MaybeType: $Maybe,
       Maybe: Maybe,
@@ -434,8 +417,8 @@
 
   //# env :: Array Type
   //.
-  //. The default environment, which may be used as is or as the basis of a
-  //. custom environment in conjunction with [`create`](#create).
+  //. The Sanctuary module's environment (`(S.create ({checkTypes, env})).env`
+  //. is a reference to `env`). Useful in conjunction with [`create`](#create).
   //.
   //. ```javascript
   //. > S.env
@@ -5152,7 +5135,26 @@
     impl: splitOnRegex
   };
 
-  return create ({checkTypes: true, env: defaultEnv});
+  return create ({
+    checkTypes: true,
+    env: Z.concat ($.env, [
+      $.FiniteNumber,
+      $.NonZeroFiniteNumber,
+      $Either ($.Unknown) ($.Unknown),
+      Fn ($.Unknown) ($.Unknown),
+      $.GlobalRegExp,
+      $.NonGlobalRegExp,
+      $.Integer,
+      $.NonNegativeInteger,
+      $Maybe ($.Unknown),
+      $.Array2 ($.Unknown) ($.Unknown),
+      $.RegexFlags,
+      $.Type,
+      $.TypeClass,
+      $.ValidDate,
+      $.ValidNumber
+    ])
+  });
 
 }));
 
