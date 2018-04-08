@@ -37,6 +37,11 @@ test ('create', function() {
   eq (uncheckedDefaultEnv.env) (S.env);
   eq (uncheckedCustomEnv.env) (customEnv);
 
+  eq (checkedDefaultEnv.unchecked.env) (S.env);
+  eq (checkedCustomEnv.unchecked.env) (customEnv);
+  eq (uncheckedDefaultEnv.unchecked.env) (S.env);
+  eq (uncheckedCustomEnv.unchecked.env) (customEnv);
+
   eq (uncheckedDefaultEnv.add (1) (42)) (S.add (1) (42));
   eq (uncheckedDefaultEnv.add (1) ('XXX')) ('1XXX');
 
