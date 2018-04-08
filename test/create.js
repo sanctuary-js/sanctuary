@@ -32,6 +32,11 @@ test ('create', function() {
   eq (S.sort (Object.keys (uncheckedDefaultEnv))) (expected);
   eq (S.sort (Object.keys (uncheckedCustomEnv))) (expected);
 
+  eq (checkedDefaultEnv.env) (S.env);
+  eq (checkedCustomEnv.env) (customEnv);
+  eq (uncheckedDefaultEnv.env) (S.env);
+  eq (uncheckedCustomEnv.env) (customEnv);
+
   eq (uncheckedDefaultEnv.add (1) (42)) (S.add (1) (42));
   eq (uncheckedDefaultEnv.add (1) ('XXX')) ('1XXX');
 
