@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "browserify": "13.1.x",
-    "eslint-plugin-markdown": "1.0.0-beta.7",
     "fantasy-land": "3.5.0",
     "fantasy-laws": "1.0.x",
     "jsverify": "0.7.x",
@@ -28,7 +27,7 @@
     "karma-browserify": "5.1.x",
     "karma-mocha": "1.3.x",
     "karma-sauce-launcher": "1.1.x",
-    "sanctuary-scripts": "1.4.x"
+    "sanctuary-scripts": "1.5.x"
   },
   "files": [
     "/LICENSE",

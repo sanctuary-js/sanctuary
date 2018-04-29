@@ -1,4 +1,60 @@
 {
   "root": true,
-  "extends": ["./eslint/es3.js"]
+  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
+  "rules": {
+    "func-call-spacing": ["error", "always", {"allowNewlines": true}],
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1,
+        "FunctionDeclaration": {"parameters": "first"},
+        "FunctionExpression": {"parameters": "first"},
+        "CallExpression": {"arguments": "first"},
+        "ArrayExpression": "first",
+        "ObjectExpression": "first",
+        "ignoredNodes": [
+          "CallExpression",
+          "CallExpression > *",
+          "CallExpression > ArrowFunctionExpression ArrowFunctionExpression > *",
+          "CallExpression > FunctionExpression > BlockStatement",
+          "ConditionalExpression",
+          "MemberExpression"
+        ]
+      }
+    ],
+    "no-extra-parens": ["off"],
+    "no-unexpected-multiline": ["off"]
+  },
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "plugins": ["markdown"],
+      "env": {"es6": true, "node": true},
+      "globals": {
+        "$": false,
+        "Cons": false,
+        "Just": false,
+        "Left": false,
+        "Nil": false,
+        "Nothing": false,
+        "R": false,
+        "Right": false,
+        "S": false,
+        "Sum": false,
+        "localStorage": false,
+        "sanctuary": false
+      },
+      "rules": {
+        "array-bracket-spacing": ["off"],
+        "comma-dangle": ["error", "always-multiline"],
+        "func-style": ["error", "declaration", {"allowArrowFunctions": true}],
+        "indent": ["off"],
+        "no-eval": ["off"],
+        "no-extra-semi": ["off"],
+        "no-unused-vars": ["error", {"varsIgnorePattern": "^S$"}],
+        "strict": ["off"]
+      }
+    }
+  ]
 }
