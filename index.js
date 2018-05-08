@@ -257,7 +257,23 @@
              (toObject);
   }
 
-  //  pair :: a -> b -> Pair a b
+  //  invoke0 :: String -> a -> b
+  function invoke0(name) {
+    return function(target) {
+      return target[name] ();
+    };
+  }
+
+  //  invoke1 :: String -> a -> b -> c
+  function invoke1(name) {
+    return function(x) {
+      return function(target) {
+        return target[name] (x);
+      };
+    };
+  }
+
+  //  pair :: a -> b -> Array2 a b
   function pair(x) {
     return function(y) {
       return [x, y];
@@ -3745,15 +3761,10 @@
   //. > S.joinWith (':') (['foo', 'bar', 'baz'])
   //. 'foo:bar:baz'
   //. ```
-  function joinWith(separator) {
-    return function(ss) {
-      return ss.join (separator);
-    };
-  }
   _.joinWith = {
     consts: {},
     types: [$.String, $.Array ($.String), $.String],
-    impl: joinWith
+    impl: invoke1 ('join')
   };
 
   //# elem :: (Setoid a, Foldable f) => a -> f a -> Boolean
@@ -4909,13 +4920,10 @@
   //. > S.toUpper ('ABC def 123')
   //. 'ABC DEF 123'
   //. ```
-  function toUpper(s) {
-    return s.toUpperCase ();
-  }
   _.toUpper = {
     consts: {},
     types: [$.String, $.String],
-    impl: toUpper
+    impl: invoke0 ('toUpperCase')
   };
 
   //# toLower :: String -> String
@@ -4928,13 +4936,10 @@
   //. > S.toLower ('ABC def 123')
   //. 'abc def 123'
   //. ```
-  function toLower(s) {
-    return s.toLowerCase ();
-  }
   _.toLower = {
     consts: {},
     types: [$.String, $.String],
-    impl: toLower
+    impl: invoke0 ('toLowerCase')
   };
 
   //# trim :: String -> String
@@ -4945,13 +4950,10 @@
   //. > S.trim ('\t\t foo bar \n')
   //. 'foo bar'
   //. ```
-  function trim(s) {
-    return s.trim ();
-  }
   _.trim = {
     consts: {},
     types: [$.String, $.String],
-    impl: trim
+    impl: invoke0 ('trim')
   };
 
   //# stripPrefix :: String -> String -> Maybe String
@@ -5045,7 +5047,7 @@
   _.unwords = {
     consts: {},
     types: [$.Array ($.String), $.String],
-    impl: joinWith (' ')
+    impl: invoke1 ('join') (' ')
   };
 
   //# lines :: String -> Array String
@@ -5101,15 +5103,10 @@
   //. > S.splitOn ('::') ('foo::bar::baz')
   //. ['foo', 'bar', 'baz']
   //. ```
-  function splitOn(separator) {
-    return function(s) {
-      return s.split (separator);
-    };
-  }
   _.splitOn = {
     consts: {},
     types: [$.String, $.String, $.Array ($.String)],
-    impl: splitOn
+    impl: invoke1 ('split')
   };
 
   //# splitOnRegex :: GlobalRegExp -> String -> Array String
