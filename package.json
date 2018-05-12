@@ -19,7 +19,7 @@
     "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
-    "browserify": "13.1.x",
+    "browserify": "16.2.x",
     "fantasy-land": "3.5.0",
     "fantasy-laws": "1.0.x",
     "jsverify": "0.8.x",
