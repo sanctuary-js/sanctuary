@@ -3,6 +3,5 @@
 //  Useless :: Useless
 module.exports = {
   constructor: {'@@type': 'sanctuary/Useless'},
-  inspect: function() { return 'Useless'; },
-  toString: function() { return 'Useless'; }
+  inspect: function() { return 'Useless'; }
 };

@@ -1,11 +1,11 @@
 'use strict';
 
 var FL = require ('fantasy-land');
+var show = require ('sanctuary-show');
 
 var concat = require ('./concat');
 var equals = require ('./equals');
 var map = require ('./map');
-var toString = require ('./toString');
 
 
 //  Identity :: a -> Identity a
@@ -55,8 +55,8 @@ Identity.prototype[FL.extract] = function() {
 };
 
 Identity.prototype.inspect =
-Identity.prototype.toString = function() {
-  return 'Identity(' + toString (this.value) + ')';
+Identity.prototype['@@show'] = function() {
+  return 'Identity (' + show (this.value) + ')';
 };
 
 module.exports = Identity;

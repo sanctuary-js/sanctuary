@@ -183,20 +183,23 @@
   /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = f (require ('sanctuary-def'),
+                        require ('sanctuary-show'),
                         require ('sanctuary-type-classes'),
                         require ('sanctuary-type-identifiers'));
   } else if (typeof define === 'function' && define.amd != null) {
     define (['sanctuary-def',
+             'sanctuary-show',
              'sanctuary-type-classes',
              'sanctuary-type-identifiers'],
             f);
   } else {
     self.sanctuary = f (self.sanctuaryDef,
+                        self.sanctuaryShow,
                         self.sanctuaryTypeClasses,
                         self.sanctuaryTypeIdentifiers);
   }
 
-} (function($, Z, type) {
+} (function($, show, Z, type) {
 
   'use strict';
 
@@ -386,6 +389,7 @@
   //.
   //. const Identity$prototype = {
   //.   'constructor': Identity,
+  //.   '@@show': function() { return `Identity (${S.show (this.value)})`; },
   //.   'fantasy-land/map': function(f) { return Identity (f (this.value)); },
   //. };
   //.
@@ -477,7 +481,7 @@
   //. See also [`create`](#create).
   //.
   //. ```javascript
-  //. > S.unchecked.map (S.toString) ({x: 'foo', y: true, z: 42})
+  //. > S.unchecked.map (S.show) ({x: 'foo', y: true, z: 42})
   //. {x: '"foo"', y: 'true', z: '42'}
   //. ```
   //.
@@ -530,27 +534,27 @@
 
   //. ### Showable
 
-  //# toString :: Any -> String
+  //# show :: Any -> String
   //.
-  //. Alias of [`Z.toString`][].
+  //. Alias of [`show`][].
   //.
   //. ```javascript
-  //. > S.toString (-0)
+  //. > S.show (-0)
   //. '-0'
   //.
-  //. > S.toString (['foo', 'bar', 'baz'])
+  //. > S.show (['foo', 'bar', 'baz'])
   //. '["foo", "bar", "baz"]'
   //.
-  //. > S.toString ({x: 1, y: 2, z: 3})
+  //. > S.show ({x: 1, y: 2, z: 3})
   //. '{"x": 1, "y": 2, "z": 3}'
   //.
-  //. > S.toString (S.Left (S.Right (S.Just (S.Nothing))))
-  //. 'Left(Right(Just(Nothing)))'
+  //. > S.show (S.Left (S.Right (S.Just (S.Nothing))))
+  //. 'Left (Right (Just (Nothing)))'
   //. ```
-  _.toString = {
+  _.show = {
     consts: {},
     types: [$.Any, $.String],
-    impl: Z.toString
+    impl: show
   };
 
   //. ### Fantasy Land
@@ -1859,19 +1863,19 @@
   //. false
   //. ```
 
-  //# Maybe#toString :: Maybe a ~> () -> String
+  //# Maybe#@@show :: Maybe a ~> () -> String
   //.
   //. Returns the string representation of the Maybe.
   //.
   //. ```javascript
-  //. > S.toString (S.Nothing)
+  //. > S.show (S.Nothing)
   //. 'Nothing'
   //.
-  //. > S.toString (S.Just ([1, 2, 3]))
-  //. 'Just([1, 2, 3])'
+  //. > S.show (S.Just ([1, 2, 3]))
+  //. 'Just ([1, 2, 3])'
   //. ```
-  Maybe.prototype.toString = function() {
-    return this.isJust ? 'Just(' + Z.toString (this.value) + ')' : 'Nothing';
+  Maybe.prototype['@@show'] = function() {
+    return this.isJust ? 'Just (' + show (this.value) + ')' : 'Nothing';
   };
 
   //# Maybe#inspect :: Maybe a ~> () -> String
@@ -1879,16 +1883,16 @@
   //. Returns the string representation of the Maybe. This method is used by
   //. `util.inspect` and the REPL to format a Maybe for display.
   //.
-  //. See also [`Maybe#toString`][].
+  //. See also [`Maybe#@@show`][].
   //.
   //. ```javascript
   //. > S.Nothing.inspect ()
   //. 'Nothing'
   //.
   //. > (S.Just ([1, 2, 3])).inspect ()
-  //. 'Just([1, 2, 3])'
+  //. 'Just ([1, 2, 3])'
   //. ```
-  Maybe.prototype.inspect = function() { return this.toString (); };
+  Maybe.prototype.inspect = function() { return show (this); };
 
   //# Maybe#fantasy-land/equals :: Setoid a => Maybe a ~> Maybe a -> Boolean
   //.
@@ -2570,20 +2574,19 @@
   //. false
   //. ```
 
-  //# Either#toString :: Either a b ~> () -> String
+  //# Either#@@show :: Either a b ~> () -> String
   //.
   //. Returns the string representation of the Either.
   //.
   //. ```javascript
-  //. > S.toString (S.Left ('Cannot divide by zero'))
-  //. 'Left("Cannot divide by zero")'
+  //. > S.show (S.Left ('Cannot divide by zero'))
+  //. 'Left ("Cannot divide by zero")'
   //.
-  //. > S.toString (S.Right ([1, 2, 3]))
-  //. 'Right([1, 2, 3])'
+  //. > S.show (S.Right ([1, 2, 3]))
+  //. 'Right ([1, 2, 3])'
   //. ```
-  Either.prototype.toString = function() {
-    return (this.isLeft ? 'Left' : 'Right') +
-           '(' + Z.toString (this.value) + ')';
+  Either.prototype['@@show'] = function() {
+    return (this.isLeft ? 'Left' : 'Right') + ' (' + show (this.value) + ')';
   };
 
   //# Either#inspect :: Either a b ~> () -> String
@@ -2591,16 +2594,16 @@
   //. Returns the string representation of the Either. This method is used by
   //. `util.inspect` and the REPL to format a Either for display.
   //.
-  //. See also [`Either#toString`][].
+  //. See also [`Either#@@show`][].
   //.
   //. ```javascript
   //. > (S.Left ('Cannot divide by zero')).inspect ()
-  //. 'Left("Cannot divide by zero")'
+  //. 'Left ("Cannot divide by zero")'
   //.
   //. > (S.Right ([1, 2, 3])).inspect ()
-  //. 'Right([1, 2, 3])'
+  //. 'Right ([1, 2, 3])'
   //. ```
-  Either.prototype.inspect = function() { return this.toString (); };
+  Either.prototype.inspect = function() { return show (this); };
 
   //# Either#fantasy-land/equals :: (Setoid a, Setoid b) => Either a b ~> Either a b -> Boolean
   //.
@@ -2993,10 +2996,10 @@
   //. Right's value, if the Either is a Right.
   //.
   //. ```javascript
-  //. > S.either (S.toUpper) (S.toString) (S.Left ('Cannot divide by zero'))
+  //. > S.either (S.toUpper) (S.show) (S.Left ('Cannot divide by zero'))
   //. 'CANNOT DIVIDE BY ZERO'
   //.
-  //. > S.either (S.toUpper) (S.toString) (S.Right (42))
+  //. > S.either (S.toUpper) (S.show) (S.Right (42))
   //. '42'
   //. ```
   function either(l) {
@@ -4110,7 +4113,7 @@
       var obj = toObject (x);
       if (key in obj) return obj[key];
       throw new TypeError ('‘prop’ expected object to have a property named ' +
-                           '‘' + key + '’; ' + Z.toString (x) + ' does not');
+                           '‘' + key + '’; ' + show (x) + ' does not');
     };
   }
   _.prop = {
@@ -4138,8 +4141,7 @@
         var obj = toObject (x);
         if (key in obj) return obj[key];
         throw new TypeError ('‘props’ expected object to have a property at ' +
-                             Z.toString (path) + '; ' +
-                             Z.toString (x) + ' does not');
+                             show (path) + '; ' + show (x) + ' does not');
       }, x);
     };
   }
@@ -5265,10 +5267,10 @@
 //. [`Z.reject`]:           v:sanctuary-js/sanctuary-type-classes#reject
 //. [`Z.sequence`]:         v:sanctuary-js/sanctuary-type-classes#sequence
 //. [`Z.takeWhile`]:        v:sanctuary-js/sanctuary-type-classes#takeWhile
-//. [`Z.toString`]:         v:sanctuary-js/sanctuary-type-classes#toString
 //. [`Z.traverse`]:         v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:             v:sanctuary-js/sanctuary-type-classes#zero
 //. [`of`]:                 v:fantasyland/fantasy-land#of-method
+//. [`show`]:               v:sanctuary-js/sanctuary-show#show
 //. [equivalence]:          https://en.wikipedia.org/wiki/Equivalence_relation
 //. [iff]:                  https://en.wikipedia.org/wiki/If_and_only_if
 //. [parseInt]:             https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
@@ -5278,7 +5280,7 @@
 //. [type identifier]:      v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:  v:fantasyland/fantasy-land#type-representatives
 //.
+//. [`Either#@@show`]:                  #Either.prototype.@@show
 //. [`Either#fantasy-land/bimap`]:      #Either.prototype.fantasy-land/bimap
 //. [`Either#fantasy-land/map`]:        #Either.prototype.fantasy-land/map
-//. [`Either#toString`]:                #Either.prototype.toString
-//. [`Maybe#toString`]:                 #Maybe.prototype.toString
+//. [`Maybe#@@show`]:                   #Maybe.prototype.@@show
