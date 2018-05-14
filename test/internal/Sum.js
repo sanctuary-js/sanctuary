@@ -2,6 +2,7 @@
 
 var FL = require ('fantasy-land');
 var $ = require ('sanctuary-def');
+var show = require ('sanctuary-show');
 var Z = require ('sanctuary-type-classes');
 var type = require ('sanctuary-type-identifiers');
 
@@ -35,8 +36,8 @@ Sum.prototype[FL.invert] = function() {
 };
 
 Sum.prototype.inspect =
-Sum.prototype.toString = function() {
-  return 'Sum(' + Z.toString (this.value) + ')';
+Sum.prototype['@@show'] = function() {
+  return 'Sum (' + show (this.value) + ')';
 };
 
 module.exports = Sum;

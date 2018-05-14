@@ -93,14 +93,13 @@ suite ('Left', function() {
     eq ((S.Left ('abc'))[FL.reduce] (function(x, y) { return x - y; }, 42)) (42);
   });
 
-  test ('"toString" method', function() {
-    eq ((S.Left ('abc')).toString.length) (0);
-    eq ((S.Left ('abc')).toString ()) ('Left("abc")');
+  test ('"@@show" method', function() {
+    eq (S.show (S.Left ('abc'))) ('Left ("abc")');
   });
 
   test ('"inspect" method', function() {
     eq ((S.Left ('abc')).inspect.length) (0);
-    eq ((S.Left ('abc')).inspect ()) ('Left("abc")');
+    eq ((S.Left ('abc')).inspect ()) ('Left ("abc")');
   });
 
 });

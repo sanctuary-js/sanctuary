@@ -93,14 +93,13 @@ suite ('Right', function() {
     eq ((S.Right (5))[FL.reduce] (function(x, y) { return x - y; }, 42)) (37);
   });
 
-  test ('"toString" method', function() {
-    eq ((S.Right ([1, 2, 3])).toString.length) (0);
-    eq ((S.Right ([1, 2, 3])).toString ()) ('Right([1, 2, 3])');
+  test ('"@@show" method', function() {
+    eq (S.show (S.Right ([1, 2, 3]))) ('Right ([1, 2, 3])');
   });
 
   test ('"inspect" method', function() {
     eq ((S.Right ([1, 2, 3])).inspect.length) (0);
-    eq ((S.Right ([1, 2, 3])).inspect ()) ('Right([1, 2, 3])');
+    eq ((S.Right ([1, 2, 3])).inspect ()) ('Right ([1, 2, 3])');
   });
 
 });

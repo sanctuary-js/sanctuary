@@ -72,9 +72,8 @@ suite ('Nothing', function() {
     eq (S.Nothing[FL.reduce] (function(x, y) { return x - y; }, 42)) (42);
   });
 
-  test ('"toString" method', function() {
-    eq (S.Nothing.toString.length) (0);
-    eq (S.Nothing.toString ()) ('Nothing');
+  test ('"@@show" method', function() {
+    eq (S.show (S.Nothing)) ('Nothing');
   });
 
   test ('"inspect" method', function() {

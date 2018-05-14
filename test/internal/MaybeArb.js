@@ -4,11 +4,9 @@ var jsc = require ('jsverify');
 
 var S = require ('./sanctuary');
 
-var toString = require ('./toString');
-
 
 //  MaybeArb :: Arbitrary a -> Arbitrary (Maybe a)
 module.exports = function MaybeArb(arb) {
-  return jsc.oneof (arb.smap (S.Just, S.prop ('value'), toString),
+  return jsc.oneof (arb.smap (S.Just, S.prop ('value'), S.show),
                     jsc.constant (S.Nothing));
 };
