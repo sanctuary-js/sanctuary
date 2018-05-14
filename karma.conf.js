@@ -14,6 +14,7 @@ function depMain(name) {
 
 //  dependencies :: Array String
 var dependencies = [
+  'sanctuary-show',
   'sanctuary-type-identifiers',
   'sanctuary-type-classes',
   'sanctuary-def'
