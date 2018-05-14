@@ -39,7 +39,7 @@
 //. Sanctuary gives us a fighting chance of avoiding such errors. We might
 //. write:
 //.
-//.     S.map(S.toUpper, S.head(words))
+//.     S.map (S.toUpper) (S.head (words))
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
@@ -137,7 +137,7 @@
 //. silent failures due to type coercion (at worst). For example:
 //.
 //. ```javascript
-//. S.add (2, true);
+//. S.add (2) (true);
 //. // ! TypeError: Invalid value
 //. //
 //. //   add :: FiniteNumber -> FiniteNumber -> FiniteNumber
@@ -154,7 +154,7 @@
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
 //.
 //. ```javascript
-//. R.add (2, true);
+//. R.add (2) (true);
 //. // => 3
 //. ```
 //.
@@ -376,31 +376,32 @@
   //. const type = require ('sanctuary-type-identifiers');
   //.
   //. //    Identity :: a -> Identity a
-  //. function Identity(x) {
-  //.   if (!(this instanceof Identity)) return new Identity (x);
-  //.   this.value = x;
-  //. }
+  //. const Identity = x => {
+  //.   const identity = Object.create (Identity$prototype);
+  //.   identity.value = x;
+  //.   return identity;
+  //. };
   //.
   //. Identity['@@type'] = 'my-package/Identity@1';
   //.
-  //. Identity.prototype['fantasy-land/map'] = function(f) {
-  //.   return Identity (f (this.value));
+  //. const Identity$prototype = {
+  //.   'constructor': Identity,
+  //.   'fantasy-land/map': function(f) { return Identity (f (this.value)); },
   //. };
   //.
   //. //    IdentityType :: Type -> Type
-  //. const IdentityType = $.UnaryType (
-  //.   Identity['@@type'],
-  //.   'http://example.com/my-package#Identity',
-  //.   x => type (x) === Identity['@@type'],
-  //.   identity => [identity.value]
-  //. );
+  //. const IdentityType = $.UnaryType
+  //.   (Identity['@@type'])
+  //.   ('http://example.com/my-package#Identity')
+  //.   (x => type (x) === Identity['@@type'])
+  //.   (identity => [identity.value]);
   //.
   //. const S = create ({
   //.   checkTypes: process.env.NODE_ENV !== 'production',
   //.   env: env.concat ([IdentityType ($.Unknown)]),
   //. });
   //.
-  //. S.map (S.sub (1), Identity (43));
+  //. S.map (S.sub (1)) (Identity (43));
   //. // => Identity (42)
   //. ```
   //.
@@ -1656,7 +1657,7 @@
   //. to the initial value.
   //.
   //. In general terms, `pipe` performs left-to-right composition of a sequence
-  //. of functions. `pipe([f, g, h], x)` is equivalent to `h(g(f(x)))`.
+  //. of functions. `pipe ([f, g, h]) (x)` is equivalent to `h (g (f (x)))`.
   //.
   //. ```javascript
   //. > S.pipe ([S.add (1), Math.sqrt, S.sub (1)]) (99)
@@ -1680,8 +1681,8 @@
   //. of applying the sequence of transformations to the initial value.
   //.
   //. In general terms, `pipeK` performs left-to-right [Kleisli][] composition
-  //. of an sequence of functions. `pipeK([f, g, h], x)` is equivalent to
-  //. `chain(h, chain(g, chain(f, x)))`.
+  //. of an sequence of functions. `pipeK ([f, g, h]) (x)` is equivalent to
+  //. `chain (h) (chain (g) (chain (f) (x)))`.
   //.
   //. ```javascript
   //. > S.pipeK ([S.tail, S.tail, S.head]) (S.Just ([1, 2, 3, 4]))
@@ -1701,7 +1702,7 @@
   //# on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
   //.
   //. Takes a binary function `f`, a unary function `g`, and two
-  //. values `x` and `y`. Returns `f(g(x))(g(y))`.
+  //. values `x` and `y`. Returns `f (g (x)) (g (y))`.
   //.
   //. This is the P combinator from combinatory logic.
   //.
@@ -3755,7 +3756,8 @@
   //.
   //. Properties:
   //.
-  //.   - `forall s :: String, t :: String. S.joinWith(s, S.splitOn(s, t)) = t`
+  //.   - `forall s :: String, t :: String.
+  //.      S.joinWith (s) (S.splitOn (s) (t)) = t`
   //.
   //. See also [`splitOn`](#splitOn).
   //.
@@ -3922,7 +3924,7 @@
   //. Properties:
   //.
   //.   - `forall f :: a -> a -> Boolean, xs :: Array a.
-  //.      S.join(S.groupBy(f, xs)) = xs`
+  //.      S.join (S.groupBy (f) (xs)) = xs`
   //.
   //. ```javascript
   //. > S.groupBy (S.equals) ([1, 1, 2, 1, 1])
@@ -3977,7 +3979,7 @@
   //.
   //. Properties:
   //.
-  //.   - `S.sort(S.sort(m)) = S.sort(m)` (idempotence)
+  //.   - `S.sort (S.sort (m)) = S.sort (m)` (idempotence)
   //.
   //. See also [`sortBy`](#sortBy).
   //.
@@ -4002,7 +4004,7 @@
   //.
   //. Properties:
   //.
-  //.   - `S.sortBy(f, S.sortBy(f, m)) = S.sortBy(f, m)` (idempotence)
+  //.   - `S.sortBy (f) (S.sortBy (f) (m)) = S.sortBy (f) (m)` (idempotence)
   //.
   //. See also [`sort`](#sort).
   //.
@@ -4819,7 +4821,8 @@
   //.
   //. Properties:
   //.
-  //.   - `forall s :: String. S.test(S.regex('', S.regexEscape(s)), s) = true`
+  //.   - `forall s :: String.
+  //.      S.test (S.regex ('') (S.regexEscape (s))) (s) = true`
   //.
   //. ```javascript
   //. > S.regexEscape ('-=*{XYZ}*=-')
@@ -4868,7 +4871,8 @@
   //. Properties:
   //.
   //.   - `forall p :: Pattern, s :: String.
-  //.      S.head(S.matchAll(S.regex('g', p), s)) = S.match(S.regex('', p), s)`
+  //.      S.head (S.matchAll (S.regex ('g') (p)) (s))
+  //.      = S.match (S.regex ('') (p)) (s)`
   //.
   //. See also [`matchAll`](#matchAll).
   //.
@@ -5134,7 +5138,8 @@
   //. Properties:
   //.
   //.   - `forall s :: String, t :: String.
-  //.      S.joinWith(s, S.splitOnRegex(S.regex('g', S.regexEscape(s)), t))
+  //.      S.joinWith (s)
+  //.                 (S.splitOnRegex (S.regex ('g') (S.regexEscape (s))) (t))
   //.      = t`
   //.
   //. See also [`splitOn`](#splitOn).
