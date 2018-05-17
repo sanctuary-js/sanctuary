@@ -1453,7 +1453,7 @@
 
   //# I :: a -> a
   //.
-  //. The I combinator. Returns its argument. Equivalent to Haskell's `id`
+  //. The `I` combinator. Returns its argument. Equivalent to Haskell's `id`
   //. function.
   //.
   //. ```javascript
