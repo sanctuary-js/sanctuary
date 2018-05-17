@@ -1449,7 +1449,7 @@
     impl: curry2 (Z.contramap)
   };
 
-  //. ### Combinator
+  //. ### Combinator: A function or definition with no free variables.
 
   //# I :: a -> a
   //.
