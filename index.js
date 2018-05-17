@@ -1496,7 +1496,7 @@
   //.
   //. The T ([thrush][]) combinator. Takes a value and a function, and returns
   //. the result of applying the function to the value. Equivalent to Haskell's
-  //. `(&)` function.
+  //. `(&)` function, which is a reverse application operator.
   //.
   //. ```javascript
   //. > S.T (42) (S.add (1))
