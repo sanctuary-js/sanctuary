@@ -358,6 +358,8 @@
 
   var _ = {};
 
+  //. ### Configure
+
   //# create :: { checkTypes :: Boolean, env :: Array Type } -> Module
   //.
   //. Takes an options record and returns a Sanctuary module. `checkTypes`
