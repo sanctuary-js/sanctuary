@@ -28,6 +28,7 @@
     "karma-browserify": "5.2.x",
     "karma-mocha": "1.3.x",
     "karma-sauce-launcher": "1.2.x",
+    "sanctuary-identity": "1.0.x",
     "sanctuary-scripts": "2.0.x"
   },
   "files": [

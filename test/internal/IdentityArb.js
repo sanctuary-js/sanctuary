@@ -1,8 +1,8 @@
 'use strict';
 
-var S = require ('./sanctuary');
+var Identity = require ('sanctuary-identity');
 
-var Identity = require ('./Identity');
+var S = require ('./sanctuary');
 
 
 //  IdentityArb :: Arbitrary a -> Arbitrary (Identity a)

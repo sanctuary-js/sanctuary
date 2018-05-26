@@ -28,7 +28,7 @@ var UselessType = $.NullaryType
 //  env :: Array Type
 var env = S.env.concat ([
   UnaryType ('sanctuary/Compose'),
-  UnaryType ('sanctuary/Identity'),
+  UnaryType ('sanctuary-identity/Identity@1'),
   List.Type ($.Unknown),
   Sum.Type,
   UselessType
