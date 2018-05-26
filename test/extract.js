@@ -1,8 +1,9 @@
 'use strict';
 
+var Identity = require ('sanctuary-identity');
+
 var S = require ('./internal/sanctuary');
 
-var Identity = require ('./internal/Identity');
 var eq = require ('./internal/eq');
 
 

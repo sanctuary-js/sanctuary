@@ -2,12 +2,12 @@
 
 var laws = require ('fantasy-laws');
 var jsc = require ('jsverify');
+var Identity = require ('sanctuary-identity');
 var Z = require ('sanctuary-type-classes');
 
 var S = require ('../internal/sanctuary');
 
 var EitherArb = require ('../internal/EitherArb');
-var Identity = require ('../internal/Identity');
 var IdentityArb = require ('../internal/IdentityArb');
 var add_ = require ('../internal/add_');
 var squareRoot = require ('../internal/squareRoot');
