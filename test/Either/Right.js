@@ -97,9 +97,4 @@ suite ('Right', function() {
     eq (S.show (S.Right ([1, 2, 3]))) ('Right ([1, 2, 3])');
   });
 
-  test ('"inspect" method', function() {
-    eq ((S.Right ([1, 2, 3])).inspect.length) (0);
-    eq ((S.Right ([1, 2, 3])).inspect ()) ('Right ([1, 2, 3])');
-  });
-
 });
