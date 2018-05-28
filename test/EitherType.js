@@ -9,10 +9,10 @@ var eq = require ('./internal/eq');
 
 test ('EitherType', function() {
 
-  eq ($.test ($.env) (S.EitherType ($.String) ($.Number)) (S.Left ('Error'))) (true);
-  eq ($.test ($.env) (S.EitherType ($.String) ($.Number)) (S.Right (42))) (true);
-  eq ($.test ($.env) (S.EitherType ($.String) ($.Number)) (S.Right ('42'))) (false);
-  eq ($.test ($.env) (S.EitherType ($.String) ($.Number)) (S.Just (42))) (false);
-  eq ($.test ($.env) (S.EitherType ($.String) ($.Number)) (null)) (false);
+  eq (S.is (S.EitherType ($.String) ($.Number)) (S.Left ('Error'))) (true);
+  eq (S.is (S.EitherType ($.String) ($.Number)) (S.Right (42))) (true);
+  eq (S.is (S.EitherType ($.String) ($.Number)) (S.Right ('42'))) (false);
+  eq (S.is (S.EitherType ($.String) ($.Number)) (S.Just (42))) (false);
+  eq (S.is (S.EitherType ($.String) ($.Number)) (null)) (false);
 
 });

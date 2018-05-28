@@ -10,6 +10,6 @@ var eq = require ('./internal/eq');
 test ('env', function() {
 
   eq (typeof S.env) ('object');
-  eq ($.test ([]) ($.Array ($.Type)) (S.env)) (true);
+  eq (S.is ($.Array ($.Type)) (S.env)) (true);
 
 });
