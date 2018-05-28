@@ -2,9 +2,9 @@
 
 var $ = require ('sanctuary-def');
 
-var S = require ('../..');
+var S = require ('..');
 
-var eq = require ('../internal/eq');
+var eq = require ('./internal/eq');
 
 
 test ('EitherType', function() {
