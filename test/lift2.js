@@ -9,7 +9,7 @@ test ('lift2', function() {
 
   eq (typeof S.lift2) ('function');
   eq (S.lift2.length) (1);
-  eq (String (S.lift2)) ('lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
+  eq (S.show (S.lift2)) ('lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
 
   //  positive :: Number -> Boolean
   function positive(n) { return n > 0; }

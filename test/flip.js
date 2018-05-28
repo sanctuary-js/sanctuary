@@ -15,7 +15,7 @@ test ('flip', function() {
 
   eq (typeof S.flip) ('function');
   eq (S.flip.length) (1);
-  eq (String (S.flip)) ('flip :: Functor f => f (a -> b) -> a -> f b');
+  eq (S.show (S.flip)) ('flip :: Functor f => f (a -> b) -> a -> f b');
 
   eq (S.flip (S.concat) ('foo') ('bar')) ('barfoo');
   eq (map (S.flip (S.concat) ('!')) (['BAM', 'POW', 'KA-POW'])) (['BAM!', 'POW!', 'KA-POW!']);

@@ -9,7 +9,7 @@ test ('stripSuffix', function() {
 
   eq (typeof S.stripSuffix) ('function');
   eq (S.stripSuffix.length) (1);
-  eq (String (S.stripSuffix)) ('stripSuffix :: String -> String -> Maybe String');
+  eq (S.show (S.stripSuffix)) ('stripSuffix :: String -> String -> Maybe String');
 
   eq (S.stripSuffix ('') ('')) (S.Just (''));
   eq (S.stripSuffix ('') ('xyz')) (S.Just ('xyz'));

@@ -9,7 +9,7 @@ test ('take', function() {
 
   eq (typeof S.take) ('function');
   eq (S.take.length) (1);
-  eq (String (S.take)) ('take :: Integer -> Array a -> Maybe (Array a)');
+  eq (S.show (S.take)) ('take :: Integer -> Array a -> Maybe (Array a)');
 
   eq (S.take (0) ([1, 2, 3, 4, 5])) (S.Just ([]));
   eq (S.take (1) ([1, 2, 3, 4, 5])) (S.Just ([1]));

@@ -9,7 +9,7 @@ test ('reduce', function() {
 
   eq (typeof S.reduce) ('function');
   eq (S.reduce.length) (1);
-  eq (String (S.reduce)) ('reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a');
+  eq (S.show (S.reduce)) ('reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a');
 
   eq (S.reduce (S.concat) ('x') ([])) ('x');
   eq (S.reduce (S.concat) ('x') (['A', 'B', 'C'])) ('xABC');

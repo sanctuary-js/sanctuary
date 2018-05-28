@@ -14,7 +14,7 @@ test ('pipeK', function() {
 
   eq (typeof S.pipeK) ('function');
   eq (S.pipeK.length) (1);
-  eq (String (S.pipeK)) ('pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b');
+  eq (S.show (S.pipeK)) ('pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b');
 
   eq (S.pipeK ([]) (S.Just ([1, 2, 3]))) (S.Just ([1, 2, 3]));
   eq (S.pipeK ([S.tail]) (S.Just ([1, 2, 3]))) (S.Just ([2, 3]));

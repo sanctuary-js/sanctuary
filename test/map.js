@@ -9,7 +9,7 @@ test ('map', function() {
 
   eq (typeof S.map) ('function');
   eq (S.map.length) (1);
-  eq (String (S.map)) ('map :: Functor f => (a -> b) -> f a -> f b');
+  eq (S.show (S.map)) ('map :: Functor f => (a -> b) -> f a -> f b');
 
   eq (S.map (S.not) (S.odd) (2)) (true);
   eq (S.map (S.not) (S.odd) (3)) (false);

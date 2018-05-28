@@ -9,7 +9,7 @@ test ('unfoldr', function() {
 
   eq (typeof S.unfoldr) ('function');
   eq (S.unfoldr.length) (1);
-  eq (String (S.unfoldr)) ('unfoldr :: (b -> Maybe (Array2 a b)) -> b -> Array a');
+  eq (S.show (S.unfoldr)) ('unfoldr :: (b -> Maybe (Array2 a b)) -> b -> Array a');
 
   function f(n) {
     return n >= 5 ? S.Nothing : S.Just ([n, n + 1]);

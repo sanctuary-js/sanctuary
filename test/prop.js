@@ -10,7 +10,7 @@ test ('prop', function() {
 
   eq (typeof S.prop) ('function');
   eq (S.prop.length) (1);
-  eq (String (S.prop)) ('prop :: String -> a -> b');
+  eq (S.show (S.prop)) ('prop :: String -> a -> b');
 
   throws (function() { S.prop ('xxx') ([1, 2, 3]); })
          (new TypeError ('‘prop’ expected object to have a property named ‘xxx’; [1, 2, 3] does not'));

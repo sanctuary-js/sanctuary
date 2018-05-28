@@ -10,7 +10,7 @@ test ('parseInt', function() {
 
   eq (typeof S.parseInt) ('function');
   eq (S.parseInt.length) (1);
-  eq (String (S.parseInt)) ('parseInt :: Radix -> String -> Maybe Integer');
+  eq (S.show (S.parseInt)) ('parseInt :: Radix -> String -> Maybe Integer');
 
   eq (S.parseInt (10) ('42')) (S.Just (42));
   eq (S.parseInt (16) ('2A')) (S.Just (42));

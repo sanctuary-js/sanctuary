@@ -14,7 +14,7 @@ test ('reverse', function() {
 
   eq (typeof S.reverse) ('function');
   eq (S.reverse.length) (1);
-  eq (String (S.reverse)) ('reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
+  eq (S.show (S.reverse)) ('reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
 
   eq (S.reverse ([])) ([]);
   eq (S.reverse ([1])) ([1]);

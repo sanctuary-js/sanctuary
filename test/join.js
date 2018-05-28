@@ -9,7 +9,7 @@ test ('join', function() {
 
   eq (typeof S.join) ('function');
   eq (S.join.length) (1);
-  eq (String (S.join)) ('join :: Chain m => m (m a) -> m a');
+  eq (S.show (S.join)) ('join :: Chain m => m (m a) -> m a');
 
   eq (S.join ([])) ([]);
   eq (S.join ([[]])) ([]);

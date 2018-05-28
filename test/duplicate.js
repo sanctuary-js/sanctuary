@@ -9,7 +9,7 @@ test ('duplicate', function() {
 
   eq (typeof S.duplicate) ('function');
   eq (S.duplicate.length) (1);
-  eq (String (S.duplicate)) ('duplicate :: Extend w => w a -> w (w a)');
+  eq (S.show (S.duplicate)) ('duplicate :: Extend w => w a -> w (w a)');
 
   eq (S.duplicate ([])) ([]);
   eq (S.duplicate ([1])) ([[1]]);

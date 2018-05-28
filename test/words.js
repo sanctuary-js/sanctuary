@@ -9,7 +9,7 @@ test ('words', function() {
 
   eq (typeof S.words) ('function');
   eq (S.words.length) (1);
-  eq (String (S.words)) ('words :: String -> Array String');
+  eq (S.show (S.words)) ('words :: String -> Array String');
 
   eq (S.words ('')) ([]);
   eq (S.words (' ')) ([]);

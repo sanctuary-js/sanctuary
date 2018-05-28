@@ -9,7 +9,7 @@ test ('min', function() {
 
   eq (typeof S.min) ('function');
   eq (S.min.length) (1);
-  eq (String (S.min)) ('min :: Ord a => a -> a -> a');
+  eq (S.show (S.min)) ('min :: Ord a => a -> a -> a');
 
   eq (S.min (10) (2)) (2);
   eq (S.min (2) (10)) (2);

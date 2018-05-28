@@ -9,7 +9,7 @@ test ('sum', function() {
 
   eq (typeof S.sum) ('function');
   eq (S.sum.length) (1);
-  eq (String (S.sum)) ('sum :: Foldable f => f FiniteNumber -> FiniteNumber');
+  eq (S.show (S.sum)) ('sum :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.sum ([])) (0);
   eq (S.sum ([0, 1, 2, 3])) (6);

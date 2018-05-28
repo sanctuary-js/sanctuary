@@ -10,7 +10,7 @@ test ('I', function() {
 
   eq (typeof S.I) ('function');
   eq (S.I.length) (1);
-  eq (String (S.I)) ('I :: a -> a');
+  eq (S.show (S.I)) ('I :: a -> a');
 
   eq (S.I ([1, 2, 3])) ([1, 2, 3]);
   eq (S.I (['foo', 42])) (['foo', 42]);

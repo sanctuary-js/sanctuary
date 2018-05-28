@@ -9,7 +9,7 @@ test ('product', function() {
 
   eq (typeof S.product) ('function');
   eq (S.product.length) (1);
-  eq (String (S.product)) ('product :: Foldable f => f FiniteNumber -> FiniteNumber');
+  eq (S.show (S.product)) ('product :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.product ([])) (1);
   eq (S.product ([0, 1, 2, 3])) (0);

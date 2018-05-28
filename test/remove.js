@@ -12,7 +12,7 @@ test ('remove', function() {
 
   eq (typeof S.remove) ('function');
   eq (S.remove.length) (1);
-  eq (String (S.remove)) ('remove :: String -> StrMap a -> StrMap a');
+  eq (S.show (S.remove)) ('remove :: String -> StrMap a -> StrMap a');
 
   eq (S.remove ('a') ({})) ({});
   eq (S.remove ('b') ({a: 1})) ({a: 1});

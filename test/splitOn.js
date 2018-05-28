@@ -12,7 +12,7 @@ test ('splitOn', function() {
 
   eq (typeof S.splitOn) ('function');
   eq (S.splitOn.length) (1);
-  eq (String (S.splitOn)) ('splitOn :: String -> String -> Array String');
+  eq (S.show (S.splitOn)) ('splitOn :: String -> String -> Array String');
 
   eq (S.splitOn ('') ('abc')) (['a', 'b', 'c']);
   eq (S.splitOn (':') ('')) (['']);

@@ -12,7 +12,7 @@ test ('is', function() {
 
   eq (typeof S.is) ('function');
   eq (S.is.length) (1);
-  eq (String (S.is)) ('is :: Type -> Any -> Boolean');
+  eq (S.show (S.is)) ('is :: Type -> Any -> Boolean');
 
   eq (S.is ($.Boolean) (true)) (true);
   eq (S.is ($.Boolean) (false)) (true);

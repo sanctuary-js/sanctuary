@@ -9,7 +9,7 @@ test ('pairs', function() {
 
   eq (typeof S.pairs) ('function');
   eq (S.pairs.length) (1);
-  eq (String (S.pairs)) ('pairs :: StrMap a -> Array (Array2 String a)');
+  eq (S.show (S.pairs)) ('pairs :: StrMap a -> Array (Array2 String a)');
 
   eq (S.sort (S.pairs ({}))) ([]);
   eq (S.sort (S.pairs ({a: 1, b: 2, c: 3}))) ([['a', 1], ['b', 2], ['c', 3]]);

@@ -9,7 +9,7 @@ test ('promap', function() {
 
   eq (typeof S.promap) ('function');
   eq (S.promap.length) (1);
-  eq (String (S.promap)) ('promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
+  eq (S.show (S.promap)) ('promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
 
   var before = S.map (S.prop ('length'));
   var after = S.join (S.mult);

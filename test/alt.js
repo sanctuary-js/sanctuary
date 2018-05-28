@@ -9,7 +9,7 @@ test ('alt', function() {
 
   eq (typeof S.alt) ('function');
   eq (S.alt.length) (1);
-  eq (String (S.alt)) ('alt :: Alt f => f a -> f a -> f a');
+  eq (S.show (S.alt)) ('alt :: Alt f => f a -> f a -> f a');
 
   eq (S.alt ([]) ([])) ([]);
   eq (S.alt ([]) ([1, 2, 3])) ([1, 2, 3]);

@@ -9,7 +9,7 @@ test ('not', function() {
 
   eq (typeof S.not) ('function');
   eq (S.not.length) (1);
-  eq (String (S.not)) ('not :: Boolean -> Boolean');
+  eq (S.show (S.not)) ('not :: Boolean -> Boolean');
 
   eq (S.not (false)) (true);
   eq (S.not (true)) (false);

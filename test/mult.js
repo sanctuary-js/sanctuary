@@ -9,7 +9,7 @@ test ('mult', function() {
 
   eq (typeof S.mult) ('function');
   eq (S.mult.length) (1);
-  eq (String (S.mult)) ('mult :: FiniteNumber -> FiniteNumber -> FiniteNumber');
+  eq (S.show (S.mult)) ('mult :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.mult (4) (2)) (8);
   eq (S.mult (4) (-2)) (-8);

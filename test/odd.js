@@ -9,7 +9,7 @@ test ('odd', function() {
 
   eq (typeof S.odd) ('function');
   eq (S.odd.length) (1);
-  eq (String (S.odd)) ('odd :: Integer -> Boolean');
+  eq (S.show (S.odd)) ('odd :: Integer -> Boolean');
 
   eq (S.odd (1)) (true);
   eq (S.odd (-1)) (true);

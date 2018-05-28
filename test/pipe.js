@@ -14,7 +14,7 @@ test ('pipe', function() {
 
   eq (typeof S.pipe) ('function');
   eq (S.pipe.length) (1);
-  eq (String (S.pipe)) ('pipe :: Foldable f => f (Any -> Any) -> a -> b');
+  eq (S.show (S.pipe)) ('pipe :: Foldable f => f (Any -> Any) -> a -> b');
 
   eq (S.pipe ([]) ('99')) ('99');
   eq (S.pipe ([parseInt]) ('99')) (99);

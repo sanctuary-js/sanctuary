@@ -11,7 +11,7 @@ test ('of', function() {
 
   eq (typeof S.of) ('function');
   eq (S.of.length) (1);
-  eq (String (S.of)) ('of :: Applicative f => TypeRep f -> a -> f a');
+  eq (S.show (S.of)) ('of :: Applicative f => TypeRep f -> a -> f a');
 
   eq (S.of (Array) (42)) ([42]);
   eq (S.of (Function) (42) (null)) (42);

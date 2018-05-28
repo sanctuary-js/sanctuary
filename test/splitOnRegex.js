@@ -12,7 +12,7 @@ test ('splitOnRegex', function() {
 
   eq (typeof S.splitOnRegex) ('function');
   eq (S.splitOnRegex.length) (1);
-  eq (String (S.splitOnRegex)) ('splitOnRegex :: GlobalRegExp -> String -> Array String');
+  eq (S.show (S.splitOnRegex)) ('splitOnRegex :: GlobalRegExp -> String -> Array String');
 
   eq (S.splitOnRegex (/b/g) ('abc')) (['a', 'c']);
   eq (S.splitOnRegex (/d/g) ('abc')) (['abc']);

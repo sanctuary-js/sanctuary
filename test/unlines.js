@@ -9,7 +9,7 @@ test ('unlines', function() {
 
   eq (typeof S.unlines) ('function');
   eq (S.unlines.length) (1);
-  eq (String (S.unlines)) ('unlines :: Array String -> String');
+  eq (S.show (S.unlines)) ('unlines :: Array String -> String');
 
   eq (S.unlines ([])) ('');
   eq (S.unlines ([''])) ('\n');

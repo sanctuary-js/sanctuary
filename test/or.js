@@ -9,7 +9,7 @@ test ('or', function() {
 
   eq (typeof S.or) ('function');
   eq (S.or.length) (1);
-  eq (String (S.or)) ('or :: Boolean -> Boolean -> Boolean');
+  eq (S.show (S.or)) ('or :: Boolean -> Boolean -> Boolean');
 
   eq (S.or (false) (false)) (false);
   eq (S.or (false) (true)) (true);

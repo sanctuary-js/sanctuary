@@ -14,7 +14,7 @@ test ('filter', function() {
 
   eq (typeof S.filter) ('function');
   eq (S.filter.length) (1);
-  eq (String (S.filter)) ('filter :: Filterable f => (a -> Boolean) -> f a -> f a');
+  eq (S.show (S.filter)) ('filter :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq (S.filter (S.odd) ([])) ([]);
   eq (S.filter (S.odd) ([0, 2, 4, 6, 8])) ([]);

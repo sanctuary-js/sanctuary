@@ -9,7 +9,7 @@ test ('elem', function() {
 
   eq (typeof S.elem) ('function');
   eq (S.elem.length) (1);
-  eq (String (S.elem)) ('elem :: (Setoid a, Foldable f) => a -> f a -> Boolean');
+  eq (S.show (S.elem)) ('elem :: (Setoid a, Foldable f) => a -> f a -> Boolean');
 
   eq (S.elem ('c') (['a', 'b', 'c'])) (true);
   eq (S.elem ('x') (['a', 'b', 'c'])) (false);

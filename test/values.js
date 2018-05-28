@@ -9,7 +9,7 @@ test ('values', function() {
 
   eq (typeof S.values) ('function');
   eq (S.values.length) (1);
-  eq (String (S.values)) ('values :: StrMap a -> Array a');
+  eq (S.show (S.values)) ('values :: StrMap a -> Array a');
 
   eq (S.sort (S.values ({}))) ([]);
   eq (S.sort (S.values ({a: 1, b: 2, c: 3}))) ([1, 2, 3]);

@@ -9,7 +9,7 @@ test ('tail', function() {
 
   eq (typeof S.tail) ('function');
   eq (S.tail.length) (1);
-  eq (String (S.tail)) ('tail :: Array a -> Maybe (Array a)');
+  eq (S.show (S.tail)) ('tail :: Array a -> Maybe (Array a)');
 
   eq (S.tail ([])) (S.Nothing);
   eq (S.tail (['foo'])) (S.Just ([]));

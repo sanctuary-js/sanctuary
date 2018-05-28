@@ -9,7 +9,7 @@ test ('toMaybe', function() {
 
   eq (typeof S.toMaybe) ('function');
   eq (S.toMaybe.length) (1);
-  eq (String (S.toMaybe)) ('toMaybe :: a -> Maybe a');
+  eq (S.show (S.toMaybe)) ('toMaybe :: a -> Maybe a');
 
   eq (S.toMaybe (null)) (S.Nothing);
   eq (S.toMaybe (undefined)) (S.Nothing);

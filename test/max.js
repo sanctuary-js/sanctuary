@@ -9,7 +9,7 @@ test ('max', function() {
 
   eq (typeof S.max) ('function');
   eq (S.max.length) (1);
-  eq (String (S.max)) ('max :: Ord a => a -> a -> a');
+  eq (S.show (S.max)) ('max :: Ord a => a -> a -> a');
 
   eq (S.max (10) (2)) (10);
   eq (S.max (2) (10)) (10);

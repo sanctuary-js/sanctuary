@@ -9,7 +9,7 @@ test ('K', function() {
 
   eq (typeof S.K) ('function');
   eq (S.K.length) (1);
-  eq (String (S.K)) ('K :: a -> b -> a');
+  eq (S.show (S.K)) ('K :: a -> b -> a');
 
   eq (S.K (21) ([])) (21);
   eq (S.K (42) (null)) (42);

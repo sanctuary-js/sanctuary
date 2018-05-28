@@ -12,7 +12,7 @@ test ('groupBy', function() {
 
   eq (typeof S.groupBy) ('function');
   eq (S.groupBy.length) (1);
-  eq (String (S.groupBy)) ('groupBy :: (a -> a -> Boolean) -> Array a -> Array (Array a)');
+  eq (S.show (S.groupBy)) ('groupBy :: (a -> a -> Boolean) -> Array a -> Array (Array a)');
 
   function productsOf3(x) {
     return function(y) {
