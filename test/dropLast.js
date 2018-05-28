@@ -9,7 +9,7 @@ test ('dropLast', function() {
 
   eq (typeof S.dropLast) ('function');
   eq (S.dropLast.length) (1);
-  eq (String (S.dropLast)) ('dropLast :: Integer -> Array a -> Maybe (Array a)');
+  eq (S.show (S.dropLast)) ('dropLast :: Integer -> Array a -> Maybe (Array a)');
 
   eq (S.dropLast (0) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4, 5]));
   eq (S.dropLast (1) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4]));

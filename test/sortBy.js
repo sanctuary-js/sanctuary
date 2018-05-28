@@ -9,7 +9,7 @@ test ('sortBy', function() {
 
   eq (typeof S.sortBy) ('function');
   eq (S.sortBy.length) (1);
-  eq (String (S.sortBy)) ('sortBy :: (Ord b, Applicative m, Foldable m, Monoid m) => (a -> b) -> m a -> m a');
+  eq (S.show (S.sortBy)) ('sortBy :: (Ord b, Applicative m, Foldable m, Monoid m) => (a -> b) -> m a -> m a');
 
   eq (S.sortBy (S.I) ([])) ([]);
   eq (S.sortBy (S.I) (['five'])) (['five']);

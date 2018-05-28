@@ -9,7 +9,7 @@ test ('concat', function() {
 
   eq (typeof S.concat) ('function');
   eq (S.concat.length) (1);
-  eq (String (S.concat)) ('concat :: Semigroup a => a -> a -> a');
+  eq (S.show (S.concat)) ('concat :: Semigroup a => a -> a -> a');
 
   eq (S.concat ([]) ([])) ([]);
   eq (S.concat ([1, 2, 3]) ([])) ([1, 2, 3]);

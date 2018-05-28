@@ -11,7 +11,7 @@ test ('sequence', function() {
 
   eq (typeof S.sequence) ('function');
   eq (S.sequence.length) (1);
-  eq (String (S.sequence)) ('sequence :: (Applicative f, Traversable t) => TypeRep f -> t (f a) -> f (t a)');
+  eq (S.show (S.sequence)) ('sequence :: (Applicative f, Traversable t) => TypeRep f -> t (f a) -> f (t a)');
 
   eq (S.sequence (Identity) ([])) (Identity ([]));
   eq (S.sequence (Identity) ([Identity (1), Identity (2), Identity (3)])) (Identity ([1, 2, 3]));

@@ -14,7 +14,7 @@ test ('allPass', function() {
 
   eq (typeof S.allPass) ('function');
   eq (S.allPass.length) (1);
-  eq (String (S.allPass)) ('allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean');
+  eq (S.show (S.allPass)) ('allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean');
 
   eq (S.allPass ([]) ('abacus')) (true);
   eq (S.allPass ([S.test (/a/), S.test (/b/), S.test (/c/)]) ('abacus')) (true);

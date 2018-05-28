@@ -9,7 +9,7 @@ test ('test', function() {
 
   eq (typeof S.test) ('function');
   eq (S.test.length) (1);
-  eq (String (S.test)) ('test :: RegExp -> String -> Boolean');
+  eq (S.show (S.test)) ('test :: RegExp -> String -> Boolean');
 
   eq (S.test (/^a/) ('abacus')) (true);
   eq (S.test (/^a/) ('banana')) (false);

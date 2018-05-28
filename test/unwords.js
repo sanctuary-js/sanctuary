@@ -9,7 +9,7 @@ test ('unwords', function() {
 
   eq (typeof S.unwords) ('function');
   eq (S.unwords.length) (1);
-  eq (String (S.unwords)) ('unwords :: Array String -> String');
+  eq (S.show (S.unwords)) ('unwords :: Array String -> String');
 
   eq (S.unwords ([])) ('');
   eq (S.unwords ([''])) ('');

@@ -9,7 +9,7 @@ test ('show', function() {
 
   eq (typeof S.show) ('function');
   eq (S.show.length) (1);
-  eq (String (S.show)) ('show :: Any -> String');
+  eq (S.show (S.show)) ('show :: Any -> String');
 
   eq (S.show (null)) ('null');
   eq (S.show (undefined)) ('undefined');

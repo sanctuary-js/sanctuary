@@ -14,7 +14,7 @@ test ('reject', function() {
 
   eq (typeof S.reject) ('function');
   eq (S.reject.length) (1);
-  eq (String (S.reject)) ('reject :: Filterable f => (a -> Boolean) -> f a -> f a');
+  eq (S.show (S.reject)) ('reject :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq (S.reject (S.odd) ([])) ([]);
   eq (S.reject (S.odd) ([0, 2, 4, 6, 8])) ([0, 2, 4, 6, 8]);

@@ -9,7 +9,7 @@ test ('fromPairs', function() {
 
   eq (typeof S.fromPairs) ('function');
   eq (S.fromPairs.length) (1);
-  eq (String (S.fromPairs)) ('fromPairs :: Foldable f => f (Array2 String a) -> StrMap a');
+  eq (S.show (S.fromPairs)) ('fromPairs :: Foldable f => f (Array2 String a) -> StrMap a');
 
   eq (S.fromPairs ([])) ({});
   eq (S.fromPairs ([['a', 1], ['b', 2], ['c', 3]])) ({a: 1, b: 2, c: 3});

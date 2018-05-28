@@ -9,7 +9,7 @@ test ('takeLast', function() {
 
   eq (typeof S.takeLast) ('function');
   eq (S.takeLast.length) (1);
-  eq (String (S.takeLast)) ('takeLast :: Integer -> Array a -> Maybe (Array a)');
+  eq (S.show (S.takeLast)) ('takeLast :: Integer -> Array a -> Maybe (Array a)');
 
   eq (S.takeLast (0) ([1, 2, 3, 4, 5])) (S.Just ([]));
   eq (S.takeLast (1) ([1, 2, 3, 4, 5])) (S.Just ([5]));

@@ -14,7 +14,7 @@ test ('anyPass', function() {
 
   eq (typeof S.anyPass) ('function');
   eq (S.anyPass.length) (1);
-  eq (String (S.anyPass)) ('anyPass :: Foldable f => f (a -> Boolean) -> a -> Boolean');
+  eq (S.show (S.anyPass)) ('anyPass :: Foldable f => f (a -> Boolean) -> a -> Boolean');
 
   eq (S.anyPass ([]) ('dolphin')) (false);
   eq (S.anyPass ([S.test (/a/), S.test (/b/), S.test (/c/)]) ('dolphin')) (false);

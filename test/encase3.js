@@ -10,7 +10,7 @@ test ('encase3', function() {
 
   eq (typeof S.encase3) ('function');
   eq (S.encase3.length) (1);
-  eq (String (S.encase3)) ('encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d');
+  eq (S.show (S.encase3)) ('encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d');
 
   eq (S.encase3 (area) (3) (4) (5)) (S.Just (6));
   eq (S.encase3 (area) (2) (2) (5)) (S.Nothing);

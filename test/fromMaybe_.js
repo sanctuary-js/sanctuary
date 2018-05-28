@@ -9,7 +9,7 @@ test ('fromMaybe_', function() {
 
   eq (typeof S.fromMaybe_) ('function');
   eq (S.fromMaybe_.length) (1);
-  eq (String (S.fromMaybe_)) ('fromMaybe_ :: (() -> a) -> Maybe a -> a');
+  eq (S.show (S.fromMaybe_)) ('fromMaybe_ :: (() -> a) -> Maybe a -> a');
 
   eq (S.fromMaybe_ (function() { return 0; }) (S.Nothing)) (0);
   eq (S.fromMaybe_ (function() { return 0; }) (S.Just (42))) (42);

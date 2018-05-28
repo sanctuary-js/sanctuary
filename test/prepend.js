@@ -9,7 +9,7 @@ test ('prepend', function() {
 
   eq (typeof S.prepend) ('function');
   eq (S.prepend.length) (1);
-  eq (String (S.prepend)) ('prepend :: (Applicative f, Semigroup f) => a -> f a -> f a');
+  eq (S.show (S.prepend)) ('prepend :: (Applicative f, Semigroup f) => a -> f a -> f a');
 
   eq (S.prepend (1) ([])) ([1]);
   eq (S.prepend (1) ([2, 3])) ([1, 2, 3]);

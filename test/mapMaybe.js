@@ -14,7 +14,7 @@ test ('mapMaybe', function() {
 
   eq (typeof S.mapMaybe) ('function');
   eq (S.mapMaybe.length) (1);
-  eq (String (S.mapMaybe)) ('mapMaybe :: (Filterable f, Functor f) => (a -> Maybe b) -> f a -> f b');
+  eq (S.show (S.mapMaybe)) ('mapMaybe :: (Filterable f, Functor f) => (a -> Maybe b) -> f a -> f b');
 
   eq (S.mapMaybe (S.head) ([])) ([]);
   eq (S.mapMaybe (S.head) ([[], [], []])) ([]);

@@ -10,7 +10,7 @@ test ('chainRec', function() {
 
   eq (typeof S.chainRec) ('function');
   eq (S.chainRec.length) (1);
-  eq (String (S.chainRec)) ('chainRec :: ChainRec m => TypeRep m -> (a -> m (Either a b)) -> a -> m b');
+  eq (S.show (S.chainRec)) ('chainRec :: ChainRec m => TypeRep m -> (a -> m (Either a b)) -> a -> m b');
 
   function permute(s) {
     return s.length === 2 ? map (S.Right) ([s + '!', s + '?'])

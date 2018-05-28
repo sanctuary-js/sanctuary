@@ -9,7 +9,7 @@ test ('equals', function() {
 
   eq (typeof S.equals) ('function');
   eq (S.equals.length) (1);
-  eq (String (S.equals)) ('equals :: Setoid a => a -> a -> Boolean');
+  eq (S.show (S.equals)) ('equals :: Setoid a => a -> a -> Boolean');
 
   eq (S.equals (S.Nothing) (S.Nothing)) (true);
   eq (S.equals (S.Just (NaN)) (S.Just (NaN))) (true);

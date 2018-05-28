@@ -13,7 +13,7 @@ test ('gets', function() {
 
   eq (typeof S.gets) ('function');
   eq (S.gets.length) (1);
-  eq (String (S.gets)) ('gets :: (Any -> Boolean) -> Array String -> a -> Maybe b');
+  eq (S.show (S.gets)) ('gets :: (Any -> Boolean) -> Array String -> a -> Maybe b');
 
   eq (S.gets (S.is ($.Number)) (['x']) ({x: {z: 0}, y: 42})) (S.Nothing);
   eq (S.gets (S.is ($.Number)) (['y']) ({x: {z: 0}, y: 42})) (S.Just (42));

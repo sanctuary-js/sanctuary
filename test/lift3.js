@@ -10,7 +10,7 @@ test ('lift3', function() {
 
   eq (typeof S.lift3) ('function');
   eq (S.lift3.length) (1);
-  eq (String (S.lift3)) ('lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d');
+  eq (S.show (S.lift3)) ('lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d');
 
   eq (S.lift3 (S.reduce) (S.Just (S.add)) (S.Just (0)) (S.Just ([1, 2, 3]))) (S.Just (6));
   eq (S.lift3 (S.reduce) (S.Just (S.add)) (S.Just (0)) (S.Nothing)) (S.Nothing);

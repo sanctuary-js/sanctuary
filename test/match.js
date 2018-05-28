@@ -12,7 +12,7 @@ test ('match', function() {
 
   eq (typeof S.match) ('function');
   eq (S.match.length) (1);
-  eq (String (S.match)) ('match :: NonGlobalRegExp -> String -> Maybe { groups :: Array (Maybe String), match :: String }');
+  eq (S.show (S.match)) ('match :: NonGlobalRegExp -> String -> Maybe { groups :: Array (Maybe String), match :: String }');
 
   var scheme = '([a-z][a-z0-9+.-]*)';
   var authentication = '(.*?):(.*?)@';

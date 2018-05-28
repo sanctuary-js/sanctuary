@@ -9,7 +9,7 @@ test ('init', function() {
 
   eq (typeof S.init) ('function');
   eq (S.init.length) (1);
-  eq (String (S.init)) ('init :: Array a -> Maybe (Array a)');
+  eq (S.show (S.init)) ('init :: Array a -> Maybe (Array a)');
 
   eq (S.init ([])) (S.Nothing);
   eq (S.init (['foo'])) (S.Just ([]));

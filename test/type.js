@@ -11,7 +11,7 @@ test ('type', function() {
 
   eq (typeof S.type) ('function');
   eq (S.type.length) (1);
-  eq (String (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
+  eq (S.show (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
 
   eq (S.type (function() { return arguments; } ()))
      ({namespace: S.Nothing, name: 'Arguments', version: 0});

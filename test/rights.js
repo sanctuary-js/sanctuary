@@ -14,7 +14,7 @@ test ('rights', function() {
 
   eq (typeof S.rights) ('function');
   eq (S.rights.length) (1);
-  eq (String (S.rights)) ('rights :: (Filterable f, Functor f) => f (Either a b) -> f b');
+  eq (S.show (S.rights)) ('rights :: (Filterable f, Functor f) => f (Either a b) -> f b');
 
   eq (S.rights ([])) ([]);
   eq (S.rights ([S.Left ('a'), S.Left ('b')])) ([]);

@@ -9,7 +9,7 @@ test ('stripPrefix', function() {
 
   eq (typeof S.stripPrefix) ('function');
   eq (S.stripPrefix.length) (1);
-  eq (String (S.stripPrefix)) ('stripPrefix :: String -> String -> Maybe String');
+  eq (S.show (S.stripPrefix)) ('stripPrefix :: String -> String -> Maybe String');
 
   eq (S.stripPrefix ('') ('')) (S.Just (''));
   eq (S.stripPrefix ('') ('abc')) (S.Just ('abc'));

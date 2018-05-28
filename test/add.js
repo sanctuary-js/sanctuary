@@ -9,7 +9,7 @@ test ('add', function() {
 
   eq (typeof S.add) ('function');
   eq (S.add.length) (1);
-  eq (String (S.add)) ('add :: FiniteNumber -> FiniteNumber -> FiniteNumber');
+  eq (S.show (S.add)) ('add :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.add (1) (1)) (2);
   eq (S.add (-1) (-1)) (-2);

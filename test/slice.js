@@ -9,7 +9,7 @@ test ('slice', function() {
 
   eq (typeof S.slice) ('function');
   eq (S.slice.length) (1);
-  eq (String (S.slice)) ('slice :: Integer -> Integer -> Array a -> Maybe (Array a)');
+  eq (S.show (S.slice)) ('slice :: Integer -> Integer -> Array a -> Maybe (Array a)');
 
   eq (S.slice (6) (1) ([1, 2, 3, 4, 5])) (S.Nothing);
   eq (S.slice (1) (6) ([1, 2, 3, 4, 5])) (S.Nothing);

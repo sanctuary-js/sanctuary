@@ -9,7 +9,7 @@ test ('head', function() {
 
   eq (typeof S.head) ('function');
   eq (S.head.length) (1);
-  eq (String (S.head)) ('head :: Array a -> Maybe a');
+  eq (S.show (S.head)) ('head :: Array a -> Maybe a');
 
   eq (S.head ([])) (S.Nothing);
   eq (S.head (['foo'])) (S.Just ('foo'));

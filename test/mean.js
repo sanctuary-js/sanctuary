@@ -9,7 +9,7 @@ test ('mean', function() {
 
   eq (typeof S.mean) ('function');
   eq (S.mean.length) (1);
-  eq (String (S.mean)) ('mean :: Foldable f => f FiniteNumber -> Maybe FiniteNumber');
+  eq (S.show (S.mean)) ('mean :: Foldable f => f FiniteNumber -> Maybe FiniteNumber');
 
   eq (S.mean ([])) (S.Nothing);
   eq (S.mean ([1, 2, 3])) (S.Just (2));

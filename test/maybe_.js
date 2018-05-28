@@ -10,7 +10,7 @@ test ('maybe_', function() {
 
   eq (typeof S.maybe_) ('function');
   eq (S.maybe_.length) (1);
-  eq (String (S.maybe_)) ('maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b');
+  eq (S.show (S.maybe_)) ('maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b');
 
   eq (S.maybe_ (function() { return factorial (10); }) (Math.sqrt) (S.Nothing)) (3628800);
   eq (S.maybe_ (function() { return factorial (10); }) (Math.sqrt) (S.Just (9))) (3);

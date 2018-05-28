@@ -11,7 +11,7 @@ test ('curry2', function() {
 
   eq (typeof S.curry2) ('function');
   eq (S.curry2.length) (1);
-  eq (String (S.curry2)) ('curry2 :: ((a, b) -> c) -> a -> b -> c');
+  eq (S.show (S.curry2)) ('curry2 :: ((a, b) -> c) -> a -> b -> c');
 
   eq (S.curry2 (Z.concat) ('foo') ('bar')) ('foobar');
 

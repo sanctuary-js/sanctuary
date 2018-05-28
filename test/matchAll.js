@@ -9,7 +9,7 @@ test ('matchAll', function() {
 
   eq (typeof S.matchAll) ('function');
   eq (S.matchAll.length) (1);
-  eq (String (S.matchAll)) ('matchAll :: GlobalRegExp -> String -> Array { groups :: Array (Maybe String), match :: String }');
+  eq (S.show (S.matchAll)) ('matchAll :: GlobalRegExp -> String -> Array { groups :: Array (Maybe String), match :: String }');
 
   var pattern = S.regex ('g') ('<(h[1-6])(?: id="([^"]*)")?>([^<]*)</\\1>');
 

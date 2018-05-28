@@ -24,7 +24,7 @@ test ('create', function() {
 
   eq (typeof S.create) ('function');
   eq (S.create.length) (1);
-  eq (String (S.create)) ('create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
+  eq (S.show (S.create)) ('create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
   var expected = S.sort (Object.keys (S));
   eq (S.sort (Object.keys (checkedDefaultEnv))) (expected);

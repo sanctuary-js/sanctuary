@@ -11,7 +11,7 @@ test ('extend', function() {
 
   eq (typeof S.extend) ('function');
   eq (S.extend.length) (1);
-  eq (String (S.extend)) ('extend :: Extend w => (w a -> b) -> w a -> w b');
+  eq (S.show (S.extend)) ('extend :: Extend w => (w a -> b) -> w a -> w b');
 
   eq (S.extend (S.joinWith ('')) ([])) ([]);
   eq (S.extend (S.joinWith ('')) (['x'])) (['x']);

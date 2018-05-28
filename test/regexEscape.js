@@ -11,7 +11,7 @@ test ('regexEscape', function() {
 
   eq (typeof S.regexEscape) ('function');
   eq (S.regexEscape.length) (1);
-  eq (String (S.regexEscape)) ('regexEscape :: String -> String');
+  eq (S.show (S.regexEscape)) ('regexEscape :: String -> String');
 
   eq (S.regexEscape ('-=*{XYZ}*=-')) ('\\-=\\*\\{XYZ\\}\\*=\\-');
 

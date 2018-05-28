@@ -9,7 +9,7 @@ test ('lines', function() {
 
   eq (typeof S.lines) ('function');
   eq (S.lines.length) (1);
-  eq (String (S.lines)) ('lines :: String -> Array String');
+  eq (S.show (S.lines)) ('lines :: String -> Array String');
 
   eq (S.lines ('')) ([]);
   eq (S.lines ('\n')) (['']);

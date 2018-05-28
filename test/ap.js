@@ -9,7 +9,7 @@ test ('ap', function() {
 
   eq (typeof S.ap) ('function');
   eq (S.ap.length) (1);
-  eq (String (S.ap)) ('ap :: Apply f => f (a -> b) -> f a -> f b');
+  eq (S.show (S.ap)) ('ap :: Apply f => f (a -> b) -> f a -> f b');
 
   eq (S.ap ([]) ([])) ([]);
   eq (S.ap ([]) ([1, 2, 3])) ([]);
