@@ -212,17 +212,25 @@
 
   'use strict';
 
-  /* global __doctest:false */
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
     /* eslint-disable no-unused-vars */
+    var Descending = __doctest.require ('sanctuary-descending');
     var Nil = (__doctest.require ('./test/internal/List')).Nil;
     var Cons = (__doctest.require ('./test/internal/List')).Cons;
     var Sum = __doctest.require ('./test/internal/Sum');
     var S = (function(S) {
+      //  DescendingType :: Type -> Type
+      var DescendingType = $.UnaryType
+        ('sanctuary/Descending')
+        ('')
+        (typeEq (Descending['@@type']))
+        (B (of (Array)) (Z.extract));
+
       var S_ = S.create ({
         checkTypes: true,
         env: S.env.concat ([
+          DescendingType ($.Unknown),
           (__doctest.require ('./test/internal/List')).Type ($.Unknown),
           Sum.Type
         ])
@@ -3339,6 +3347,13 @@
   //. . {rank: 7, suit: 'spades'},
   //. . {rank: 5, suit: 'spades'} ]
   //. ```
+  //.
+  //. If descending order is desired, one may use [`Descending`][]:
+  //.
+  //. ```javascript
+  //. > S.sortBy (Descending) ([83, 97, 110, 99, 116, 117, 97, 114, 121])
+  //. [121, 117, 116, 114, 110, 99, 97, 97, 83]
+  //. ```
   _.sortBy = {
     consts: {b: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
     types: [Fn (a) (b), m (a), m (a)],
@@ -4530,6 +4545,7 @@
 //. [Semigroupoid]:         v:fantasyland/fantasy-land#semigroupoid
 //. [UnaryType]:            v:sanctuary-js/sanctuary-def#UnaryType
 //. [`$.test`]:             v:sanctuary-js/sanctuary-def#test
+//. [`Descending`]:         v:sanctuary-js/sanctuary-descending#Descending
 //. [`Z.alt`]:              v:sanctuary-js/sanctuary-type-classes#alt
 //. [`Z.ap`]:               v:sanctuary-js/sanctuary-type-classes#ap
 //. [`Z.apFirst`]:          v:sanctuary-js/sanctuary-type-classes#apFirst

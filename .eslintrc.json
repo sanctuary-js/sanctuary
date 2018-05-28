@@ -29,6 +29,7 @@
       "globals": {
         "$": false,
         "Cons": false,
+        "Descending": false,
         "Just": false,
         "Left": false,
         "Nil": false,
