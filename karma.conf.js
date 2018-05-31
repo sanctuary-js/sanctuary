@@ -17,8 +17,8 @@ var dependencies = [
   'sanctuary-show',
   'sanctuary-type-identifiers',
   'sanctuary-type-classes',
-  'sanctuary-def',
   'sanctuary-either',
+  'sanctuary-def',
   'sanctuary-maybe',
   'sanctuary-pair'
 ];
