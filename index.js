@@ -605,6 +605,7 @@
   //. . $.Boolean,
   //. . $.Date,
   //. . $.Error,
+  //. . $.HtmlElement,
   //. . $.Null,
   //. . $.Number,
   //. . $.Object,
