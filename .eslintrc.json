@@ -33,6 +33,7 @@
         "Left": false,
         "Nil": false,
         "Nothing": false,
+        "Pair": false,
         "R": false,
         "Right": false,
         "S": false,

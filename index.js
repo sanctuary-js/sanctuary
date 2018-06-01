@@ -185,6 +185,7 @@
     module.exports = f (require ('sanctuary-def'),
                         require ('sanctuary-either'),
                         require ('sanctuary-maybe'),
+                        require ('sanctuary-pair'),
                         require ('sanctuary-show'),
                         require ('sanctuary-type-classes'),
                         require ('sanctuary-type-identifiers'));
@@ -192,6 +193,7 @@
     define (['sanctuary-def',
              'sanctuary-either',
              'sanctuary-maybe',
+             'sanctuary-pair',
              'sanctuary-show',
              'sanctuary-type-classes',
              'sanctuary-type-identifiers'],
@@ -200,12 +202,13 @@
     self.sanctuary = f (self.sanctuaryDef,
                         self.sanctuaryEither,
                         self.sanctuaryMaybe,
+                        self.sanctuaryPair,
                         self.sanctuaryShow,
                         self.sanctuaryTypeClasses,
                         self.sanctuaryTypeIdentifiers);
   }
 
-} (function($, Either, Maybe, show, Z, type) {
+} (function($, Either, Maybe, Pair, show, Z, type) {
 
   'use strict';
 
@@ -289,13 +292,6 @@
     };
   }
 
-  //  pair :: a -> b -> Array2 a b
-  function pair(x) {
-    return function(y) {
-      return [x, y];
-    };
-  }
-
   //  toObject :: a -> Object
   function toObject(x) {
     return x == null ? Object.create (null) : Object (x);
@@ -347,6 +343,14 @@
     ('https://github.com/sanctuary-js/sanctuary-maybe')
     (typeEq ('sanctuary-maybe/Maybe@1'))
     (maybe ([]) (of (Array)));
+
+  //  $Pair :: Type -> Type -> Type
+  var $Pair = $.BinaryType
+    ('sanctuary/Pair')
+    ('https://github.com/sanctuary-js/sanctuary-pair')
+    (typeEq ('sanctuary-pair/Pair@1'))
+    (function(pair) { return [pair.fst]; })
+    (function(pair) { return [pair.snd]; });
 
   //  TypeRep :: Type -> Type
   var TypeRep = $.UnaryType
@@ -426,7 +430,8 @@
       Maybe: Maybe,
       Nothing: Nothing,
       EitherType: $Either,
-      Either: Either
+      Either: Either,
+      PairType: $Pair
     };
     (Object.keys (_)).forEach (function(name) {
       S[name] = def (name) (_[name].consts) (_[name].types) (_[name].impl);
@@ -472,6 +477,7 @@
   //. . $.NonNegativeInteger,
   //. . S.MaybeType ($.Unknown),
   //. . $.Array2 ($.Unknown) ($.Unknown),
+  //. . S.PairType ($.Unknown) ($.Unknown),
   //. . $.RegexFlags,
   //. . $.Type,
   //. . $.TypeClass,
@@ -916,6 +922,9 @@
   //.
   //. > S.map (Math.sqrt) (S.Right (9))
   //. Right (3)
+  //.
+  //. > S.map (Math.sqrt) (S.Pair (99980001) (99980001))
+  //. Pair (99980001) (9999)
   //. ```
   //.
   //. Replacing `Functor f => f` with `Function x` produces the B combinator
@@ -982,6 +991,9 @@
   //. Curried version of [`Z.bimap`][].
   //.
   //. ```javascript
+  //. > S.bimap (S.toUpper) (Math.sqrt) (S.Pair ('foo') (64))
+  //. Pair ('FOO') (8)
+  //.
   //. > S.bimap (S.toUpper) (Math.sqrt) (S.Left ('foo'))
   //. Left ('FOO')
   //.
@@ -1000,6 +1012,9 @@
   //. side of a Bifunctor.
   //.
   //. ```javascript
+  //. > S.mapLeft (S.toUpper) (S.Pair ('foo') (64))
+  //. Pair ('FOO') (64)
+  //.
   //. > S.mapLeft (S.toUpper) (S.Left ('foo'))
   //. Left ('FOO')
   //.
@@ -1341,6 +1356,9 @@
   //.
   //. > S.join (S.Just (S.Just (1)))
   //. Just (1)
+  //.
+  //. > S.join (S.Pair ('foo') (S.Pair ('bar') ('baz')))
+  //. Pair ('foobar') ('baz')
   //. ```
   //.
   //. Replacing `Chain m => m` with `Function x` produces the W combinator
@@ -1436,6 +1454,11 @@
   //# extract :: Comonad w => w a -> a
   //.
   //. [Type-safe][sanctuary-def] version of [`Z.extract`][].
+  //.
+  //. ```javascript
+  //. > S.extract (S.Pair ('foo') ('bar'))
+  //. 'bar'
+  //. ```
   _.extract = {
     consts: {w: [Z.Comonad]},
     types: [w (a), a],
@@ -1734,6 +1757,74 @@
     consts: {},
     types: [Fn (b) (Fn (b) (c)), Fn (a) (b), a, a, c],
     impl: on
+  };
+
+  //. ### Pair type
+  //.
+  //. Pair is the canonical product type: a value of type `Pair a b` always
+  //. contains exactly two values: one of type `a`; one of type `b`.
+  //.
+  //. The implementation is provided by [sanctuary-pair][].
+
+  //# PairType :: Type -> Type -> Type
+  //.
+  //. A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
+
+  //# Pair :: a -> b -> Pair a b
+  //.
+  //. Pair's sole data constructor. Additionally, it serves as the
+  //. Pair [type representative][].
+  //.
+  //. ```javascript
+  //. > S.Pair ('foo') (42)
+  //. Pair ('foo') (42)
+  //. ```
+  _.Pair = {
+    consts: {},
+    types: [a, b, $Pair (a) (b)],
+    impl: Pair
+  };
+
+  //# fst :: Pair a b -> a
+  //.
+  //. `fst (Pair (x) (y))` is equivalent to `x`.
+  //.
+  //. ```javascript
+  //. > S.fst (S.Pair ('foo') (42))
+  //. 'foo'
+  //. ```
+  _.fst = {
+    consts: {},
+    types: [$Pair (a) (b), a],
+    impl: Pair.fst
+  };
+
+  //# snd :: Pair a b -> b
+  //.
+  //. `snd (Pair (x) (y))` is equivalent to `y`.
+  //.
+  //. ```javascript
+  //. > S.snd (S.Pair ('foo') (42))
+  //. 42
+  //. ```
+  _.snd = {
+    consts: {},
+    types: [$Pair (a) (b), b],
+    impl: Pair.snd
+  };
+
+  //# swap :: Pair a b -> Pair b a
+  //.
+  //. `swap (Pair (x) (y))` is equivalent to `Pair (y) (x)`.
+  //.
+  //. ```javascript
+  //. > S.swap (S.Pair ('foo') (42))
+  //. Pair (42) ('foo')
+  //. ```
+  _.swap = {
+    consts: {},
+    types: [$Pair (a) (b), $Pair (b) (a)],
+    impl: Pair.swap
   };
 
   //. ### Maybe type
@@ -2907,6 +2998,9 @@
   //.
   //. > S.size (S.Just ('quux'))
   //. 1
+  //.
+  //. > S.size (S.Pair ('ignored!') ('counted!'))
+  //. 1
   //. ```
   _.size = {
     consts: {f: [Z.Foldable]},
@@ -3067,7 +3161,7 @@
     impl: curry3 (Z.foldMap)
   };
 
-  //# unfoldr :: (b -> Maybe (Array2 a b)) -> b -> Array a
+  //# unfoldr :: (b -> Maybe (Pair a b)) -> b -> Array a
   //.
   //. Takes a function and a seed value, and returns an array generated by
   //. applying the function repeatedly. The array is initially empty. The
@@ -3080,21 +3174,21 @@
   //.     the array and the function is applied to the second element.
   //.
   //. ```javascript
-  //. > S.unfoldr (n => n < 5 ? S.Just ([n, n + 1]) : S.Nothing) (1)
+  //. > S.unfoldr (n => n < 5 ? S.Just (S.Pair (n) (n + 1)) : S.Nothing) (1)
   //. [1, 2, 3, 4]
   //. ```
   function unfoldr(f) {
     return function(x) {
       var result = [];
-      for (var m = f (x); m.isJust; m = f (m.value[1])) {
-        result.push (m.value[0]);
+      for (var m = f (x); m.isJust; m = f (m.value.snd)) {
+        result.push (m.value.fst);
       }
       return result;
     };
   }
   _.unfoldr = {
     consts: {},
-    types: [Fn (b) ($Maybe ($.Array2 (a) (b))), b, $.Array (a)],
+    types: [Fn (b) ($Maybe ($Pair (a) (b))), b, $.Array (a)],
     impl: unfoldr
   };
 
@@ -3251,7 +3345,7 @@
     impl: curry2 (Z.sortBy)
   };
 
-  //# zip :: Array a -> Array b -> Array (Array2 a b)
+  //# zip :: Array a -> Array b -> Array (Pair a b)
   //.
   //. Returns an array of pairs of corresponding elements from the given
   //. arrays. The length of the resulting array is equal to the length of
@@ -3261,15 +3355,15 @@
   //.
   //. ```javascript
   //. > S.zip (['a', 'b']) (['x', 'y', 'z'])
-  //. [['a', 'x'], ['b', 'y']]
+  //. [Pair ('a') ('x'), Pair ('b') ('y')]
   //.
   //. > S.zip ([1, 3, 5]) ([2, 4])
-  //. [[1, 2], [3, 4]]
+  //. [Pair (1) (2), Pair (3) (4)]
   //. ```
   _.zip = {
     consts: {},
-    types: [$.Array (a), $.Array (b), $.Array ($.Array2 (a) (b))],
-    impl: zipWith (pair)
+    types: [$.Array (a), $.Array (b), $.Array ($Pair (a) (b))],
+    impl: zipWith (Pair)
   };
 
   //# zipWith :: (a -> b -> c) -> Array a -> Array b -> Array c
@@ -3547,46 +3641,46 @@
     impl: values
   };
 
-  //# pairs :: StrMap a -> Array (Array2 String a)
+  //# pairs :: StrMap a -> Array (Pair String a)
   //.
   //. Returns the key–value pairs of the given string map, in arbitrary order.
   //.
   //. ```javascript
   //. > S.sort (S.pairs ({b: 2, a: 1, c: 3}))
-  //. [['a', 1], ['b', 2], ['c', 3]]
+  //. [Pair ('a') (1), Pair ('b') (2), Pair ('c') (3)]
   //. ```
   function pairs(strMap) {
-    return Z.map (function(k) { return [k, strMap[k]]; },
+    return Z.map (function(k) { return Pair (k) (strMap[k]); },
                   Object.keys (strMap));
   }
   _.pairs = {
     consts: {},
-    types: [$.StrMap (a), $.Array ($.Array2 ($.String) (a))],
+    types: [$.StrMap (a), $.Array ($Pair ($.String) (a))],
     impl: pairs
   };
 
-  //# fromPairs :: Foldable f => f (Array2 String a) -> StrMap a
+  //# fromPairs :: Foldable f => f (Pair String a) -> StrMap a
   //.
   //. Returns a string map containing the key–value pairs specified by the
   //. given [Foldable][]. If a key appears in multiple pairs, the rightmost
   //. pair takes precedence.
   //.
   //. ```javascript
-  //. > S.fromPairs ([['a', 1], ['b', 2], ['c', 3]])
+  //. > S.fromPairs ([S.Pair ('a') (1), S.Pair ('b') (2), S.Pair ('c') (3)])
   //. {a: 1, b: 2, c: 3}
   //.
-  //. > S.fromPairs ([['x', 1], ['x', 2]])
+  //. > S.fromPairs ([S.Pair ('x') (1), S.Pair ('x') (2)])
   //. {x: 2}
   //. ```
   function fromPairs(pairs) {
     return Z.reduce (function(strMap, pair) {
-      strMap[pair[0]] = pair[1];
+      strMap[pair.fst] = pair.snd;
       return strMap;
     }, {}, pairs);
   }
   _.fromPairs = {
     consts: {f: [Z.Foldable]},
-    types: [f ($.Array2 ($.String) (a)), $.StrMap (a)],
+    types: [f ($Pair ($.String) (a)), $.StrMap (a)],
     impl: fromPairs
   };
 
@@ -4130,7 +4224,7 @@
       return withRegex (pattern, function() {
         return unfoldr (function(_) {
           return Z.map (function(ss) {
-            return [toMatch (ss), null];
+            return Pair (toMatch (ss)) (null);
           }, toMaybe (pattern.exec (s)));
         }) ([]);
       });
@@ -4409,6 +4503,7 @@
       $.NonNegativeInteger,
       $Maybe ($.Unknown),
       $.Array2 ($.Unknown) ($.Unknown),
+      $Pair ($.Unknown) ($.Unknown),
       $.RegexFlags,
       $.Type,
       $.TypeClass,
@@ -4477,6 +4572,7 @@
 //. [sanctuary-def]:        v:sanctuary-js/sanctuary-def
 //. [sanctuary-either]:     v:sanctuary-js/sanctuary-either
 //. [sanctuary-maybe]:      v:sanctuary-js/sanctuary-maybe
+//. [sanctuary-pair]:       v:sanctuary-js/sanctuary-pair
 //. [stable sort]:          https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [thrush]:               https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
 //. [type identifier]:      v:sanctuary-js/sanctuary-type-identifiers
