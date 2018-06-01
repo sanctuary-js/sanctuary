@@ -22,7 +22,7 @@
     "types"
   ],
   "dependencies": {
-    "sanctuary-def": "0.17.1",
+    "sanctuary-def": "0.17.2",
     "sanctuary-either": "1.0.0",
     "sanctuary-maybe": "1.0.0",
     "sanctuary-pair": "1.0.0",
