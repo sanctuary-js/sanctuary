@@ -144,7 +144,7 @@
 //.
 //. ### Variadic functions
 //.
-//. Ramda provides several functions with take any number of arguments. These
+//. Ramda provides several functions which take any number of arguments. These
 //. are known as [variadic functions][]. Additionally, Ramda provides several
 //. functions which take variadic functions as arguments. Although natural in
 //. a dynamically typed language, variadic functions are at odds with the type
