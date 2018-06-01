@@ -312,6 +312,35 @@
 //. such as mapping over an object with heterogeneous values. This is possible
 //. via selective use of [`unchecked`](#unchecked) functions.
 //.
+//. ## Installation
+//.
+//. `npm install sanctuary` will install Sanctuary for use in Node.js.
+//.
+//. Running Sanctuary in the browser is more involved. One must include a
+//. `<script>` for each dependency in addition to one for Sanctuary itself:
+//.
+//. ```html
+//. <script src="vendor/sanctuary-show.js"></script>
+//. <script src="vendor/sanctuary-type-identifiers.js"></script>
+//. <script src="vendor/sanctuary-type-classes.js"></script>
+//. <script src="vendor/sanctuary-either.js"></script>
+//. <script src="vendor/sanctuary-maybe.js"></script>
+//. <script src="vendor/sanctuary-pair.js"></script>
+//. <script src="vendor/sanctuary-def.js"></script>
+//. <script src="vendor/sanctuary.js"></script>
+//. ```
+//.
+//. To ensure compatibility one should use the dependency versions specified
+//. in __package.json__.
+//.
+//. For convenience one could define aliases for various modules:
+//.
+//. ```javascript
+//. const S = window.sanctuary;
+//. const $ = window.sanctuaryDef;
+//. // ...
+//. ```
+//.
 //. ## API
 
 (function(f) {

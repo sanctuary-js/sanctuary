@@ -40,14 +40,15 @@
         "S": false,
         "Sum": false,
         "localStorage": false,
-        "sanctuary": false
+        "sanctuary": false,
+        "window": false
       },
       "rules": {
         "comma-dangle": ["error", "always-multiline"],
         "indent": ["off"],
         "no-eval": ["off"],
         "no-extra-semi": ["off"],
-        "no-unused-vars": ["error", {"varsIgnorePattern": "^S$"}]
+        "no-unused-vars": ["error", {"varsIgnorePattern": "^([$]|S)$"}]
       }
     }
   ]
