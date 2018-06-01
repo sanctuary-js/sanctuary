@@ -43,6 +43,144 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
+//. ## Ramda
+//.
+//. [Ramda][] provides several functions which return problematic values
+//. such as `undefined`, `Infinity`, or `NaN` when applied to unsuitable
+//. inputs. These are known as [partial functions][]. Partial functions
+//. necessitate the use of guards or null checks. In order to safely use
+//. `R.head`, for example, one must ensure that the array is non-empty:
+//.
+//.     if (R.isEmpty (xs)) {
+//.       // ...
+//.     } else {
+//.       return f (R.head (xs));
+//.     }
+//.
+//. Using the Maybe type renders such guards (and null checks) unnecessary.
+//. Changing functions such as `R.head` to return Maybe values was proposed
+//. in [ramda/ramda#683][], but was considered too much of a stretch for
+//. JavaScript programmers. Sanctuary was released the following month,
+//. in January 2015, as a companion library to Ramda.
+//.
+//. In addition to broadening in scope in the years since its release,
+//. Sanctuary's philosophy has diverged from Ramda's in several respects.
+//.
+//. ### Totality
+//.
+//. Every Sanctuary function is defined for every value which is a member of
+//. the function's input type. Such functions are known as [total functions][].
+//. Ramda, on the other hand, contains a number of [partial functions][].
+//.
+//. ### Information preservation
+//.
+//. Certain Sanctuary functions preserve more information than their Ramda
+//. counterparts. Examples:
+//.
+//.     |> R.tail ([])                      |> S.tail ([])
+//.     []                                  Nothing
+//.
+//.     |> R.tail (['foo'])                 |> S.tail (['foo'])
+//.     []                                  Just ([])
+//.
+//.     |> R.replace (/^x/) ('') ('abc')    |> S.stripPrefix ('x') ('abc')
+//.     'abc'                               Nothing
+//.
+//.     |> R.replace (/^x/) ('') ('xabc')   |> S.stripPrefix ('x') ('xabc')
+//.     'abc'                               Just ('abc')
+//.
+//. ### Invariants
+//.
+//. Sanctuary performs rigorous [type checking][] of inputs and outputs, and
+//. throws a descriptive error if a type error is encountered. This allows bugs
+//. to be caught and fixed early in the development cycle.
+//.
+//. Ramda operates on the [garbage in, garbage out][GIGO] principal. Functions
+//. are documented to take arguments of particular types, but these invariants
+//. are not enforced. The problem with this approach in a language as
+//. permissive as JavaScript is that there's no guarantee that garbage input
+//. will produce garbage output ([ramda/ramda#1413][]). Ramda performs ad hoc
+//. type checking in some such cases ([ramda/ramda#1419][]).
+//.
+//. Sanctuary can be configured to operate in garbage in, garbage out mode.
+//. Ramda cannot be configured to enforce its invariants.
+//.
+//. ### Currying
+//.
+//. Sanctuary functions are curried. There is, for example, exactly one way to
+//. apply `S.reduce` to `S.add`, `0`, and `xs`:
+//.
+//.   - `S.reduce (S.add) (0) (xs)`
+//.
+//. Ramda functions are also curried, but in a complex manner. There are four
+//. ways to apply `R.reduce` to `R.add`, `0`, and `xs`:
+//.
+//.   - `R.reduce (R.add) (0) (xs)`
+//.   - `R.reduce (R.add) (0, xs)`
+//.   - `R.reduce (R.add, 0) (xs)`
+//.   - `R.reduce (R.add, 0, xs)`
+//.
+//. Ramda supports all these forms because curried functions enable partial
+//. application, one of the library's tenets, but `f(x)(y)(z)` is considered
+//. too unfamiliar and too unattractive to appeal to JavaScript programmers.
+//.
+//. Sanctuary's developers prefer a simple, unfamiliar construct to a complex,
+//. familiar one. Familiarity can be acquired; complexity is intrinsic.
+//.
+//. The lack of breathing room in `f(x)(y)(z)` impairs readability. The simple
+//. solution to this problem, proposed in [#438][], is to include a space when
+//. applying a function: `f (x) (y) (z)`.
+//.
+//. Ramda also provides a special placeholder value, [`R.__`][], which removes
+//. the restriction that a function must be applied to its arguments in order.
+//. The following expressions are equivalent:
+//.
+//.   - `R.reduce (R.__, 0, xs) (R.add)`
+//.   - `R.reduce (R.add, R.__, xs) (0)`
+//.   - `R.reduce (R.__, 0) (R.add) (xs)`
+//.   - `R.reduce (R.__, 0) (R.add, xs)`
+//.   - `R.reduce (R.__, R.__, xs) (R.add) (0)`
+//.   - `R.reduce (R.__, R.__, xs) (R.add, 0)`
+//.
+//. ### Variadic functions
+//.
+//. Ramda provides several functions with take any number of arguments. These
+//. are known as [variadic functions][]. Additionally, Ramda provides several
+//. functions which take variadic functions as arguments. Although natural in
+//. a dynamically typed language, variadic functions are at odds with the type
+//. notation Ramda and Sanctuary both use, leading to some indecipherable type
+//. signatures such as this one:
+//.
+//.     R.lift :: (*... -> *...) -> ([*]... -> [*])
+//.
+//. Sanctuary has no variadic functions, nor any functions which take variadic
+//. functions as arguments. Sanctuary provides two "lift" functions, each with
+//. a helpful type signature:
+//.
+//.     S.lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
+//.     S.lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+//.
+//. ### Implicit context
+//.
+//. Ramda provides [`R.bind`][] and [`R.invoker`][] for working with methods.
+//. Additionally, many Ramda functions use `Function#call` or `Function#apply`
+//. to preserve context. Sanctuary makes no allowances for `this`.
+//.
+//. ### Transducers
+//.
+//. Several Ramda functions act as transducers. Sanctuary provides no support
+//. for transducers.
+//.
+//. ### Modularity
+//.
+//. Whereas Ramda has no dependencies, Sanctuary has a modular design:
+//. [sanctuary-def][] provides type checking, [sanctuary-type-classes][]
+//. provides Fantasy Land functions and type classes, [sanctuary-show][]
+//. provides string representations, and algebraic data types are provided
+//. by [sanctuary-either][], [sanctuary-maybe][], and [sanctuary-pair][].
+//. Not only does this approach reduce the complexity of Sanctuary itself,
+//. but it allows these components to be reused in other contexts.
+//.
 //. ## Types
 //.
 //. Sanctuary uses Haskell-like type signatures to describe the types of
@@ -4529,12 +4667,14 @@
 
 }));
 
+//. [#438]:                     https://github.com/sanctuary-js/sanctuary/issues/438
 //. [Apply]:                    v:fantasyland/fantasy-land#apply
 //. [BinaryType]:               v:sanctuary-js/sanctuary-def#BinaryType
 //. [Chain]:                    v:fantasyland/fantasy-land#chain
 //. [Either]:                   #either-type
 //. [Fantasy Land]:             v:fantasyland/fantasy-land
 //. [Foldable]:                 v:fantasyland/fantasy-land#foldable
+//. [GIGO]:                     https://en.wikipedia.org/wiki/Garbage_in,_garbage_out
 //. [Haskell]:                  https://www.haskell.org/
 //. [Kleisli]:                  https://en.wikipedia.org/wiki/Kleisli_category
 //. [Maybe]:                    #maybe-type
@@ -4546,6 +4686,9 @@
 //. [UnaryType]:                v:sanctuary-js/sanctuary-def#UnaryType
 //. [`$.test`]:                 v:sanctuary-js/sanctuary-def#test
 //. [`Descending`]:             v:sanctuary-js/sanctuary-descending#Descending
+//. [`R.__`]:                   http://ramdajs.com/docs/#__
+//. [`R.bind`]:                 http://ramdajs.com/docs/#bind
+//. [`R.invoker`]:              http://ramdajs.com/docs/#invoker
 //. [`Z.alt`]:                  v:sanctuary-js/sanctuary-type-classes#alt
 //. [`Z.ap`]:                   v:sanctuary-js/sanctuary-type-classes#ap
 //. [`Z.apFirst`]:              v:sanctuary-js/sanctuary-type-classes#apFirst
@@ -4585,11 +4728,20 @@
 //. [equivalence]:              https://en.wikipedia.org/wiki/Equivalence_relation
 //. [iff]:                      https://en.wikipedia.org/wiki/If_and_only_if
 //. [parseInt]:                 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+//. [partial functions]:        https://en.wikipedia.org/wiki/Partial_function
+//. [ramda/ramda#683]:          https://github.com/ramda/ramda/issues/683
+//. [ramda/ramda#1413]:         https://github.com/ramda/ramda/issues/1413
+//. [ramda/ramda#1419]:         https://github.com/ramda/ramda/pull/1419
 //. [sanctuary-def]:            v:sanctuary-js/sanctuary-def
 //. [sanctuary-either]:         v:sanctuary-js/sanctuary-either
 //. [sanctuary-maybe]:          v:sanctuary-js/sanctuary-maybe
 //. [sanctuary-pair]:           v:sanctuary-js/sanctuary-pair
+//. [sanctuary-show]:           v:sanctuary-js/sanctuary-show
+//. [sanctuary-type-classes]:   v:sanctuary-js/sanctuary-type-classes
 //. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [thrush]:                   https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
+//. [total functions]:          https://en.wikipedia.org/wiki/Partial_function#Total_function
+//. [type checking]:            #type-checking
 //. [type identifier]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:      v:fantasyland/fantasy-land#type-representatives
+//. [variadic functions]:       https://en.wikipedia.org/wiki/Variadic_function
