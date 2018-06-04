@@ -1655,11 +1655,11 @@
     impl: curry2 (Z.contramap)
   };
 
-  //. ### Combinator
+  //. ### Combinator: A function or definition with no free variables.
 
   //# I :: a -> a
   //.
-  //. The I combinator. Returns its argument. Equivalent to Haskell's `id`
+  //. The `I` combinator. Returns its argument. Equivalent to Haskell's `id`
   //. function.
   //.
   //. ```javascript
@@ -1702,7 +1702,7 @@
   //.
   //. The T ([thrush][]) combinator. Takes a value and a function, and returns
   //. the result of applying the function to the value. Equivalent to Haskell's
-  //. `(&)` function.
+  //. `(&)` function, which is a reverse application operator.
   //.
   //. ```javascript
   //. > S.T (42) (S.add (1))
