@@ -3582,6 +3582,43 @@
     impl: zipWith
   };
 
+  //# intercalate :: Monoid m => TypeRep m -> m -> (Array m) -> m
+  //.
+  //. Insert a monoid value between every two values in a list
+  //. containing the same monoid, then flatten the list into
+  //. a single value of the same monoid.
+  //.
+  //. ```javascript
+  //. > S.intercalate (String) (' mississippi, ') (['one', 'two', 'three', 'four'])
+  //. 'one mississippi, two mississippi, three mississippi, four'
+  //.
+  //. > S.intercalate (String) (' mississippi, ') (['one'])
+  //. 'one'
+  //.
+  //. > S.intercalate (String) (' mississippi, ') ([])
+  //. ''
+  //. ```
+  function intercalate(monoid) {
+    return function(sep) {
+      return function(arr) {
+        if (arr.length === 0) return [];
+
+        var head = arr[0];
+        var tail = arr.slice (1);
+        return Z.concat (
+          monoid,
+          head,
+          Z.foldMap (monoid, function(x) { return Z.concat (sep, x); }, tail)
+        );
+      };
+    };
+  }
+  _.intercalate = {
+    consts: {b: [Z.Monoid]},
+    types: [TypeRep (b), b, $.Array (b), b],
+    impl: intercalate
+  };
+
   //. ### Object
 
   //# prop :: String -> a -> b
