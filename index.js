@@ -3601,12 +3601,11 @@
   function intercalate(monoid) {
     return function(sep) {
       return function(arr) {
-        if (arr.length === 0) return [];
+        if (arr.length === 0) return Z.empty (monoid);
 
         var head = arr[0];
         var tail = arr.slice (1);
         return Z.concat (
-          monoid,
           head,
           Z.foldMap (monoid, function(x) { return Z.concat (sep, x); }, tail)
         );
