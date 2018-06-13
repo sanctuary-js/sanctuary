@@ -3582,7 +3582,7 @@
     impl: zipWith
   };
 
-  //# intercalate :: Monoid m => TypeRep m -> m -> Array m -> m
+  //# intercalate :: (Foldable f, Monoid m) => TypeRep m -> m -> f m -> m
   //.
   //. Insert a monoid value between every two values in a list
   //. containing the same monoid, then flatten the list into
@@ -3598,23 +3598,24 @@
   //. > S.intercalate (String) (' mississippi, ') ([])
   //. ''
   //. ```
-  function intercalate(monoid) {
+  function intercalate(Monoid) {
     return function(sep) {
-      return function(arr) {
-        if (arr.length === 0) return Z.empty (monoid);
-
-        var head = arr[0];
-        var tail = arr.slice (1);
-        return Z.concat (
-          head,
-          Z.foldMap (monoid, function(x) { return Z.concat (sep, x); }, tail)
+      return function(foldable) {
+        var empty = true;
+        return Z.reduce (
+          function(monoid, x) {
+            return Z.concat (monoid,
+                             empty ? (empty = false, x) : Z.concat (sep, x));
+          },
+          Z.empty (Monoid),
+          foldable
         );
       };
     };
   }
   _.intercalate = {
-    consts: {a: [Z.Monoid]},
-    types: [TypeRep (a), a, $.Array (a), a],
+    consts: {f: [Z.Foldable], a: [Z.Monoid]},
+    types: [TypeRep (a), a, f (a), a],
     impl: intercalate
   };
 
