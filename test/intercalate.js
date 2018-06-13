@@ -17,8 +17,14 @@ test ('intercalate', function() {
       ['one', 'two', 'three', 'four'],
       'one mississippi, two mississippi, three mississippi, four'
     ],
-    [['one'], 'one'],
-    [[], '']
+    [
+      ['one'],
+      'one'
+    ],
+    [
+      [],
+      ''
+    ]
   ];
 
   expects.map (([l, r]) => eq (S.intercalate (String) (sep) (l)) (r));
