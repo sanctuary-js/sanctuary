@@ -3582,7 +3582,7 @@
     impl: zipWith
   };
 
-  //# intercalate :: Monoid m => TypeRep m -> m -> (Array m) -> m
+  //# intercalate :: Monoid m => TypeRep m -> m -> Array m -> m
   //.
   //. Insert a monoid value between every two values in a list
   //. containing the same monoid, then flatten the list into
