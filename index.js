@@ -3613,8 +3613,8 @@
     };
   }
   _.intercalate = {
-    consts: {b: [Z.Monoid]},
-    types: [TypeRep (b), b, $.Array (b), b],
+    consts: {a: [Z.Monoid]},
+    types: [TypeRep (a), a, $.Array (a), a],
     impl: intercalate
   };
 
