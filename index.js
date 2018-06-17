@@ -43,6 +43,14 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
+//. ## Folktale
+//.
+//. [Folktale][], like Sanctuary, is a standard library for functional
+//. programming in JavaScript. It is well designed and well documented.
+//. Whereas Sanctuary treats JavaScript as a member of the ML language
+//. family, Folktale embraces JavaScript's object-oriented programming
+//. model. Programming with Folktale resembles programming with Scala.
+//.
 //. ## Ramda
 //.
 //. [Ramda][] provides several functions which return problematic values
@@ -4704,6 +4712,7 @@
 //. [Either]:                   #either-type
 //. [Fantasy Land]:             v:fantasyland/fantasy-land
 //. [Foldable]:                 v:fantasyland/fantasy-land#foldable
+//. [Folktale]:                 https://folktale.origamitower.com/
 //. [GIGO]:                     https://en.wikipedia.org/wiki/Garbage_in,_garbage_out
 //. [Haskell]:                  https://www.haskell.org/
 //. [Kleisli]:                  https://en.wikipedia.org/wiki/Kleisli_category
