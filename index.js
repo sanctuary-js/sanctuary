@@ -3358,8 +3358,8 @@
   //.     the array and the function is applied to the second element.
   //.
   //. ```javascript
-  //. > S.unfoldr (n => n < 5 ? S.Just (S.Pair (n) (n + 1)) : S.Nothing) (1)
-  //. [1, 2, 3, 4]
+  //. > S.unfoldr (n => n < 1000 ? S.Just (S.Pair (n) (2 * n)) : S.Nothing) (1)
+  //. [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
   //. ```
   function unfoldr(f) {
     return function(x) {
