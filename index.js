@@ -3338,6 +3338,9 @@
   //. ```javascript
   //. > S.foldMap (String) (f => f.name) ([Math.sin, Math.cos, Math.tan])
   //. 'sincostan'
+  //.
+  //. > S.foldMap (Array) (x => [x + 1, x + 2]) ([10, 20, 30])
+  //. [11, 12, 21, 22, 31, 32]
   //. ```
   _.foldMap = {
     consts: {b: [Z.Monoid], f: [Z.Foldable]},
