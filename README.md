@@ -85,7 +85,7 @@ Sanctuary performs rigorous [type checking][] of inputs and outputs, and
 throws a descriptive error if a type error is encountered. This allows bugs
 to be caught and fixed early in the development cycle.
 
-Ramda operates on the [garbage in, garbage out][GIGO] principal. Functions
+Ramda operates on the [garbage in, garbage out][GIGO] principle. Functions
 are documented to take arguments of particular types, but these invariants
 are not enforced. The problem with this approach in a language as
 permissive as JavaScript is that there's no guarantee that garbage input
