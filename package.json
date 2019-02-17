@@ -25,7 +25,7 @@
   "devDependencies": {
     "browserify": "16.2.x",
     "fantasy-land": "3.5.0",
-    "fantasy-laws": "1.1.x",
+    "fantasy-laws": "1.2.x",
     "jsverify": "0.8.x",
     "karma": "2.0.x",
     "karma-browserify": "5.2.x",
