@@ -2767,6 +2767,31 @@
     impl: B (not)
   };
 
+  //# boolean :: a -> a -> Boolean -> a
+  //.
+  //. Case analysis for the `Boolean` type. `boolean (x) (y) (b)` evaluates
+  //. to `x` if `b` is `false`; to `y` if `b` is `true`.
+  //.
+  //. ```javascript
+  //. > S.boolean ('no') ('yes') (false)
+  //. 'no'
+  //.
+  //. > S.boolean ('no') ('yes') (true)
+  //. 'yes'
+  //. ```
+  function boolean(x) {
+    return function(y) {
+      return function(b) {
+        return b ? y : x;
+      };
+    };
+  }
+  _.boolean = {
+    consts: {},
+    types: [a, a, $.Boolean, a],
+    impl: boolean
+  };
+
   //# ifElse :: (a -> Boolean) -> (a -> b) -> (a -> b) -> a -> b
   //.
   //. Takes a unary predicate, a unary "if" function, a unary "else"
