@@ -2924,6 +2924,36 @@
 
   //. ### Array
 
+  //# array :: b -> (a -> Array a -> b) -> Array a -> b
+  //.
+  //. Case analysis for the `Array a` type.
+  //.
+  //. ```javascript
+  //. > S.array (S.Nothing) (head => tail => S.Just (head)) ([])
+  //. Nothing
+  //.
+  //. > S.array (S.Nothing) (head => tail => S.Just (head)) ([1, 2, 3])
+  //. Just (1)
+  //.
+  //. > S.array (S.Nothing) (head => tail => S.Just (tail)) ([])
+  //. Nothing
+  //.
+  //. > S.array (S.Nothing) (head => tail => S.Just (tail)) ([1, 2, 3])
+  //. Just ([2, 3])
+  //. ```
+  function array(y) {
+    return function(f) {
+      return function(xs) {
+        return xs.length === 0 ? y : f (xs[0]) (xs.slice (1));
+      };
+    };
+  }
+  _.array = {
+    consts: {},
+    types: [b, Fn (a) (Fn ($.Array (a)) (b)), $.Array (a), b],
+    impl: array
+  };
+
   //# slice :: Integer -> Integer -> Array a -> Maybe (Array a)
   //.
   //. Takes a start index `i`, an end index `j`, and an array, and returns
@@ -3003,13 +3033,10 @@
   //. > S.head ([])
   //. Nothing
   //. ```
-  function head(xs) {
-    return xs.length > 0 ? Just (xs[0]) : Nothing;
-  }
   _.head = {
     consts: {},
     types: [$.Array (a), $Maybe (a)],
-    impl: head
+    impl: array (Nothing) (B (K) (Just))
   };
 
   //# last :: Array a -> Maybe a
@@ -3045,13 +3072,10 @@
   //. > S.tail ([])
   //. Nothing
   //. ```
-  function tail(xs) {
-    return xs.length > 0 ? Just (xs.slice (1)) : Nothing;
-  }
   _.tail = {
     consts: {},
     types: [$.Array (a), $Maybe ($.Array (a))],
-    impl: tail
+    impl: array (Nothing) (K (Just))
   };
 
   //# init :: Array a -> Maybe (Array a)
