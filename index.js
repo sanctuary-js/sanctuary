@@ -910,6 +910,29 @@
     impl: curry2 (Z.max)
   };
 
+  //# clamp :: Ord a => a -> a -> a -> a
+  //.
+  //. Takes a lower bound, an upper bound, and a value of the same type.
+  //. Returns the value if it is within the bounds; the nearer bound otherwise.
+  //.
+  //. See also [`min`](#min) and [`max`](#max).
+  //.
+  //. ```javascript
+  //. > S.clamp (0) (100) (42)
+  //. 42
+  //.
+  //. > S.clamp (0) (100) (-1)
+  //. 0
+  //.
+  //. > S.clamp ('A') ('Z') ('~')
+  //. 'Z'
+  //. ```
+  _.clamp = {
+    consts: {a: [Z.Ord]},
+    types: [a, a, a, a],
+    impl: curry3 (Z.clamp)
+  };
+
   //# id :: Category c => TypeRep c -> c
   //.
   //. [Type-safe][sanctuary-def] version of [`Z.id`][].
@@ -3239,6 +3262,83 @@
     consts: {f: [Z.Foldable]},
     types: [f (a), $.Integer],
     impl: Z.size
+  };
+
+  //# all :: Foldable f => (a -> Boolean) -> f a -> Boolean
+  //.
+  //. Returns `true` [iff][] all the elements of the structure satisfy the
+  //. predicate.
+  //.
+  //. See also [`any`](#any) and [`none`](#none).
+  //.
+  //. ```javascript
+  //. > S.all (S.odd) ([])
+  //. true
+  //.
+  //. > S.all (S.odd) ([1, 3, 5])
+  //. true
+  //.
+  //. > S.all (S.odd) ([1, 2, 3])
+  //. false
+  //. ```
+  _.all = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Predicate (a), f (a), $.Boolean],
+    impl: curry2 (Z.all)
+  };
+
+  //# any :: Foldable f => (a -> Boolean) -> f a -> Boolean
+  //.
+  //. Returns `true` [iff][] any element of the structure satisfies the
+  //. predicate.
+  //.
+  //. See also [`all`](#all) and [`none`](#none).
+  //.
+  //. ```javascript
+  //. > S.any (S.odd) ([])
+  //. false
+  //.
+  //. > S.any (S.odd) ([2, 4, 6])
+  //. false
+  //.
+  //. > S.any (S.odd) ([1, 2, 3])
+  //. true
+  //. ```
+  _.any = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Predicate (a), f (a), $.Boolean],
+    impl: curry2 (Z.any)
+  };
+
+  //# none :: Foldable f => (a -> Boolean) -> f a -> Boolean
+  //.
+  //. Returns `true` [iff][] none of the elements of the structure satisfies
+  //. the predicate.
+  //.
+  //. Properties:
+  //.
+  //.   - `forall p :: a -> Boolean, xs :: Foldable f => f a.
+  //.      S.none (p) (xs) = S.not (S.any (p) (xs))`
+  //.
+  //.   - `forall p :: a -> Boolean, xs :: Foldable f => f a.
+  //.      S.none (p) (xs) = S.all (S.complement (p)) (xs)`
+  //.
+  //. See also [`all`](#all) and [`any`](#any).
+  //.
+  //. ```javascript
+  //. > S.none (S.odd) ([])
+  //. true
+  //.
+  //. > S.none (S.odd) ([2, 4, 6])
+  //. true
+  //.
+  //. > S.none (S.odd) ([1, 2, 3])
+  //. false
+  //. ```
+  _.none = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Predicate (a), f (a), $.Boolean],
+    impl: curry2 (Z.none)
   };
 
   //# append :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
