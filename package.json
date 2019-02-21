@@ -16,7 +16,7 @@
   "dependencies": {
     "sanctuary-def": "0.19.0",
     "sanctuary-either": "1.1.0",
-    "sanctuary-maybe": "1.0.0",
+    "sanctuary-maybe": "1.1.0",
     "sanctuary-pair": "1.0.0",
     "sanctuary-show": "1.0.0",
     "sanctuary-type-classes": "10.0.0",
