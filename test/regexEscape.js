@@ -1,13 +1,13 @@
 'use strict';
 
-var jsc = require ('jsverify');
+const jsc = require ('jsverify');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('regexEscape', function() {
+test ('regexEscape', () => {
 
   eq (typeof S.regexEscape) ('function');
   eq (S.regexEscape.length) (1);
@@ -15,12 +15,20 @@ test ('regexEscape', function() {
 
   eq (S.regexEscape ('-=*{XYZ}*=-')) ('\\-=\\*\\{XYZ\\}\\*=\\-');
 
-  jsc.assert (jsc.forall (jsc.string, function(s) {
-    return S.test (S.regex ('') (S.regexEscape (s))) (s);
-  }), {tests: 1000});
+  jsc.assert (
+    jsc.forall (
+      jsc.string,
+      s => S.test (S.regex ('') (S.regexEscape (s))) (s)
+    ),
+    {tests: 1000}
+  );
 
-  jsc.assert (jsc.forall (jsc.string, function(s) {
-    return S.test (S.regex ('') ('^' + S.regexEscape (s) + '$')) (s);
-  }), {tests: 1000});
+  jsc.assert (
+    jsc.forall (
+      jsc.string,
+      s => S.test (S.regex ('') ('^' + S.regexEscape (s) + '$')) (s)
+    ),
+    {tests: 1000}
+  );
 
 });

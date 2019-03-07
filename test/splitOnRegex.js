@@ -1,14 +1,14 @@
 'use strict';
 
-var jsc = require ('jsverify');
+const jsc = require ('jsverify');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var equals = require ('./internal/equals');
+const eq = require ('./internal/eq');
+const equals = require ('./internal/equals');
 
 
-test ('splitOnRegex', function() {
+test ('splitOnRegex', () => {
 
   eq (typeof S.splitOnRegex) ('function');
   eq (S.splitOnRegex.length) (1);
@@ -48,14 +48,14 @@ test ('splitOnRegex', function() {
   eq (S.splitOnRegex (/./g) ('')) (['']);
   eq (S.splitOnRegex (/./g) ('hello')) (['', '', '', '', '', '']);
 
-  jsc.assert (jsc.forall (jsc.asciistring, function(t) {
-    var min = 0;
-    var max = t.length;
-    var i = jsc.random (min, max);
-    var j = jsc.random (min, max);
-    var s = t.slice (Math.min (i, j), Math.max (i, j));
-    var lhs = S.joinWith (s) (S.splitOnRegex (S.regex ('g') (S.regexEscape (s))) (t));
-    var rhs = t;
+  jsc.assert (jsc.forall (jsc.asciistring, t => {
+    const min = 0;
+    const max = t.length;
+    const i = jsc.random (min, max);
+    const j = jsc.random (min, max);
+    const s = t.slice (Math.min (i, j), Math.max (i, j));
+    const lhs = S.joinWith (s) (S.splitOnRegex (S.regex ('g') (S.regexEscape (s))) (t));
+    const rhs = t;
     return equals (lhs) (rhs);
   }), {tests: 1000});
 

@@ -1,13 +1,13 @@
 'use strict';
 
-var $ = require ('sanctuary-def');
+const $ = require ('sanctuary-def');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('PairType', function() {
+test ('PairType', () => {
 
   eq (typeof S.PairType) ('function');
   eq (S.PairType.length) (1);

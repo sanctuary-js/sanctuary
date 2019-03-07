@@ -1,0 +1,9 @@
+{
+  "root": true,
+  "extends": ["../node_modules/sanctuary-style/eslint-es6.json"],
+  "env": {"node": true},
+  "globals": {"suite": false, "test": false},
+  "rules": {
+    "max-len": ["off"]
+  }
+}

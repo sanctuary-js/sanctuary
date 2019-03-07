@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var rem = require ('./internal/rem');
+const eq = require ('./internal/eq');
+const rem = require ('./internal/rem');
 
 
-test ('encaseEither2', function() {
+test ('encaseEither2', () => {
 
   eq (typeof S.encaseEither2) ('function');
   eq (S.encaseEither2.length) (1);

@@ -1,14 +1,14 @@
 'use strict';
 
-var jsc = require ('jsverify');
+const jsc = require ('jsverify');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var equals = require ('./internal/equals');
+const eq = require ('./internal/eq');
+const equals = require ('./internal/equals');
 
 
-test ('insert', function() {
+test ('insert', () => {
 
   eq (typeof S.insert) ('function');
   eq (S.insert.length) (1);
@@ -18,10 +18,10 @@ test ('insert', function() {
   eq (S.insert ('b') (2) ({a: 1})) ({a: 1, b: 2});
   eq (S.insert ('c') (3) ({a: 1, b: 2, c: 4})) ({a: 1, b: 2, c: 3});
 
-  jsc.assert (jsc.forall (jsc.string, jsc.number, jsc.dict (jsc.number), function(key, val, map) {
-    var insert = S.insert (key) (val);
-    var lhs = insert (insert (map));
-    var rhs = insert (map);
+  jsc.assert (jsc.forall (jsc.string, jsc.number, jsc.dict (jsc.number), (key, val, map) => {
+    const insert = S.insert (key) (val);
+    const lhs = insert (insert (map));
+    const rhs = insert (map);
     return equals (lhs) (rhs);
   }), {tests: 1000});
 

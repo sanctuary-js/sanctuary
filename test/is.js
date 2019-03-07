@@ -1,14 +1,14 @@
 'use strict';
 
-var $ = require ('sanctuary-def');
+const $ = require ('sanctuary-def');
 
-var S = require ('..');
+const S = require ('..');
 
-var Sum = require ('./internal/Sum');
-var eq = require ('./internal/eq');
+const Sum = require ('./internal/Sum');
+const eq = require ('./internal/eq');
 
 
-test ('is', function() {
+test ('is', () => {
 
   eq (typeof S.is) ('function');
   eq (S.is.length) (1);
@@ -38,7 +38,7 @@ test ('is', function() {
   eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Left (''))) (true);
   eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Right (0))) (true);
 
-  var a = $.TypeVariable ('a');
+  const a = $.TypeVariable ('a');
 
   eq (S.is ($.Array (a)) ([])) (true);
   eq (S.is ($.Array (a)) ([1, 2, 3])) (true);

@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('matchAll', function() {
+test ('matchAll', () => {
 
   eq (typeof S.matchAll) ('function');
   eq (S.matchAll.length) (1);
   eq (S.show (S.matchAll)) ('matchAll :: GlobalRegExp -> String -> Array { groups :: Array (Maybe String), match :: String }');
 
-  var pattern = S.regex ('g') ('<(h[1-6])(?: id="([^"]*)")?>([^<]*)</\\1>');
+  const pattern = S.regex ('g') ('<(h[1-6])(?: id="([^"]*)")?>([^<]*)</\\1>');
 
   eq (S.matchAll (pattern) ('')) ([]);
 

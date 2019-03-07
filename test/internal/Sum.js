@@ -1,13 +1,13 @@
 'use strict';
 
-var FL = require ('fantasy-land');
-var $ = require ('sanctuary-def');
-var show = require ('sanctuary-show');
-var Z = require ('sanctuary-type-classes');
-var type = require ('sanctuary-type-identifiers');
+const FL = require ('fantasy-land');
+const $ = require ('sanctuary-def');
+const show = require ('sanctuary-show');
+const Z = require ('sanctuary-type-classes');
+const type = require ('sanctuary-type-identifiers');
 
 
-//  Sum :: Number -> Sum
+//    Sum :: Number -> Sum
 function Sum(value) {
   if (!(this instanceof Sum)) return new Sum (value);
   this.value = value;
@@ -15,13 +15,13 @@ function Sum(value) {
 
 Sum['@@type'] = 'sanctuary/Sum';
 
-//  Type :: Type
+//    Type :: Type
 Sum.Type = $.NullaryType
   (Sum['@@type'])
   ('')
-  (function(x) { return type (x) === Sum['@@type']; });
+  (x => type (x) === Sum['@@type']);
 
-Sum[FL.empty] = function() { return Sum (0); };
+Sum[FL.empty] = () => Sum (0);
 
 Sum.prototype[FL.equals] = function(other) {
   return Z.equals (this.value, other.value);

@@ -1,6 +1,6 @@
 'use strict';
 
-//  factorial :: Number -> Number !
+//    factorial :: Number -> Number !
 module.exports = function factorial(n) {
   if (n < 0) {
     throw new Error ('Cannot determine factorial of negative number');

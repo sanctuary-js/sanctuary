@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('mapLeft', function() {
+test ('mapLeft', () => {
 
   eq (typeof S.mapLeft) ('function');
   eq (S.mapLeft.length) (1);

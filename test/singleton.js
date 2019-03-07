@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('singleton', function() {
+test ('singleton', () => {
 
   eq (typeof S.singleton) ('function');
   eq (S.singleton.length) (1);

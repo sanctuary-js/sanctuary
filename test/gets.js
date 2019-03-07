@@ -1,15 +1,15 @@
 'use strict';
 
-var vm = require ('vm');
+const vm = require ('vm');
 
-var $ = require ('sanctuary-def');
+const $ = require ('sanctuary-def');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('gets', function() {
+test ('gets', () => {
 
   eq (typeof S.gets) ('function');
   eq (S.gets.length) (1);

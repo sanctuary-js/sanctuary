@@ -1,13 +1,13 @@
 'use strict';
 
-var Z = require ('sanctuary-type-classes');
+const Z = require ('sanctuary-type-classes');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('curry2', function() {
+test ('curry2', () => {
 
   eq (typeof S.curry2) ('function');
   eq (S.curry2.length) (1);

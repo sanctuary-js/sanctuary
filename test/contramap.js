@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('contramap', function() {
+test ('contramap', () => {
 
   eq (typeof S.contramap) ('function');
   eq (S.contramap.length) (1);

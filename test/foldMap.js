@@ -1,17 +1,17 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('foldMap', function() {
+test ('foldMap', () => {
 
   eq (typeof S.foldMap) ('function');
   eq (S.foldMap.length) (1);
   eq (S.show (S.foldMap)) ('foldMap :: (Monoid b, Foldable f) => TypeRep b -> (a -> b) -> f a -> b');
 
-  function repeat(n) { return (new Array (n + 1)).join (String (n)); }
+  const repeat = n => (new Array (n + 1)).join (String (n));
   eq (S.foldMap (String) (repeat) ([])) ('');
   eq (S.foldMap (String) (repeat) ([1])) ('1');
   eq (S.foldMap (String) (repeat) ([1, 2])) ('122');

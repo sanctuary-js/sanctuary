@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('mult', function() {
+test ('mult', () => {
 
   eq (typeof S.mult) ('function');
   eq (S.mult.length) (1);

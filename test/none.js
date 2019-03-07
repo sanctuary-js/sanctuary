@@ -1,19 +1,15 @@
 'use strict';
 
-var jsc = require ('jsverify');
+const jsc = require ('jsverify');
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var List = require ('./internal/List');
-var eq = require ('./internal/eq');
-var equals = require ('./internal/equals');
-
-
-var Cons = List.Cons;
-var Nil = List.Nil;
+const {Nil, Cons} = require ('./internal/List');
+const eq = require ('./internal/eq');
+const equals = require ('./internal/equals');
 
 
-test ('none', function() {
+test ('none', () => {
 
   eq (typeof S.none) ('function');
   eq (S.none.length) (1);
@@ -39,17 +35,17 @@ test ('none', function() {
   eq (S.none (S.gt (0)) (S.Just (0))) (true);
   eq (S.none (S.gt (0)) (S.Just (1))) (false);
 
-  jsc.assert (jsc.forall (jsc.array (jsc.integer), function(xs) {
-    var p = S.odd;
-    var lhs = S.none (p) (xs);
-    var rhs = S.not (S.any (p) (xs));
+  jsc.assert (jsc.forall (jsc.array (jsc.integer), xs => {
+    const p = S.odd;
+    const lhs = S.none (p) (xs);
+    const rhs = S.not (S.any (p) (xs));
     return equals (lhs) (rhs);
   }), {tests: 1000});
 
-  jsc.assert (jsc.forall (jsc.array (jsc.integer), function(xs) {
-    var p = S.odd;
-    var lhs = S.none (p) (xs);
-    var rhs = S.all (S.complement (p)) (xs);
+  jsc.assert (jsc.forall (jsc.array (jsc.integer), xs => {
+    const p = S.odd;
+    const lhs = S.none (p) (xs);
+    const rhs = S.all (S.complement (p)) (xs);
     return equals (lhs) (rhs);
   }), {tests: 1000});
 

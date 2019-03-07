@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var rem = require ('./internal/rem');
+const eq = require ('./internal/eq');
+const rem = require ('./internal/rem');
 
 
-test ('on', function() {
+test ('on', () => {
 
   eq (typeof S.on) ('function');
   eq (S.on.length) (1);

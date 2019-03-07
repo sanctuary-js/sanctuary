@@ -1,20 +1,20 @@
 'use strict';
 
-var fs = require ('fs');
-var path = require ('path');
-var vm = require ('vm');
+const fs = require ('fs');
+const path = require ('path');
+const vm = require ('vm');
 
-var $$version = (require ('sanctuary-def/package.json')).version;
+const $$version = (require ('sanctuary-def/package.json')).version;
 
-var eq = require ('./internal/eq');
-var throws = require ('./internal/throws');
+const eq = require ('./internal/eq');
+const throws = require ('./internal/throws');
 
 
-suite ('NODE_ENV', function() {
+suite ('NODE_ENV', () => {
 
-  var source = fs.readFileSync (path.join (__dirname, '..', 'index.js'), 'utf8');
+  const source = fs.readFileSync (path.join (__dirname, '..', 'index.js'), 'utf8');
 
-  var expected = new TypeError ([
+  const expected = new TypeError ([
     'Invalid value',
     '',
     'add :: FiniteNumber -> FiniteNumber -> FiniteNumber',
@@ -26,68 +26,68 @@ suite ('NODE_ENV', function() {
     'The value at position 1 is not a member of ‘FiniteNumber’.',
     '',
     'See https://github.com/sanctuary-js/sanctuary-def/tree/v' + $$version + '#FiniteNumber for information about the sanctuary-def/FiniteNumber type.',
-    ''
+    '',
   ].join ('\n'));
 
-  test ('typeof process === "undefined"', function() {
-    var context = {
+  test ('typeof process === "undefined"', () => {
+    const context = {
       module: {exports: {}},
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 
-    throws (function() { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }) (expected);
   });
 
-  test ('typeof process !== "undefined" && process == null', function() {
-    var context = {
+  test ('typeof process !== "undefined" && process == null', () => {
+    const context = {
       module: {exports: {}},
       process: null,
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 
-    throws (function() { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }) (expected);
   });
 
-  test ('typeof process !== "undefined" && process != null && process.env == null', function() {
-    var context = {
+  test ('typeof process !== "undefined" && process != null && process.env == null', () => {
+    const context = {
       module: {exports: {}},
       process: {},
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 
-    throws (function() { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }) (expected);
   });
 
-  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV == null', function() {
-    var context = {
+  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV == null', () => {
+    const context = {
       module: {exports: {}},
       process: {env: {}},
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 
-    throws (function() { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }) (expected);
   });
 
-  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV !== "production"', function() {
-    var context = {
+  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV !== "production"', () => {
+    const context = {
       module: {exports: {}},
       process: {env: {NODE_ENV: 'XXX'}},
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 
-    throws (function() { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }) (expected);
   });
 
-  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV === "production"', function() {
-    var context = {
+  test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV === "production"', () => {
+    const context = {
       module: {exports: {}},
       process: {env: {NODE_ENV: 'production'}},
-      require: require
+      require: require,
     };
     vm.runInNewContext (source, context);
 

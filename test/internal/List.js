@@ -1,15 +1,15 @@
 'use strict';
 
-var FL = require ('fantasy-land');
-var $ = require ('sanctuary-def');
-var show = require ('sanctuary-show');
-var Z = require ('sanctuary-type-classes');
-var type = require ('sanctuary-type-identifiers');
+const FL = require ('fantasy-land');
+const $ = require ('sanctuary-def');
+const show = require ('sanctuary-show');
+const Z = require ('sanctuary-type-classes');
+const type = require ('sanctuary-type-identifiers');
 
-var eq = require ('./eq');
+const eq = require ('./eq');
 
 
-var List = {prototype: _List.prototype};
+const List = {prototype: _List.prototype};
 
 List.prototype.constructor = List;
 
@@ -24,20 +24,18 @@ function _List(tag, head, tail) {
 
 List['@@type'] = 'sanctuary/List';
 
-//  Type :: Type -> Type
+//    Type :: Type -> Type
 List.Type = $.UnaryType
   (List['@@type'])
   ('')
-  (function(x) { return type (x) === List['@@type']; })
-  (function(list) {
-     return Z.reduce (function(xs, x) { xs.push (x); return xs; }, [], list);
-   });
+  (x => type (x) === List['@@type'])
+  (list => Z.reduce ((xs, x) => ((xs.push (x), xs)), [], list));
 
-//  Nil :: List a
-var Nil = List.Nil = new _List ('Nil');
+//    Nil :: List a
+const Nil = List.Nil = new _List ('Nil');
 
-//  Cons :: a -> List a -> List a
-var Cons = List.Cons = function Cons(head) {
+//    Cons :: a -> List a -> List a
+const Cons = List.Cons = function Cons(head) {
   eq (arguments.length) (Cons.length);
   return function Cons$1(tail) {
     eq (arguments.length) (Cons$1.length);
@@ -45,9 +43,9 @@ var Cons = List.Cons = function Cons(head) {
   };
 };
 
-List[FL.empty] = function() { return Nil; };
+List[FL.empty] = () => Nil;
 
-List[FL.of] = function(x) { return Cons (x) (Nil); };
+List[FL.of] = x => Cons (x) (Nil);
 
 List[FL.zero] = List[FL.empty];
 

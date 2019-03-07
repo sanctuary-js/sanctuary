@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('sortBy', function() {
+test ('sortBy', () => {
 
   eq (typeof S.sortBy) ('function');
   eq (S.sortBy.length) (1);
@@ -17,10 +17,10 @@ test ('sortBy', function() {
   eq (S.sortBy (S.I) (['five', 'six', 'seven'])) (['five', 'seven', 'six']);
   eq (S.sortBy (S.prop ('length')) (['five', 'six', 'seven'])) (['six', 'five', 'seven']);
 
-  var _7s = {rank: 7, suit: 's'};
-  var _5h = {rank: 5, suit: 'h'};
-  var _2h = {rank: 2, suit: 'h'};
-  var _5s = {rank: 5, suit: 's'};
+  const _7s = {rank: 7, suit: 's'};
+  const _5h = {rank: 5, suit: 'h'};
+  const _2h = {rank: 2, suit: 'h'};
+  const _5s = {rank: 5, suit: 's'};
   eq (S.sortBy (S.prop ('rank')) ([_7s, _5h, _2h, _5s])) ([_2h, _5h, _5s, _7s]);
   eq (S.sortBy (S.prop ('rank')) ([_7s, _5s, _2h, _5h])) ([_2h, _5s, _5h, _7s]);
   eq (S.sortBy (S.prop ('suit')) ([_7s, _5h, _2h, _5s])) ([_5h, _2h, _7s, _5s]);

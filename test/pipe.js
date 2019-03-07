@@ -1,16 +1,12 @@
 'use strict';
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var List = require ('./internal/List');
-var eq = require ('./internal/eq');
-
-
-var Cons = List.Cons;
-var Nil = List.Nil;
+const {Nil, Cons} = require ('./internal/List');
+const eq = require ('./internal/eq');
 
 
-test ('pipe', function() {
+test ('pipe', () => {
 
   eq (typeof S.pipe) ('function');
   eq (S.pipe.length) (1);
