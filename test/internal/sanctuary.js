@@ -19,19 +19,12 @@ function UnaryType(typeIdent) {
     ($.Unknown);
 }
 
-//  UselessType :: Type
-var UselessType = $.NullaryType
-  ('sanctuary/Useless')
-  ('')
-  (function(x) { return type (x) === 'sanctuary/Useless'; });
-
 //  env :: Array Type
 var env = S.env.concat ([
   UnaryType ('sanctuary/Compose'),
   UnaryType ('sanctuary-identity/Identity@1'),
   List.Type ($.Unknown),
-  Sum.Type,
-  UselessType
+  Sum.Type
 ]);
 
 module.exports = S.create ({checkTypes: true, env: env});
