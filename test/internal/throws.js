@@ -1,10 +1,10 @@
 'use strict';
 
-var assert = require ('assert');
+const assert = require ('assert');
 
-var equals = require ('./equals');
+const equals = require ('./equals');
 
-//  throws :: (() -> Undefined !) -> Error -> Undefined !
+//    throws :: (() -> Undefined !) -> Error -> Undefined !
 module.exports = function throws(thunk) {
   assert.strictEqual (arguments.length, throws.length);
   return function throws$1(expected) {

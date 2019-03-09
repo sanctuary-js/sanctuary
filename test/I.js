@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var properties = require ('./properties');
+const eq = require ('./internal/eq');
+const properties = require ('./properties');
 
 
-test ('I', function() {
+test ('I', () => {
 
   eq (typeof S.I) ('function');
   eq (S.I.length) (1);
@@ -20,8 +20,8 @@ test ('I', function() {
 
   if (typeof document !== 'undefined') {
     //  eslint-disable-next-line no-undef
-    var a = document.createElement ('a');
-    var href = S.prop ('href');
+    const a = document.createElement ('a');
+    const href = S.prop ('href');
     eq (href (a)) ('');
     eq (href (S.I (a))) ('');
   }

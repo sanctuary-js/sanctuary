@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('zip', function() {
+test ('zip', () => {
 
   eq (typeof S.zip) ('function');
   eq (S.zip.length) (1);

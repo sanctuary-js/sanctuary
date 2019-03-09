@@ -1,13 +1,13 @@
 'use strict';
 
-var Identity = require ('sanctuary-identity');
+const Identity = require ('sanctuary-identity');
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('of', function() {
+test ('of', () => {
 
   eq (typeof S.of) ('function');
   eq (S.of.length) (1);

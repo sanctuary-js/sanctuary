@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('test', function() {
+test ('test', () => {
 
   eq (typeof S.test) ('function');
   eq (S.test.length) (1);
@@ -14,7 +14,7 @@ test ('test', function() {
   eq (S.test (/^a/) ('abacus')) (true);
   eq (S.test (/^a/) ('banana')) (false);
 
-  var pattern = /x/g;
+  const pattern = /x/g;
   eq (pattern.lastIndex) (0);
   eq (S.test (pattern) ('xyz')) (true);
   eq (pattern.lastIndex) (0);

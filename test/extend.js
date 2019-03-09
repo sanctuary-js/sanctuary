@@ -1,13 +1,13 @@
 'use strict';
 
-var Identity = require ('sanctuary-identity');
+const Identity = require ('sanctuary-identity');
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('extend', function() {
+test ('extend', () => {
 
   eq (typeof S.extend) ('function');
   eq (S.extend.length) (1);

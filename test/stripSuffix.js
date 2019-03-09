@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('stripSuffix', function() {
+test ('stripSuffix', () => {
 
   eq (typeof S.stripSuffix) ('function');
   eq (S.stripSuffix.length) (1);

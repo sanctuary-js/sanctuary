@@ -1,21 +1,21 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('fromMaybe_', function() {
+test ('fromMaybe_', () => {
 
   eq (typeof S.fromMaybe_) ('function');
   eq (S.fromMaybe_.length) (1);
   eq (S.show (S.fromMaybe_)) ('fromMaybe_ :: (() -> a) -> Maybe a -> a');
 
-  eq (S.fromMaybe_ (function() { return 0; }) (S.Nothing)) (0);
-  eq (S.fromMaybe_ (function() { return 0; }) (S.Just (42))) (42);
+  eq (S.fromMaybe_ (() => 0) (S.Nothing)) (0);
+  eq (S.fromMaybe_ (() => 0) (S.Just (42))) (42);
 
-  var count = 0;
-  eq (S.fromMaybe_ (function() { return count += 1; }) (S.Just (42))) (42);
+  let count = 0;
+  eq (S.fromMaybe_ (() => count += 1) (S.Just (42))) (42);
   eq (count) (0);
 
 });

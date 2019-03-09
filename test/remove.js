@@ -1,14 +1,14 @@
 'use strict';
 
-var jsc = require ('jsverify');
+const jsc = require ('jsverify');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var equals = require ('./internal/equals');
+const eq = require ('./internal/eq');
+const equals = require ('./internal/equals');
 
 
-test ('remove', function() {
+test ('remove', () => {
 
   eq (typeof S.remove) ('function');
   eq (S.remove.length) (1);
@@ -18,10 +18,10 @@ test ('remove', function() {
   eq (S.remove ('b') ({a: 1})) ({a: 1});
   eq (S.remove ('c') ({a: 1, b: 2, c: 3})) ({a: 1, b: 2});
 
-  jsc.assert (jsc.forall (jsc.string, jsc.dict (jsc.number), function(key, map) {
-    var remove = S.remove (key);
-    var lhs = remove (remove (map));
-    var rhs = remove (map);
+  jsc.assert (jsc.forall (jsc.string, jsc.dict (jsc.number), (key, map) => {
+    const remove = S.remove (key);
+    const lhs = remove (remove (map));
+    const rhs = remove (map);
     return equals (lhs) (rhs);
   }), {tests: 1000});
 

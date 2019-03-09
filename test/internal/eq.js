@@ -1,12 +1,12 @@
 'use strict';
 
-var assert = require ('assert');
+const assert = require ('assert');
 
-var show = require ('sanctuary-show');
+const show = require ('sanctuary-show');
 
-var equals = require ('./equals');
+const equals = require ('./equals');
 
-//  eq :: a -> b -> Undefined !
+//    eq :: a -> b -> Undefined !
 module.exports = function eq(actual) {
   assert.strictEqual (arguments.length, eq.length);
   return function eq$1(expected) {

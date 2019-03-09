@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('unchecked', function() {
+test ('unchecked', () => {
 
   eq (S.unchecked.add (2) (2)) (4);
   eq (S.unchecked.add (2) ('2')) ('22');

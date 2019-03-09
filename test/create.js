@@ -1,32 +1,32 @@
 'use strict';
 
-var $ = require ('sanctuary-def');
+const $ = require ('sanctuary-def');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var throws = require ('./internal/throws');
-
-
-//  FooTrue42 :: Type
-var FooTrue42 = $.EnumType ('my-package/FooTrue42') ('') (['foo', true, 42]);
-
-//  customEnv :: Array Type
-var customEnv = S.env.concat ([FooTrue42]);
-
-var checkedDefaultEnv   = S.create ({checkTypes: true, env: S.env});
-var checkedCustomEnv    = S.create ({checkTypes: true, env: customEnv});
-var uncheckedDefaultEnv = S.create ({checkTypes: false, env: S.env});
-var uncheckedCustomEnv  = S.create ({checkTypes: false, env: customEnv});
+const eq = require ('./internal/eq');
+const throws = require ('./internal/throws');
 
 
-test ('create', function() {
+//    FooTrue42 :: Type
+const FooTrue42 = $.EnumType ('my-package/FooTrue42') ('') (['foo', true, 42]);
+
+//    customEnv :: Array Type
+const customEnv = S.env.concat ([FooTrue42]);
+
+const checkedDefaultEnv   = S.create ({checkTypes: true, env: S.env});
+const checkedCustomEnv    = S.create ({checkTypes: true, env: customEnv});
+const uncheckedDefaultEnv = S.create ({checkTypes: false, env: S.env});
+const uncheckedCustomEnv  = S.create ({checkTypes: false, env: customEnv});
+
+
+test ('create', () => {
 
   eq (typeof S.create) ('function');
   eq (S.create.length) (1);
   eq (S.show (S.create)) ('create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
-  var expected = S.sort (Object.keys (S));
+  const expected = S.sort (Object.keys (S));
   eq (S.sort (Object.keys (checkedDefaultEnv))) (expected);
   eq (S.sort (Object.keys (checkedCustomEnv))) (expected);
   eq (S.sort (Object.keys (uncheckedDefaultEnv))) (expected);
@@ -45,7 +45,7 @@ test ('create', function() {
   eq (uncheckedDefaultEnv.add (1) (42)) (S.add (1) (42));
   eq (uncheckedDefaultEnv.add (1) ('XXX')) ('1XXX');
 
-  throws (function() { S.I (['foo', 'foo', 42]); })
+  throws (() => { S.I (['foo', 'foo', 42]); })
          (new TypeError ('Type-variable constraint violation\n' +
                          '\n' +
                          'I :: a -> a\n' +

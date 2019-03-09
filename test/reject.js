@@ -1,16 +1,12 @@
 'use strict';
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var List = require ('./internal/List');
-var eq = require ('./internal/eq');
-
-
-var Cons = List.Cons;
-var Nil = List.Nil;
+const {Nil, Cons} = require ('./internal/List');
+const eq = require ('./internal/eq');
 
 
-test ('reject', function() {
+test ('reject', () => {
 
   eq (typeof S.reject) ('function');
   eq (S.reject.length) (1);

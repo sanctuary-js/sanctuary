@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
-var throws = require ('./internal/throws');
+const eq = require ('./internal/eq');
+const throws = require ('./internal/throws');
 
 
-test ('parseInt', function() {
+test ('parseInt', () => {
 
   eq (typeof S.parseInt) ('function');
   eq (S.parseInt.length) (1);
@@ -90,7 +90,7 @@ test ('parseInt', function() {
   eq (S.parseInt (36) ('[')) (S.Nothing);
 
   // Throws if radix is not in [2 .. 36]
-  throws (function() { S.parseInt (1); })
+  throws (() => { S.parseInt (1); })
          (new TypeError ('Invalid value\n' +
                          '\n' +
                          'parseInt :: Radix -> String -> Maybe Integer\n' +
@@ -101,7 +101,7 @@ test ('parseInt', function() {
                          '\n' +
                          'The value at position 1 is not a member of ‘Radix’.\n'));
 
-  throws (function() { S.parseInt (37); })
+  throws (() => { S.parseInt (37); })
          (new TypeError ('Invalid value\n' +
                          '\n' +
                          'parseInt :: Radix -> String -> Maybe Integer\n' +

@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('bimap', function() {
+test ('bimap', () => {
 
   eq (typeof S.bimap) ('function');
   eq (S.bimap.length) (1);

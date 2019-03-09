@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var area = require ('./internal/area');
-var eq = require ('./internal/eq');
+const area = require ('./internal/area');
+const eq = require ('./internal/eq');
 
 
-test ('encase3', function() {
+test ('encase3', () => {
 
   eq (typeof S.encase3) ('function');
   eq (S.encase3.length) (1);

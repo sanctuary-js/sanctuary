@@ -1,18 +1,19 @@
 'use strict';
 
-var vm = require ('vm');
+const vm = require ('vm');
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('type', function() {
+test ('type', () => {
 
   eq (typeof S.type) ('function');
   eq (S.type.length) (1);
   eq (S.show (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
 
+  // eslint-disable-next-line prefer-rest-params
   eq (S.type (function() { return arguments; } ()))
      ({namespace: S.Nothing, name: 'Arguments', version: 0});
   eq (S.type ([]))
@@ -23,7 +24,7 @@ test ('type', function() {
      ({namespace: S.Nothing, name: 'Date', version: 0});
   eq (S.type (new TypeError ()))
      ({namespace: S.Nothing, name: 'Error', version: 0});
-  eq (S.type (function() {}))
+  eq (S.type (() => {}))
      ({namespace: S.Nothing, name: 'Function', version: 0});
   eq (S.type (null))
      ({namespace: S.Nothing, name: 'Null', version: 0});

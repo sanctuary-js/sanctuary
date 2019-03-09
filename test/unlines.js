@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('unlines', function() {
+test ('unlines', () => {
 
   eq (typeof S.unlines) ('function');
   eq (S.unlines.length) (1);

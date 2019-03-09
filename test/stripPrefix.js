@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('stripPrefix', function() {
+test ('stripPrefix', () => {
 
   eq (typeof S.stripPrefix) ('function');
   eq (S.stripPrefix.length) (1);

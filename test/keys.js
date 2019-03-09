@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('keys', function() {
+test ('keys', () => {
 
   eq (typeof S.keys) ('function');
   eq (S.keys.length) (1);
@@ -14,8 +14,8 @@ test ('keys', function() {
   eq (S.sort (S.keys ({}))) ([]);
   eq (S.sort (S.keys ({a: 1, b: 2, c: 3}))) (['a', 'b', 'c']);
 
-  var proto = {a: 1, b: 2};
-  var obj = Object.create (proto);
+  const proto = {a: 1, b: 2};
+  const obj = Object.create (proto);
   obj.c = 3;
   obj.d = 4;
 

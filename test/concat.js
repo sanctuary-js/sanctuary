@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('concat', function() {
+test ('concat', () => {
 
   eq (typeof S.concat) ('function');
   eq (S.concat.length) (1);

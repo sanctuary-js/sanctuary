@@ -1,16 +1,12 @@
 'use strict';
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var List = require ('./internal/List');
-var eq = require ('./internal/eq');
-
-
-var Cons = List.Cons;
-var Nil = List.Nil;
+const {Nil, Cons} = require ('./internal/List');
+const eq = require ('./internal/eq');
 
 
-test ('anyPass', function() {
+test ('anyPass', () => {
 
   eq (typeof S.anyPass) ('function');
   eq (S.anyPass.length) (1);
@@ -24,8 +20,8 @@ test ('anyPass', function() {
   eq (S.anyPass (Cons (S.test (/a/)) (Cons (S.test (/b/)) (Cons (S.test (/c/)) (Nil)))) ('dolphin')) (false);
   eq (S.anyPass (Cons (S.test (/a/)) (Cons (S.test (/b/)) (Cons (S.test (/c/)) (Nil)))) ('narwhal')) (true);
 
-  var e = false;
-  eq (S.anyPass ([S.test (/a/), function() { e = true; }]) ('narwhal')) (true);
+  let e = false;
+  eq (S.anyPass ([S.test (/a/), () => e = true]) ('narwhal')) (true);
   eq (e) (false);
 
 });

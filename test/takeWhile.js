@@ -1,11 +1,11 @@
 'use strict';
 
-var S = require ('..');
+const S = require ('..');
 
-var eq = require ('./internal/eq');
+const eq = require ('./internal/eq');
 
 
-test ('takeWhile', function() {
+test ('takeWhile', () => {
 
   eq (typeof S.takeWhile) ('function');
   eq (S.takeWhile.length) (1);

@@ -1,12 +1,12 @@
 'use strict';
 
-var S = require ('./internal/sanctuary');
+const S = require ('./internal/sanctuary');
 
-var Sum = require ('./internal/Sum');
-var eq = require ('./internal/eq');
+const Sum = require ('./internal/Sum');
+const eq = require ('./internal/eq');
 
 
-test ('invert', function() {
+test ('invert', () => {
 
   eq (typeof S.invert) ('function');
   eq (S.invert.length) (1);
