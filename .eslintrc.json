@@ -50,6 +50,12 @@
         "no-extra-semi": ["off"],
         "no-unused-vars": ["error", {"args": "none", "varsIgnorePattern": "^([$]|S)$"}]
       }
+    },
+    {
+      "files": ["index.js"],
+      "rules": {
+        "multiline-comment-style": ["off"]
+      }
     }
   ]
 }
