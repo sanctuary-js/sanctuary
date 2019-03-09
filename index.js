@@ -4275,8 +4275,18 @@
 
   //# parseDate :: String -> Maybe ValidDate
   //.
-  //. Takes a string and returns Just the date represented by the string
-  //. if it does in fact represent a date; Nothing otherwise.
+  //. Takes a string `s` and returns `Just (new Date (s))` if `new Date (s)`
+  //. evaluates to a [`ValidDate`][ValidDate] value; Nothing otherwise.
+  //.
+  //. As noted in [#488][], this function's behaviour is unspecified for some
+  //. inputs! [MDN][date parsing] warns against using the `Date` constructor
+  //. to parse date strings:
+  //.
+  //. > __Note:__ parsing of date strings with the `Date` constructor \[…] is
+  //. > strongly discouraged due to browser differences and inconsistencies.
+  //. > Support for RFC 2822 format strings is by convention only. Support for
+  //. > ISO 8601 formats differs in that date-only strings (e.g. "1970-01-01")
+  //. > are treated as UTC, not local.
   //.
   //. ```javascript
   //. > S.parseDate ('2011-01-19T17:40:00Z')
@@ -4858,6 +4868,7 @@
 }));
 
 //. [#438]:                     https://github.com/sanctuary-js/sanctuary/issues/438
+//. [#488]:                     https://github.com/sanctuary-js/sanctuary/issues/488
 //. [Apply]:                    v:fantasyland/fantasy-land#apply
 //. [BinaryType]:               v:sanctuary-js/sanctuary-def#BinaryType
 //. [Chain]:                    v:fantasyland/fantasy-land#chain
@@ -4875,6 +4886,7 @@
 //. [RegexFlags]:               v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroupoid]:             v:fantasyland/fantasy-land#semigroupoid
 //. [UnaryType]:                v:sanctuary-js/sanctuary-def#UnaryType
+//. [ValidDate]:                v:sanctuary-js/sanctuary-def#ValidDate
 //. [`$.test`]:                 v:sanctuary-js/sanctuary-def#test
 //. [`Descending`]:             v:sanctuary-js/sanctuary-descending#Descending
 //. [`R.__`]:                   http://ramdajs.com/docs/#__
@@ -4916,6 +4928,7 @@
 //. [`Z.traverse`]:             v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:                 v:sanctuary-js/sanctuary-type-classes#zero
 //. [`show`]:                   v:sanctuary-js/sanctuary-show#show
+//. [date parsing]:             https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
 //. [equivalence]:              https://en.wikipedia.org/wiki/Equivalence_relation
 //. [iff]:                      https://en.wikipedia.org/wiki/If_and_only_if
 //. [parseInt]:                 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
