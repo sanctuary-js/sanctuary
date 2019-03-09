@@ -23,13 +23,8 @@
     "sanctuary-type-identifiers": "2.0.1"
   },
   "devDependencies": {
-    "browserify": "16.2.x",
     "fantasy-land": "4.0.1",
     "jsverify": "0.8.x",
-    "karma": "2.0.x",
-    "karma-browserify": "5.2.x",
-    "karma-mocha": "1.3.x",
-    "karma-sauce-launcher": "1.2.x",
     "sanctuary-descending": "1.1.0",
     "sanctuary-identity": "1.1.x",
     "sanctuary-scripts": "2.0.x"

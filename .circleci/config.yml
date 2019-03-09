@@ -30,7 +30,7 @@ jobs:
               nvm exec $1 npm test
             }
             case $CIRCLE_NODE_INDEX in
-              0) npm install && npm test && node_modules/.bin/karma start ;;
+              0) npm install && npm test ;;
               1) test_with_version 7 ;;
               2) test_with_version 8 ;;
             esac
