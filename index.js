@@ -475,6 +475,13 @@
     };
   }
 
+  //  toArray :: Foldable f => f a -> Array a
+  function toArray(foldable) {
+    return Z.reduce (function(xs, x) { xs.push (x); return xs; },
+                     [],
+                     foldable);
+  }
+
   //  toObject :: a -> Object
   function toObject(x) {
     return x == null ? Object.create (null) : Object (x);
@@ -3391,7 +3398,7 @@
     impl: curry2 (Z.prepend)
   };
 
-  //# joinWith :: String -> Array String -> String
+  //# joinWith :: Foldable f => String -> f String -> String
   //.
   //. Joins the strings of the second argument separated by the first argument.
   //.
@@ -3406,10 +3413,15 @@
   //. > S.joinWith (':') (['foo', 'bar', 'baz'])
   //. 'foo:bar:baz'
   //. ```
+  function joinWith(separator) {
+    return function(foldable) {
+      return (unless (Array.isArray) (toArray) (foldable)).join (separator);
+    };
+  }
   _.joinWith = {
-    consts: {},
-    types: [$.String, $.Array ($.String), $.String],
-    impl: invoke1 ('join')
+    consts: {f: [Z.Foldable]},
+    types: [$.String, f ($.String), $.String],
+    impl: joinWith
   };
 
   //# elem :: (Setoid a, Foldable f) => a -> f a -> Boolean
