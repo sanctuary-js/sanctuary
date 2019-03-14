@@ -3063,10 +3063,10 @@
     impl: at
   };
 
-  //# head :: Array a -> Maybe a
+  //# head :: Foldable f => f a -> Maybe a
   //.
-  //. Returns Just the first element of the given array if the array contains
-  //. at least one element; Nothing otherwise.
+  //. Returns Just the first element of the given structure if the structure
+  //. contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.head ([1, 2, 3])
@@ -3074,17 +3074,32 @@
   //.
   //. > S.head ([])
   //. Nothing
+  //.
+  //. > S.head (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. Just (1)
+  //.
+  //. > S.head (Nil)
+  //. Nothing
   //. ```
+  function head(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      return foldable.length > 0 ? Just (foldable[0]) : Nothing;
+    }
+    return Z.reduce (function(m, x) { return m.isJust ? m : Just (x); },
+                     Nothing,
+                     foldable);
+  }
   _.head = {
-    consts: {},
-    types: [$.Array (a), $Maybe (a)],
-    impl: array (Nothing) (B (K) (Just))
+    consts: {f: [Z.Foldable]},
+    types: [f (a), $Maybe (a)],
+    impl: head
   };
 
-  //# last :: Array a -> Maybe a
+  //# last :: Foldable f => f a -> Maybe a
   //.
-  //. Returns Just the last element of the given array if the array contains
-  //. at least one element; Nothing otherwise.
+  //. Returns Just the last element of the given structure if the structure
+  //. contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.last ([1, 2, 3])
@@ -3092,20 +3107,31 @@
   //.
   //. > S.last ([])
   //. Nothing
+  //.
+  //. > S.last (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. Just (3)
+  //.
+  //. > S.last (Nil)
+  //. Nothing
   //. ```
-  function last(xs) {
-    return xs.length > 0 ? Just (xs[xs.length - 1]) : Nothing;
+  function last(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      return foldable.length > 0 ? Just (foldable[foldable.length - 1])
+                                 : Nothing;
+    }
+    return Z.reduce (function(_, x) { return Just (x); }, Nothing, foldable);
   }
   _.last = {
-    consts: {},
-    types: [$.Array (a), $Maybe (a)],
+    consts: {f: [Z.Foldable]},
+    types: [f (a), $Maybe (a)],
     impl: last
   };
 
-  //# tail :: Array a -> Maybe (Array a)
+  //# tail :: (Applicative f, Foldable f, Monoid (f a)) => f a -> Maybe (f a)
   //.
-  //. Returns Just all but the first of the given array's elements if the
-  //. array contains at least one element; Nothing otherwise.
+  //. Returns Just all but the first of the given structure's elements if the
+  //. structure contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.tail ([1, 2, 3])
@@ -3113,17 +3139,33 @@
   //.
   //. > S.tail ([])
   //. Nothing
+  //.
+  //. > S.tail (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. Just (Cons (2) (Cons (3) (Nil)))
+  //
+  //. > S.tail (Nil)
+  //. Nothing
   //. ```
+  function tail(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      return foldable.length > 0 ? Just (foldable.slice (1)) : Nothing;
+    }
+    var empty = Z.empty (foldable.constructor);
+    return Z.reduce (function(m, x) {
+      return Just (maybe (empty) (append (x)) (m));
+    }, Nothing, foldable);
+  }
   _.tail = {
-    consts: {},
-    types: [$.Array (a), $Maybe ($.Array (a))],
-    impl: array (Nothing) (K (Just))
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [f (a), $Maybe (f (a))],
+    impl: tail
   };
 
-  //# init :: Array a -> Maybe (Array a)
+  //# init :: (Applicative f, Foldable f, Monoid (f a)) => f a -> Maybe (f a)
   //.
-  //. Returns Just all but the last of the given array's elements if the
-  //. array contains at least one element; Nothing otherwise.
+  //. Returns Just all but the last of the given structure's elements if the
+  //. structure contains at least one element; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.init ([1, 2, 3])
@@ -3131,13 +3173,26 @@
   //.
   //. > S.init ([])
   //. Nothing
+  //.
+  //. > S.init (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. Just (Cons (1) (Cons (2) (Nil)))
+  //.
+  //. > S.init (Nil)
+  //. Nothing
   //. ```
-  function init(xs) {
-    return xs.length > 0 ? Just (xs.slice (0, -1)) : Nothing;
+  function init(foldable) {
+    //  Fast path for arrays.
+    if (Array.isArray (foldable)) {
+      return foldable.length > 0 ? Just (foldable.slice (0, -1)) : Nothing;
+    }
+    var empty = Z.empty (foldable.constructor);
+    return Z.map (Pair.snd, Z.reduce (function(m, x) {
+      return Just (Pair (x) (maybe (empty) (pair (append)) (m)));
+    }, Nothing, foldable));
   }
   _.init = {
-    consts: {},
-    types: [$.Array (a), $Maybe ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [f (a), $Maybe (f (a))],
     impl: init
   };
 
@@ -3379,10 +3434,15 @@
   //. > S.append ([3]) (S.Just ([1, 2]))
   //. Just ([1, 2, 3])
   //. ```
+  function append(x) {
+    return function(xs) {
+      return Z.append (x, xs);
+    };
+  }
   _.append = {
     consts: {f: [Z.Applicative, Z.Semigroup]},
     types: [a, f (a), f (a)],
-    impl: curry2 (Z.append)
+    impl: append
   };
 
   //# prepend :: (Applicative f, Semigroup (f a)) => a -> f a -> f a
