@@ -1992,6 +1992,25 @@
     impl: Pair
   };
 
+  //# pair :: (a -> b -> c) -> Pair a b -> c
+  //.
+  //. Case analysis for the `Pair a b` type.
+  //.
+  //. ```javascript
+  //. > S.pair (S.concat) (S.Pair ('foo') ('bar'))
+  //. 'foobar'
+  //. ```
+  function pair(f) {
+    return function(pair) {
+      return f (pair.fst) (pair.snd);
+    };
+  }
+  _.pair = {
+    consts: {},
+    types: [Fn (a) (Fn (b) (c)), $Pair (a) (b), c],
+    impl: pair
+  };
+
   //# fst :: Pair a b -> a
   //.
   //. `fst (Pair (x) (y))` is equivalent to `x`.
@@ -2003,7 +2022,7 @@
   _.fst = {
     consts: {},
     types: [$Pair (a) (b), a],
-    impl: Pair.fst
+    impl: pair (K)
   };
 
   //# snd :: Pair a b -> b
@@ -2017,7 +2036,7 @@
   _.snd = {
     consts: {},
     types: [$Pair (a) (b), b],
-    impl: Pair.snd
+    impl: pair (C (K))
   };
 
   //# swap :: Pair a b -> Pair b a
@@ -2031,7 +2050,7 @@
   _.swap = {
     consts: {},
     types: [$Pair (a) (b), $Pair (b) (a)],
-    impl: Pair.swap
+    impl: pair (C (Pair))
   };
 
   //. ### Maybe type
