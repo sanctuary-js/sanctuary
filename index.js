@@ -1135,10 +1135,15 @@
   //. > S.mapLeft (S.toUpper) (S.Right (64))
   //. Right (64)
   //. ```
+  function mapLeft(f) {
+    return function(bifunctor) {
+      return Z.mapLeft (f, bifunctor);
+    };
+  }
   _.mapLeft = {
     consts: {p: [Z.Bifunctor]},
     types: [$.Fn (a) (b), p (a) (c), p (b) (c)],
-    impl: curry2 (Z.mapLeft)
+    impl: mapLeft
   };
 
   //# promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d
@@ -3182,10 +3187,15 @@
   //. > S.prepend ([1]) (S.Just ([2, 3]))
   //. Just ([1, 2, 3])
   //. ```
+  function prepend(x) {
+    return function(xs) {
+      return Z.prepend (x, xs);
+    };
+  }
   _.prepend = {
     consts: {f: [Z.Applicative, Z.Semigroup]},
     types: [a, f (a), f (a)],
-    impl: curry2 (Z.prepend)
+    impl: prepend
   };
 
   //# joinWith :: String -> Array String -> String
@@ -3354,18 +3364,17 @@
     impl: range
   };
 
-  //# groupBy :: (a -> a -> Boolean) -> Array a -> Array (Array a)
+  //# groupBy :: (Applicative f, Foldable f, Monoid (f a)) => (a -> a -> Boolean) -> f a -> f (f a)
   //.
-  //. Splits its array argument into an array of arrays of equal,
-  //. adjacent elements. Equality is determined by the function
-  //. provided as the first argument. Its behaviour can be surprising
-  //. for functions that aren't reflexive, transitive, and symmetric
-  //. (see [equivalence][] relation).
+  //. Splits the given structure into groups of equal, adjacent elements.
+  //. Equality is determined by the function provided as the first argument.
+  //. Its behaviour can be surprising for functions that aren't reflexive,
+  //. transitive, and symmetric (see [equivalence][] relation).
   //.
   //. Properties:
   //.
-  //.   - `forall f :: a -> a -> Boolean, xs :: Array a.
-  //.      S.join (S.groupBy (f) (xs)) = xs`
+  //.   - `forall p :: a -> a -> Boolean, f :: Foldable f => f a.
+  //.      S.join (S.groupBy (p) (f)) = f`
   //.
   //. ```javascript
   //. > S.groupBy (S.equals) ([1, 1, 2, 1, 1])
@@ -3374,22 +3383,49 @@
   //. > S.groupBy (x => y => x + y === 0) ([2, -3, 3, 3, 3, 4, -4, 4])
   //. [[2], [-3, 3, 3, 3], [4, -4], [4]]
   //. ```
-  function groupBy(f) {
-    return function(xs) {
-      if (xs.length === 0) return [];
-      var x0 = xs[0];         // :: a
-      var active = [x0];      // :: Array a
-      var result = [active];  // :: Array (Array a)
-      for (var idx = 1; idx < xs.length; idx += 1) {
-        var x = xs[idx];
-        if (f (x0) (x)) active.push (x); else result.push (active = [x0 = x]);
+  function Array$groupBy(pred, xs) {
+    if (xs.length === 0) return [];
+    var x0 = xs[0];         // :: a
+    var active = [x0];      // :: Array a
+    var result = [active];  // :: Array (Array a)
+    for (var idx = 1; idx < xs.length; idx += 1) {
+      var x = xs[idx];
+      if (pred (x0) (x)) active.push (x); else result.push (active = [x0 = x]);
+    }
+    return result;
+  }
+  function groupBy(pred) {
+    return function(foldable) {
+      //  Fast path for arrays.
+      if (Array.isArray (foldable)) return Array$groupBy (pred, foldable);
+
+      var empty = Z.empty (foldable.constructor);
+      return maybe (empty)
+                   (pair (B (prepend) (Pair.snd)))
+                   (Z.reduce (reducer, Nothing, Z.reverse (foldable)));
+
+      //  reducer :: (Maybe (Pair (Pair a (f a)) (f (f a))), a)
+      //          -> Maybe (Pair (Pair a (f a)) (f (f a)))
+      //                               ^  ^^^    ^^^^^^^
+      //                               |   |        |
+      //                               |   |        +--- closed groups
+      //                               |   +------------ open group
+      //                               +---------------- open group leader
+      function reducer(m, x) {
+        var open = Pair (x) (prepend (x) (empty));
+        return Just (maybe (Pair (open) (empty))
+                           (function(p) {
+                              return pred (p.fst.fst) (x) ?
+                                     mapLeft (map (prepend (x))) (p) :
+                                     Pair (open) (prepend (p.fst.snd) (p.snd));
+                            })
+                           (m));
       }
-      return result;
     };
   }
   _.groupBy = {
-    consts: {},
-    types: [$.Fn (a) ($.Predicate (a)), $.Array (a), $.Array ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [$.Fn (a) ($.Predicate (a)), f (a), f (f (a))],
     impl: groupBy
   };
 
