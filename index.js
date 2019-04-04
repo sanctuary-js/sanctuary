@@ -4361,7 +4361,7 @@
   //. inputs! [MDN][date parsing] warns against using the `Date` constructor
   //. to parse date strings:
   //.
-  //. > __Note:__ parsing of date strings with the `Date` constructor \[…] is
+  //. > __Note:__ parsing of date strings with the `Date` constructor […] is
   //. > strongly discouraged due to browser differences and inconsistencies.
   //. > Support for RFC 2822 format strings is by convention only. Support for
   //. > ISO 8601 formats differs in that date-only strings (e.g. "1970-01-01")
