@@ -1067,46 +1067,6 @@
     impl: curry2 (Z.reject)
   };
 
-  //# takeWhile :: Filterable f => (a -> Boolean) -> f a -> f a
-  //.
-  //. Curried version of [`Z.takeWhile`][]. Discards the first element which
-  //. does not satisfy the predicate, and all subsequent elements.
-  //.
-  //. See also [`dropWhile`](#dropWhile).
-  //.
-  //. ```javascript
-  //. > S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. [3, 3, 3, 7]
-  //.
-  //. > S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. []
-  //. ```
-  _.takeWhile = {
-    consts: {f: [Z.Filterable]},
-    types: [$.Predicate (a), f (a), f (a)],
-    impl: curry2 (Z.takeWhile)
-  };
-
-  //# dropWhile :: Filterable f => (a -> Boolean) -> f a -> f a
-  //.
-  //. Curried version of [`Z.dropWhile`][]. Retains the first element which
-  //. does not satisfy the predicate, and all subsequent elements.
-  //.
-  //. See also [`takeWhile`](#takeWhile).
-  //.
-  //. ```javascript
-  //. > S.dropWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. [6, 3, 5, 4]
-  //.
-  //. > S.dropWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. [3, 3, 3, 7, 6, 3, 5, 4]
-  //. ```
-  _.dropWhile = {
-    consts: {f: [Z.Filterable]},
-    types: [$.Predicate (a), f (a), f (a)],
-    impl: curry2 (Z.dropWhile)
-  };
-
   //# map :: Functor f => (a -> b) -> f a -> f b
   //.
   //. Curried version of [`Z.map`][].
@@ -3140,6 +3100,33 @@
     impl: takeLast
   };
 
+  //# takeWhile :: (a -> Boolean) -> Array a -> Array a
+  //.
+  //. Discards the first element which does not satisfy the predicate,
+  //. and all subsequent elements.
+  //.
+  //. See also [`dropWhile`](#dropWhile).
+  //.
+  //. ```javascript
+  //. > S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7]
+  //.
+  //. > S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. []
+  //. ```
+  function takeWhile(pred) {
+    return function(xs) {
+      var idx = 0;
+      while (idx < xs.length && pred (xs[idx])) idx += 1;
+      return xs.slice (0, idx);
+    };
+  }
+  _.takeWhile = {
+    consts: {},
+    types: [$.Predicate (a), $.Array (a), $.Array (a)],
+    impl: takeWhile
+  };
+
   //# drop :: Integer -> Array a -> Maybe (Array a)
   //.
   //. Returns Just all but the first N elements of the given array if N is
@@ -3193,6 +3180,33 @@
     consts: {},
     types: [$.Integer, $.Array (a), $Maybe ($.Array (a))],
     impl: dropLast
+  };
+
+  //# dropWhile :: (a -> Boolean) -> Array a -> Array a
+  //.
+  //. Retains the first element which does not satisfy the predicate,
+  //. and all subsequent elements.
+  //.
+  //. See also [`takeWhile`](#takeWhile).
+  //.
+  //. ```javascript
+  //. > S.dropWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. [6, 3, 5, 4]
+  //.
+  //. > S.dropWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7, 6, 3, 5, 4]
+  //. ```
+  function dropWhile(pred) {
+    return function(xs) {
+      var idx = 0;
+      while (idx < xs.length && pred (xs[idx])) idx += 1;
+      return xs.slice (idx);
+    };
+  }
+  _.dropWhile = {
+    consts: {},
+    types: [$.Predicate (a), $.Array (a), $.Array (a)],
+    impl: dropWhile
   };
 
   //# size :: Foldable f => f a -> Integer
@@ -4903,7 +4917,6 @@
 //. [`Z.compose`]:              v:sanctuary-js/sanctuary-type-classes#compose
 //. [`Z.concat`]:               v:sanctuary-js/sanctuary-type-classes#concat
 //. [`Z.contramap`]:            v:sanctuary-js/sanctuary-type-classes#contramap
-//. [`Z.dropWhile`]:            v:sanctuary-js/sanctuary-type-classes#dropWhile
 //. [`Z.duplicate`]:            v:sanctuary-js/sanctuary-type-classes#duplicate
 //. [`Z.empty`]:                v:sanctuary-js/sanctuary-type-classes#empty
 //. [`Z.equals`]:               v:sanctuary-js/sanctuary-type-classes#equals
@@ -4925,7 +4938,6 @@
 //. [`Z.promap`]:               v:sanctuary-js/sanctuary-type-classes#promap
 //. [`Z.reject`]:               v:sanctuary-js/sanctuary-type-classes#reject
 //. [`Z.sequence`]:             v:sanctuary-js/sanctuary-type-classes#sequence
-//. [`Z.takeWhile`]:            v:sanctuary-js/sanctuary-type-classes#takeWhile
 //. [`Z.traverse`]:             v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:                 v:sanctuary-js/sanctuary-type-classes#zero
 //. [`show`]:                   v:sanctuary-js/sanctuary-show#show
