@@ -2875,29 +2875,6 @@
     impl: slice
   };
 
-  //# at :: Integer -> Array a -> Maybe a
-  //.
-  //. Returns Just the element of the given array at the specified index if
-  //. the index is within the array's bounds; Nothing otherwise.
-  //.
-  //. ```javascript
-  //. > S.at (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just ('c')
-  //.
-  //. > S.at (5) (['a', 'b', 'c', 'd', 'e'])
-  //. Nothing
-  //. ```
-  function at(idx) {
-    return function(xs) {
-      return idx < 0 || idx >= xs.length ? Nothing : Just (xs[idx]);
-    };
-  }
-  _.at = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $Maybe (a)],
-    impl: at
-  };
-
   //# head :: Foldable f => f a -> Maybe a
   //.
   //. Returns Just the first element of the given structure if the structure
