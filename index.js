@@ -487,11 +487,6 @@
     };
   }
 
-  //  value :: { value :: a } -> a
-  function value(r) {
-    return r.value;
-  }
-
   //  :: Type
   var a = $.TypeVariable ('a');
   var b = $.TypeVariable ('b');
@@ -2283,7 +2278,7 @@
   //. ['foo', 'baz']
   //. ```
   function justs(maybes) {
-    return map (value) (filter (isJust) (maybes));
+    return map (prop ('value')) (filter (isJust) (maybes));
   }
   _.justs = {
     consts: {f: [Z.Filterable, Z.Functor]},
@@ -2557,7 +2552,7 @@
   _.lefts = {
     consts: {f: [Z.Filterable, Z.Functor]},
     types: [f ($Either (a) (b)), f (a)],
-    impl: B (map (value)) (filter (isLeft))
+    impl: B (map (prop ('value'))) (filter (isLeft))
   };
 
   //# rights :: (Filterable f, Functor f) => f (Either a b) -> f b
@@ -2574,7 +2569,7 @@
   _.rights = {
     consts: {f: [Z.Filterable, Z.Functor]},
     types: [f ($Either (a) (b)), f (b)],
-    impl: B (map (value)) (filter (isRight))
+    impl: B (map (prop ('value'))) (filter (isRight))
   };
 
   //# tagBy :: (a -> Boolean) -> a -> Either a a
@@ -3830,6 +3825,7 @@
   //. lacks the specified property, a type error is thrown.
   //.
   //. For accessing properties of uncertain objects, use [`get`](#get) instead.
+  //. For accessing string map values by key, use [`value`](#value) instead.
   //.
   //. ```javascript
   //. > S.prop ('a') ({a: 1, b: 2})
@@ -3884,7 +3880,7 @@
   //. value of the specified object property if it exists and the value
   //. satisfies the given predicate; Nothing otherwise.
   //.
-  //. See also [`gets`](#gets) and [`prop`](#prop).
+  //. See also [`gets`](#gets), [`prop`](#prop), and [`value`](#value).
   //.
   //. ```javascript
   //. > S.get (S.is ($.Number)) ('x') ({x: 1, y: 2})
@@ -3951,6 +3947,38 @@
   //. the same type. Formally, a value is a member of type `StrMap a` if its
   //. [type identifier][] is `'Object'` and the values of its enumerable own
   //. properties are all members of type `a`.
+
+  //# value :: String -> StrMap a -> Maybe a
+  //.
+  //. Retrieve the value associated with the given key in the given string map.
+  //.
+  //. Formally, `value (k) (m)` evaluates to `Just (m[k])` if `k` is an
+  //. enumerable own property of `m`; `Nothing` otherwise.
+  //.
+  //. See also [`prop`](#prop) and [`get`](#get).
+  //.
+  //. ```javascript
+  //. > S.value ('foo') ({foo: 1, bar: 2})
+  //. Just (1)
+  //.
+  //. > S.value ('bar') ({foo: 1, bar: 2})
+  //. Just (2)
+  //.
+  //. > S.value ('baz') ({foo: 1, bar: 2})
+  //. Nothing
+  //. ```
+  function value(key) {
+    return function(strMap) {
+      return Object.prototype.propertyIsEnumerable.call (strMap, key) ?
+             Just (strMap[key]) :
+             Nothing;
+    };
+  }
+  _.value = {
+    consts: {},
+    types: [$.String, $.StrMap (a), $Maybe (a)],
+    impl: value
+  };
 
   //# singleton :: String -> a -> StrMap a
   //.
