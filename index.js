@@ -494,7 +494,6 @@
   var d = $.TypeVariable ('d');
   var e = $.TypeVariable ('e');
   var g = $.TypeVariable ('g');
-  var l = $.TypeVariable ('l');
   var r = $.TypeVariable ('r');
 
   //  :: Type -> Type
@@ -2306,31 +2305,6 @@
     impl: B (B (justs)) (map)
   };
 
-  //# encase :: (a -> b) -> a -> Maybe b
-  //.
-  //. Takes a unary function `f` which may throw and a value `x` of any type,
-  //. and applies `f` to `x` inside a `try` block. If an exception is caught,
-  //. the return value is Nothing; otherwise the return value is Just the
-  //. result of applying `f` to `x`.
-  //.
-  //. See also [`encaseEither`](#encaseEither).
-  //.
-  //. ```javascript
-  //. > S.encase (eval) ('1 + 1')
-  //. Just (2)
-  //.
-  //. > S.encase (eval) ('1 +')
-  //. Nothing
-  //. ```
-  function encase(f) {
-    return B (eitherToMaybe) (encaseEither (I) (f));
-  }
-  _.encase = {
-    consts: {},
-    types: [Fn (a) (b), a, $Maybe (b)],
-    impl: encase
-  };
-
   //# maybeToEither :: a -> Maybe b -> Either a b
   //.
   //. Converts a Maybe to an Either. Nothing becomes a Left (containing the
@@ -2575,41 +2549,30 @@
     impl: tagBy
   };
 
-  //# encaseEither :: (Error -> l) -> (a -> r) -> a -> Either l r
+  //# encase :: (a -> b) -> a -> Either Error b
   //.
-  //. Takes two unary functions, `f` and `g`, the second of which may throw,
-  //. and a value `x` of any type. Applies `g` to `x` inside a `try` block.
-  //. If an exception is caught, the return value is a Left containing the
-  //. result of applying `f` to the caught Error object; otherwise the return
-  //. value is a Right containing the result of applying `g` to `x`.
-  //.
-  //. See also [`encase`](#encase).
+  //. Takes a function that may throw and returns a pure function.
   //.
   //. ```javascript
-  //. > S.encaseEither (S.I) (JSON.parse) ('["foo","bar","baz"]')
+  //. > S.encase (JSON.parse) ('["foo","bar","baz"]')
   //. Right (['foo', 'bar', 'baz'])
   //.
-  //. > S.encaseEither (S.I) (JSON.parse) ('[')
+  //. > S.encase (JSON.parse) ('[')
   //. Left (new SyntaxError ('Unexpected end of JSON input'))
-  //.
-  //. > S.encaseEither (S.prop ('message')) (JSON.parse) ('[')
-  //. Left ('Unexpected end of JSON input')
   //. ```
-  function encaseEither(f) {
-    return function(g) {
-      return function(x) {
-        try {
-          return Right (g (x));
-        } catch (err) {
-          return Left (f (err));
-        }
-      };
+  function encase(f) {
+    return function(x) {
+      try {
+        return Right (f (x));
+      } catch (err) {
+        return Left (err);
+      }
     };
   }
-  _.encaseEither = {
+  _.encase = {
     consts: {},
-    types: [Fn ($.Error) (l), Fn (a) (r), a, $Either (l) (r)],
-    impl: encaseEither
+    types: [Fn (a) (b), a, $Either ($.Error) (b)],
+    impl: encase
   };
 
   //# eitherToMaybe :: Either a b -> Maybe b
@@ -4464,7 +4427,7 @@
   //. Just ([1, 2, 3])
   //. ```
   function parseJson(pred) {
-    return B (filter (pred)) (encase (JSON.parse));
+    return B (filter (pred)) (B (eitherToMaybe) (encase (JSON.parse)));
   }
   _.parseJson = {
     consts: {},
