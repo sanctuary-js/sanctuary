@@ -2331,24 +2331,6 @@
     impl: encase
   };
 
-  //# encase2 :: (a -> b -> c) -> a -> b -> Maybe c
-  //.
-  //. Binary version of [`encase`](#encase).
-  _.encase2 = {
-    consts: {},
-    types: [Fn (a) (Fn (b) (c)), a, b, $Maybe (c)],
-    impl: B (B (B (eitherToMaybe))) (encaseEither2 (I))
-  };
-
-  //# encase3 :: (a -> b -> c -> d) -> a -> b -> c -> Maybe d
-  //.
-  //. Ternary version of [`encase`](#encase).
-  _.encase3 = {
-    consts: {},
-    types: [Fn (a) (Fn (b) (Fn (c) (d))), a, b, c, $Maybe (d)],
-    impl: B (B (B (B (eitherToMaybe)))) (encaseEither3 (I))
-  };
-
   //# maybeToEither :: a -> Maybe b -> Either a b
   //.
   //. Converts a Maybe to an Either. Nothing becomes a Left (containing the
@@ -2628,57 +2610,6 @@
     consts: {},
     types: [Fn ($.Error) (l), Fn (a) (r), a, $Either (l) (r)],
     impl: encaseEither
-  };
-
-  //# encaseEither2 :: (Error -> l) -> (a -> b -> r) -> a -> b -> Either l r
-  //.
-  //. Binary version of [`encaseEither`](#encaseEither).
-  function encaseEither2(f) {
-    return function(g) {
-      return function(x) {
-        return function(y) {
-          try {
-            return Right (g (x) (y));
-          } catch (err) {
-            return Left (f (err));
-          }
-        };
-      };
-    };
-  }
-  _.encaseEither2 = {
-    consts: {},
-    types: [Fn ($.Error) (l), Fn (a) (Fn (b) (r)), a, b, $Either (l) (r)],
-    impl: encaseEither2
-  };
-
-  //# encaseEither3 :: (Error -> l) -> (a -> b -> c -> r) -> a -> b -> c -> Either l r
-  //.
-  //. Ternary version of [`encaseEither`](#encaseEither).
-  function encaseEither3(f) {
-    return function(g) {
-      return function(x) {
-        return function(y) {
-          return function(z) {
-            try {
-              return Right (g (x) (y) (z));
-            } catch (err) {
-              return Left (f (err));
-            }
-          };
-        };
-      };
-    };
-  }
-  _.encaseEither3 = {
-    consts: {},
-    types: [Fn ($.Error) (l),
-            Fn (a) (Fn (b) (Fn (c) (r))),
-            a,
-            b,
-            c,
-            $Either (l) (r)],
-    impl: encaseEither3
   };
 
   //# eitherToMaybe :: Either a b -> Maybe b
