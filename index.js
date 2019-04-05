@@ -2845,36 +2845,6 @@
     impl: array
   };
 
-  //# slice :: Integer -> Integer -> Array a -> Maybe (Array a)
-  //.
-  //. Takes a start index `i`, an end index `j`, and an array, and returns
-  //. Just the `[i,j)` slice of the array if possible; Nothing otherwise.
-  //.
-  //. See also [`take`](#take), [`drop`](#drop), [`takeLast`](#takeLast),
-  //. and [`dropLast`](#dropLast).
-  //.
-  //. ```javascript
-  //. > S.slice (1) (3) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['b', 'c'])
-  //.
-  //. > S.slice (1) (6) (['a', 'b', 'c', 'd', 'e'])
-  //. Nothing
-  //. ```
-  function slice(fromIdx) {
-    return function(toIdx) {
-      return function(xs) {
-        return fromIdx <= toIdx && fromIdx >= 0 && toIdx <= xs.length ?
-               Just (xs.slice (fromIdx, toIdx)) :
-               Nothing;
-      };
-    };
-  }
-  _.slice = {
-    consts: {},
-    types: [$.Integer, $.Integer, $.Array (a), $Maybe ($.Array (a))],
-    impl: slice
-  };
-
   //# head :: Foldable f => f a -> Maybe a
   //.
   //. Returns Just the first element of the given structure if the structure
