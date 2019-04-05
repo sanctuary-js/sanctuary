@@ -2849,7 +2849,6 @@
   //.
   //. Takes a start index `i`, an end index `j`, and an array, and returns
   //. Just the `[i,j)` slice of the array if possible; Nothing otherwise.
-  //. A negative index represents an offset from the length of the array.
   //.
   //. See also [`take`](#take), [`drop`](#drop), [`takeLast`](#takeLast),
   //. and [`dropLast`](#dropLast).
@@ -2858,23 +2857,15 @@
   //. > S.slice (1) (3) (['a', 'b', 'c', 'd', 'e'])
   //. Just (['b', 'c'])
   //.
-  //. > S.slice (-3) (-1) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['c', 'd'])
-  //.
   //. > S.slice (1) (6) (['a', 'b', 'c', 'd', 'e'])
   //. Nothing
   //. ```
-  function slice(start) {
-    return function(end) {
+  function slice(fromIdx) {
+    return function(toIdx) {
       return function(xs) {
-        var fromIdx = start < 0 ? start + xs.length : start;
-        var toIdx = end < 0 ? end + xs.length : end;
-
-        return Math.abs (start) <= xs.length &&
-               Math.abs (end) <= xs.length &&
-               fromIdx <= toIdx ?
-                 Just (xs.slice (fromIdx, toIdx)) :
-                 Nothing;
+        return fromIdx <= toIdx && fromIdx >= 0 && toIdx <= xs.length ?
+               Just (xs.slice (fromIdx, toIdx)) :
+               Nothing;
       };
     };
   }
@@ -2887,8 +2878,7 @@
   //# at :: Integer -> Array a -> Maybe a
   //.
   //. Returns Just the element of the given array at the specified index if
-  //. the index is within the array's bounds; Nothing otherwise. A negative
-  //. index represents an offset from the length of the array.
+  //. the index is within the array's bounds; Nothing otherwise.
   //.
   //. ```javascript
   //. > S.at (2) (['a', 'b', 'c', 'd', 'e'])
@@ -2896,13 +2886,9 @@
   //.
   //. > S.at (5) (['a', 'b', 'c', 'd', 'e'])
   //. Nothing
-  //.
-  //. > S.at (-2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just ('d')
   //. ```
-  function at(n) {
+  function at(idx) {
     return function(xs) {
-      var idx = n < 0 ? xs.length + n : n;
       return idx < 0 || idx >= xs.length ? Nothing : Just (xs[idx]);
     };
   }
