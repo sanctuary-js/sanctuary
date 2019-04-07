@@ -28,8 +28,9 @@ List['@@type'] = 'sanctuary/List';
 List.Type = $.UnaryType
   (List['@@type'])
   ('')
+  ([])
   (x => type (x) === List['@@type'])
-  (list => Z.reduce ((xs, x) => ((xs.push (x), xs)), [], list));
+  (list => list);
 
 //    Nil :: List a
 const Nil = List.Nil = new _List ('Nil');

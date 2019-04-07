@@ -19,6 +19,7 @@ Sum['@@type'] = 'sanctuary/Sum';
 Sum.Type = $.NullaryType
   (Sum['@@type'])
   ('')
+  ([])
   (x => type (x) === Sum['@@type']);
 
 Sum[FL.empty] = () => Sum (0);

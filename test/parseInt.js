@@ -97,7 +97,7 @@ test ('parseInt', () => {
                          '            ^^^^^\n' +
                          '              1\n' +
                          '\n' +
-                         '1)  1 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, NonNegativeInteger, ValidNumber\n' +
+                         '1)  1 :: Number\n' +
                          '\n' +
                          'The value at position 1 is not a member of ‘Radix’.\n'));
 
@@ -108,7 +108,7 @@ test ('parseInt', () => {
                          '            ^^^^^\n' +
                          '              1\n' +
                          '\n' +
-                         '1)  37 :: Number, FiniteNumber, NonZeroFiniteNumber, Integer, NonNegativeInteger, ValidNumber\n' +
+                         '1)  37 :: Number\n' +
                          '\n' +
                          'The value at position 1 is not a member of ‘Radix’.\n'));
 
