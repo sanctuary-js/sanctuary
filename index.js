@@ -1204,25 +1204,31 @@
 
   //# alt :: Alt f => f a -> f a -> f a
   //.
-  //. Curried version of [`Z.alt`][].
+  //. Curried version of [`Z.alt`][] with arguments flipped to facilitate
+  //. partial application.
   //.
   //. ```javascript
-  //. > S.alt (S.Nothing) (S.Just (1))
-  //. Just (1)
+  //. > S.alt (S.Just ('default')) (S.Nothing)
+  //. Just ('default')
   //.
-  //. > S.alt (S.Just (2)) (S.Just (3))
-  //. Just (2)
+  //. > S.alt (S.Just ('default')) (S.Just ('hello'))
+  //. Just ('hello')
   //.
-  //. > S.alt (S.Left ('X')) (S.Right (1))
+  //. > S.alt (S.Right (0)) (S.Left ('X'))
+  //. Right (0)
+  //.
+  //. > S.alt (S.Right (0)) (S.Right (1))
   //. Right (1)
-  //.
-  //. > S.alt (S.Right (2)) (S.Right (3))
-  //. Right (2)
   //. ```
+  function alt(y) {
+    return function(x) {
+      return Z.alt (x, y);
+    };
+  }
   _.alt = {
     consts: {f: [Z.Alt]},
     types: [f (a), f (a), f (a)],
-    impl: curry2 (Z.alt)
+    impl: alt
   };
 
   //# zero :: Plus f => TypeRep f -> f a
