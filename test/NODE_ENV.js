@@ -25,7 +25,7 @@ suite ('NODE_ENV', () => {
     '',
     'The value at position 1 is not a member of ‘FiniteNumber’.',
     '',
-    'See https://github.com/sanctuary-js/sanctuary-def/tree/v' + $$version + '#FiniteNumber for information about the sanctuary-def/FiniteNumber type.',
+    'See https://github.com/sanctuary-js/sanctuary-def/tree/v' + $$version + '#FiniteNumber for information about the FiniteNumber type.',
     '',
   ].join ('\n'));
 

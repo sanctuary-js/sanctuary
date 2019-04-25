@@ -294,7 +294,7 @@
 //. //
 //. //   The value at position 1 is not a member of ‘FiniteNumber’.
 //. //
-//. //   See v:sanctuary-js/sanctuary-def#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
+//. //   See v:sanctuary-js/sanctuary-def#FiniteNumber for information about the FiniteNumber type.
 //. ```
 //.
 //. Compare this to the behaviour of Ramda's unchecked equivalent:
@@ -395,17 +395,9 @@
     var Cons = (__doctest.require ('./test/internal/List')).Cons;
     var Sum = __doctest.require ('./test/internal/Sum');
     var S = (function(S) {
-      //  DescendingType :: Type -> Type
-      var DescendingType = $.UnaryType
-        ('sanctuary/Descending')
-        ('')
-        (typeEq (Descending['@@type']))
-        (B (of (Array)) (Z.extract));
-
       var S_ = S.create ({
         checkTypes: true,
         env: S.env.concat ([
-          DescendingType ($.Unknown),
           (__doctest.require ('./test/internal/List')).Type ($.Unknown),
           Sum.Type
         ])
@@ -446,13 +438,6 @@
     };
   }
 
-  //  Fn :: Type -> Type -> Type
-  function Fn(x) {
-    return function(y) {
-      return $.Function ([x, y]);
-    };
-  }
-
   //  get_ :: String -> a -> Maybe b
   function get_(key) {
     return B (function(obj) { return key in obj ? Just (obj[key]) : Nothing; })
@@ -480,13 +465,6 @@
     return x == null ? Object.create (null) : Object (x);
   }
 
-  //  typeEq :: String -> a -> Boolean
-  function typeEq(typeIdent) {
-    return function(x) {
-      return type (x) === typeIdent;
-    };
-  }
-
   //  :: Type
   var a = $.TypeVariable ('a');
   var b = $.TypeVariable ('b');
@@ -506,36 +484,14 @@
   var p = $.BinaryTypeVariable ('p');
   var s = $.BinaryTypeVariable ('s');
 
-  //  $Either :: Type -> Type -> Type
-  var $Either = $.BinaryType
-    ('sanctuary/Either')
-    ('https://github.com/sanctuary-js/sanctuary-either')
-    (typeEq ('sanctuary-either/Either@1'))
-    (either (of (Array)) (K ([])))
-    (either (K ([])) (of (Array)));
-
-  //  $Maybe :: Type -> Type
-  var $Maybe = $.UnaryType
-    ('sanctuary/Maybe')
-    ('https://github.com/sanctuary-js/sanctuary-maybe')
-    (typeEq ('sanctuary-maybe/Maybe@1'))
-    (maybe ([]) (of (Array)));
-
-  //  $Pair :: Type -> Type -> Type
-  var $Pair = $.BinaryType
-    ('sanctuary/Pair')
-    ('https://github.com/sanctuary-js/sanctuary-pair')
-    (typeEq ('sanctuary-pair/Pair@1'))
-    (function(pair) { return [pair.fst]; })
-    (function(pair) { return [pair.snd]; });
-
   //  TypeRep :: Type -> Type
   var TypeRep = $.UnaryType
-    ('sanctuary/TypeRep')
+    ('TypeRep')
     ('https://github.com/fantasyland/fantasy-land#type-representatives')
+    ([])
     (function(x) {
-       return $.AnyFunction._test (x) ||
-              x != null && $.String._test (x['@@type']);
+       return $.test ([]) ($.AnyFunction) (x) ||
+              x != null && $.test ([]) ($.String) (x['@@type']);
      })
     (K ([]));
 
@@ -583,8 +539,9 @@
   //.
   //. //    IdentityType :: Type -> Type
   //. const IdentityType = $.UnaryType
-  //.   (Identity['@@type'])
+  //.   ('Identity')
   //.   ('http://example.com/my-package#Identity')
+  //.   ([])
   //.   (x => type (x) === Identity['@@type'])
   //.   (identity => [identity.value]);
   //.
@@ -603,12 +560,9 @@
     var S = {
       env: opts.env,
       is: def ('is') ({}) ([$.Type, $.Any, $.Boolean]) ($.test (opts.env)),
-      MaybeType: $Maybe,
       Maybe: Maybe,
       Nothing: Nothing,
-      EitherType: $Either,
-      Either: Either,
-      PairType: $Pair
+      Either: Either
     };
     (Object.keys (_)).forEach (function(name) {
       S[name] = def (name) (_[name].consts) (_[name].types) (_[name].impl);
@@ -633,34 +587,27 @@
   //. [ $.AnyFunction,
   //. . $.Arguments,
   //. . $.Array ($.Unknown),
+  //. . $.Array2 ($.Unknown) ($.Unknown),
   //. . $.Boolean,
   //. . $.Date,
+  //. . $.Descending ($.Unknown),
+  //. . $.Either ($.Unknown) ($.Unknown),
   //. . $.Error,
+  //. . $.Fn ($.Unknown) ($.Unknown),
   //. . $.HtmlElement,
+  //. . $.Identity ($.Unknown),
+  //. . $.Maybe ($.Unknown),
   //. . $.Null,
   //. . $.Number,
   //. . $.Object,
+  //. . $.Pair ($.Unknown) ($.Unknown),
   //. . $.RegExp,
   //. . $.StrMap ($.Unknown),
   //. . $.String,
   //. . $.Symbol,
-  //. . $.Undefined,
-  //. . $.FiniteNumber,
-  //. . $.NonZeroFiniteNumber,
-  //. . S.EitherType ($.Unknown) ($.Unknown),
-  //. . $.Function ([$.Unknown, $.Unknown]),
-  //. . $.GlobalRegExp,
-  //. . $.NonGlobalRegExp,
-  //. . $.Integer,
-  //. . $.NonNegativeInteger,
-  //. . S.MaybeType ($.Unknown),
-  //. . $.Array2 ($.Unknown) ($.Unknown),
-  //. . S.PairType ($.Unknown) ($.Unknown),
-  //. . $.RegexFlags,
   //. . $.Type,
   //. . $.TypeClass,
-  //. . $.ValidDate,
-  //. . $.ValidNumber ]
+  //. . $.Undefined ]
   //. ```
 
   //# unchecked :: Module
@@ -704,7 +651,7 @@
   _.type = {
     consts: {},
     types: [$.Any,
-            $.RecordType ({namespace: $Maybe ($.String),
+            $.RecordType ({namespace: $.Maybe ($.String),
                            name: $.String,
                            version: $.NonNegativeInteger})],
     impl: type_
@@ -1109,7 +1056,7 @@
   }
   _.map = {
     consts: {f: [Z.Functor]},
-    types: [Fn (a) (b), f (a), f (b)],
+    types: [$.Fn (a) (b), f (a), f (b)],
     impl: map
   };
 
@@ -1143,7 +1090,7 @@
   //. ```
   _.flip = {
     consts: {f: [Z.Functor]},
-    types: [f (Fn (a) (b)), a, f (b)],
+    types: [f ($.Fn (a) (b)), a, f (b)],
     impl: curry2 (Z.flip)
   };
 
@@ -1163,7 +1110,7 @@
   //. ```
   _.bimap = {
     consts: {p: [Z.Bifunctor]},
-    types: [Fn (a) (b), Fn (c) (d), p (a) (c), p (b) (d)],
+    types: [$.Fn (a) (b), $.Fn (c) (d), p (a) (c), p (b) (d)],
     impl: curry3 (Z.bimap)
   };
 
@@ -1184,7 +1131,7 @@
   //. ```
   _.mapLeft = {
     consts: {p: [Z.Bifunctor]},
-    types: [Fn (a) (b), p (a) (c), p (b) (c)],
+    types: [$.Fn (a) (b), p (a) (c), p (b) (c)],
     impl: curry2 (Z.mapLeft)
   };
 
@@ -1198,7 +1145,7 @@
   //. ```
   _.promap = {
     consts: {p: [Z.Profunctor]},
-    types: [Fn (a) (b), Fn (c) (d), p (b) (c), p (a) (d)],
+    types: [$.Fn (a) (b), $.Fn (c) (d), p (b) (c), p (a) (d)],
     impl: curry3 (Z.promap)
   };
 
@@ -1247,7 +1194,7 @@
   //. ```
   _.zero = {
     consts: {f: [Z.Plus]},
-    types: [TypeRep ($.TypeVariable ('f')), f (a)],
+    types: [TypeRep (f (a)), f (a)],
     impl: Z.zero
   };
 
@@ -1279,7 +1226,7 @@
   }
   _.reduce = {
     consts: {f: [Z.Foldable]},
-    types: [Fn (a) (Fn (b) (a)), a, f (b), a],
+    types: [$.Fn (a) ($.Fn (b) (a)), a, f (b), a],
     impl: reduce
   };
 
@@ -1308,7 +1255,7 @@
   //. ```
   _.traverse = {
     consts: {f: [Z.Applicative], t: [Z.Traversable]},
-    types: [TypeRep ($.TypeVariable ('f')), Fn (a) (f (b)), t (a), f (t (b))],
+    types: [TypeRep (f (b)), $.Fn (a) (f (b)), t (a), f (t (b))],
     impl: curry3 (Z.traverse)
   };
 
@@ -1335,7 +1282,7 @@
   //. ```
   _.sequence = {
     consts: {f: [Z.Applicative], t: [Z.Traversable]},
-    types: [TypeRep ($.TypeVariable ('f')), t (f (a)), f (t (a))],
+    types: [TypeRep (f (a)), t (f (a)), f (t (a))],
     impl: curry2 (Z.sequence)
   };
 
@@ -1370,7 +1317,7 @@
   //. ```
   _.ap = {
     consts: {f: [Z.Apply]},
-    types: [f (Fn (a) (b)), f (a), f (b)],
+    types: [f ($.Fn (a) (b)), f (a), f (b)],
     impl: curry2 (Z.ap)
   };
 
@@ -1394,7 +1341,7 @@
   //. ```
   _.lift2 = {
     consts: {f: [Z.Apply]},
-    types: [Fn (a) (Fn (b) (c)), f (a), f (b), f (c)],
+    types: [$.Fn (a) ($.Fn (b) (c)), f (a), f (b), f (c)],
     impl: curry3 (Z.lift2)
   };
 
@@ -1412,7 +1359,7 @@
   //. ```
   _.lift3 = {
     consts: {f: [Z.Apply]},
-    types: [Fn (a) (Fn (b) (Fn (c) (d))), f (a), f (b), f (c), f (d)],
+    types: [$.Fn (a) ($.Fn (b) ($.Fn (c) (d))), f (a), f (b), f (c), f (d)],
     impl: curry4 (Z.lift3)
   };
 
@@ -1482,7 +1429,7 @@
   }
   _.of = {
     consts: {f: [Z.Applicative]},
-    types: [TypeRep ($.TypeVariable ('f')), a, f (a)],
+    types: [TypeRep (f (a)), a, f (a)],
     impl: of
   };
 
@@ -1505,7 +1452,7 @@
   //. ```
   _.chain = {
     consts: {m: [Z.Chain]},
-    types: [Fn (a) (m (b)), m (a), m (b)],
+    types: [$.Fn (a) (m (b)), m (a), m (b)],
     impl: curry2 (Z.chain)
   };
 
@@ -1570,10 +1517,7 @@
   }
   _.chainRec = {
     consts: {m: [Z.ChainRec]},
-    types: [TypeRep ($.TypeVariable ('m')),
-            Fn (a) (m ($Either (a) (b))),
-            a,
-            m (b)],
+    types: [TypeRep (m (b)), $.Fn (a) (m ($.Either (a) (b))), a, m (b)],
     impl: chainRec
   };
 
@@ -1590,7 +1534,7 @@
   //. ```
   _.extend = {
     consts: {w: [Z.Extend]},
-    types: [Fn (w (a)) (b), w (a), w (b)],
+    types: [$.Fn (w (a)) (b), w (a), w (b)],
     impl: curry2 (Z.extend)
   };
 
@@ -1642,7 +1586,7 @@
   //. ```
   _.contramap = {
     consts: {f: [Z.Contravariant]},
-    types: [Fn (b) (a), f (a), f (b)],
+    types: [$.Fn (b) (a), f (a), f (b)],
     impl: curry2 (Z.contramap)
   };
 
@@ -1709,7 +1653,7 @@
   }
   _.T = {
     consts: {},
-    types: [a, Fn (a) (b), b],
+    types: [a, $.Fn (a) (b), b],
     impl: T
   };
 
@@ -1871,7 +1815,7 @@
   }
   _.pipe = {
     consts: {f: [Z.Foldable]},
-    types: [f (Fn ($.Any) ($.Any)), a, b],
+    types: [f ($.Fn ($.Any) ($.Any)), a, b],
     impl: pipe
   };
 
@@ -1896,7 +1840,7 @@
   }
   _.pipeK = {
     consts: {f: [Z.Foldable], m: [Z.Chain]},
-    types: [f (Fn ($.Any) (m ($.Any))), m (a), m (b)],
+    types: [f ($.Fn ($.Any) (m ($.Any))), m (a), m (b)],
     impl: pipeK
   };
 
@@ -1922,7 +1866,7 @@
   }
   _.on = {
     consts: {},
-    types: [Fn (b) (Fn (b) (c)), Fn (a) (b), a, a, c],
+    types: [$.Fn (b) ($.Fn (b) (c)), $.Fn (a) (b), a, a, c],
     impl: on
   };
 
@@ -1948,7 +1892,7 @@
   //. ```
   _.Pair = {
     consts: {},
-    types: [a, b, $Pair (a) (b)],
+    types: [a, b, $.Pair (a) (b)],
     impl: Pair
   };
 
@@ -1967,7 +1911,7 @@
   }
   _.pair = {
     consts: {},
-    types: [Fn (a) (Fn (b) (c)), $Pair (a) (b), c],
+    types: [$.Fn (a) ($.Fn (b) (c)), $.Pair (a) (b), c],
     impl: pair
   };
 
@@ -1981,7 +1925,7 @@
   //. ```
   _.fst = {
     consts: {},
-    types: [$Pair (a) (b), a],
+    types: [$.Pair (a) (b), a],
     impl: pair (K)
   };
 
@@ -1995,7 +1939,7 @@
   //. ```
   _.snd = {
     consts: {},
-    types: [$Pair (a) (b), b],
+    types: [$.Pair (a) (b), b],
     impl: pair (C (K))
   };
 
@@ -2009,7 +1953,7 @@
   //. ```
   _.swap = {
     consts: {},
-    types: [$Pair (a) (b), $Pair (b) (a)],
+    types: [$.Pair (a) (b), $.Pair (b) (a)],
     impl: pair (C (Pair))
   };
 
@@ -2047,7 +1991,7 @@
   //. ```
   _.Just = {
     consts: {},
-    types: [a, $Maybe (a)],
+    types: [a, $.Maybe (a)],
     impl: Just
   };
 
@@ -2067,7 +2011,7 @@
   }
   _.isNothing = {
     consts: {},
-    types: [$Maybe (a), $.Boolean],
+    types: [$.Maybe (a), $.Boolean],
     impl: isNothing
   };
 
@@ -2087,7 +2031,7 @@
   }
   _.isJust = {
     consts: {},
-    types: [$Maybe (a), $.Boolean],
+    types: [$.Maybe (a), $.Boolean],
     impl: isJust
   };
 
@@ -2108,7 +2052,7 @@
   //. ```
   _.fromMaybe = {
     consts: {},
-    types: [a, $Maybe (a), a],
+    types: [a, $.Maybe (a), a],
     impl: C (maybe) (I)
   };
 
@@ -2128,7 +2072,7 @@
   //. ```
   _.fromMaybe_ = {
     consts: {},
-    types: [$.Thunk (a), $Maybe (a), a],
+    types: [$.Thunk (a), $.Maybe (a), a],
     impl: C (maybe_) (I)
   };
 
@@ -2151,7 +2095,7 @@
   }
   _.maybeToNullable = {
     consts: {},
-    types: [$Maybe (a), $.Nullable (a)],
+    types: [$.Maybe (a), $.Nullable (a)],
     impl: maybeToNullable
   };
 
@@ -2172,7 +2116,7 @@
   }
   _.toMaybe = {
     consts: {},
-    types: [a, $Maybe (a)],
+    types: [a, $.Maybe (a)],
     impl: toMaybe
   };
 
@@ -2200,7 +2144,7 @@
   }
   _.maybe = {
     consts: {},
-    types: [b, Fn (a) (b), $Maybe (a), b],
+    types: [b, $.Fn (a) (b), $.Maybe (a), b],
     impl: maybe
   };
 
@@ -2227,7 +2171,7 @@
   }
   _.maybe_ = {
     consts: {},
-    types: [$.Thunk (b), Fn (a) (b), $Maybe (a), b],
+    types: [$.Thunk (b), $.Fn (a) (b), $.Maybe (a), b],
     impl: maybe_
   };
 
@@ -2247,7 +2191,7 @@
   }
   _.justs = {
     consts: {f: [Z.Filterable, Z.Functor]},
-    types: [f ($Maybe (a)), f (a)],
+    types: [f ($.Maybe (a)), f (a)],
     impl: justs
   };
 
@@ -2267,7 +2211,7 @@
   //. ```
   _.mapMaybe = {
     consts: {f: [Z.Filterable, Z.Functor]},
-    types: [Fn (a) ($Maybe (b)), f (a), f (b)],
+    types: [$.Fn (a) ($.Maybe (b)), f (a), f (b)],
     impl: B (B (justs)) (map)
   };
 
@@ -2290,7 +2234,7 @@
   }
   _.maybeToEither = {
     consts: {},
-    types: [a, $Maybe (b), $Either (a) (b)],
+    types: [a, $.Maybe (b), $.Either (a) (b)],
     impl: maybeToEither
   };
 
@@ -2320,7 +2264,7 @@
   //. ```
   _.Left = {
     consts: {},
-    types: [a, $Either (a) (b)],
+    types: [a, $.Either (a) (b)],
     impl: Left
   };
 
@@ -2334,7 +2278,7 @@
   //. ```
   _.Right = {
     consts: {},
-    types: [b, $Either (a) (b)],
+    types: [b, $.Either (a) (b)],
     impl: Right
   };
 
@@ -2354,7 +2298,7 @@
   }
   _.isLeft = {
     consts: {},
-    types: [$Either (a) (b), $.Boolean],
+    types: [$.Either (a) (b), $.Boolean],
     impl: isLeft
   };
 
@@ -2374,7 +2318,7 @@
   }
   _.isRight = {
     consts: {},
-    types: [$Either (a) (b), $.Boolean],
+    types: [$.Either (a) (b), $.Boolean],
     impl: isRight
   };
 
@@ -2395,7 +2339,7 @@
   }
   _.fromEither = {
     consts: {},
-    types: [b, $Either (a) (b), b],
+    types: [b, $.Either (a) (b), b],
     impl: fromEither
   };
 
@@ -2429,7 +2373,7 @@
   }
   _.toEither = {
     consts: {},
-    types: [a, b, $Either (a) (b)],
+    types: [a, b, $.Either (a) (b)],
     impl: toEither
   };
 
@@ -2456,7 +2400,7 @@
   }
   _.either = {
     consts: {},
-    types: [Fn (a) (c), Fn (b) (c), $Either (a) (b), c],
+    types: [$.Fn (a) (c), $.Fn (b) (c), $.Either (a) (b), c],
     impl: either
   };
 
@@ -2473,7 +2417,7 @@
   //. ```
   _.lefts = {
     consts: {f: [Z.Filterable, Z.Functor]},
-    types: [f ($Either (a) (b)), f (a)],
+    types: [f ($.Either (a) (b)), f (a)],
     impl: B (map (prop ('value'))) (filter (isLeft))
   };
 
@@ -2490,7 +2434,7 @@
   //. ```
   _.rights = {
     consts: {f: [Z.Filterable, Z.Functor]},
-    types: [f ($Either (a) (b)), f (b)],
+    types: [f ($.Either (a) (b)), f (b)],
     impl: B (map (prop ('value'))) (filter (isRight))
   };
 
@@ -2511,7 +2455,7 @@
   }
   _.tagBy = {
     consts: {},
-    types: [$.Predicate (a), a, $Either (a) (a)],
+    types: [$.Predicate (a), a, $.Either (a) (a)],
     impl: tagBy
   };
 
@@ -2537,7 +2481,7 @@
   }
   _.encase = {
     consts: {},
-    types: [Fn (a) (b), a, $Either ($.Error) (b)],
+    types: [$.Fn (a) (b), a, $.Either ($.Error) (b)],
     impl: encase
   };
 
@@ -2560,7 +2504,7 @@
   }
   _.eitherToMaybe = {
     consts: {},
-    types: [$Either (a) (b), $Maybe (b)],
+    types: [$.Either (a) (b), $.Maybe (b)],
     impl: eitherToMaybe
   };
 
@@ -2717,7 +2661,7 @@
   }
   _.ifElse = {
     consts: {},
-    types: [$.Predicate (a), Fn (a) (b), Fn (a) (b), a, b],
+    types: [$.Predicate (a), $.Fn (a) (b), $.Fn (a) (b), a, b],
     impl: ifElse
   };
 
@@ -2741,7 +2685,7 @@
   }
   _.when = {
     consts: {},
-    types: [$.Predicate (a), Fn (a) (a), a, a],
+    types: [$.Predicate (a), $.Fn (a) (a), a, a],
     impl: when
   };
 
@@ -2765,7 +2709,7 @@
   }
   _.unless = {
     consts: {},
-    types: [$.Predicate (a), Fn (a) (a), a, a],
+    types: [$.Predicate (a), $.Fn (a) (a), a, a],
     impl: unless
   };
 
@@ -2847,7 +2791,7 @@
   }
   _.array = {
     consts: {},
-    types: [b, Fn (a) (Fn ($.Array (a)) (b)), $.Array (a), b],
+    types: [b, $.Fn (a) ($.Fn ($.Array (a)) (b)), $.Array (a), b],
     impl: array
   };
 
@@ -2880,7 +2824,7 @@
   }
   _.head = {
     consts: {f: [Z.Foldable]},
-    types: [f (a), $Maybe (a)],
+    types: [f (a), $.Maybe (a)],
     impl: head
   };
 
@@ -2912,7 +2856,7 @@
   }
   _.last = {
     consts: {f: [Z.Foldable]},
-    types: [f (a), $Maybe (a)],
+    types: [f (a), $.Maybe (a)],
     impl: last
   };
 
@@ -2946,7 +2890,7 @@
   }
   _.tail = {
     consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-    types: [f (a), $Maybe (f (a))],
+    types: [f (a), $.Maybe (f (a))],
     impl: tail
   };
 
@@ -2980,7 +2924,7 @@
   }
   _.init = {
     consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
-    types: [f (a), $Maybe (f (a))],
+    types: [f (a), $.Maybe (f (a))],
     impl: init
   };
 
@@ -3007,7 +2951,7 @@
   }
   _.take = {
     consts: {},
-    types: [$.Integer, $.Array (a), $Maybe ($.Array (a))],
+    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
     impl: take
   };
 
@@ -3035,7 +2979,7 @@
   }
   _.takeLast = {
     consts: {},
-    types: [$.Integer, $.Array (a), $Maybe ($.Array (a))],
+    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
     impl: takeLast
   };
 
@@ -3089,7 +3033,7 @@
   }
   _.drop = {
     consts: {},
-    types: [$.Integer, $.Array (a), $Maybe ($.Array (a))],
+    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
     impl: drop
   };
 
@@ -3117,7 +3061,7 @@
   }
   _.dropLast = {
     consts: {},
-    types: [$.Integer, $.Array (a), $Maybe ($.Array (a))],
+    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
     impl: dropLast
   };
 
@@ -3396,7 +3340,7 @@
   }
   _.find = {
     consts: {f: [Z.Foldable]},
-    types: [$.Predicate (a), f (a), $Maybe (a)],
+    types: [$.Predicate (a), f (a), $.Maybe (a)],
     impl: find
   };
 
@@ -3414,7 +3358,7 @@
   //. ```
   _.foldMap = {
     consts: {b: [Z.Monoid], f: [Z.Foldable]},
-    types: [TypeRep (b), Fn (a) (b), f (a), b],
+    types: [TypeRep (b), $.Fn (a) (b), f (a), b],
     impl: curry3 (Z.foldMap)
   };
 
@@ -3445,7 +3389,7 @@
   }
   _.unfoldr = {
     consts: {},
-    types: [Fn (b) ($Maybe ($Pair (a) (b))), b, $.Array (a)],
+    types: [$.Fn (b) ($.Maybe ($.Pair (a) (b))), b, $.Array (a)],
     impl: unfoldr
   };
 
@@ -3513,7 +3457,7 @@
   }
   _.groupBy = {
     consts: {},
-    types: [Fn (a) ($.Predicate (a)), $.Array (a), $.Array ($.Array (a))],
+    types: [$.Fn (a) ($.Predicate (a)), $.Array (a), $.Array ($.Array (a))],
     impl: groupBy
   };
 
@@ -3605,7 +3549,7 @@
   //. ```
   _.sortBy = {
     consts: {b: [Z.Ord], m: [Z.Applicative, Z.Foldable, Z.Monoid]},
-    types: [Fn (a) (b), m (a), m (a)],
+    types: [$.Fn (a) (b), m (a), m (a)],
     impl: curry2 (Z.sortBy)
   };
 
@@ -3626,7 +3570,7 @@
   //. ```
   _.zip = {
     consts: {},
-    types: [$.Array (a), $.Array (b), $.Array ($Pair (a) (b))],
+    types: [$.Array (a), $.Array (b), $.Array ($.Pair (a) (b))],
     impl: zipWith (Pair)
   };
 
@@ -3659,7 +3603,7 @@
   }
   _.zipWith = {
     consts: {},
-    types: [Fn (a) (Fn (b) (c)), $.Array (a), $.Array (b), $.Array (c)],
+    types: [$.Fn (a) ($.Fn (b) (c)), $.Array (a), $.Array (b), $.Array (c)],
     impl: zipWith
   };
 
@@ -3750,7 +3694,7 @@
   }
   _.get = {
     consts: {},
-    types: [$.Predicate ($.Any), $.String, a, $Maybe (b)],
+    types: [$.Predicate ($.Any), $.String, a, $.Maybe (b)],
     impl: get
   };
 
@@ -3783,7 +3727,7 @@
   }
   _.gets = {
     consts: {},
-    types: [$.Predicate ($.Any), $.Array ($.String), a, $Maybe (b)],
+    types: [$.Predicate ($.Any), $.Array ($.String), a, $.Maybe (b)],
     impl: gets
   };
 
@@ -3823,7 +3767,7 @@
   }
   _.value = {
     consts: {},
-    types: [$.String, $.StrMap (a), $Maybe (a)],
+    types: [$.String, $.StrMap (a), $.Maybe (a)],
     impl: value
   };
 
@@ -3952,7 +3896,7 @@
   }
   _.pairs = {
     consts: {},
-    types: [$.StrMap (a), $.Array ($Pair ($.String) (a))],
+    types: [$.StrMap (a), $.Array ($.Pair ($.String) (a))],
     impl: pairs
   };
 
@@ -3977,7 +3921,7 @@
   }
   _.fromPairs = {
     consts: {f: [Z.Foldable]},
-    types: [f ($Pair ($.String) (a)), $.StrMap (a)],
+    types: [f ($.Pair ($.String) (a)), $.StrMap (a)],
     impl: fromPairs
   };
 
@@ -4179,7 +4123,7 @@
   }
   _.mean = {
     consts: {f: [Z.Foldable]},
-    types: [f ($.FiniteNumber), $Maybe ($.FiniteNumber)],
+    types: [f ($.FiniteNumber), $.Maybe ($.FiniteNumber)],
     impl: mean
   };
 
@@ -4255,7 +4199,7 @@
   }
   _.parseDate = {
     consts: {},
-    types: [$.String, $Maybe ($.ValidDate)],
+    types: [$.String, $.Maybe ($.ValidDate)],
     impl: parseDate
   };
 
@@ -4310,15 +4254,16 @@
   }
   _.parseFloat = {
     consts: {},
-    types: [$.String, $Maybe ($.Number)],
+    types: [$.String, $.Maybe ($.Number)],
     impl: parseFloat_
   };
 
   //  Radix :: Type
   var Radix = $.NullaryType
-    ('sanctuary/Radix')
+    ('Radix')
     ('')
-    (function(x) { return $.Integer._test (x) && x >= 2 && x <= 36; });
+    ([$.Integer])
+    (function(x) { return x >= 2 && x <= 36; });
 
   //# parseInt :: Radix -> String -> Maybe Integer
   //.
@@ -4349,14 +4294,14 @@
       var t = s.replace (/^[+-]/, '');
       if (pattern.test (radix === 16 ? t.replace (/^0x/i, '') : t)) {
         var n = parseInt (s, radix);
-        if ($.Integer._test (n)) return Just (n);
+        if ($.test ([]) ($.Integer) (n)) return Just (n);
       }
       return Nothing;
     };
   }
   _.parseInt = {
     consts: {},
-    types: [Radix, $.String, $Maybe ($.Integer)],
+    types: [Radix, $.String, $.Maybe ($.Integer)],
     impl: parseInt_
   };
 
@@ -4384,7 +4329,7 @@
   }
   _.parseJson = {
     consts: {},
-    types: [$.Predicate ($.Any), $.String, $Maybe (a)],
+    types: [$.Predicate ($.Any), $.String, $.Maybe (a)],
     impl: parseJson
   };
 
@@ -4393,7 +4338,7 @@
   //  Match :: Type
   var Match = $.RecordType ({
     match: $.String,
-    groups: $.Array ($Maybe ($.String))
+    groups: $.Array ($.Maybe ($.String))
   });
 
   //  toMatch :: Array String? -> Match
@@ -4504,7 +4449,7 @@
   }
   _.match = {
     consts: {},
-    types: [$.NonGlobalRegExp, $.String, $Maybe (Match)],
+    types: [$.NonGlobalRegExp, $.String, $.Maybe (Match)],
     impl: match
   };
 
@@ -4614,7 +4559,7 @@
   }
   _.stripPrefix = {
     consts: {},
-    types: [$.String, $.String, $Maybe ($.String)],
+    types: [$.String, $.String, $.Maybe ($.String)],
     impl: stripPrefix
   };
 
@@ -4641,7 +4586,7 @@
   }
   _.stripSuffix = {
     consts: {},
-    types: [$.String, $.String, $Maybe ($.String)],
+    types: [$.String, $.String, $.Maybe ($.String)],
     impl: stripSuffix
   };
 
@@ -4792,31 +4737,11 @@
   };
 
   return create ({
-    checkTypes: (
-      /* global process:false */
-      typeof process === 'undefined'
-      || process == null
-      || process.env == null
-      || process.env.NODE_ENV !== 'production'
-    ),
-    env: Z.concat ($.env, [
-      $.FiniteNumber,
-      $.NonZeroFiniteNumber,
-      $Either ($.Unknown) ($.Unknown),
-      Fn ($.Unknown) ($.Unknown),
-      $.GlobalRegExp,
-      $.NonGlobalRegExp,
-      $.Integer,
-      $.NonNegativeInteger,
-      $Maybe ($.Unknown),
-      $.Array2 ($.Unknown) ($.Unknown),
-      $Pair ($.Unknown) ($.Unknown),
-      $.RegexFlags,
-      $.Type,
-      $.TypeClass,
-      $.ValidDate,
-      $.ValidNumber
-    ])
+    checkTypes: typeof process === 'undefined'
+                || process == null
+                || process.env == null
+                || process.env.NODE_ENV !== 'production',
+    env: $.env
   });
 
 }));

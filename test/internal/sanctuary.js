@@ -9,20 +9,20 @@ const List = require ('./List');
 const Sum = require ('./Sum');
 
 
-//    UnaryType :: String -> Type
-const UnaryType = typeIdent =>
+//    UnaryType :: String -> String -> Type
+const UnaryType = name => typeIdent =>
   $.UnaryType (typeIdent)
               ('')
+              ([])
               (x => type (x) === typeIdent)
               (v => [v.value])
               ($.Unknown);
 
 //    env :: Array Type
 const env = S.env.concat ([
-  UnaryType ('sanctuary/Compose'),
-  UnaryType ('sanctuary-identity/Identity@1'),
+  UnaryType ('Compose') ('sanctuary/Compose'),
   List.Type ($.Unknown),
   Sum.Type,
 ]);
 
-module.exports = S.create ({checkTypes: true, env: env});
+module.exports = S.create ({checkTypes: true, env});

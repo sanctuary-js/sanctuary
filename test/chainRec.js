@@ -10,7 +10,7 @@ test ('chainRec', () => {
 
   eq (typeof S.chainRec) ('function');
   eq (S.chainRec.length) (1);
-  eq (S.show (S.chainRec)) ('chainRec :: ChainRec m => TypeRep m -> (a -> m (Either a b)) -> a -> m b');
+  eq (S.show (S.chainRec)) ('chainRec :: ChainRec m => TypeRep (m b) -> (a -> m (Either a b)) -> a -> m b');
 
   eq (S.chainRec (Array)
                  (s => s.length === 2 ? map (S.Right) ([s + '!', s + '?'])

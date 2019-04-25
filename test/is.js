@@ -26,17 +26,17 @@ test ('is', () => {
   eq (S.is ($.Array ($.Integer)) ([1, 2, 3])) (true);
   eq (S.is ($.Array ($.Integer)) ([])) (true);
 
-  eq (S.is (S.MaybeType ($.Integer)) (S.Nothing)) (true);
-  eq (S.is (S.MaybeType ($.Integer)) (S.Just (0))) (true);
-  eq (S.is (S.MaybeType ($.Integer)) (S.Left (0))) (false);
-  eq (S.is (S.MaybeType ($.Integer)) (S.Right (0))) (false);
+  eq (S.is ($.Maybe ($.Integer)) (S.Nothing)) (true);
+  eq (S.is ($.Maybe ($.Integer)) (S.Just (0))) (true);
+  eq (S.is ($.Maybe ($.Integer)) (S.Left (0))) (false);
+  eq (S.is ($.Maybe ($.Integer)) (S.Right (0))) (false);
 
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Nothing)) (false);
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Just (0))) (false);
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Left (0))) (false);
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Right (''))) (false);
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Left (''))) (true);
-  eq (S.is (S.EitherType ($.String) ($.Integer)) (S.Right (0))) (true);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Nothing)) (false);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Just (0))) (false);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Left (0))) (false);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Right (''))) (false);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Left (''))) (true);
+  eq (S.is ($.Either ($.String) ($.Integer)) (S.Right (0))) (true);
 
   const a = $.TypeVariable ('a');
 

@@ -53,6 +53,7 @@
     },
     {
       "files": ["index.js"],
+      "globals": {"process": false},
       "rules": {
         "multiline-comment-style": ["off"]
       }
