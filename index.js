@@ -2916,57 +2916,90 @@
     impl: init
   };
 
-  //# take :: Integer -> Array a -> Maybe (Array a)
+  //# take :: (Applicative f, Foldable f, Monoid (f a)) => Integer -> f a -> Maybe (f a)
   //.
-  //. Returns Just the first N elements of the given array if N is greater
-  //. than or equal to zero and less than or equal to the length of the array;
+  //. Returns Just the first N elements of the given structure if N is
+  //. non-negative and less than or equal to the size of the structure;
   //. Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.take (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['a', 'b'])
+  //. > S.take (0) (['foo', 'bar'])
+  //. Just ([])
   //.
-  //. > S.take (5) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['a', 'b', 'c', 'd', 'e'])
+  //. > S.take (1) (['foo', 'bar'])
+  //. Just (['foo'])
   //.
-  //. > S.take (6) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.take (2) (['foo', 'bar'])
+  //. Just (['foo', 'bar'])
+  //.
+  //. > S.take (3) (['foo', 'bar'])
   //. Nothing
+  //.
+  //. > S.take (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
+  //. Just (Cons (1) (Cons (2) (Cons (3) (Nil))))
   //. ```
-  function take(n) {
-    return function(xs) {
-      return n >= 0 && n <= xs.length ? Just (xs.slice (0, n)) : Nothing;
+  function _takeDrop(arrayCase, generalCase) {
+    return function(n) {
+      return function(xs) {
+        if (n < 0) return Nothing;
+
+        //  Fast path for arrays.
+        if (Array.isArray (xs)) {
+          return n <= xs.length ? Just (arrayCase (n, xs)) : Nothing;
+        }
+
+        //  m :: Maybe (Pair Integer (f a))
+        var m = Z.reduce (function(m, x) {
+          return Z.map (function(pair) {
+            var n = pair.fst;
+            var xs = pair.snd;
+            return Pair (n - 1) (generalCase (n, xs, x));
+          }, m);
+        }, Just (Pair (n) (Z.empty (xs.constructor))), xs);
+
+        return Z.map (Pair.snd, Z.reject (B (gt (0)) (Pair.fst), m));
+      };
     };
   }
+  var take = _takeDrop (
+    function(n, xs) { return xs.slice (0, n); },
+    function(n, xs, x) { return n > 0 ? Z.append (x, xs) : xs; }
+  );
   _.take = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [$.Integer, f (a), $.Maybe (f (a))],
     impl: take
   };
 
-  //# drop :: Integer -> Array a -> Maybe (Array a)
+  //# drop :: (Applicative f, Foldable f, Monoid (f a)) => Integer -> f a -> Maybe (f a)
   //.
-  //. Returns Just all but the first N elements of the given array if N is
-  //. greater than or equal to zero and less than or equal to the length of
-  //. the array; Nothing otherwise.
+  //. Returns Just all but the first N elements of the given structure if
+  //. N is non-negative and less than or equal to the size of the structure;
+  //. Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.drop (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['c', 'd', 'e'])
+  //. > S.drop (0) (['foo', 'bar'])
+  //. Just (['foo', 'bar'])
   //.
-  //. > S.drop (5) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.drop (1) (['foo', 'bar'])
+  //. Just (['bar'])
+  //.
+  //. > S.drop (2) (['foo', 'bar'])
   //. Just ([])
   //.
-  //. > S.drop (6) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.drop (3) (['foo', 'bar'])
   //. Nothing
+  //.
+  //. > S.drop (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
+  //. Just (Cons (4) (Cons (5) (Nil)))
   //. ```
-  function drop(n) {
-    return function(xs) {
-      return n >= 0 && n <= xs.length ? Just (xs.slice (n)) : Nothing;
-    };
-  }
+  var drop = _takeDrop (
+    function(n, xs) { return xs.slice (n); },
+    function(n, xs, x) { return n > 0 ? xs : Z.append (x, xs); }
+  );
   _.drop = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [$.Integer, f (a), $.Maybe (f (a))],
     impl: drop
   };
 
