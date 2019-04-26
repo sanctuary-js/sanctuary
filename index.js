@@ -1877,10 +1877,6 @@
   //.
   //. The implementation is provided by [sanctuary-pair][].
 
-  //# PairType :: Type -> Type -> Type
-  //.
-  //. A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
-
   //# Pair :: a -> b -> Pair a b
   //.
   //. Pair's sole data constructor. Additionally, it serves as the
@@ -1963,10 +1959,6 @@
   //. either Nothing (the empty value) or a Just whose value is of type `a`.
   //.
   //. The implementation is provided by [sanctuary-maybe][].
-
-  //# MaybeType :: Type -> Type
-  //.
-  //. A [`UnaryType`][UnaryType] for use with [sanctuary-def][].
 
   //# Maybe :: TypeRep Maybe
   //.
@@ -2245,10 +2237,6 @@
   //. value is of type `b`.
   //.
   //. The implementation is provided by [sanctuary-either][].
-
-  //# EitherType :: Type -> Type -> Type
-  //.
-  //. A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
 
   //# Either :: TypeRep Either
   //.
@@ -4749,7 +4737,6 @@
 //. [#438]:                     https://github.com/sanctuary-js/sanctuary/issues/438
 //. [#488]:                     https://github.com/sanctuary-js/sanctuary/issues/488
 //. [Apply]:                    v:fantasyland/fantasy-land#apply
-//. [BinaryType]:               v:sanctuary-js/sanctuary-def#BinaryType
 //. [Chain]:                    v:fantasyland/fantasy-land#chain
 //. [Either]:                   #either-type
 //. [Fantasy Land]:             v:fantasyland/fantasy-land
@@ -4764,7 +4751,6 @@
 //. [Ramda]:                    http://ramdajs.com/
 //. [RegexFlags]:               v:sanctuary-js/sanctuary-def#RegexFlags
 //. [Semigroupoid]:             v:fantasyland/fantasy-land#semigroupoid
-//. [UnaryType]:                v:sanctuary-js/sanctuary-def#UnaryType
 //. [ValidDate]:                v:sanctuary-js/sanctuary-def#ValidDate
 //. [`$.test`]:                 v:sanctuary-js/sanctuary-def#test
 //. [`Descending`]:             v:sanctuary-js/sanctuary-descending#Descending
