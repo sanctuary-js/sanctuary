@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('zip', () => {
 
-  eq (typeof S.zip) ('function');
-  eq (S.zip.length) (1);
   eq (S.show (S.zip)) ('zip :: Array a -> Array b -> Array (Pair a b)');
 
   eq (S.zip (['a', 'b']) (['x', 'y', 'z']))

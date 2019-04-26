@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('concat', () => {
 
-  eq (typeof S.concat) ('function');
-  eq (S.concat.length) (1);
   eq (S.show (S.concat)) ('concat :: Semigroup a => a -> a -> a');
 
   eq (S.concat ([]) ([])) ([]);

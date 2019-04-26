@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('justs', () => {
 
-  eq (typeof S.justs) ('function');
-  eq (S.justs.length) (1);
   eq (S.show (S.justs)) ('justs :: (Filterable f, Functor f) => f (Maybe a) -> f a');
 
   eq (S.justs ([])) ([]);

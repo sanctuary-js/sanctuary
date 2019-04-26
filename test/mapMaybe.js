@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('mapMaybe', () => {
 
-  eq (typeof S.mapMaybe) ('function');
-  eq (S.mapMaybe.length) (1);
   eq (S.show (S.mapMaybe)) ('mapMaybe :: (Filterable f, Functor f) => (a -> Maybe b) -> f a -> f b');
 
   eq (S.mapMaybe (S.head) ([])) ([]);

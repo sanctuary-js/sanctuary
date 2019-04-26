@@ -11,8 +11,6 @@ const eq = require ('./internal/eq');
 
 test ('get', () => {
 
-  eq (typeof S.get) ('function');
-  eq (S.get.length) (1);
   eq (S.show (S.get)) ('get :: (Any -> Boolean) -> String -> a -> Maybe b');
 
   eq (S.get (S.is ($.Number)) ('x') ({x: 0, y: 42})) (S.Just (0));

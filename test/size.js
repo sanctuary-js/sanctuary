@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('size', () => {
 
-  eq (typeof S.size) ('function');
-  eq (S.size.length) (1);
   eq (S.show (S.size)) ('size :: Foldable f => f a -> Integer');
 
   eq (S.size ([])) (0);

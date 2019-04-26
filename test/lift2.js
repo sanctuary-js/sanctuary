@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('lift2', () => {
 
-  eq (typeof S.lift2) ('function');
-  eq (S.lift2.length) (1);
   eq (S.show (S.lift2)) ('lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
 
   eq (S.lift2 (S.add) (S.Just (3)) (S.Just (3))) (S.Just (6));

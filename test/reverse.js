@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('reverse', () => {
 
-  eq (typeof S.reverse) ('function');
-  eq (S.reverse.length) (1);
   eq (S.show (S.reverse)) ('reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
 
   eq (S.reverse ([])) ([]);

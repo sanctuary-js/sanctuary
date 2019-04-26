@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('extend', () => {
 
-  eq (typeof S.extend) ('function');
-  eq (S.extend.length) (1);
   eq (S.show (S.extend)) ('extend :: Extend w => (w a -> b) -> w a -> w b');
 
   eq (S.extend (S.joinWith ('')) ([])) ([]);

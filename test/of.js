@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('of', () => {
 
-  eq (typeof S.of) ('function');
-  eq (S.of.length) (1);
   eq (S.show (S.of)) ('of :: Applicative f => TypeRep (f a) -> a -> f a');
 
   eq (S.of (Array) (42)) ([42]);

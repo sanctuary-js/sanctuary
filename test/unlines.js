@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('unlines', () => {
 
-  eq (typeof S.unlines) ('function');
-  eq (S.unlines.length) (1);
   eq (S.show (S.unlines)) ('unlines :: Array String -> String');
 
   eq (S.unlines ([])) ('');

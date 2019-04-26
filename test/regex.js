@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('regex', () => {
 
-  eq (typeof S.regex) ('function');
-  eq (S.regex.length) (1);
   eq (S.show (S.regex)) ('regex :: RegexFlags -> String -> RegExp');
 
   eq (S.regex ('') ('\\d')) (/\d/);

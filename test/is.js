@@ -10,8 +10,6 @@ const eq = require ('./internal/eq');
 
 test ('is', () => {
 
-  eq (typeof S.is) ('function');
-  eq (S.is.length) (1);
   eq (S.show (S.is)) ('is :: Type -> Any -> Boolean');
 
   eq (S.is ($.Boolean) (true)) (true);

@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('or', () => {
 
-  eq (typeof S.or) ('function');
-  eq (S.or.length) (1);
   eq (S.show (S.or)) ('or :: Boolean -> Boolean -> Boolean');
 
   eq (S.or (false) (false)) (false);

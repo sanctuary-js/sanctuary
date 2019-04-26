@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('unfoldr', () => {
 
-  eq (typeof S.unfoldr) ('function');
-  eq (S.unfoldr.length) (1);
   eq (S.show (S.unfoldr)) ('unfoldr :: (b -> Maybe (Pair a b)) -> b -> Array a');
 
   const f = n => n >= 5 ? S.Nothing : S.Just (S.Pair (n) (n + 1));

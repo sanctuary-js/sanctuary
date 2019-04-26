@@ -8,8 +8,6 @@ const map = require ('./internal/map');
 
 test ('chainRec', () => {
 
-  eq (typeof S.chainRec) ('function');
-  eq (S.chainRec.length) (1);
   eq (S.show (S.chainRec)) ('chainRec :: ChainRec m => TypeRep (m b) -> (a -> m (Either a b)) -> a -> m b');
 
   eq (S.chainRec (Array)

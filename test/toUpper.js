@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('toUpper', () => {
 
-  eq (typeof S.toUpper) ('function');
-  eq (S.toUpper.length) (1);
   eq (S.show (S.toUpper)) ('toUpper :: String -> String');
 
   eq (S.toUpper ('')) ('');

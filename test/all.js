@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('all', () => {
 
-  eq (typeof S.all) ('function');
-  eq (S.all.length) (1);
   eq (S.show (S.all)) ('all :: Foldable f => (a -> Boolean) -> f a -> Boolean');
 
   eq (S.all (S.gt (0)) ([])) (true);

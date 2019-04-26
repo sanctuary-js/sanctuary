@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('trim', () => {
 
-  eq (typeof S.trim) ('function');
-  eq (S.trim.length) (1);
   eq (S.show (S.trim)) ('trim :: String -> String');
 
   eq (S.trim ('')) ('');

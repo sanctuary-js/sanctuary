@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('clamp', () => {
 
-  eq (typeof S.clamp) ('function');
-  eq (S.clamp.length) (1);
   eq (S.show (S.clamp)) ('clamp :: Ord a => a -> a -> a -> a');
 
   eq (S.clamp (0) (100) (-1)) (0);

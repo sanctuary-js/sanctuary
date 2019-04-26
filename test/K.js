@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('K', () => {
 
-  eq (typeof S.K) ('function');
-  eq (S.K.length) (1);
   eq (S.show (S.K)) ('K :: a -> b -> a');
 
   eq (S.K (21) ([])) (21);

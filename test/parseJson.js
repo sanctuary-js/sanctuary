@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('parseJson', () => {
 
-  eq (typeof S.parseJson) ('function');
-  eq (S.parseJson.length) (1);
   eq (S.show (S.parseJson)) ('parseJson :: (Any -> Boolean) -> String -> Maybe a');
 
   eq (S.parseJson (S.is ($.Any)) ('[Invalid JSON]')) (S.Nothing);

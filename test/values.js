@@ -8,8 +8,6 @@ const strMap = require ('./internal/strMap');
 
 test ('values', () => {
 
-  eq (typeof S.values) ('function');
-  eq (S.values.length) (1);
   eq (S.show (S.values)) ('values :: StrMap a -> Array a');
 
   eq (S.sort (S.values ({}))) ([]);

@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('sequence', () => {
 
-  eq (typeof S.sequence) ('function');
-  eq (S.sequence.length) (1);
   eq (S.show (S.sequence)) ('sequence :: (Applicative f, Traversable t) => TypeRep (f a) -> t (f a) -> f (t a)');
 
   eq (S.sequence (Identity) ([])) (Identity ([]));

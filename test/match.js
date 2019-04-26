@@ -10,8 +10,6 @@ const equals = require ('./internal/equals');
 
 test ('match', () => {
 
-  eq (typeof S.match) ('function');
-  eq (S.match.length) (1);
   eq (S.show (S.match)) ('match :: NonGlobalRegExp -> String -> Maybe { groups :: Array (Maybe String), match :: String }');
 
   const scheme = '([a-z][a-z0-9+.-]*)';

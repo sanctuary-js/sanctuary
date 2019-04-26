@@ -9,8 +9,6 @@ const map = require ('./internal/map');
 
 test ('flip', () => {
 
-  eq (typeof S.flip) ('function');
-  eq (S.flip.length) (1);
   eq (S.show (S.flip)) ('flip :: Functor f => f (a -> b) -> a -> f b');
 
   eq (S.flip (S.concat) ('foo') ('bar')) ('barfoo');

@@ -8,8 +8,6 @@ const strMap = require ('./internal/strMap');
 
 test ('value', () => {
 
-  eq (typeof S.value) ('function');
-  eq (S.value.length) (1);
   eq (S.show (S.value)) ('value :: String -> StrMap a -> Maybe a');
 
   eq (S.value ('foo') ({foo: 1, bar: 2})) (S.Just (1));

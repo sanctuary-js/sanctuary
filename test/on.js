@@ -8,8 +8,6 @@ const rem = require ('./internal/rem');
 
 test ('on', () => {
 
-  eq (typeof S.on) ('function');
-  eq (S.on.length) (1);
   eq (S.show (S.on)) ('on :: (b -> b -> c) -> (a -> b) -> a -> a -> c');
 
   eq (S.on (rem) (S.prop ('x')) ({x: 5, y: 5}) ({x: 3, y: 3})) (2);

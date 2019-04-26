@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('zipWith', () => {
 
-  eq (typeof S.zipWith) ('function');
-  eq (S.zipWith.length) (1);
   eq (S.show (S.zipWith)) ('zipWith :: (a -> b -> c) -> Array a -> Array b -> Array c');
 
   eq (S.zipWith (x => y => x + y) (['a', 'b']) (['x', 'y', 'z'])) (['ax', 'by']);

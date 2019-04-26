@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('equals', () => {
 
-  eq (typeof S.equals) ('function');
-  eq (S.equals.length) (1);
   eq (S.show (S.equals)) ('equals :: Setoid a => a -> a -> Boolean');
 
   eq (S.equals (S.Nothing) (S.Nothing)) (true);

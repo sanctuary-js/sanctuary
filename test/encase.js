@@ -10,8 +10,6 @@ const rem = require ('./internal/rem');
 
 test ('encase', () => {
 
-  eq (typeof S.encase) ('function');
-  eq (S.encase.length) (1);
   eq (S.show (S.encase)) ('encase :: (a -> b) -> a -> Either Error b');
 
   //    safeFactorial :: Number -> Maybe Number

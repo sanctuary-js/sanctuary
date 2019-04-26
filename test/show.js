@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('show', () => {
 
-  eq (typeof S.show) ('function');
-  eq (S.show.length) (1);
   eq (S.show (S.show)) ('show :: Any -> String');
 
   eq (S.show (null)) ('null');

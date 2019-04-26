@@ -10,8 +10,6 @@ const equals = require ('./internal/equals');
 
 test ('insert', () => {
 
-  eq (typeof S.insert) ('function');
-  eq (S.insert.length) (1);
   eq (S.show (S.insert)) ('insert :: String -> a -> StrMap a -> StrMap a');
 
   eq (S.insert ('a') (1) ({})) ({a: 1});

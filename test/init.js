@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('init', () => {
 
-  eq (typeof S.init) ('function');
-  eq (S.init.length) (1);
   eq (S.show (S.init)) ('init :: (Applicative f, Foldable f, Monoid f) => f a -> Maybe (f a)');
 
   eq (S.init ([])) (S.Nothing);

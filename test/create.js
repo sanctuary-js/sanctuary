@@ -22,8 +22,6 @@ const uncheckedCustomEnv  = S.create ({checkTypes: false, env: customEnv});
 
 test ('create', () => {
 
-  eq (typeof S.create) ('function');
-  eq (S.create.length) (1);
   eq (S.show (S.create)) ('create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
   const expected = S.sort (Object.keys (S));

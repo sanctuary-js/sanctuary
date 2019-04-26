@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('mean', () => {
 
-  eq (typeof S.mean) ('function');
-  eq (S.mean.length) (1);
   eq (S.show (S.mean)) ('mean :: Foldable f => f FiniteNumber -> Maybe FiniteNumber');
 
   eq (S.mean ([])) (S.Nothing);
