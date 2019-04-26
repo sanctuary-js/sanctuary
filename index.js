@@ -3003,59 +3003,69 @@
     impl: drop
   };
 
-  //# takeLast :: Integer -> Array a -> Maybe (Array a)
+  //# takeLast :: (Applicative f, Foldable f, Monoid (f a)) => Integer -> f a -> Maybe (f a)
   //.
-  //. Returns Just the last N elements of the given array if N is greater
-  //. than or equal to zero and less than or equal to the length of the array;
+  //. Returns Just the last N elements of the given structure if N is
+  //. non-negative and less than or equal to the size of the structure;
   //. Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.takeLast (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['d', 'e'])
+  //. > S.takeLast (0) (['foo', 'bar'])
+  //. Just ([])
   //.
-  //. > S.takeLast (5) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['a', 'b', 'c', 'd', 'e'])
+  //. > S.takeLast (1) (['foo', 'bar'])
+  //. Just (['bar'])
   //.
-  //. > S.takeLast (6) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.takeLast (2) (['foo', 'bar'])
+  //. Just (['foo', 'bar'])
+  //.
+  //. > S.takeLast (3) (['foo', 'bar'])
   //. Nothing
+  //.
+  //. > S.takeLast (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Nil)))))
+  //. Just (Cons (2) (Cons (3) (Cons (4) (Nil))))
   //. ```
   function takeLast(n) {
     return function(xs) {
-      return n >= 0 && n <= xs.length ? Just (xs.slice (xs.length - n))
-                                      : Nothing;
+      return Z.map (Z.reverse, take (n) (Z.reverse (xs)));
     };
   }
   _.takeLast = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [$.Integer, f (a), $.Maybe (f (a))],
     impl: takeLast
   };
 
-  //# dropLast :: Integer -> Array a -> Maybe (Array a)
+  //# dropLast :: (Applicative f, Foldable f, Monoid (f a)) => Integer -> f a -> Maybe (f a)
   //.
-  //. Returns Just all but the last N elements of the given array if N is
-  //. greater than or equal to zero and less than or equal to the length of
-  //. the array; Nothing otherwise.
+  //. Returns Just all but the last N elements of the given structure if
+  //. N is non-negative and less than or equal to the size of the structure;
+  //. Nothing otherwise.
   //.
   //. ```javascript
-  //. > S.dropLast (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['a', 'b', 'c'])
+  //. > S.dropLast (0) (['foo', 'bar'])
+  //. Just (['foo', 'bar'])
   //.
-  //. > S.dropLast (5) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.dropLast (1) (['foo', 'bar'])
+  //. Just (['foo'])
+  //.
+  //. > S.dropLast (2) (['foo', 'bar'])
   //. Just ([])
   //.
-  //. > S.dropLast (6) (['a', 'b', 'c', 'd', 'e'])
+  //. > S.dropLast (3) (['foo', 'bar'])
   //. Nothing
+  //.
+  //. > S.dropLast (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Nil)))))
+  //. Just (Cons (1) (Nil))
   //. ```
   function dropLast(n) {
     return function(xs) {
-      return n >= 0 && n <= xs.length ? Just (xs.slice (0, xs.length - n))
-                                      : Nothing;
+      return Z.map (Z.reverse, drop (n) (Z.reverse (xs)));
     };
   }
   _.dropLast = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
+    consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
+    types: [$.Integer, f (a), $.Maybe (f (a))],
     impl: dropLast
   };
 
