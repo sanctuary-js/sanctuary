@@ -2943,6 +2943,33 @@
     impl: take
   };
 
+  //# drop :: Integer -> Array a -> Maybe (Array a)
+  //.
+  //. Returns Just all but the first N elements of the given array if N is
+  //. greater than or equal to zero and less than or equal to the length of
+  //. the array; Nothing otherwise.
+  //.
+  //. ```javascript
+  //. > S.drop (2) (['a', 'b', 'c', 'd', 'e'])
+  //. Just (['c', 'd', 'e'])
+  //.
+  //. > S.drop (5) (['a', 'b', 'c', 'd', 'e'])
+  //. Just ([])
+  //.
+  //. > S.drop (6) (['a', 'b', 'c', 'd', 'e'])
+  //. Nothing
+  //. ```
+  function drop(n) {
+    return function(xs) {
+      return n >= 0 && n <= xs.length ? Just (xs.slice (n)) : Nothing;
+    };
+  }
+  _.drop = {
+    consts: {},
+    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
+    impl: drop
+  };
+
   //# takeLast :: Integer -> Array a -> Maybe (Array a)
   //.
   //. Returns Just the last N elements of the given array if N is greater
@@ -2971,60 +2998,6 @@
     impl: takeLast
   };
 
-  //# takeWhile :: (a -> Boolean) -> Array a -> Array a
-  //.
-  //. Discards the first element which does not satisfy the predicate,
-  //. and all subsequent elements.
-  //.
-  //. See also [`dropWhile`](#dropWhile).
-  //.
-  //. ```javascript
-  //. > S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. [3, 3, 3, 7]
-  //.
-  //. > S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
-  //. []
-  //. ```
-  function takeWhile(pred) {
-    return function(xs) {
-      var idx = 0;
-      while (idx < xs.length && pred (xs[idx])) idx += 1;
-      return xs.slice (0, idx);
-    };
-  }
-  _.takeWhile = {
-    consts: {},
-    types: [$.Predicate (a), $.Array (a), $.Array (a)],
-    impl: takeWhile
-  };
-
-  //# drop :: Integer -> Array a -> Maybe (Array a)
-  //.
-  //. Returns Just all but the first N elements of the given array if N is
-  //. greater than or equal to zero and less than or equal to the length of
-  //. the array; Nothing otherwise.
-  //.
-  //. ```javascript
-  //. > S.drop (2) (['a', 'b', 'c', 'd', 'e'])
-  //. Just (['c', 'd', 'e'])
-  //.
-  //. > S.drop (5) (['a', 'b', 'c', 'd', 'e'])
-  //. Just ([])
-  //.
-  //. > S.drop (6) (['a', 'b', 'c', 'd', 'e'])
-  //. Nothing
-  //. ```
-  function drop(n) {
-    return function(xs) {
-      return n >= 0 && n <= xs.length ? Just (xs.slice (n)) : Nothing;
-    };
-  }
-  _.drop = {
-    consts: {},
-    types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
-    impl: drop
-  };
-
   //# dropLast :: Integer -> Array a -> Maybe (Array a)
   //.
   //. Returns Just all but the last N elements of the given array if N is
@@ -3051,6 +3024,33 @@
     consts: {},
     types: [$.Integer, $.Array (a), $.Maybe ($.Array (a))],
     impl: dropLast
+  };
+
+  //# takeWhile :: (a -> Boolean) -> Array a -> Array a
+  //.
+  //. Discards the first element which does not satisfy the predicate,
+  //. and all subsequent elements.
+  //.
+  //. See also [`dropWhile`](#dropWhile).
+  //.
+  //. ```javascript
+  //. > S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. [3, 3, 3, 7]
+  //.
+  //. > S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
+  //. []
+  //. ```
+  function takeWhile(pred) {
+    return function(xs) {
+      var idx = 0;
+      while (idx < xs.length && pred (xs[idx])) idx += 1;
+      return xs.slice (0, idx);
+    };
+  }
+  _.takeWhile = {
+    consts: {},
+    types: [$.Predicate (a), $.Array (a), $.Array (a)],
+    impl: takeWhile
   };
 
   //# dropWhile :: (a -> Boolean) -> Array a -> Array a
