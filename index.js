@@ -242,10 +242,6 @@
 //.
 //. `Number -> Number` can thus be seen as shorthand for `(Number) -> Number`.
 //.
-//. The question mark (`?`) is used to represent types which include `null`
-//. and `undefined` as members. `String?`, for example, represents the type
-//. comprising `null`, `undefined`, and all strings.
-//.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
 //. but these can be simulated by providing a group of data constructors which
 //. return values with the same set of methods. A value of the Either type, for
@@ -645,7 +641,7 @@
   //. ```
   function type_(x) {
     var r = type.parse (type (x));
-    r.namespace = toMaybe (r.namespace);
+    r.namespace = Z.reject (equals (null), Just (r.namespace));
     return r;
   }
   _.type = {
@@ -721,10 +717,15 @@
   //. > S.equals (S.Just ([1, 2, 3])) (S.Just ([1, 2, 4]))
   //. false
   //. ```
+  function equals(x) {
+    return function(y) {
+      return Z.equals (x, y);
+    };
+  }
   _.equals = {
     consts: {a: [Z.Setoid]},
     types: [a, a, $.Boolean],
-    impl: curry2 (Z.equals)
+    impl: equals
   };
 
   //# lt :: Ord a => a -> a -> Boolean
@@ -1008,10 +1009,15 @@
   //. > S.reject (S.odd) (S.Just (1))
   //. Nothing
   //. ```
+  function reject(pred) {
+    return function(filterable) {
+      return Z.reject (pred, filterable);
+    };
+  }
   _.reject = {
     consts: {f: [Z.Filterable]},
     types: [$.Predicate (a), f (a), f (a)],
-    impl: curry2 (Z.reject)
+    impl: reject
   };
 
   //# map :: Functor f => (a -> b) -> f a -> f b
@@ -2091,27 +2097,6 @@
     impl: maybeToNullable
   };
 
-  //# toMaybe :: a? -> Maybe a
-  //.
-  //. Takes a value and returns Nothing if the value is `null` or `undefined`;
-  //. Just the value otherwise.
-  //.
-  //. ```javascript
-  //. > S.toMaybe (null)
-  //. Nothing
-  //.
-  //. > S.toMaybe (42)
-  //. Just (42)
-  //. ```
-  function toMaybe(x) {
-    return x == null ? Nothing : Just (x);
-  }
-  _.toMaybe = {
-    consts: {},
-    types: [a, $.Maybe (a)],
-    impl: toMaybe
-  };
-
   //# maybe :: b -> (a -> b) -> Maybe a -> b
   //.
   //. Takes a value of any type, a function, and a Maybe. If the Maybe is
@@ -2329,40 +2314,6 @@
     consts: {},
     types: [b, $.Either (a) (b), b],
     impl: fromEither
-  };
-
-  //# toEither :: a -> b? -> Either a b
-  //.
-  //. Converts an arbitrary value to an Either: a Left if the value is `null`
-  //. or `undefined`; a Right otherwise. The first argument specifies the
-  //. value of the Left in the "failure" case.
-  //.
-  //. ```javascript
-  //. > S.toEither ('XYZ') (null)
-  //. Left ('XYZ')
-  //.
-  //. > S.toEither ('XYZ') ('ABC')
-  //. Right ('ABC')
-  //.
-  //. > S.map (S.prop ('0'))
-  //. .       (S.toEither ('Invalid protocol')
-  //. .                   ('ftp://example.com/'.match (/^https?:/)))
-  //. Left ('Invalid protocol')
-  //.
-  //. > S.map (S.prop ('0'))
-  //. .       (S.toEither ('Invalid protocol')
-  //. .                   ('https://example.com/'.match (/^https?:/)))
-  //. Right ('https:')
-  //. ```
-  function toEither(x) {
-    return function(y) {
-      return y == null ? Left (x) : Right (y);
-    };
-  }
-  _.toEither = {
-    consts: {},
-    types: [a, b, $.Either (a) (b)],
-    impl: toEither
   };
 
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
@@ -4374,7 +4325,10 @@
 
   //  toMatch :: Array String? -> Match
   function toMatch(ss) {
-    return {match: ss[0], groups: Z.map (toMaybe, ss.slice (1))};
+    return {
+      match: ss[0],
+      groups: Z.map (B (reject (equals (undefined))) (Just), ss.slice (1))
+    };
   }
 
   //  withRegex :: (RegExp, () -> a) -> a
@@ -4475,7 +4429,8 @@
   //. ```
   function match(pattern) {
     return function(s) {
-      return Z.map (toMatch, toMaybe (s.match (pattern)));
+      return Z.map (toMatch,
+                    Z.reject (equals (null), Just (s.match (pattern))));
     };
   }
   _.match = {
@@ -4508,7 +4463,7 @@
         return unfoldr (function(_) {
           return Z.map (function(ss) {
             return Pair (toMatch (ss)) (null);
-          }, toMaybe (pattern.exec (s)));
+          }, Z.reject (equals (null), Just (pattern.exec (s))));
         }) ([]);
       });
     };
