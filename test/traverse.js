@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('traverse', () => {
 
-  eq (typeof S.traverse) ('function');
-  eq (S.traverse.length) (1);
   eq (S.show (S.traverse)) ('traverse :: (Applicative f, Traversable t) => TypeRep (f b) -> (a -> f b) -> t a -> f (t b)');
 
   eq (S.traverse (S.Maybe) (S.parseInt (16)) (['A', 'B', 'C'])) (S.Just ([10, 11, 12]));

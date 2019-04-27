@@ -10,8 +10,6 @@ const equals = require ('./internal/equals');
 
 test ('remove', () => {
 
-  eq (typeof S.remove) ('function');
-  eq (S.remove.length) (1);
   eq (S.show (S.remove)) ('remove :: String -> StrMap a -> StrMap a');
 
   eq (S.remove ('a') ({})) ({});

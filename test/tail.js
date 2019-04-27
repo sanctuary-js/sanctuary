@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('tail', () => {
 
-  eq (typeof S.tail) ('function');
-  eq (S.tail.length) (1);
   eq (S.show (S.tail)) ('tail :: (Applicative f, Foldable f, Monoid f) => f a -> Maybe (f a)');
 
   eq (S.tail ([])) (S.Nothing);

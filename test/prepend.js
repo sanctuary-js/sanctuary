@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('prepend', () => {
 
-  eq (typeof S.prepend) ('function');
-  eq (S.prepend.length) (1);
   eq (S.show (S.prepend)) ('prepend :: (Applicative f, Semigroup f) => a -> f a -> f a');
 
   eq (S.prepend (1) ([])) ([1]);

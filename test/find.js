@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('find', () => {
 
-  eq (typeof S.find) ('function');
-  eq (S.find.length) (1);
   eq (S.show (S.find)) ('find :: Foldable f => (a -> Boolean) -> f a -> Maybe a');
 
   eq (S.find (S.even) ([])) (S.Nothing);

@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('elem', () => {
 
-  eq (typeof S.elem) ('function');
-  eq (S.elem.length) (1);
   eq (S.show (S.elem)) ('elem :: (Setoid a, Foldable f) => a -> f a -> Boolean');
 
   eq (S.elem ('c') (['a', 'b', 'c'])) (true);

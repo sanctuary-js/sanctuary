@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('regexEscape', () => {
 
-  eq (typeof S.regexEscape) ('function');
-  eq (S.regexEscape.length) (1);
   eq (S.show (S.regexEscape)) ('regexEscape :: String -> String');
 
   eq (S.regexEscape ('-=*{XYZ}*=-')) ('\\-=\\*\\{XYZ\\}\\*=\\-');

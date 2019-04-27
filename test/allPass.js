@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('allPass', () => {
 
-  eq (typeof S.allPass) ('function');
-  eq (S.allPass.length) (1);
   eq (S.show (S.allPass)) ('allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean');
 
   eq (S.allPass ([]) ('abacus')) (true);

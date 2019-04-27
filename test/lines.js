@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('lines', () => {
 
-  eq (typeof S.lines) ('function');
-  eq (S.lines.length) (1);
   eq (S.show (S.lines)) ('lines :: String -> Array String');
 
   eq (S.lines ('')) ([]);

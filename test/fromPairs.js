@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('fromPairs', () => {
 
-  eq (typeof S.fromPairs) ('function');
-  eq (S.fromPairs.length) (1);
   eq (S.show (S.fromPairs)) ('fromPairs :: Foldable f => f (Pair String a) -> StrMap a');
 
   eq (S.fromPairs ([]))

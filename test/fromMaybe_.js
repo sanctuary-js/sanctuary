@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('fromMaybe_', () => {
 
-  eq (typeof S.fromMaybe_) ('function');
-  eq (S.fromMaybe_.length) (1);
   eq (S.show (S.fromMaybe_)) ('fromMaybe_ :: (() -> a) -> Maybe a -> a');
 
   eq (S.fromMaybe_ (() => 0) (S.Nothing)) (0);

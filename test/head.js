@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('head', () => {
 
-  eq (typeof S.head) ('function');
-  eq (S.head.length) (1);
   eq (S.show (S.head)) ('head :: Foldable f => f a -> Maybe a');
 
   eq (S.head ([])) (S.Nothing);

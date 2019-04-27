@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('sum', () => {
 
-  eq (typeof S.sum) ('function');
-  eq (S.sum.length) (1);
   eq (S.show (S.sum)) ('sum :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.sum ([])) (0);

@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('product', () => {
 
-  eq (typeof S.product) ('function');
-  eq (S.product.length) (1);
   eq (S.show (S.product)) ('product :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.product ([])) (1);

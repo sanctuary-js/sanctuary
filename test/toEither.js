@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('toEither', () => {
 
-  eq (typeof S.toEither) ('function');
-  eq (S.toEither.length) (1);
   eq (S.show (S.toEither)) ('toEither :: a -> b -> Either a b');
 
   eq (S.toEither ('a') (null)) (S.Left ('a'));

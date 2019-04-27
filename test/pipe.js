@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('pipe', () => {
 
-  eq (typeof S.pipe) ('function');
-  eq (S.pipe.length) (1);
   eq (S.show (S.pipe)) ('pipe :: Foldable f => f (Any -> Any) -> a -> b');
 
   eq (S.pipe ([]) ('99')) ('99');

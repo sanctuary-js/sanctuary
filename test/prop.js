@@ -8,8 +8,6 @@ const throws = require ('./internal/throws');
 
 test ('prop', () => {
 
-  eq (typeof S.prop) ('function');
-  eq (S.prop.length) (1);
   eq (S.show (S.prop)) ('prop :: String -> a -> b');
 
   throws (() => { S.prop ('xxx') ([1, 2, 3]); })

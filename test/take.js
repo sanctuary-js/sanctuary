@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('take', () => {
 
-  eq (typeof S.take) ('function');
-  eq (S.take.length) (1);
   eq (S.show (S.take)) ('take :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
 
   eq (S.take (0) ([1, 2, 3, 4, 5])) (S.Just ([]));

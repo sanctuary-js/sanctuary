@@ -8,8 +8,6 @@ const strMap = require ('./internal/strMap');
 
 test ('pairs', () => {
 
-  eq (typeof S.pairs) ('function');
-  eq (S.pairs.length) (1);
   eq (S.show (S.pairs)) ('pairs :: StrMap a -> Array (Pair String a)');
 
   eq (S.sort (S.pairs ({}))) ([]);

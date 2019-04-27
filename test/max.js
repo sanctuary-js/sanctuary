@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('max', () => {
 
-  eq (typeof S.max) ('function');
-  eq (S.max.length) (1);
   eq (S.show (S.max)) ('max :: Ord a => a -> a -> a');
 
   eq (S.max (10) (2)) (10);

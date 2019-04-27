@@ -8,8 +8,6 @@ const properties = require ('./properties');
 
 test ('I', () => {
 
-  eq (typeof S.I) ('function');
-  eq (S.I.length) (1);
   eq (S.show (S.I)) ('I :: a -> a');
 
   eq (S.I ([1, 2, 3])) ([1, 2, 3]);

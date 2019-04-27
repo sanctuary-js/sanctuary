@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('range', () => {
 
-  eq (typeof S.range) ('function');
-  eq (S.range.length) (1);
   eq (S.show (S.range)) ('range :: Integer -> Integer -> Array Integer');
 
   eq (S.range (0) (0)) ([]);

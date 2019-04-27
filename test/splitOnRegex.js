@@ -10,8 +10,6 @@ const equals = require ('./internal/equals');
 
 test ('splitOnRegex', () => {
 
-  eq (typeof S.splitOnRegex) ('function');
-  eq (S.splitOnRegex.length) (1);
   eq (S.show (S.splitOnRegex)) ('splitOnRegex :: GlobalRegExp -> String -> Array String');
 
   eq (S.splitOnRegex (/b/g) ('abc')) (['a', 'c']);

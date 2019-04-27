@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('stripPrefix', () => {
 
-  eq (typeof S.stripPrefix) ('function');
-  eq (S.stripPrefix.length) (1);
   eq (S.show (S.stripPrefix)) ('stripPrefix :: String -> String -> Maybe String');
 
   eq (S.stripPrefix ('') ('')) (S.Just (''));

@@ -9,8 +9,6 @@ const eq = require ('./internal/eq');
 
 test ('type', () => {
 
-  eq (typeof S.type) ('function');
-  eq (S.type.length) (1);
   eq (S.show (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
 
   // eslint-disable-next-line prefer-rest-params

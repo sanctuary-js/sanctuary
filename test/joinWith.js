@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('joinWith', () => {
 
-  eq (typeof S.joinWith) ('function');
-  eq (S.joinWith.length) (1);
   eq (S.show (S.joinWith)) ('joinWith :: String -> Array String -> String');
 
   eq (S.joinWith ('') (['a', 'b', 'c'])) ('abc');

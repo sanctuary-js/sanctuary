@@ -11,8 +11,6 @@ const eq = require ('./internal/eq');
 
 test ('gets', () => {
 
-  eq (typeof S.gets) ('function');
-  eq (S.gets.length) (1);
   eq (S.show (S.gets)) ('gets :: (Any -> Boolean) -> Array String -> a -> Maybe b');
 
   eq (S.gets (S.is ($.Number)) (['x']) ({x: {z: 0}, y: 42})) (S.Nothing);

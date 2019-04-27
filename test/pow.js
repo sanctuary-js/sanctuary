@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('pow', () => {
 
-  eq (typeof S.pow) ('function');
-  eq (S.pow.length) (1);
   eq (S.show (S.pow)) ('pow :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.pow (2) (8)) (64);

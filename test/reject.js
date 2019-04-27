@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('reject', () => {
 
-  eq (typeof S.reject) ('function');
-  eq (S.reject.length) (1);
   eq (S.show (S.reject)) ('reject :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq (S.reject (S.odd) ([])) ([]);

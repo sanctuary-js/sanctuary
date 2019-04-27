@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('pipeK', () => {
 
-  eq (typeof S.pipeK) ('function');
-  eq (S.pipeK.length) (1);
   eq (S.show (S.pipeK)) ('pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b');
 
   eq (S.pipeK ([]) (S.Just ([1, 2, 3]))) (S.Just ([1, 2, 3]));

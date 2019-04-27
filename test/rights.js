@@ -8,8 +8,6 @@ const eq = require ('./internal/eq');
 
 test ('rights', () => {
 
-  eq (typeof S.rights) ('function');
-  eq (S.rights.length) (1);
   eq (S.show (S.rights)) ('rights :: (Filterable f, Functor f) => f (Either a b) -> f b');
 
   eq (S.rights ([])) ([]);

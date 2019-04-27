@@ -11,8 +11,6 @@ const equals = require ('./internal/equals');
 
 test ('none', () => {
 
-  eq (typeof S.none) ('function');
-  eq (S.none.length) (1);
   eq (S.show (S.none)) ('none :: Foldable f => (a -> Boolean) -> f a -> Boolean');
 
   eq (S.none (S.gt (0)) ([])) (true);

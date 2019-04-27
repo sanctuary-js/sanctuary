@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('sort', () => {
 
-  eq (typeof S.sort) ('function');
-  eq (S.sort.length) (1);
   eq (S.show (S.sort)) ('sort :: (Ord a, Applicative m, Foldable m, Monoid m) => m a -> m a');
 
   eq (S.sort ([])) ([]);

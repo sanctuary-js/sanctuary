@@ -7,8 +7,6 @@ const eq = require ('./internal/eq');
 
 test ('chain', () => {
 
-  eq (typeof S.chain) ('function');
-  eq (S.chain.length) (1);
   eq (S.show (S.chain)) ('chain :: Chain m => (a -> m b) -> m a -> m b');
 
   eq (S.chain (S.I) ([[1, 2], [3, 4], [5, 6]])) ([1, 2, 3, 4, 5, 6]);
