@@ -26,7 +26,7 @@
     "fantasy-land": "4.0.1",
     "jsverify": "0.8.x",
     "sanctuary-descending": "1.2.0",
-    "sanctuary-identity": "1.1.x",
+    "sanctuary-identity": "1.2.x",
     "sanctuary-scripts": "3.2.x"
   },
   "files": [
