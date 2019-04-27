@@ -14,7 +14,7 @@ also a pleasure to write.
 
 Sanctuary provides two data types, [Maybe][] and [Either][], both of
 which are compatible with [Fantasy Land][]. Thanks to these data types
-even Sanctuary functions which may fail, such as [`head`](#head), are
+even Sanctuary functions that may fail, such as [`head`](#head), are
 composable.
 
 Sanctuary makes it possible to write safe code without null checks.
@@ -43,7 +43,7 @@ model. Programming with Folktale resembles programming with Scala.
 
 ## Ramda
 
-[Ramda][] provides several functions which return problematic values
+[Ramda][] provides several functions that return problematic values
 such as `undefined`, `Infinity`, or `NaN` when applied to unsuitable
 inputs. These are known as [partial functions][]. Partial functions
 necessitate the use of guards or null checks. In order to safely use
@@ -66,7 +66,7 @@ Sanctuary's philosophy has diverged from Ramda's in several respects.
 
 ### Totality
 
-Every Sanctuary function is defined for every value which is a member of
+Every Sanctuary function is defined for every value that is a member of
 the function's input type. Such functions are known as [total functions][].
 Ramda, on the other hand, contains a number of [partial functions][].
 
@@ -129,7 +129,7 @@ The lack of breathing room in `f(x)(y)(z)` impairs readability. The simple
 solution to this problem, proposed in [#438][], is to include a space when
 applying a function: `f (x) (y) (z)`.
 
-Ramda also provides a special placeholder value, [`R.__`][], which removes
+Ramda also provides a special placeholder value, [`R.__`][], that removes
 the restriction that a function must be applied to its arguments in order.
 The following expressions are equivalent:
 
@@ -142,16 +142,16 @@ The following expressions are equivalent:
 
 ### Variadic functions
 
-Ramda provides several functions which take any number of arguments. These
+Ramda provides several functions that take any number of arguments. These
 are known as [variadic functions][]. Additionally, Ramda provides several
-functions which take variadic functions as arguments. Although natural in
+functions that take variadic functions as arguments. Although natural in
 a dynamically typed language, variadic functions are at odds with the type
 notation Ramda and Sanctuary both use, leading to some indecipherable type
 signatures such as this one:
 
     R.lift :: (*... -> *...) -> ([*]... -> [*])
 
-Sanctuary has no variadic functions, nor any functions which take variadic
+Sanctuary has no variadic functions, nor any functions that take variadic
 functions as arguments. Sanctuary provides two "lift" functions, each with
 a helpful type signature:
 
@@ -197,7 +197,7 @@ The arrow (`->`) is used to express a function's type:
 
     Math.abs :: Number -> Number
 
-That states that `Math.abs` is a unary function which takes an argument
+That states that `Math.abs` is a unary function that takes an argument
 of type `Number` and returns a value of type `Number`.
 
 Some functions are parametrically polymorphic: their types are not fixed.
@@ -218,7 +218,7 @@ The same applies for each other type variable. For the function above, the
 types with which `a` and `b` are replaced may be different, but needn't be.
 
 Since all Sanctuary functions are curried (they accept their arguments
-one at a time), a binary function is represented as a unary function which
+one at a time), a binary function is represented as a unary function that
 returns a unary function: `* -> * -> *`. This aligns neatly with Haskell,
 which uses curried functions exclusively. In JavaScript, though, we may
 wish to represent the types of functions with arities less than or greater
@@ -232,12 +232,8 @@ than one. The general form is `(<input-types>) -> <output-type>`, where
 
 `Number -> Number` can thus be seen as shorthand for `(Number) -> Number`.
 
-The question mark (`?`) is used to represent types which include `null`
-and `undefined` as members. `String?`, for example, represents the type
-comprising `null`, `undefined`, and all strings.
-
 Sanctuary embraces types. JavaScript doesn't support algebraic data types,
-but these can be simulated by providing a group of data constructors which
+but these can be simulated by providing a group of data constructors that
 return values with the same set of methods. A value of the Either type, for
 example, is created via the Left constructor or the Right constructor.
 
@@ -260,7 +256,7 @@ of type `Maybe a`.
 
 Sanctuary supports type classes: constraints on type variables. Whereas
 `a -> a` implicitly supports every type, `Functor f => (a -> b) -> f a ->
-f b` requires that `f` be a type which satisfies the requirements of the
+f b` requires that `f` be a type that satisfies the requirements of the
 Functor type class. Type-class constraints appear at the beginning of a
 type signature, separated from the rest of the signature by a fat arrow
 (`=>`).
@@ -284,7 +280,7 @@ S.add (2) (true);
 //
 //   The value at position 1 is not a member of ‘FiniteNumber’.
 //
-//   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#FiniteNumber for information about the sanctuary-def/FiniteNumber type.
+//   See https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0#FiniteNumber for information about the FiniteNumber type.
 ```
 
 Compare this to the behaviour of Ramda's unchecked equivalent:
@@ -306,7 +302,7 @@ const S = sanctuary.create ({
 });
 ```
 
-Occasionally one may wish to perform an operation which is not type safe,
+Occasionally one may wish to perform an operation that is not type safe,
 such as mapping over an object with heterogeneous values. This is possible
 via selective use of [`unchecked`](#unchecked) functions.
 
@@ -343,7 +339,7 @@ const $ = window.sanctuaryDef;
 
 ### Configure
 
-#### <a name="create" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L550">`create :: { checkTypes :: Boolean, env :: Array Type } -⁠> Module`</a>
+#### <a name="create" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L501">`create :: { checkTypes :: Boolean, env :: Array Type } -⁠> Module`</a>
 
 Takes an options record and returns a Sanctuary module. `checkTypes`
 specifies whether to enable type checking. The module's polymorphic
@@ -356,7 +352,7 @@ is enabled, a badly typed application will produce an exception with a
 descriptive error message.
 
 The following snippet demonstrates defining a custom type and using
-`create` to produce a Sanctuary module which is aware of that type:
+`create` to produce a Sanctuary module that is aware of that type:
 
 ```javascript
 const {create, env} = require ('sanctuary');
@@ -380,8 +376,9 @@ const Identity$prototype = {
 
 //    IdentityType :: Type -> Type
 const IdentityType = $.UnaryType
-  (Identity['@@type'])
+  ('Identity')
   ('http://example.com/my-package#Identity')
+  ([])
   (x => type (x) === Identity['@@type'])
   (identity => [identity.value]);
 
@@ -396,7 +393,7 @@ S.map (S.sub (1)) (Identity (43));
 
 See also [`env`](#env).
 
-#### <a name="env" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L627">`env :: Array Type`</a>
+#### <a name="env" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L576">`env :: Array Type`</a>
 
 The Sanctuary module's environment (`(S.create ({checkTypes, env})).env`
 is a reference to `env`). Useful in conjunction with [`create`](#create).
@@ -406,40 +403,33 @@ is a reference to `env`). Useful in conjunction with [`create`](#create).
 [ $.AnyFunction,
 . $.Arguments,
 . $.Array ($.Unknown),
+. $.Array2 ($.Unknown) ($.Unknown),
 . $.Boolean,
 . $.Date,
+. $.Descending ($.Unknown),
+. $.Either ($.Unknown) ($.Unknown),
 . $.Error,
+. $.Fn ($.Unknown) ($.Unknown),
 . $.HtmlElement,
+. $.Identity ($.Unknown),
+. $.Maybe ($.Unknown),
 . $.Null,
 . $.Number,
 . $.Object,
+. $.Pair ($.Unknown) ($.Unknown),
 . $.RegExp,
 . $.StrMap ($.Unknown),
 . $.String,
 . $.Symbol,
-. $.Undefined,
-. $.FiniteNumber,
-. $.NonZeroFiniteNumber,
-. S.EitherType ($.Unknown) ($.Unknown),
-. $.Function ([$.Unknown, $.Unknown]),
-. $.GlobalRegExp,
-. $.NonGlobalRegExp,
-. $.Integer,
-. $.NonNegativeInteger,
-. S.MaybeType ($.Unknown),
-. $.Array2 ($.Unknown) ($.Unknown),
-. S.PairType ($.Unknown) ($.Unknown),
-. $.RegexFlags,
 . $.Type,
 . $.TypeClass,
-. $.ValidDate,
-. $.ValidNumber ]
+. $.Undefined ]
 ```
 
-#### <a name="unchecked" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L667">`unchecked :: Module`</a>
+#### <a name="unchecked" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L609">`unchecked :: Module`</a>
 
-A complete Sanctuary module which performs no type checking. This is
-useful as it permits operations which Sanctuary's type checking would
+A complete Sanctuary module that performs no type checking. This is
+useful as it permits operations that Sanctuary's type checking would
 disallow, such as mapping over an object with heterogeneous values.
 
 See also [`create`](#create).
@@ -458,7 +448,7 @@ Opting out of type checking may cause type errors to go unnoticed.
 
 ### Classify
 
-#### <a name="type" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L689">`type :: Any -⁠> { namespace :: Maybe String, name :: String, version :: NonNegativeInteger }`</a>
+#### <a name="type" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L631">`type :: Any -⁠> { namespace :: Maybe String, name :: String, version :: NonNegativeInteger }`</a>
 
 Returns the result of parsing the [type identifier][] of the given value.
 
@@ -470,7 +460,7 @@ Returns the result of parsing the [type identifier][] of the given value.
 {namespace: Nothing, name: 'Array', version: 0}
 ```
 
-#### <a name="is" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L714">`is :: Type -⁠> Any -⁠> Boolean`</a>
+#### <a name="is" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L656">`is :: Type -⁠> Any -⁠> Boolean`</a>
 
 Returns `true` [iff][] the given value is a member of the specified type.
 See [`$.test`][] for details.
@@ -485,7 +475,7 @@ false
 
 ### Showable
 
-#### <a name="show" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L729">`show :: Any -⁠> String`</a>
+#### <a name="show" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L671">`show :: Any -⁠> String`</a>
 
 Alias of [`show`][].
 
@@ -507,9 +497,9 @@ Alias of [`show`][].
 
 Sanctuary is compatible with the [Fantasy Land][] specification.
 
-#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L756">`equals :: Setoid a => a -⁠> a -⁠> Boolean`</a>
+#### <a name="equals" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L698">`equals :: Setoid a => a -⁠> a -⁠> Boolean`</a>
 
-Curried version of [`Z.equals`][] which requires two arguments of the
+Curried version of [`Z.equals`][] that requires two arguments of the
 same type.
 
 To compare values of different types first use [`create`](#create) to
@@ -530,7 +520,7 @@ true
 false
 ```
 
-#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L784">`lt :: Ord a => a -⁠> a -⁠> Boolean`</a>
+#### <a name="lt" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L731">`lt :: Ord a => a -⁠> a -⁠> Boolean`</a>
 
 Returns `true` [iff][] the *second* argument is less than the first
 according to [`Z.lt`][].
@@ -540,7 +530,7 @@ according to [`Z.lt`][].
 [1, 2]
 ```
 
-#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L804">`lte :: Ord a => a -⁠> a -⁠> Boolean`</a>
+#### <a name="lte" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L751">`lte :: Ord a => a -⁠> a -⁠> Boolean`</a>
 
 Returns `true` [iff][] the *second* argument is less than or equal to
 the first according to [`Z.lte`][].
@@ -550,7 +540,7 @@ the first according to [`Z.lte`][].
 [1, 2, 3]
 ```
 
-#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L824">`gt :: Ord a => a -⁠> a -⁠> Boolean`</a>
+#### <a name="gt" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L771">`gt :: Ord a => a -⁠> a -⁠> Boolean`</a>
 
 Returns `true` [iff][] the *second* argument is greater than the first
 according to [`Z.gt`][].
@@ -560,7 +550,7 @@ according to [`Z.gt`][].
 [4, 5]
 ```
 
-#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L844">`gte :: Ord a => a -⁠> a -⁠> Boolean`</a>
+#### <a name="gte" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L791">`gte :: Ord a => a -⁠> a -⁠> Boolean`</a>
 
 Returns `true` [iff][] the *second* argument is greater than or equal
 to the first according to [`Z.gte`][].
@@ -570,7 +560,7 @@ to the first according to [`Z.gte`][].
 [3, 4, 5]
 ```
 
-#### <a name="min" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L864">`min :: Ord a => a -⁠> a -⁠> a`</a>
+#### <a name="min" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L811">`min :: Ord a => a -⁠> a -⁠> a`</a>
 
 Returns the smaller of its two arguments (according to [`Z.lte`][]).
 
@@ -587,7 +577,7 @@ new Date ('1999-12-31')
 '10'
 ```
 
-#### <a name="max" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L886">`max :: Ord a => a -⁠> a -⁠> a`</a>
+#### <a name="max" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L833">`max :: Ord a => a -⁠> a -⁠> a`</a>
 
 Returns the larger of its two arguments (according to [`Z.lte`][]).
 
@@ -604,7 +594,7 @@ new Date ('2000-01-01')
 '2'
 ```
 
-#### <a name="clamp" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L908">`clamp :: Ord a => a -⁠> a -⁠> a -⁠> a`</a>
+#### <a name="clamp" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L855">`clamp :: Ord a => a -⁠> a -⁠> a -⁠> a`</a>
 
 Takes a lower bound, an upper bound, and a value of the same type.
 Returns the value if it is within the bounds; the nearer bound otherwise.
@@ -622,7 +612,7 @@ See also [`min`](#min) and [`max`](#max).
 'Z'
 ```
 
-#### <a name="id" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L931">`id :: Category c => TypeRep c -⁠> c`</a>
+#### <a name="id" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L878">`id :: Category c => TypeRep c -⁠> c`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.id`][].
 
@@ -631,7 +621,7 @@ See also [`min`](#min) and [`max`](#max).
 42
 ```
 
-#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L945">`concat :: Semigroup a => a -⁠> a -⁠> a`</a>
+#### <a name="concat" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L892">`concat :: Semigroup a => a -⁠> a -⁠> a`</a>
 
 Curried version of [`Z.concat`][].
 
@@ -652,7 +642,7 @@ Just ([1, 2, 3, 4, 5, 6])
 Sum (42)
 ```
 
-#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L971">`empty :: Monoid a => TypeRep a -⁠> a`</a>
+#### <a name="empty" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L918">`empty :: Monoid a => TypeRep a -⁠> a`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.empty`][].
 
@@ -670,7 +660,7 @@ Sum (42)
 Sum (0)
 ```
 
-#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L994">`invert :: Group g => g -⁠> g`</a>
+#### <a name="invert" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L941">`invert :: Group g => g -⁠> g`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.invert`][].
 
@@ -679,9 +669,9 @@ Sum (0)
 Sum (-5)
 ```
 
-#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1008">`filter :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
+#### <a name="filter" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L955">`filter :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
 
-Curried version of [`Z.filter`][]. Discards every element which does not
+Curried version of [`Z.filter`][]. Discards every element that does not
 satisfy the predicate.
 
 See also [`reject`](#reject).
@@ -703,9 +693,9 @@ Nothing
 Just (1)
 ```
 
-#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1042">`reject :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
+#### <a name="reject" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L989">`reject :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
 
-Curried version of [`Z.reject`][]. Discards every element which satisfies
+Curried version of [`Z.reject`][]. Discards every element that satisfies
 the predicate.
 
 See also [`filter`](#filter).
@@ -727,37 +717,7 @@ Just (0)
 Nothing
 ```
 
-#### <a name="takeWhile" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1071">`takeWhile :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
-
-Curried version of [`Z.takeWhile`][]. Discards the first element which
-does not satisfy the predicate, and all subsequent elements.
-
-See also [`dropWhile`](#dropWhile).
-
-```javascript
-> S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
-[3, 3, 3, 7]
-
-> S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
-[]
-```
-
-#### <a name="dropWhile" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1091">`dropWhile :: Filterable f => (a -⁠> Boolean) -⁠> f a -⁠> f a`</a>
-
-Curried version of [`Z.dropWhile`][]. Retains the first element which
-does not satisfy the predicate, and all subsequent elements.
-
-See also [`takeWhile`](#takeWhile).
-
-```javascript
-> S.dropWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
-[6, 3, 5, 4]
-
-> S.dropWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
-[3, 3, 3, 7, 6, 3, 5, 4]
-```
-
-#### <a name="map" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1111">`map :: Functor f => (a -⁠> b) -⁠> f a -⁠> f b`</a>
+#### <a name="map" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1023">`map :: Functor f => (a -⁠> b) -⁠> f a -⁠> f b`</a>
 
 Curried version of [`Z.map`][].
 
@@ -793,7 +753,7 @@ from combinatory logic (i.e. [`compose`](#compose)):
 10
 ```
 
-#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1157">`flip :: Functor f => f (a -⁠> b) -⁠> a -⁠> f b`</a>
+#### <a name="flip" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1069">`flip :: Functor f => f (a -⁠> b) -⁠> a -⁠> f b`</a>
 
 Curried version of [`Z.flip`][]. Maps over the given functions, applying
 each to the given value.
@@ -822,7 +782,7 @@ from combinatory logic:
 Cons (1) (Cons (2) (Nil))
 ```
 
-#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1191">`bimap :: Bifunctor f => (a -⁠> b) -⁠> (c -⁠> d) -⁠> f a c -⁠> f b d`</a>
+#### <a name="bimap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1103">`bimap :: Bifunctor f => (a -⁠> b) -⁠> (c -⁠> d) -⁠> f a c -⁠> f b d`</a>
 
 Curried version of [`Z.bimap`][].
 
@@ -837,7 +797,7 @@ Left ('FOO')
 Right (8)
 ```
 
-#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1211">`mapLeft :: Bifunctor f => (a -⁠> b) -⁠> f a c -⁠> f b c`</a>
+#### <a name="mapLeft" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1123">`mapLeft :: Bifunctor f => (a -⁠> b) -⁠> f a c -⁠> f b c`</a>
 
 Curried version of [`Z.mapLeft`][]. Maps the given function over the left
 side of a Bifunctor.
@@ -853,7 +813,7 @@ Left ('FOO')
 Right (64)
 ```
 
-#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1232">`promap :: Profunctor p => (a -⁠> b) -⁠> (c -⁠> d) -⁠> p b c -⁠> p a d`</a>
+#### <a name="promap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1144">`promap :: Profunctor p => (a -⁠> b) -⁠> (c -⁠> d) -⁠> p b c -⁠> p a d`</a>
 
 Curried version of [`Z.promap`][].
 
@@ -862,25 +822,26 @@ Curried version of [`Z.promap`][].
 11
 ```
 
-#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1246">`alt :: Alt f => f a -⁠> f a -⁠> f a`</a>
+#### <a name="alt" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1158">`alt :: Alt f => f a -⁠> f a -⁠> f a`</a>
 
-Curried version of [`Z.alt`][].
+Curried version of [`Z.alt`][] with arguments flipped to facilitate
+partial application.
 
 ```javascript
-> S.alt (S.Nothing) (S.Just (1))
-Just (1)
+> S.alt (S.Just ('default')) (S.Nothing)
+Just ('default')
 
-> S.alt (S.Just (2)) (S.Just (3))
-Just (2)
+> S.alt (S.Just ('default')) (S.Just ('hello'))
+Just ('hello')
 
-> S.alt (S.Left ('X')) (S.Right (1))
+> S.alt (S.Right (0)) (S.Left ('X'))
+Right (0)
+
+> S.alt (S.Right (0)) (S.Right (1))
 Right (1)
-
-> S.alt (S.Right (2)) (S.Right (3))
-Right (2)
 ```
 
-#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1269">`zero :: Plus f => TypeRep f -⁠> f a`</a>
+#### <a name="zero" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1187">`zero :: Plus f => TypeRep f -⁠> f a`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.zero`][].
 
@@ -895,7 +856,7 @@ Right (2)
 Nothing
 ```
 
-#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1289">`reduce :: Foldable f => (b -⁠> a -⁠> b) -⁠> b -⁠> f a -⁠> b`</a>
+#### <a name="reduce" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1207">`reduce :: Foldable f => (b -⁠> a -⁠> b) -⁠> b -⁠> f a -⁠> b`</a>
 
 Takes a curried binary function, an initial value, and a [Foldable][],
 and applies the function to the initial value and the Foldable's first
@@ -913,7 +874,7 @@ otherwise.
 [5, 4, 3, 2, 1]
 ```
 
-#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1321">`traverse :: (Applicative f, Traversable t) => TypeRep f -⁠> (a -⁠> f b) -⁠> t a -⁠> f (t b)`</a>
+#### <a name="traverse" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1239">`traverse :: (Applicative f, Traversable t) => TypeRep f -⁠> (a -⁠> f b) -⁠> t a -⁠> f (t b)`</a>
 
 Curried version of [`Z.traverse`][].
 
@@ -937,7 +898,7 @@ Just ({a: 10, b: 11, c: 12})
 Nothing
 ```
 
-#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1350">`sequence :: (Applicative f, Traversable t) => TypeRep f -⁠> t (f a) -⁠> f (t a)`</a>
+#### <a name="sequence" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1268">`sequence :: (Applicative f, Traversable t) => TypeRep f -⁠> t (f a) -⁠> f (t a)`</a>
 
 Curried version of [`Z.sequence`][]. Inverts the given `t (f a)`
 to produce an `f (t a)`.
@@ -959,7 +920,7 @@ Just ({a: 1, b: 2, c: 3})
 Nothing
 ```
 
-#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1377">`ap :: Apply f => f (a -⁠> b) -⁠> f a -⁠> f b`</a>
+#### <a name="ap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1295">`ap :: Apply f => f (a -⁠> b) -⁠> f a -⁠> f b`</a>
 
 Curried version of [`Z.ap`][].
 
@@ -989,9 +950,9 @@ from combinatory logic:
 'Hask'
 ```
 
-#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1412">`lift2 :: Apply f => (a -⁠> b -⁠> c) -⁠> f a -⁠> f b -⁠> f c`</a>
+#### <a name="lift2" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1330">`lift2 :: Apply f => (a -⁠> b -⁠> c) -⁠> f a -⁠> f b -⁠> f c`</a>
 
-Promotes a curried binary function to a function which operates on two
+Promotes a curried binary function to a function that operates on two
 [Apply][]s.
 
 ```javascript
@@ -1008,9 +969,9 @@ Just (true)
 Just (false)
 ```
 
-#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1436">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d) -⁠> f a -⁠> f b -⁠> f c -⁠> f d`</a>
+#### <a name="lift3" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1354">`lift3 :: Apply f => (a -⁠> b -⁠> c -⁠> d) -⁠> f a -⁠> f b -⁠> f c -⁠> f d`</a>
 
-Promotes a curried ternary function to a function which operates on three
+Promotes a curried ternary function to a function that operates on three
 [Apply][]s.
 
 ```javascript
@@ -1021,7 +982,7 @@ Just (6)
 Nothing
 ```
 
-#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1454">`apFirst :: Apply f => f a -⁠> f b -⁠> f a`</a>
+#### <a name="apFirst" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1372">`apFirst :: Apply f => f a -⁠> f b -⁠> f a`</a>
 
 Curried version of [`Z.apFirst`][]. Combines two effectful actions,
 keeping only the result of the first. Equivalent to Haskell's `(<*)`
@@ -1037,7 +998,7 @@ See also [`apSecond`](#apSecond).
 Just (1)
 ```
 
-#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1475">`apSecond :: Apply f => f a -⁠> f b -⁠> f b`</a>
+#### <a name="apSecond" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1393">`apSecond :: Apply f => f a -⁠> f b -⁠> f b`</a>
 
 Curried version of [`Z.apSecond`][]. Combines two effectful actions,
 keeping only the result of the second. Equivalent to Haskell's `(*>)`
@@ -1053,7 +1014,7 @@ See also [`apFirst`](#apFirst).
 Just (2)
 ```
 
-#### <a name="of" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1496">`of :: Applicative f => TypeRep f -⁠> a -⁠> f a`</a>
+#### <a name="of" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1414">`of :: Applicative f => TypeRep f -⁠> a -⁠> f a`</a>
 
 Curried version of [`Z.of`][].
 
@@ -1071,7 +1032,7 @@ Just (42)
 Right (42)
 ```
 
-#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1524">`chain :: Chain m => (a -⁠> m b) -⁠> m a -⁠> m b`</a>
+#### <a name="chain" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1442">`chain :: Chain m => (a -⁠> m b) -⁠> m a -⁠> m b`</a>
 
 Curried version of [`Z.chain`][].
 
@@ -1089,7 +1050,7 @@ Just (123)
 Nothing
 ```
 
-#### <a name="join" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1547">`join :: Chain m => m (m a) -⁠> m a`</a>
+#### <a name="join" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1465">`join :: Chain m => m (m a) -⁠> m a`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.join`][].
 Removes one level of nesting from a nested monadic structure.
@@ -1120,7 +1081,7 @@ from combinatory logic:
 'abcabc'
 ```
 
-#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1583">`chainRec :: ChainRec m => TypeRep m -⁠> (a -⁠> m (Either a b)) -⁠> a -⁠> m b`</a>
+#### <a name="chainRec" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1501">`chainRec :: ChainRec m => TypeRep m -⁠> (a -⁠> m (Either a b)) -⁠> a -⁠> m b`</a>
 
 Performs a [`chain`](#chain)-like computation with constant stack usage.
 Similar to [`Z.chainRec`][], but curried and more convenient due to the
@@ -1134,7 +1095,7 @@ use of the Either type to indicate completion (via a Right).
 ['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']
 ```
 
-#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1615">`extend :: Extend w => (w a -⁠> b) -⁠> w a -⁠> w b`</a>
+#### <a name="extend" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1530">`extend :: Extend w => (w a -⁠> b) -⁠> w a -⁠> w b`</a>
 
 Curried version of [`Z.extend`][].
 
@@ -1146,7 +1107,7 @@ Curried version of [`Z.extend`][].
 [4, 3, 2, 1]
 ```
 
-#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1632">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
+#### <a name="duplicate" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1547">`duplicate :: Extend w => w a -⁠> w (w a)`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.duplicate`][].
 Adds one level of nesting to a comonadic structure.
@@ -1165,7 +1126,7 @@ Just (Just (1))
 [4, 3, 2, 1]
 ```
 
-#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1656">`extract :: Comonad w => w a -⁠> a`</a>
+#### <a name="extract" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1571">`extract :: Comonad w => w a -⁠> a`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.extract`][].
 
@@ -1174,7 +1135,7 @@ Just (Just (1))
 'bar'
 ```
 
-#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1670">`contramap :: Contravariant f => (b -⁠> a) -⁠> f a -⁠> f b`</a>
+#### <a name="contramap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1585">`contramap :: Contravariant f => (b -⁠> a) -⁠> f a -⁠> f b`</a>
 
 [Type-safe][sanctuary-def] version of [`Z.contramap`][].
 
@@ -1185,7 +1146,7 @@ Just (Just (1))
 
 ### Combinator
 
-#### <a name="I" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1686">`I :: a -⁠> a`</a>
+#### <a name="I" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1601">`I :: a -⁠> a`</a>
 
 The I combinator. Returns its argument. Equivalent to Haskell's `id`
 function.
@@ -1195,7 +1156,7 @@ function.
 'foo'
 ```
 
-#### <a name="K" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1704">`K :: a -⁠> b -⁠> a`</a>
+#### <a name="K" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1619">`K :: a -⁠> b -⁠> a`</a>
 
 The K combinator. Takes two values and returns the first. Equivalent to
 Haskell's `const` function.
@@ -1208,7 +1169,7 @@ Haskell's `const` function.
 [42, 42, 42, 42, 42]
 ```
 
-#### <a name="T" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1727">`T :: a -⁠> (a -⁠> b) -⁠> b`</a>
+#### <a name="T" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1642">`T :: a -⁠> (a -⁠> b) -⁠> b`</a>
 
 The T ([thrush][]) combinator. Takes a value and a function, and returns
 the result of applying the function to the value. Equivalent to Haskell's
@@ -1224,7 +1185,7 @@ the result of applying the function to the value. Equivalent to Haskell's
 
 ### Function
 
-#### <a name="curry2" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1753">`curry2 :: ((a, b) -⁠> c) -⁠> a -⁠> b -⁠> c`</a>
+#### <a name="curry2" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1668">`curry2 :: ((a, b) -⁠> c) -⁠> a -⁠> b -⁠> c`</a>
 
 Curries the given binary function.
 
@@ -1233,7 +1194,7 @@ Curries the given binary function.
 [10, 100, 1000]
 ```
 
-#### <a name="curry3" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1774">`curry3 :: ((a, b, c) -⁠> d) -⁠> a -⁠> b -⁠> c -⁠> d`</a>
+#### <a name="curry3" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1689">`curry3 :: ((a, b, c) -⁠> d) -⁠> a -⁠> b -⁠> c -⁠> d`</a>
 
 Curries the given ternary function.
 
@@ -1246,7 +1207,7 @@ Curries the given ternary function.
 'orange icecream'
 ```
 
-#### <a name="curry4" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1801">`curry4 :: ((a, b, c, d) -⁠> e) -⁠> a -⁠> b -⁠> c -⁠> d -⁠> e`</a>
+#### <a name="curry4" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1716">`curry4 :: ((a, b, c, d) -⁠> e) -⁠> a -⁠> b -⁠> c -⁠> d -⁠> e`</a>
 
 Curries the given quaternary function.
 
@@ -1259,7 +1220,7 @@ Curries the given quaternary function.
 {x: 0, y: 0, width: 10, height: 10}
 ```
 
-#### <a name="curry5" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1830">`curry5 :: ((a, b, c, d, e) -⁠> f) -⁠> a -⁠> b -⁠> c -⁠> d -⁠> e -⁠> f`</a>
+#### <a name="curry5" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1745">`curry5 :: ((a, b, c, d, e) -⁠> f) -⁠> a -⁠> b -⁠> c -⁠> d -⁠> e -⁠> f`</a>
 
 Curries the given quinary function.
 
@@ -1278,7 +1239,7 @@ Curries the given quinary function.
 
 ### Composition
 
-#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1867">`compose :: Semigroupoid s => s b c -⁠> s a b -⁠> s a c`</a>
+#### <a name="compose" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1782">`compose :: Semigroupoid s => s b c -⁠> s a b -⁠> s a c`</a>
 
 Curried version of [`Z.compose`][].
 
@@ -1295,7 +1256,7 @@ See also [`pipe`](#pipe).
 10
 ```
 
-#### <a name="pipe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1889">`pipe :: Foldable f => f (Any -⁠> Any) -⁠> a -⁠> b`</a>
+#### <a name="pipe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1804">`pipe :: Foldable f => f (Any -⁠> Any) -⁠> a -⁠> b`</a>
 
 Takes a sequence of functions assumed to be unary and a value of any
 type, and returns the result of applying the sequence of transformations
@@ -1309,9 +1270,9 @@ of functions. `pipe ([f, g, h]) (x)` is equivalent to `h (g (f (x)))`.
 9
 ```
 
-#### <a name="pipeK" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1913">`pipeK :: (Foldable f, Chain m) => f (Any -⁠> m Any) -⁠> m a -⁠> m b`</a>
+#### <a name="pipeK" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1828">`pipeK :: (Foldable f, Chain m) => f (Any -⁠> m Any) -⁠> m a -⁠> m b`</a>
 
-Takes a sequence of functions assumed to be unary which return values
+Takes a sequence of functions assumed to be unary that return values
 with a [Chain][], and a value of that Chain, and returns the result
 of applying the sequence of transformations to the initial value.
 
@@ -1324,7 +1285,7 @@ of an sequence of functions. `pipeK ([f, g, h]) (x)` is equivalent to
 Just (3)
 ```
 
-#### <a name="on" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1938">`on :: (b -⁠> b -⁠> c) -⁠> (a -⁠> b) -⁠> a -⁠> a -⁠> c`</a>
+#### <a name="on" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1853">`on :: (b -⁠> b -⁠> c) -⁠> (a -⁠> b) -⁠> a -⁠> a -⁠> c`</a>
 
 Takes a binary function `f`, a unary function `g`, and two
 values `x` and `y`. Returns `f (g (x)) (g (y))`.
@@ -1343,11 +1304,7 @@ contains exactly two values: one of type `a`; one of type `b`.
 
 The implementation is provided by [sanctuary-pair][].
 
-#### <a name="PairType" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1971">`PairType :: Type -⁠> Type -⁠> Type`</a>
-
-A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
-
-#### <a name="Pair" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1975">`Pair :: a -⁠> b -⁠> Pair a b`</a>
+#### <a name="Pair" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1886">`Pair :: a -⁠> b -⁠> Pair a b`</a>
 
 Pair's sole data constructor. Additionally, it serves as the
 Pair [type representative][].
@@ -1357,7 +1314,7 @@ Pair [type representative][].
 Pair ('foo') (42)
 ```
 
-#### <a name="pair" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L1990">`pair :: (a -⁠> b -⁠> c) -⁠> Pair a b -⁠> c`</a>
+#### <a name="pair" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1901">`pair :: (a -⁠> b -⁠> c) -⁠> Pair a b -⁠> c`</a>
 
 Case analysis for the `Pair a b` type.
 
@@ -1366,7 +1323,7 @@ Case analysis for the `Pair a b` type.
 'foobar'
 ```
 
-#### <a name="fst" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2009">`fst :: Pair a b -⁠> a`</a>
+#### <a name="fst" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1920">`fst :: Pair a b -⁠> a`</a>
 
 `fst (Pair (x) (y))` is equivalent to `x`.
 
@@ -1375,7 +1332,7 @@ Case analysis for the `Pair a b` type.
 'foo'
 ```
 
-#### <a name="snd" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2023">`snd :: Pair a b -⁠> b`</a>
+#### <a name="snd" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1934">`snd :: Pair a b -⁠> b`</a>
 
 `snd (Pair (x) (y))` is equivalent to `y`.
 
@@ -1384,7 +1341,7 @@ Case analysis for the `Pair a b` type.
 42
 ```
 
-#### <a name="swap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2037">`swap :: Pair a b -⁠> Pair b a`</a>
+#### <a name="swap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1948">`swap :: Pair a b -⁠> Pair b a`</a>
 
 `swap (Pair (x) (y))` is equivalent to `Pair (y) (x)`.
 
@@ -1400,15 +1357,11 @@ either Nothing (the empty value) or a Just whose value is of type `a`.
 
 The implementation is provided by [sanctuary-maybe][].
 
-#### <a name="MaybeType" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2058">`MaybeType :: Type -⁠> Type`</a>
-
-A [`UnaryType`][UnaryType] for use with [sanctuary-def][].
-
-#### <a name="Maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2062">`Maybe :: TypeRep Maybe`</a>
+#### <a name="Maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1969">`Maybe :: TypeRep Maybe`</a>
 
 Maybe [type representative][].
 
-#### <a name="Nothing" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2066">`Nothing :: Maybe a`</a>
+#### <a name="Nothing" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1973">`Nothing :: Maybe a`</a>
 
 The empty value of type `Maybe a`.
 
@@ -1417,7 +1370,7 @@ The empty value of type `Maybe a`.
 Nothing
 ```
 
-#### <a name="Just" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2075">`Just :: a -⁠> Maybe a`</a>
+#### <a name="Just" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1982">`Just :: a -⁠> Maybe a`</a>
 
 Constructs a value of type `Maybe a` from a value of type `a`.
 
@@ -1426,7 +1379,7 @@ Constructs a value of type `Maybe a` from a value of type `a`.
 Just (42)
 ```
 
-#### <a name="isNothing" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2089">`isNothing :: Maybe a -⁠> Boolean`</a>
+#### <a name="isNothing" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L1996">`isNothing :: Maybe a -⁠> Boolean`</a>
 
 Returns `true` if the given Maybe is Nothing; `false` if it is a Just.
 
@@ -1438,7 +1391,7 @@ true
 false
 ```
 
-#### <a name="isJust" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2109">`isJust :: Maybe a -⁠> Boolean`</a>
+#### <a name="isJust" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2016">`isJust :: Maybe a -⁠> Boolean`</a>
 
 Returns `true` if the given Maybe is a Just; `false` if it is Nothing.
 
@@ -1450,7 +1403,7 @@ true
 false
 ```
 
-#### <a name="fromMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2129">`fromMaybe :: a -⁠> Maybe a -⁠> a`</a>
+#### <a name="fromMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2036">`fromMaybe :: a -⁠> Maybe a -⁠> a`</a>
 
 Takes a default value and a Maybe, and returns the Maybe's value
 if the Maybe is a Just; the default value otherwise.
@@ -1466,9 +1419,9 @@ See also [`fromMaybe_`](#fromMaybe_) and
 0
 ```
 
-#### <a name="fromMaybe_" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2150">`fromMaybe_ :: (() -⁠> a) -⁠> Maybe a -⁠> a`</a>
+#### <a name="fromMaybe_" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2057">`fromMaybe_ :: (() -⁠> a) -⁠> Maybe a -⁠> a`</a>
 
-Variant of [`fromMaybe`](#fromMaybe) which takes a thunk so the default
+Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
 value is only computed if required.
 
 ```javascript
@@ -1481,7 +1434,7 @@ value is only computed if required.
 832040
 ```
 
-#### <a name="maybeToNullable" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2170">`maybeToNullable :: Maybe a -⁠> Nullable a`</a>
+#### <a name="maybeToNullable" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2077">`maybeToNullable :: Maybe a -⁠> Nullable a`</a>
 
 Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
 [Nullable][] is defined in [sanctuary-def][].
@@ -1496,20 +1449,7 @@ See also [`fromMaybe`](#fromMaybe).
 null
 ```
 
-#### <a name="toMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2193">`toMaybe :: a? -⁠> Maybe a`</a>
-
-Takes a value and returns Nothing if the value is `null` or `undefined`;
-Just the value otherwise.
-
-```javascript
-> S.toMaybe (null)
-Nothing
-
-> S.toMaybe (42)
-Just (42)
-```
-
-#### <a name="maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2214">`maybe :: b -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
+#### <a name="maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2100">`maybe :: b -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
 
 Takes a value of any type, a function, and a Maybe. If the Maybe is
 a Just, the return value is the result of applying the function to
@@ -1525,9 +1465,9 @@ See also [`maybe_`](#maybe_).
 0
 ```
 
-#### <a name="maybe_" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2242">`maybe_ :: (() -⁠> b) -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
+#### <a name="maybe_" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2128">`maybe_ :: (() -⁠> b) -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
 
-Variant of [`maybe`](#maybe) which takes a thunk so the default value
+Variant of [`maybe`](#maybe) that takes a thunk so the default value
 is only computed if required.
 
 ```javascript
@@ -1540,9 +1480,9 @@ is only computed if required.
 832040
 ```
 
-#### <a name="justs" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2269">`justs :: (Filterable f, Functor f) => f (Maybe a) -⁠> f a`</a>
+#### <a name="justs" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2155">`justs :: (Filterable f, Functor f) => f (Maybe a) -⁠> f a`</a>
 
-Discards each element which is Nothing, and unwraps each element which is
+Discards each element that is Nothing, and unwraps each element that is
 a Just. Related to Haskell's `catMaybes` function.
 
 See also [`lefts`](#lefts) and [`rights`](#rights).
@@ -1552,7 +1492,7 @@ See also [`lefts`](#lefts) and [`rights`](#rights).
 ['foo', 'baz']
 ```
 
-#### <a name="mapMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2289">`mapMaybe :: (Filterable f, Functor f) => (a -⁠> Maybe b) -⁠> f a -⁠> f b`</a>
+#### <a name="mapMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2175">`mapMaybe :: (Filterable f, Functor f) => (a -⁠> Maybe b) -⁠> f a -⁠> f b`</a>
 
 Takes a function and a structure, applies the function to each element
 of the structure, and returns the "successful" results. If the result of
@@ -1567,32 +1507,7 @@ if the result is a Just, the Just's value is included.
 {x: 1, z: 4}
 ```
 
-#### <a name="encase" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2309">`encase :: (a -⁠> b) -⁠> a -⁠> Maybe b`</a>
-
-Takes a unary function `f` which may throw and a value `x` of any type,
-and applies `f` to `x` inside a `try` block. If an exception is caught,
-the return value is Nothing; otherwise the return value is Just the
-result of applying `f` to `x`.
-
-See also [`encaseEither`](#encaseEither).
-
-```javascript
-> S.encase (eval) ('1 + 1')
-Just (2)
-
-> S.encase (eval) ('1 +')
-Nothing
-```
-
-#### <a name="encase2" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2334">`encase2 :: (a -⁠> b -⁠> c) -⁠> a -⁠> b -⁠> Maybe c`</a>
-
-Binary version of [`encase`](#encase).
-
-#### <a name="encase3" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2343">`encase3 :: (a -⁠> b -⁠> c -⁠> d) -⁠> a -⁠> b -⁠> c -⁠> Maybe d`</a>
-
-Ternary version of [`encase`](#encase).
-
-#### <a name="maybeToEither" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2352">`maybeToEither :: a -⁠> Maybe b -⁠> Either a b`</a>
+#### <a name="maybeToEither" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2195">`maybeToEither :: a -⁠> Maybe b -⁠> Either a b`</a>
 
 Converts a Maybe to an Either. Nothing becomes a Left (containing the
 first argument); a Just becomes a Right.
@@ -1615,15 +1530,11 @@ value is of type `b`.
 
 The implementation is provided by [sanctuary-either][].
 
-#### <a name="EitherType" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2383">`EitherType :: Type -⁠> Type -⁠> Type`</a>
-
-A [`BinaryType`][BinaryType] for use with [sanctuary-def][].
-
-#### <a name="Either" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2387">`Either :: TypeRep Either`</a>
+#### <a name="Either" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2226">`Either :: TypeRep Either`</a>
 
 Either [type representative][].
 
-#### <a name="Left" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2391">`Left :: a -⁠> Either a b`</a>
+#### <a name="Left" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2230">`Left :: a -⁠> Either a b`</a>
 
 Constructs a value of type `Either a b` from a value of type `a`.
 
@@ -1632,7 +1543,7 @@ Constructs a value of type `Either a b` from a value of type `a`.
 Left ('Cannot divide by zero')
 ```
 
-#### <a name="Right" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2405">`Right :: b -⁠> Either a b`</a>
+#### <a name="Right" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2244">`Right :: b -⁠> Either a b`</a>
 
 Constructs a value of type `Either a b` from a value of type `b`.
 
@@ -1641,7 +1552,7 @@ Constructs a value of type `Either a b` from a value of type `b`.
 Right (42)
 ```
 
-#### <a name="isLeft" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2419">`isLeft :: Either a b -⁠> Boolean`</a>
+#### <a name="isLeft" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2258">`isLeft :: Either a b -⁠> Boolean`</a>
 
 Returns `true` if the given Either is a Left; `false` if it is a Right.
 
@@ -1653,7 +1564,7 @@ true
 false
 ```
 
-#### <a name="isRight" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2439">`isRight :: Either a b -⁠> Boolean`</a>
+#### <a name="isRight" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2278">`isRight :: Either a b -⁠> Boolean`</a>
 
 Returns `true` if the given Either is a Right; `false` if it is a Left.
 
@@ -1665,7 +1576,7 @@ true
 false
 ```
 
-#### <a name="fromEither" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2459">`fromEither :: b -⁠> Either a b -⁠> b`</a>
+#### <a name="fromEither" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2298">`fromEither :: b -⁠> Either a b -⁠> b`</a>
 
 Takes a default value and an Either, and returns the Right value
 if the Either is a Right; the default value otherwise.
@@ -1678,31 +1589,7 @@ if the Either is a Right; the default value otherwise.
 0
 ```
 
-#### <a name="toEither" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2480">`toEither :: a -⁠> b? -⁠> Either a b`</a>
-
-Converts an arbitrary value to an Either: a Left if the value is `null`
-or `undefined`; a Right otherwise. The first argument specifies the
-value of the Left in the "failure" case.
-
-```javascript
-> S.toEither ('XYZ') (null)
-Left ('XYZ')
-
-> S.toEither ('XYZ') ('ABC')
-Right ('ABC')
-
-> S.map (S.prop ('0'))
-.       (S.toEither ('Invalid protocol')
-.                   ('ftp://example.com/'.match (/^https?:/)))
-Left ('Invalid protocol')
-
-> S.map (S.prop ('0'))
-.       (S.toEither ('Invalid protocol')
-.                   ('https://example.com/'.match (/^https?:/)))
-Right ('https:')
-```
-
-#### <a name="either" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2514">`either :: (a -⁠> c) -⁠> (b -⁠> c) -⁠> Either a b -⁠> c`</a>
+#### <a name="either" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2319">`either :: (a -⁠> c) -⁠> (b -⁠> c) -⁠> Either a b -⁠> c`</a>
 
 Takes two functions and an Either, and returns the result of
 applying the first function to the Left's value, if the Either
@@ -1717,9 +1604,9 @@ Right's value, if the Either is a Right.
 '42'
 ```
 
-#### <a name="lefts" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2541">`lefts :: (Filterable f, Functor f) => f (Either a b) -⁠> f a`</a>
+#### <a name="lefts" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2346">`lefts :: (Filterable f, Functor f) => f (Either a b) -⁠> f a`</a>
 
-Discards each element which is a Right, and unwraps each element which is
+Discards each element that is a Right, and unwraps each element that is
 a Left.
 
 See also [`rights`](#rights).
@@ -1729,9 +1616,9 @@ See also [`rights`](#rights).
 ['foo', 'bar']
 ```
 
-#### <a name="rights" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2558">`rights :: (Filterable f, Functor f) => f (Either a b) -⁠> f b`</a>
+#### <a name="rights" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2363">`rights :: (Filterable f, Functor f) => f (Either a b) -⁠> f b`</a>
 
-Discards each element which is a Left, and unwraps each element which is
+Discards each element that is a Left, and unwraps each element that is
 a Right.
 
 See also [`lefts`](#lefts).
@@ -1741,7 +1628,7 @@ See also [`lefts`](#lefts).
 [20, 10]
 ```
 
-#### <a name="tagBy" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2575">`tagBy :: (a -⁠> Boolean) -⁠> a -⁠> Either a a`</a>
+#### <a name="tagBy" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2380">`tagBy :: (a -⁠> Boolean) -⁠> a -⁠> Either a a`</a>
 
 Takes a predicate and a value, and returns a Right of the value if it
 satisfies the predicate; a Left of the value otherwise.
@@ -1754,36 +1641,19 @@ Left (0)
 Right (1)
 ```
 
-#### <a name="encaseEither" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2596">`encaseEither :: (Error -⁠> l) -⁠> (a -⁠> r) -⁠> a -⁠> Either l r`</a>
+#### <a name="encase" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2401">`encase :: (a -⁠> b) -⁠> a -⁠> Either Error b`</a>
 
-Takes two unary functions, `f` and `g`, the second of which may throw,
-and a value `x` of any type. Applies `g` to `x` inside a `try` block.
-If an exception is caught, the return value is a Left containing the
-result of applying `f` to the caught Error object; otherwise the return
-value is a Right containing the result of applying `g` to `x`.
-
-See also [`encase`](#encase).
+Takes a function that may throw and returns a pure function.
 
 ```javascript
-> S.encaseEither (S.I) (JSON.parse) ('["foo","bar","baz"]')
+> S.encase (JSON.parse) ('["foo","bar","baz"]')
 Right (['foo', 'bar', 'baz'])
 
-> S.encaseEither (S.I) (JSON.parse) ('[')
+> S.encase (JSON.parse) ('[')
 Left (new SyntaxError ('Unexpected end of JSON input'))
-
-> S.encaseEither (S.prop ('message')) (JSON.parse) ('[')
-Left ('Unexpected end of JSON input')
 ```
 
-#### <a name="encaseEither2" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2633">`encaseEither2 :: (Error -⁠> l) -⁠> (a -⁠> b -⁠> r) -⁠> a -⁠> b -⁠> Either l r`</a>
-
-Binary version of [`encaseEither`](#encaseEither).
-
-#### <a name="encaseEither3" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2655">`encaseEither3 :: (Error -⁠> l) -⁠> (a -⁠> b -⁠> c -⁠> r) -⁠> a -⁠> b -⁠> c -⁠> Either l r`</a>
-
-Ternary version of [`encaseEither`](#encaseEither).
-
-#### <a name="eitherToMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2684">`eitherToMaybe :: Either a b -⁠> Maybe b`</a>
+#### <a name="eitherToMaybe" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2427">`eitherToMaybe :: Either a b -⁠> Maybe b`</a>
 
 Converts an Either to a Maybe. A Left becomes Nothing; a Right becomes
 a Just.
@@ -1800,7 +1670,7 @@ Just (42)
 
 ### Logic
 
-#### <a name="and" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2709">`and :: Boolean -⁠> Boolean -⁠> Boolean`</a>
+#### <a name="and" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2452">`and :: Boolean -⁠> Boolean -⁠> Boolean`</a>
 
 Boolean "and".
 
@@ -1818,7 +1688,7 @@ false
 true
 ```
 
-#### <a name="or" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2737">`or :: Boolean -⁠> Boolean -⁠> Boolean`</a>
+#### <a name="or" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2480">`or :: Boolean -⁠> Boolean -⁠> Boolean`</a>
 
 Boolean "or".
 
@@ -1836,7 +1706,7 @@ true
 true
 ```
 
-#### <a name="not" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2765">`not :: Boolean -⁠> Boolean`</a>
+#### <a name="not" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2508">`not :: Boolean -⁠> Boolean`</a>
 
 Boolean "not".
 
@@ -1850,7 +1720,7 @@ true
 false
 ```
 
-#### <a name="complement" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2787">`complement :: (a -⁠> Boolean) -⁠> a -⁠> Boolean`</a>
+#### <a name="complement" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2530">`complement :: (a -⁠> Boolean) -⁠> a -⁠> Boolean`</a>
 
 Takes a unary predicate and a value of any type, and returns the logical
 negation of applying the predicate to the value.
@@ -1865,7 +1735,7 @@ true
 false
 ```
 
-#### <a name="boolean" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2807">`boolean :: a -⁠> a -⁠> Boolean -⁠> a`</a>
+#### <a name="boolean" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2550">`boolean :: a -⁠> a -⁠> Boolean -⁠> a`</a>
 
 Case analysis for the `Boolean` type. `boolean (x) (y) (b)` evaluates
 to `x` if `b` is `false`; to `y` if `b` is `true`.
@@ -1878,7 +1748,7 @@ to `x` if `b` is `false`; to `y` if `b` is `true`.
 'yes'
 ```
 
-#### <a name="ifElse" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2832">`ifElse :: (a -⁠> Boolean) -⁠> (a -⁠> b) -⁠> (a -⁠> b) -⁠> a -⁠> b`</a>
+#### <a name="ifElse" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2575">`ifElse :: (a -⁠> Boolean) -⁠> (a -⁠> b) -⁠> (a -⁠> b) -⁠> a -⁠> b`</a>
 
 Takes a unary predicate, a unary "if" function, a unary "else"
 function, and a value of any type, and returns the result of
@@ -1896,7 +1766,7 @@ See also [`when`](#when) and [`unless`](#unless).
 4
 ```
 
-#### <a name="when" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2864">`when :: (a -⁠> Boolean) -⁠> (a -⁠> a) -⁠> a -⁠> a`</a>
+#### <a name="when" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2607">`when :: (a -⁠> Boolean) -⁠> (a -⁠> a) -⁠> a -⁠> a`</a>
 
 Takes a unary predicate, a unary function, and a value of any type, and
 returns the result of applying the function to the value if the value
@@ -1912,7 +1782,7 @@ See also [`unless`](#unless) and [`ifElse`](#ifElse).
 -1
 ```
 
-#### <a name="unless" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2888">`unless :: (a -⁠> Boolean) -⁠> (a -⁠> a) -⁠> a -⁠> a`</a>
+#### <a name="unless" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2631">`unless :: (a -⁠> Boolean) -⁠> (a -⁠> a) -⁠> a -⁠> a`</a>
 
 Takes a unary predicate, a unary function, and a value of any type, and
 returns the result of applying the function to the value if the value
@@ -1928,39 +1798,9 @@ See also [`when`](#when) and [`ifElse`](#ifElse).
 -1
 ```
 
-#### <a name="allPass" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2912">`allPass :: Foldable f => f (a -⁠> Boolean) -⁠> a -⁠> Boolean`</a>
-
-Takes a structure containing zero or more predicates, and a value
-of any type. Returns `true` [iff][] the value satisfies all of the
-predicates. None of the subsequent predicates will be applied after
-the first predicate not satisfied.
-
-```javascript
-> S.allPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('quiessence')
-true
-
-> S.allPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('fissiparous')
-false
-```
-
-#### <a name="anyPass" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2937">`anyPass :: Foldable f => f (a -⁠> Boolean) -⁠> a -⁠> Boolean`</a>
-
-Takes a structure containing zero or more predicates, and a value
-of any type. Returns `true` [iff][] the value satisfies any of the
-predicates. None of the subsequent predicates will be applied after
-the first predicate satisfied.
-
-```javascript
-> S.anyPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('incandescent')
-true
-
-> S.anyPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('empathy')
-false
-```
-
 ### Array
 
-#### <a name="array" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2964">`array :: b -⁠> (a -⁠> Array a -⁠> b) -⁠> Array a -⁠> b`</a>
+#### <a name="array" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2657">`array :: b -⁠> (a -⁠> Array a -⁠> b) -⁠> Array a -⁠> b`</a>
 
 Case analysis for the `Array a` type.
 
@@ -1978,44 +1818,7 @@ Nothing
 Just ([2, 3])
 ```
 
-#### <a name="slice" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L2994">`slice :: Integer -⁠> Integer -⁠> Array a -⁠> Maybe (Array a)`</a>
-
-Takes a start index `i`, an end index `j`, and an array, and returns
-Just the `[i,j)` slice of the array if possible; Nothing otherwise.
-A negative index represents an offset from the length of the array.
-
-See also [`take`](#take), [`drop`](#drop), [`takeLast`](#takeLast),
-and [`dropLast`](#dropLast).
-
-```javascript
-> S.slice (1) (3) (['a', 'b', 'c', 'd', 'e'])
-Just (['b', 'c'])
-
-> S.slice (-3) (-1) (['a', 'b', 'c', 'd', 'e'])
-Just (['c', 'd'])
-
-> S.slice (1) (6) (['a', 'b', 'c', 'd', 'e'])
-Nothing
-```
-
-#### <a name="at" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3033">`at :: Integer -⁠> Array a -⁠> Maybe a`</a>
-
-Returns Just the element of the given array at the specified index if
-the index is within the array's bounds; Nothing otherwise. A negative
-index represents an offset from the length of the array.
-
-```javascript
-> S.at (2) (['a', 'b', 'c', 'd', 'e'])
-Just ('c')
-
-> S.at (5) (['a', 'b', 'c', 'd', 'e'])
-Nothing
-
-> S.at (-2) (['a', 'b', 'c', 'd', 'e'])
-Just ('d')
-```
-
-#### <a name="head" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3061">`head :: Foldable f => f a -⁠> Maybe a`</a>
+#### <a name="head" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2687">`head :: Foldable f => f a -⁠> Maybe a`</a>
 
 Returns Just the first element of the given structure if the structure
 contains at least one element; Nothing otherwise.
@@ -2034,7 +1837,7 @@ Just (1)
 Nothing
 ```
 
-#### <a name="last" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3094">`last :: Foldable f => f a -⁠> Maybe a`</a>
+#### <a name="last" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2720">`last :: Foldable f => f a -⁠> Maybe a`</a>
 
 Returns Just the last element of the given structure if the structure
 contains at least one element; Nothing otherwise.
@@ -2053,7 +1856,7 @@ Just (3)
 Nothing
 ```
 
-#### <a name="tail" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3126">`tail :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> Maybe (f a)`</a>
+#### <a name="tail" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2752">`tail :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> Maybe (f a)`</a>
 
 Returns Just all but the first of the given structure's elements if the
 structure contains at least one element; Nothing otherwise.
@@ -2072,7 +1875,7 @@ Just (Cons (2) (Cons (3) (Nil)))
 Nothing
 ```
 
-#### <a name="init" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3160">`init :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> Maybe (f a)`</a>
+#### <a name="init" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2786">`init :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> Maybe (f a)`</a>
 
 Returns Just all but the last of the given structure's elements if the
 structure contains at least one element; Nothing otherwise.
@@ -2091,75 +1894,129 @@ Just (Cons (1) (Cons (2) (Nil)))
 Nothing
 ```
 
-#### <a name="take" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3194">`take :: Integer -⁠> Array a -⁠> Maybe (Array a)`</a>
+#### <a name="take" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2820">`take :: (Applicative f, Foldable f, Monoid (f a)) => Integer -⁠> f a -⁠> Maybe (f a)`</a>
 
-Returns Just the first N elements of the given array if N is greater
-than or equal to zero and less than or equal to the length of the array;
+Returns Just the first N elements of the given structure if N is
+non-negative and less than or equal to the size of the structure;
 Nothing otherwise.
 
 ```javascript
-> S.take (2) (['a', 'b', 'c', 'd', 'e'])
-Just (['a', 'b'])
+> S.take (0) (['foo', 'bar'])
+Just ([])
 
-> S.take (5) (['a', 'b', 'c', 'd', 'e'])
-Just (['a', 'b', 'c', 'd', 'e'])
+> S.take (1) (['foo', 'bar'])
+Just (['foo'])
 
-> S.take (6) (['a', 'b', 'c', 'd', 'e'])
+> S.take (2) (['foo', 'bar'])
+Just (['foo', 'bar'])
+
+> S.take (3) (['foo', 'bar'])
 Nothing
+
+> S.take (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
+Just (Cons (1) (Cons (2) (Cons (3) (Nil))))
 ```
 
-#### <a name="takeLast" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3221">`takeLast :: Integer -⁠> Array a -⁠> Maybe (Array a)`</a>
+#### <a name="drop" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2875">`drop :: (Applicative f, Foldable f, Monoid (f a)) => Integer -⁠> f a -⁠> Maybe (f a)`</a>
 
-Returns Just the last N elements of the given array if N is greater
-than or equal to zero and less than or equal to the length of the array;
+Returns Just all but the first N elements of the given structure if
+N is non-negative and less than or equal to the size of the structure;
 Nothing otherwise.
 
 ```javascript
-> S.takeLast (2) (['a', 'b', 'c', 'd', 'e'])
-Just (['d', 'e'])
+> S.drop (0) (['foo', 'bar'])
+Just (['foo', 'bar'])
 
-> S.takeLast (5) (['a', 'b', 'c', 'd', 'e'])
-Just (['a', 'b', 'c', 'd', 'e'])
+> S.drop (1) (['foo', 'bar'])
+Just (['bar'])
 
-> S.takeLast (6) (['a', 'b', 'c', 'd', 'e'])
-Nothing
-```
-
-#### <a name="drop" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3249">`drop :: Integer -⁠> Array a -⁠> Maybe (Array a)`</a>
-
-Returns Just all but the first N elements of the given array if N is
-greater than or equal to zero and less than or equal to the length of
-the array; Nothing otherwise.
-
-```javascript
-> S.drop (2) (['a', 'b', 'c', 'd', 'e'])
-Just (['c', 'd', 'e'])
-
-> S.drop (5) (['a', 'b', 'c', 'd', 'e'])
+> S.drop (2) (['foo', 'bar'])
 Just ([])
 
-> S.drop (6) (['a', 'b', 'c', 'd', 'e'])
+> S.drop (3) (['foo', 'bar'])
 Nothing
+
+> S.drop (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
+Just (Cons (4) (Cons (5) (Nil)))
 ```
 
-#### <a name="dropLast" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3276">`dropLast :: Integer -⁠> Array a -⁠> Maybe (Array a)`</a>
+#### <a name="takeLast" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2907">`takeLast :: (Applicative f, Foldable f, Monoid (f a)) => Integer -⁠> f a -⁠> Maybe (f a)`</a>
 
-Returns Just all but the last N elements of the given array if N is
-greater than or equal to zero and less than or equal to the length of
-the array; Nothing otherwise.
+Returns Just the last N elements of the given structure if N is
+non-negative and less than or equal to the size of the structure;
+Nothing otherwise.
 
 ```javascript
-> S.dropLast (2) (['a', 'b', 'c', 'd', 'e'])
-Just (['a', 'b', 'c'])
-
-> S.dropLast (5) (['a', 'b', 'c', 'd', 'e'])
+> S.takeLast (0) (['foo', 'bar'])
 Just ([])
 
-> S.dropLast (6) (['a', 'b', 'c', 'd', 'e'])
+> S.takeLast (1) (['foo', 'bar'])
+Just (['bar'])
+
+> S.takeLast (2) (['foo', 'bar'])
+Just (['foo', 'bar'])
+
+> S.takeLast (3) (['foo', 'bar'])
 Nothing
+
+> S.takeLast (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Nil)))))
+Just (Cons (2) (Cons (3) (Cons (4) (Nil))))
 ```
 
-#### <a name="size" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3304">`size :: Foldable f => f a -⁠> Integer`</a>
+#### <a name="dropLast" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2940">`dropLast :: (Applicative f, Foldable f, Monoid (f a)) => Integer -⁠> f a -⁠> Maybe (f a)`</a>
+
+Returns Just all but the last N elements of the given structure if
+N is non-negative and less than or equal to the size of the structure;
+Nothing otherwise.
+
+```javascript
+> S.dropLast (0) (['foo', 'bar'])
+Just (['foo', 'bar'])
+
+> S.dropLast (1) (['foo', 'bar'])
+Just (['foo'])
+
+> S.dropLast (2) (['foo', 'bar'])
+Just ([])
+
+> S.dropLast (3) (['foo', 'bar'])
+Nothing
+
+> S.dropLast (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Nil)))))
+Just (Cons (1) (Nil))
+```
+
+#### <a name="takeWhile" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L2973">`takeWhile :: (a -⁠> Boolean) -⁠> Array a -⁠> Array a`</a>
+
+Discards the first element that does not satisfy the predicate,
+and all subsequent elements.
+
+See also [`dropWhile`](#dropWhile).
+
+```javascript
+> S.takeWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
+[3, 3, 3, 7]
+
+> S.takeWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
+[]
+```
+
+#### <a name="dropWhile" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3000">`dropWhile :: (a -⁠> Boolean) -⁠> Array a -⁠> Array a`</a>
+
+Retains the first element that does not satisfy the predicate,
+and all subsequent elements.
+
+See also [`takeWhile`](#takeWhile).
+
+```javascript
+> S.dropWhile (S.odd) ([3, 3, 3, 7, 6, 3, 5, 4])
+[6, 3, 5, 4]
+
+> S.dropWhile (S.even) ([3, 3, 3, 7, 6, 3, 5, 4])
+[3, 3, 3, 7, 6, 3, 5, 4]
+```
+
+#### <a name="size" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3027">`size :: Foldable f => f a -⁠> Integer`</a>
 
 Returns the number of elements of the given structure.
 
@@ -2186,7 +2043,7 @@ Returns the number of elements of the given structure.
 1
 ```
 
-#### <a name="all" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3336">`all :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
+#### <a name="all" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3059">`all :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
 
 Returns `true` [iff][] all the elements of the structure satisfy the
 predicate.
@@ -2204,7 +2061,7 @@ true
 false
 ```
 
-#### <a name="any" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3359">`any :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
+#### <a name="any" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3082">`any :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
 
 Returns `true` [iff][] any element of the structure satisfies the
 predicate.
@@ -2222,7 +2079,7 @@ false
 true
 ```
 
-#### <a name="none" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3382">`none :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
+#### <a name="none" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3105">`none :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Boolean`</a>
 
 Returns `true` [iff][] none of the elements of the structure satisfies
 the predicate.
@@ -2248,7 +2105,7 @@ true
 false
 ```
 
-#### <a name="append" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3413">`append :: (Applicative f, Semigroup (f a)) => a -⁠> f a -⁠> f a`</a>
+#### <a name="append" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3136">`append :: (Applicative f, Semigroup (f a)) => a -⁠> f a -⁠> f a`</a>
 
 Returns the result of appending the first argument to the second.
 
@@ -2268,7 +2125,7 @@ Just ([1])
 Just ([1, 2, 3])
 ```
 
-#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3443">`prepend :: (Applicative f, Semigroup (f a)) => a -⁠> f a -⁠> f a`</a>
+#### <a name="prepend" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3166">`prepend :: (Applicative f, Semigroup (f a)) => a -⁠> f a -⁠> f a`</a>
 
 Returns the result of prepending the first argument to the second.
 
@@ -2288,7 +2145,7 @@ Just ([1])
 Just ([1, 2, 3])
 ```
 
-#### <a name="joinWith" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3468">`joinWith :: String -⁠> Array String -⁠> String`</a>
+#### <a name="joinWith" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3191">`joinWith :: String -⁠> Array String -⁠> String`</a>
 
 Joins the strings of the second argument separated by the first argument.
 
@@ -2304,7 +2161,7 @@ See also [`splitOn`](#splitOn).
 'foo:bar:baz'
 ```
 
-#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3489">`elem :: (Setoid a, Foldable f) => a -⁠> f a -⁠> Boolean`</a>
+#### <a name="elem" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3212">`elem :: (Setoid a, Foldable f) => a -⁠> f a -⁠> Boolean`</a>
 
 Takes a value and a structure and returns `true` [iff][] the value is an
 element of the structure.
@@ -2334,10 +2191,10 @@ false
 false
 ```
 
-#### <a name="find" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3524">`find :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Maybe a`</a>
+#### <a name="find" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3247">`find :: Foldable f => (a -⁠> Boolean) -⁠> f a -⁠> Maybe a`</a>
 
 Takes a predicate and a structure and returns Just the leftmost element
-of the structure which satisfies the predicate; Nothing if there is no
+of the structure that satisfies the predicate; Nothing if there is no
 such element.
 
 See also [`elem`](#elem).
@@ -2350,7 +2207,7 @@ Just (-2)
 Nothing
 ```
 
-#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3556">`foldMap :: (Monoid m, Foldable f) => TypeRep m -⁠> (a -⁠> m) -⁠> f a -⁠> m`</a>
+#### <a name="foldMap" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3279">`foldMap :: (Monoid m, Foldable f) => TypeRep m -⁠> (a -⁠> m) -⁠> f a -⁠> m`</a>
 
 Curried version of [`Z.foldMap`][]. Deconstructs a foldable by mapping
 every element to a monoid and concatenating the results.
@@ -2363,7 +2220,7 @@ every element to a monoid and concatenating the results.
 [11, 12, 21, 22, 31, 32]
 ```
 
-#### <a name="unfoldr" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3574">`unfoldr :: (b -⁠> Maybe (Pair a b)) -⁠> b -⁠> Array a`</a>
+#### <a name="unfoldr" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3297">`unfoldr :: (b -⁠> Maybe (Pair a b)) -⁠> b -⁠> Array a`</a>
 
 Takes a function and a seed value, and returns an array generated by
 applying the function repeatedly. The array is initially empty. The
@@ -2380,7 +2237,7 @@ of the function should result in either:
 [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
 ```
 
-#### <a name="range" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3605">`range :: Integer -⁠> Integer -⁠> Array Integer`</a>
+#### <a name="range" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3328">`range :: Integer -⁠> Integer -⁠> Array Integer`</a>
 
 Returns an array of consecutive integers starting with the first argument
 and ending with the second argument minus one. Returns `[]` if the second
@@ -2397,7 +2254,7 @@ argument is less than or equal to the first argument.
 []
 ```
 
-#### <a name="groupBy" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3634">`groupBy :: (a -⁠> a -⁠> Boolean) -⁠> Array a -⁠> Array (Array a)`</a>
+#### <a name="groupBy" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3357">`groupBy :: (a -⁠> a -⁠> Boolean) -⁠> Array a -⁠> Array (Array a)`</a>
 
 Splits its array argument into an array of arrays of equal,
 adjacent elements. Equality is determined by the function
@@ -2418,7 +2275,7 @@ Properties:
 [[2], [-3, 3, 3, 3], [4, -4], [4]]
 ```
 
-#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3673">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
+#### <a name="reverse" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3396">`reverse :: (Applicative f, Foldable f, Monoid (f a)) => f a -⁠> f a`</a>
 
 Reverses the elements of the given structure.
 
@@ -2433,7 +2290,7 @@ Cons (3) (Cons (2) (Cons (1) (Nil)))
 'cba'
 ```
 
-#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3693">`sort :: (Ord a, Applicative m, Foldable m, Monoid (m a)) => m a -⁠> m a`</a>
+#### <a name="sort" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3416">`sort :: (Ord a, Applicative m, Foldable m, Monoid (m a)) => m a -⁠> m a`</a>
 
 Performs a [stable sort][] of the elements of the given structure, using
 [`Z.lte`][] for comparisons.
@@ -2452,7 +2309,7 @@ See also [`sortBy`](#sortBy).
 [Left (2), Left (4), Right (1), Right (3)]
 ```
 
-#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3717">`sortBy :: (Ord b, Applicative m, Foldable m, Monoid (m a)) => (a -⁠> b) -⁠> m a -⁠> m a`</a>
+#### <a name="sortBy" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3440">`sortBy :: (Ord b, Applicative m, Foldable m, Monoid (m a)) => (a -⁠> b) -⁠> m a -⁠> m a`</a>
 
 Performs a [stable sort][] of the elements of the given structure, using
 [`Z.lte`][] to compare the values produced by applying the given function
@@ -2495,7 +2352,7 @@ If descending order is desired, one may use [`Descending`][]:
 [121, 117, 116, 114, 110, 99, 97, 97, 83]
 ```
 
-#### <a name="zip" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3765">`zip :: Array a -⁠> Array b -⁠> Array (Pair a b)`</a>
+#### <a name="zip" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3488">`zip :: Array a -⁠> Array b -⁠> Array (Pair a b)`</a>
 
 Returns an array of pairs of corresponding elements from the given
 arrays. The length of the resulting array is equal to the length of
@@ -2511,7 +2368,7 @@ See also [`zipWith`](#zipWith).
 [Pair (1) (2), Pair (3) (4)]
 ```
 
-#### <a name="zipWith" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3786">`zipWith :: (a -⁠> b -⁠> c) -⁠> Array a -⁠> Array b -⁠> Array c`</a>
+#### <a name="zipWith" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3509">`zipWith :: (a -⁠> b -⁠> c) -⁠> Array a -⁠> Array b -⁠> Array c`</a>
 
 Returns the result of combining, pairwise, the given arrays using the
 given binary function. The length of the resulting array is equal to the
@@ -2529,7 +2386,7 @@ See also [`zip`](#zip).
 
 ### Object
 
-#### <a name="prop" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3821">`prop :: String -⁠> a -⁠> b`</a>
+#### <a name="prop" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3544">`prop :: String -⁠> a -⁠> b`</a>
 
 Takes a property name and an object with known properties and returns
 the value of the specified property. If for some reason the object
@@ -2543,7 +2400,7 @@ For accessing string map values by key, use [`value`](#value) instead.
 1
 ```
 
-#### <a name="props" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3848">`props :: Array String -⁠> a -⁠> b`</a>
+#### <a name="props" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3571">`props :: Array String -⁠> a -⁠> b`</a>
 
 Takes a property path (an array of property names) and an object with
 known structure and returns the value at the given path. If for some
@@ -2557,7 +2414,7 @@ instead.
 1
 ```
 
-#### <a name="get" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3877">`get :: (Any -⁠> Boolean) -⁠> String -⁠> a -⁠> Maybe b`</a>
+#### <a name="get" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3600">`get :: (Any -⁠> Boolean) -⁠> String -⁠> a -⁠> Maybe b`</a>
 
 Takes a predicate, a property name, and an object and returns Just the
 value of the specified object property if it exists and the value
@@ -2582,7 +2439,7 @@ Just ([1, 2, 3])
 Nothing
 ```
 
-#### <a name="gets" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3910">`gets :: (Any -⁠> Boolean) -⁠> Array String -⁠> a -⁠> Maybe b`</a>
+#### <a name="gets" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3633">`gets :: (Any -⁠> Boolean) -⁠> Array String -⁠> a -⁠> Maybe b`</a>
 
 Takes a predicate, a property path (an array of property names), and
 an object and returns Just the value at the given path if such a path
@@ -2609,7 +2466,7 @@ the same type. Formally, a value is a member of type `StrMap a` if its
 [type identifier][] is `'Object'` and the values of its enumerable own
 properties are all members of type `a`.
 
-#### <a name="value" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3951">`value :: String -⁠> StrMap a -⁠> Maybe a`</a>
+#### <a name="value" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3674">`value :: String -⁠> StrMap a -⁠> Maybe a`</a>
 
 Retrieve the value associated with the given key in the given string map.
 
@@ -2629,7 +2486,7 @@ Just (2)
 Nothing
 ```
 
-#### <a name="singleton" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L3983">`singleton :: String -⁠> a -⁠> StrMap a`</a>
+#### <a name="singleton" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3706">`singleton :: String -⁠> a -⁠> StrMap a`</a>
 
 Takes a string and a value of any type, and returns a string map with
 a single entry (mapping the key to the value).
@@ -2639,7 +2496,7 @@ a single entry (mapping the key to the value).
 {foo: 42}
 ```
 
-#### <a name="insert" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4005">`insert :: String -⁠> a -⁠> StrMap a -⁠> StrMap a`</a>
+#### <a name="insert" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3728">`insert :: String -⁠> a -⁠> StrMap a -⁠> StrMap a`</a>
 
 Takes a string, a value of any type, and a string map, and returns a
 string map comprising all the entries of the given string map plus the
@@ -2656,7 +2513,7 @@ function.
 {a: 4, b: 2}
 ```
 
-#### <a name="remove" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4034">`remove :: String -⁠> StrMap a -⁠> StrMap a`</a>
+#### <a name="remove" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3757">`remove :: String -⁠> StrMap a -⁠> StrMap a`</a>
 
 Takes a string and a string map, and returns a string map comprising all
 the entries of the given string map except the one whose key matches the
@@ -2673,7 +2530,7 @@ function.
 {}
 ```
 
-#### <a name="keys" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4063">`keys :: StrMap a -⁠> Array String`</a>
+#### <a name="keys" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3786">`keys :: StrMap a -⁠> Array String`</a>
 
 Returns the keys of the given string map, in arbitrary order.
 
@@ -2682,7 +2539,7 @@ Returns the keys of the given string map, in arbitrary order.
 ['a', 'b', 'c']
 ```
 
-#### <a name="values" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4077">`values :: StrMap a -⁠> Array a`</a>
+#### <a name="values" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3800">`values :: StrMap a -⁠> Array a`</a>
 
 Returns the values of the given string map, in arbitrary order.
 
@@ -2691,7 +2548,7 @@ Returns the values of the given string map, in arbitrary order.
 [1, 2, 3]
 ```
 
-#### <a name="pairs" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4094">`pairs :: StrMap a -⁠> Array (Pair String a)`</a>
+#### <a name="pairs" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3817">`pairs :: StrMap a -⁠> Array (Pair String a)`</a>
 
 Returns the key–value pairs of the given string map, in arbitrary order.
 
@@ -2700,7 +2557,7 @@ Returns the key–value pairs of the given string map, in arbitrary order.
 [Pair ('a') (1), Pair ('b') (2), Pair ('c') (3)]
 ```
 
-#### <a name="fromPairs" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4112">`fromPairs :: Foldable f => f (Pair String a) -⁠> StrMap a`</a>
+#### <a name="fromPairs" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3835">`fromPairs :: Foldable f => f (Pair String a) -⁠> StrMap a`</a>
 
 Returns a string map containing the key–value pairs specified by the
 given [Foldable][]. If a key appears in multiple pairs, the rightmost
@@ -2716,7 +2573,7 @@ pair takes precedence.
 
 ### Number
 
-#### <a name="negate" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4139">`negate :: ValidNumber -⁠> ValidNumber`</a>
+#### <a name="negate" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3862">`negate :: ValidNumber -⁠> ValidNumber`</a>
 
 Negates its argument.
 
@@ -2728,7 +2585,7 @@ Negates its argument.
 42
 ```
 
-#### <a name="add" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4159">`add :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="add" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3882">`add :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
 
 Returns the sum of two (finite) numbers.
 
@@ -2737,7 +2594,7 @@ Returns the sum of two (finite) numbers.
 2
 ```
 
-#### <a name="sum" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4178">`sum :: Foldable f => f FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="sum" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3901">`sum :: Foldable f => f FiniteNumber -⁠> FiniteNumber`</a>
 
 Returns the sum of the given array of (finite) numbers.
 
@@ -2755,7 +2612,7 @@ Returns the sum of the given array of (finite) numbers.
 0
 ```
 
-#### <a name="sub" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4201">`sub :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="sub" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3924">`sub :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
 
 Takes a finite number `n` and returns the _subtract `n`_ function.
 
@@ -2764,7 +2621,7 @@ Takes a finite number `n` and returns the _subtract `n`_ function.
 [0, 1, 2]
 ```
 
-#### <a name="mult" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4220">`mult :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="mult" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3943">`mult :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
 
 Returns the product of two (finite) numbers.
 
@@ -2773,7 +2630,7 @@ Returns the product of two (finite) numbers.
 8
 ```
 
-#### <a name="product" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4239">`product :: Foldable f => f FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="product" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3962">`product :: Foldable f => f FiniteNumber -⁠> FiniteNumber`</a>
 
 Returns the product of the given array of (finite) numbers.
 
@@ -2791,7 +2648,7 @@ Returns the product of the given array of (finite) numbers.
 1
 ```
 
-#### <a name="div" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4262">`div :: NonZeroFiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="div" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L3985">`div :: NonZeroFiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
 
 Takes a non-zero finite number `n` and returns the _divide by `n`_
 function.
@@ -2801,7 +2658,7 @@ function.
 [0, 0.5, 1, 1.5]
 ```
 
-#### <a name="pow" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4282">`pow :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
+#### <a name="pow" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4005">`pow :: FiniteNumber -⁠> FiniteNumber -⁠> FiniteNumber`</a>
 
 Takes a finite number `n` and returns the _power of `n`_ function.
 
@@ -2813,7 +2670,7 @@ Takes a finite number `n` and returns the _power of `n`_ function.
 [1, 2, 3, 4, 5]
 ```
 
-#### <a name="mean" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4304">`mean :: Foldable f => f FiniteNumber -⁠> Maybe FiniteNumber`</a>
+#### <a name="mean" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4027">`mean :: Foldable f => f FiniteNumber -⁠> Maybe FiniteNumber`</a>
 
 Returns the mean of the given array of (finite) numbers.
 
@@ -2833,7 +2690,7 @@ Nothing
 
 ### Integer
 
-#### <a name="even" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4341">`even :: Integer -⁠> Boolean`</a>
+#### <a name="even" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4064">`even :: Integer -⁠> Boolean`</a>
 
 Returns `true` if the given integer is even; `false` if it is odd.
 
@@ -2845,7 +2702,7 @@ true
 false
 ```
 
-#### <a name="odd" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4361">`odd :: Integer -⁠> Boolean`</a>
+#### <a name="odd" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4084">`odd :: Integer -⁠> Boolean`</a>
 
 Returns `true` if the given integer is odd; `false` if it is even.
 
@@ -2859,7 +2716,7 @@ false
 
 ### Parse
 
-#### <a name="parseDate" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4383">`parseDate :: String -⁠> Maybe ValidDate`</a>
+#### <a name="parseDate" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4106">`parseDate :: String -⁠> Maybe ValidDate`</a>
 
 Takes a string `s` and returns `Just (new Date (s))` if `new Date (s)`
 evaluates to a [`ValidDate`][ValidDate] value; Nothing otherwise.
@@ -2882,7 +2739,7 @@ Just (new Date ('2011-01-19T17:40:00.000Z'))
 Nothing
 ```
 
-#### <a name="parseFloat" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4449">`parseFloat :: String -⁠> Maybe Number`</a>
+#### <a name="parseFloat" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4172">`parseFloat :: String -⁠> Maybe Number`</a>
 
 Takes a string and returns Just the number represented by the string
 if it does in fact represent a number; Nothing otherwise.
@@ -2895,7 +2752,7 @@ Just (-123.45)
 Nothing
 ```
 
-#### <a name="parseInt" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4476">`parseInt :: Radix -⁠> String -⁠> Maybe Integer`</a>
+#### <a name="parseInt" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4200">`parseInt :: Radix -⁠> String -⁠> Maybe Integer`</a>
 
 Takes a radix (an integer between 2 and 36 inclusive) and a string,
 and returns Just the number represented by the string if it does in
@@ -2917,9 +2774,9 @@ Just (255)
 Nothing
 ```
 
-#### <a name="parseJson" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4516">`parseJson :: (Any -⁠> Boolean) -⁠> String -⁠> Maybe a`</a>
+#### <a name="parseJson" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4240">`parseJson :: (Any -⁠> Boolean) -⁠> String -⁠> Maybe a`</a>
 
-Takes a predicate and a string which may or may not be valid JSON, and
+Takes a predicate and a string that may or may not be valid JSON, and
 returns Just the result of applying `JSON.parse` to the string *if* the
 result satisfies the predicate; Nothing otherwise.
 
@@ -2939,7 +2796,7 @@ Just ([1, 2, 3])
 
 ### RegExp
 
-#### <a name="regex" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4565">`regex :: RegexFlags -⁠> String -⁠> RegExp`</a>
+#### <a name="regex" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4292">`regex :: RegexFlags -⁠> String -⁠> RegExp`</a>
 
 Takes a [RegexFlags][] and a pattern, and returns a RegExp.
 
@@ -2948,9 +2805,9 @@ Takes a [RegexFlags][] and a pattern, and returns a RegExp.
 /:\d+:/g
 ```
 
-#### <a name="regexEscape" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4584">`regexEscape :: String -⁠> String`</a>
+#### <a name="regexEscape" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4311">`regexEscape :: String -⁠> String`</a>
 
-Takes a string which may contain regular expression metacharacters,
+Takes a string that may contain regular expression metacharacters,
 and returns a string with those metacharacters escaped.
 
 Properties:
@@ -2963,7 +2820,7 @@ Properties:
 '\\-=\\*\\{XYZ\\}\\*=\\-'
 ```
 
-#### <a name="test" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4607">`test :: RegExp -⁠> String -⁠> Boolean`</a>
+#### <a name="test" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4334">`test :: RegExp -⁠> String -⁠> Boolean`</a>
 
 Takes a pattern and a string, and returns `true` [iff][] the pattern
 matches the string.
@@ -2976,7 +2833,7 @@ true
 false
 ```
 
-#### <a name="match" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4630">`match :: NonGlobalRegExp -⁠> String -⁠> Maybe { match :: String, groups :: Array (Maybe String) }`</a>
+#### <a name="match" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4357">`match :: NonGlobalRegExp -⁠> String -⁠> Maybe { match :: String, groups :: Array (Maybe String) }`</a>
 
 Takes a pattern and a string, and returns Just a match record if the
 pattern matches the string; Nothing otherwise.
@@ -3000,7 +2857,7 @@ Just ({match: 'goodbye', groups: [Just ('good')]})
 Just ({match: 'bye', groups: [Nothing]})
 ```
 
-#### <a name="matchAll" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4664">`matchAll :: GlobalRegExp -⁠> String -⁠> Array { match :: String, groups :: Array (Maybe String) }`</a>
+#### <a name="matchAll" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4392">`matchAll :: GlobalRegExp -⁠> String -⁠> Array { match :: String, groups :: Array (Maybe String) }`</a>
 
 Takes a pattern and a string, and returns an array of match records.
 
@@ -3021,7 +2878,7 @@ See also [`match`](#match).
 
 ### String
 
-#### <a name="toUpper" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4701">`toUpper :: String -⁠> String`</a>
+#### <a name="toUpper" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4429">`toUpper :: String -⁠> String`</a>
 
 Returns the upper-case equivalent of its argument.
 
@@ -3032,7 +2889,7 @@ See also [`toLower`](#toLower).
 'ABC DEF 123'
 ```
 
-#### <a name="toLower" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4717">`toLower :: String -⁠> String`</a>
+#### <a name="toLower" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4445">`toLower :: String -⁠> String`</a>
 
 Returns the lower-case equivalent of its argument.
 
@@ -3043,7 +2900,7 @@ See also [`toUpper`](#toUpper).
 'abc def 123'
 ```
 
-#### <a name="trim" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4733">`trim :: String -⁠> String`</a>
+#### <a name="trim" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4461">`trim :: String -⁠> String`</a>
 
 Strips leading and trailing whitespace characters.
 
@@ -3052,7 +2909,7 @@ Strips leading and trailing whitespace characters.
 'foo bar'
 ```
 
-#### <a name="stripPrefix" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4747">`stripPrefix :: String -⁠> String -⁠> Maybe String`</a>
+#### <a name="stripPrefix" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4475">`stripPrefix :: String -⁠> String -⁠> Maybe String`</a>
 
 Returns Just the portion of the given string (the second argument) left
 after removing the given prefix (the first argument) if the string starts
@@ -3068,7 +2925,7 @@ Just ('sanctuary.js.org')
 Nothing
 ```
 
-#### <a name="stripSuffix" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4774">`stripSuffix :: String -⁠> String -⁠> Maybe String`</a>
+#### <a name="stripSuffix" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4502">`stripSuffix :: String -⁠> String -⁠> Maybe String`</a>
 
 Returns Just the portion of the given string (the second argument) left
 after removing the given suffix (the first argument) if the string ends
@@ -3084,7 +2941,7 @@ Just ('README')
 Nothing
 ```
 
-#### <a name="words" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4801">`words :: String -⁠> Array String`</a>
+#### <a name="words" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4529">`words :: String -⁠> Array String`</a>
 
 Takes a string and returns the array of words the string contains
 (words are delimited by whitespace characters).
@@ -3096,7 +2953,7 @@ See also [`unwords`](#unwords).
 ['foo', 'bar', 'baz']
 ```
 
-#### <a name="unwords" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4824">`unwords :: Array String -⁠> String`</a>
+#### <a name="unwords" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4552">`unwords :: Array String -⁠> String`</a>
 
 Takes an array of words and returns the result of joining the words
 with separating spaces.
@@ -3108,7 +2965,7 @@ See also [`words`](#words).
 'foo bar baz'
 ```
 
-#### <a name="lines" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4841">`lines :: String -⁠> Array String`</a>
+#### <a name="lines" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4569">`lines :: String -⁠> Array String`</a>
 
 Takes a string and returns the array of lines the string contains
 (lines are delimited by newlines: `'\n'` or `'\r\n'` or `'\r'`).
@@ -3121,7 +2978,7 @@ See also [`unlines`](#unlines).
 ['foo', 'bar', 'baz']
 ```
 
-#### <a name="unlines" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4863">`unlines :: Array String -⁠> String`</a>
+#### <a name="unlines" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4591">`unlines :: Array String -⁠> String`</a>
 
 Takes an array of lines and returns the result of joining the lines
 after appending a terminating line feed (`'\n'`) to each.
@@ -3133,7 +2990,7 @@ See also [`lines`](#lines).
 'foo\nbar\nbaz\n'
 ```
 
-#### <a name="splitOn" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4883">`splitOn :: String -⁠> String -⁠> Array String`</a>
+#### <a name="splitOn" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4611">`splitOn :: String -⁠> String -⁠> Array String`</a>
 
 Returns the substrings of its second argument separated by occurrences
 of its first argument.
@@ -3145,7 +3002,7 @@ See also [`joinWith`](#joinWith) and [`splitOnRegex`](#splitOnRegex).
 ['foo', 'bar', 'baz']
 ```
 
-#### <a name="splitOnRegex" href="https://github.com/sanctuary-js/sanctuary/blob/v1.1.0/index.js#L4900">`splitOnRegex :: GlobalRegExp -⁠> String -⁠> Array String`</a>
+#### <a name="splitOnRegex" href="https://github.com/sanctuary-js/sanctuary/blob/v2.0.0/index.js#L4628">`splitOnRegex :: GlobalRegExp -⁠> String -⁠> Array String`</a>
 
 Takes a pattern and a string, and returns the result of splitting the
 string at every non-overlapping occurrence of the pattern.
@@ -3170,7 +3027,6 @@ See also [`splitOn`](#splitOn).
 [#438]:                     https://github.com/sanctuary-js/sanctuary/issues/438
 [#488]:                     https://github.com/sanctuary-js/sanctuary/issues/488
 [Apply]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#apply
-[BinaryType]:               https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#BinaryType
 [Chain]:                    https://github.com/fantasyland/fantasy-land/tree/v4.0.1#chain
 [Either]:                   #either-type
 [Fantasy Land]:             https://github.com/fantasyland/fantasy-land/tree/v4.0.1
@@ -3180,53 +3036,50 @@ See also [`splitOn`](#splitOn).
 [Haskell]:                  https://www.haskell.org/
 [Kleisli]:                  https://en.wikipedia.org/wiki/Kleisli_category
 [Maybe]:                    #maybe-type
-[Nullable]:                 https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#Nullable
+[Nullable]:                 https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0#Nullable
 [PureScript]:               http://www.purescript.org/
 [Ramda]:                    http://ramdajs.com/
-[RegexFlags]:               https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#RegexFlags
+[RegexFlags]:               https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0#RegexFlags
 [Semigroupoid]:             https://github.com/fantasyland/fantasy-land/tree/v4.0.1#semigroupoid
-[UnaryType]:                https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#UnaryType
-[ValidDate]:                https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#ValidDate
-[`$.test`]:                 https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0#test
-[`Descending`]:             https://github.com/sanctuary-js/sanctuary-descending/tree/v1.1.0#Descending
+[ValidDate]:                https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0#ValidDate
+[`$.test`]:                 https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0#test
+[`Descending`]:             https://github.com/sanctuary-js/sanctuary-descending/tree/v1.2.0#Descending
 [`R.__`]:                   http://ramdajs.com/docs/#__
 [`R.bind`]:                 http://ramdajs.com/docs/#bind
 [`R.invoker`]:              http://ramdajs.com/docs/#invoker
-[`Z.alt`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#alt
-[`Z.ap`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#ap
-[`Z.apFirst`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#apFirst
-[`Z.apSecond`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#apSecond
-[`Z.bimap`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#bimap
-[`Z.chain`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#chain
-[`Z.chainRec`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#chainRec
-[`Z.compose`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#compose
-[`Z.concat`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#concat
-[`Z.contramap`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#contramap
-[`Z.dropWhile`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#dropWhile
-[`Z.duplicate`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#duplicate
-[`Z.empty`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#empty
-[`Z.equals`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#equals
-[`Z.extend`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#extend
-[`Z.extract`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#extract
-[`Z.filter`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#filter
-[`Z.flip`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#flip
-[`Z.foldMap`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#foldMap
-[`Z.gt`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#gt
-[`Z.gte`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#gte
-[`Z.id`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#id
-[`Z.invert`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#invert
-[`Z.join`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#join
-[`Z.lt`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#lt
-[`Z.lte`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#lte
-[`Z.map`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#map
-[`Z.mapLeft`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#mapLeft
-[`Z.of`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#of
-[`Z.promap`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#promap
-[`Z.reject`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#reject
-[`Z.sequence`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#sequence
-[`Z.takeWhile`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#takeWhile
-[`Z.traverse`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#traverse
-[`Z.zero`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0#zero
+[`Z.alt`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#alt
+[`Z.ap`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#ap
+[`Z.apFirst`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#apFirst
+[`Z.apSecond`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#apSecond
+[`Z.bimap`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#bimap
+[`Z.chain`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#chain
+[`Z.chainRec`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#chainRec
+[`Z.compose`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#compose
+[`Z.concat`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#concat
+[`Z.contramap`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#contramap
+[`Z.duplicate`]:            https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#duplicate
+[`Z.empty`]:                https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#empty
+[`Z.equals`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#equals
+[`Z.extend`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#extend
+[`Z.extract`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#extract
+[`Z.filter`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#filter
+[`Z.flip`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#flip
+[`Z.foldMap`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#foldMap
+[`Z.gt`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#gt
+[`Z.gte`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#gte
+[`Z.id`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#id
+[`Z.invert`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#invert
+[`Z.join`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#join
+[`Z.lt`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#lt
+[`Z.lte`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#lte
+[`Z.map`]:                  https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#map
+[`Z.mapLeft`]:              https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#mapLeft
+[`Z.of`]:                   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#of
+[`Z.promap`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#promap
+[`Z.reject`]:               https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#reject
+[`Z.sequence`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#sequence
+[`Z.traverse`]:             https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#traverse
+[`Z.zero`]:                 https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0#zero
 [`show`]:                   https://github.com/sanctuary-js/sanctuary-show/tree/v1.0.0#show
 [date parsing]:             https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
 [equivalence]:              https://en.wikipedia.org/wiki/Equivalence_relation
@@ -3236,12 +3089,12 @@ See also [`splitOn`](#splitOn).
 [ramda/ramda#683]:          https://github.com/ramda/ramda/issues/683
 [ramda/ramda#1413]:         https://github.com/ramda/ramda/issues/1413
 [ramda/ramda#1419]:         https://github.com/ramda/ramda/pull/1419
-[sanctuary-def]:            https://github.com/sanctuary-js/sanctuary-def/tree/v0.19.0
-[sanctuary-either]:         https://github.com/sanctuary-js/sanctuary-either/tree/v1.1.0
-[sanctuary-maybe]:          https://github.com/sanctuary-js/sanctuary-maybe/tree/v1.1.0
-[sanctuary-pair]:           https://github.com/sanctuary-js/sanctuary-pair/tree/v1.1.0
+[sanctuary-def]:            https://github.com/sanctuary-js/sanctuary-def/tree/v0.20.0
+[sanctuary-either]:         https://github.com/sanctuary-js/sanctuary-either/tree/v1.2.0
+[sanctuary-maybe]:          https://github.com/sanctuary-js/sanctuary-maybe/tree/v1.2.0
+[sanctuary-pair]:           https://github.com/sanctuary-js/sanctuary-pair/tree/v1.2.0
 [sanctuary-show]:           https://github.com/sanctuary-js/sanctuary-show/tree/v1.0.0
-[sanctuary-type-classes]:   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v10.0.0
+[sanctuary-type-classes]:   https://github.com/sanctuary-js/sanctuary-type-classes/tree/v11.0.0
 [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 [thrush]:                   https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
 [total functions]:          https://en.wikipedia.org/wiki/Partial_function#Total_function
