@@ -24,7 +24,7 @@
 //.
 //. Sanctuary provides two data types, [Maybe][] and [Either][], both of
 //. which are compatible with [Fantasy Land][]. Thanks to these data types
-//. even Sanctuary functions which may fail, such as [`head`](#head), are
+//. even Sanctuary functions that may fail, such as [`head`](#head), are
 //. composable.
 //.
 //. Sanctuary makes it possible to write safe code without null checks.
@@ -53,7 +53,7 @@
 //.
 //. ## Ramda
 //.
-//. [Ramda][] provides several functions which return problematic values
+//. [Ramda][] provides several functions that return problematic values
 //. such as `undefined`, `Infinity`, or `NaN` when applied to unsuitable
 //. inputs. These are known as [partial functions][]. Partial functions
 //. necessitate the use of guards or null checks. In order to safely use
@@ -76,7 +76,7 @@
 //.
 //. ### Totality
 //.
-//. Every Sanctuary function is defined for every value which is a member of
+//. Every Sanctuary function is defined for every value that is a member of
 //. the function's input type. Such functions are known as [total functions][].
 //. Ramda, on the other hand, contains a number of [partial functions][].
 //.
@@ -139,7 +139,7 @@
 //. solution to this problem, proposed in [#438][], is to include a space when
 //. applying a function: `f (x) (y) (z)`.
 //.
-//. Ramda also provides a special placeholder value, [`R.__`][], which removes
+//. Ramda also provides a special placeholder value, [`R.__`][], that removes
 //. the restriction that a function must be applied to its arguments in order.
 //. The following expressions are equivalent:
 //.
@@ -152,16 +152,16 @@
 //.
 //. ### Variadic functions
 //.
-//. Ramda provides several functions which take any number of arguments. These
+//. Ramda provides several functions that take any number of arguments. These
 //. are known as [variadic functions][]. Additionally, Ramda provides several
-//. functions which take variadic functions as arguments. Although natural in
+//. functions that take variadic functions as arguments. Although natural in
 //. a dynamically typed language, variadic functions are at odds with the type
 //. notation Ramda and Sanctuary both use, leading to some indecipherable type
 //. signatures such as this one:
 //.
 //.     R.lift :: (*... -> *...) -> ([*]... -> [*])
 //.
-//. Sanctuary has no variadic functions, nor any functions which take variadic
+//. Sanctuary has no variadic functions, nor any functions that take variadic
 //. functions as arguments. Sanctuary provides two "lift" functions, each with
 //. a helpful type signature:
 //.
@@ -207,7 +207,7 @@
 //.
 //.     Math.abs :: Number -> Number
 //.
-//. That states that `Math.abs` is a unary function which takes an argument
+//. That states that `Math.abs` is a unary function that takes an argument
 //. of type `Number` and returns a value of type `Number`.
 //.
 //. Some functions are parametrically polymorphic: their types are not fixed.
@@ -228,7 +228,7 @@
 //. types with which `a` and `b` are replaced may be different, but needn't be.
 //.
 //. Since all Sanctuary functions are curried (they accept their arguments
-//. one at a time), a binary function is represented as a unary function which
+//. one at a time), a binary function is represented as a unary function that
 //. returns a unary function: `* -> * -> *`. This aligns neatly with Haskell,
 //. which uses curried functions exclusively. In JavaScript, though, we may
 //. wish to represent the types of functions with arities less than or greater
@@ -243,7 +243,7 @@
 //. `Number -> Number` can thus be seen as shorthand for `(Number) -> Number`.
 //.
 //. Sanctuary embraces types. JavaScript doesn't support algebraic data types,
-//. but these can be simulated by providing a group of data constructors which
+//. but these can be simulated by providing a group of data constructors that
 //. return values with the same set of methods. A value of the Either type, for
 //. example, is created via the Left constructor or the Right constructor.
 //.
@@ -266,7 +266,7 @@
 //.
 //. Sanctuary supports type classes: constraints on type variables. Whereas
 //. `a -> a` implicitly supports every type, `Functor f => (a -> b) -> f a ->
-//. f b` requires that `f` be a type which satisfies the requirements of the
+//. f b` requires that `f` be a type that satisfies the requirements of the
 //. Functor type class. Type-class constraints appear at the beginning of a
 //. type signature, separated from the rest of the signature by a fat arrow
 //. (`=>`).
@@ -312,7 +312,7 @@
 //. });
 //. ```
 //.
-//. Occasionally one may wish to perform an operation which is not type safe,
+//. Occasionally one may wish to perform an operation that is not type safe,
 //. such as mapping over an object with heterogeneous values. This is possible
 //. via selective use of [`unchecked`](#unchecked) functions.
 //.
@@ -511,7 +511,7 @@
   //. descriptive error message.
   //.
   //. The following snippet demonstrates defining a custom type and using
-  //. `create` to produce a Sanctuary module which is aware of that type:
+  //. `create` to produce a Sanctuary module that is aware of that type:
   //.
   //. ```javascript
   //. const {create, env} = require ('sanctuary');
@@ -608,8 +608,8 @@
 
   //# unchecked :: Module
   //.
-  //. A complete Sanctuary module which performs no type checking. This is
-  //. useful as it permits operations which Sanctuary's type checking would
+  //. A complete Sanctuary module that performs no type checking. This is
+  //. useful as it permits operations that Sanctuary's type checking would
   //. disallow, such as mapping over an object with heterogeneous values.
   //.
   //. See also [`create`](#create).
@@ -697,7 +697,7 @@
 
   //# equals :: Setoid a => a -> a -> Boolean
   //.
-  //. Curried version of [`Z.equals`][] which requires two arguments of the
+  //. Curried version of [`Z.equals`][] that requires two arguments of the
   //. same type.
   //.
   //. To compare values of different types first use [`create`](#create) to
@@ -954,7 +954,7 @@
 
   //# filter :: Filterable f => (a -> Boolean) -> f a -> f a
   //.
-  //. Curried version of [`Z.filter`][]. Discards every element which does not
+  //. Curried version of [`Z.filter`][]. Discards every element that does not
   //. satisfy the predicate.
   //.
   //. See also [`reject`](#reject).
@@ -988,7 +988,7 @@
 
   //# reject :: Filterable f => (a -> Boolean) -> f a -> f a
   //.
-  //. Curried version of [`Z.reject`][]. Discards every element which satisfies
+  //. Curried version of [`Z.reject`][]. Discards every element that satisfies
   //. the predicate.
   //.
   //. See also [`filter`](#filter).
@@ -1329,7 +1329,7 @@
 
   //# lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
   //.
-  //. Promotes a curried binary function to a function which operates on two
+  //. Promotes a curried binary function to a function that operates on two
   //. [Apply][]s.
   //.
   //. ```javascript
@@ -1353,7 +1353,7 @@
 
   //# lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
   //.
-  //. Promotes a curried ternary function to a function which operates on three
+  //. Promotes a curried ternary function to a function that operates on three
   //. [Apply][]s.
   //.
   //. ```javascript
@@ -1827,7 +1827,7 @@
 
   //# pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b
   //.
-  //. Takes a sequence of functions assumed to be unary which return values
+  //. Takes a sequence of functions assumed to be unary that return values
   //. with a [Chain][], and a value of that Chain, and returns the result
   //. of applying the sequence of transformations to the initial value.
   //.
@@ -2056,7 +2056,7 @@
 
   //# fromMaybe_ :: (() -> a) -> Maybe a -> a
   //.
-  //. Variant of [`fromMaybe`](#fromMaybe) which takes a thunk so the default
+  //. Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
   //. value is only computed if required.
   //.
   //. ```javascript
@@ -2127,7 +2127,7 @@
 
   //# maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b
   //.
-  //. Variant of [`maybe`](#maybe) which takes a thunk so the default value
+  //. Variant of [`maybe`](#maybe) that takes a thunk so the default value
   //. is only computed if required.
   //.
   //. ```javascript
@@ -2154,7 +2154,7 @@
 
   //# justs :: (Filterable f, Functor f) => f (Maybe a) -> f a
   //.
-  //. Discards each element which is Nothing, and unwraps each element which is
+  //. Discards each element that is Nothing, and unwraps each element that is
   //. a Just. Related to Haskell's `catMaybes` function.
   //.
   //. See also [`lefts`](#lefts) and [`rights`](#rights).
@@ -2345,7 +2345,7 @@
 
   //# lefts :: (Filterable f, Functor f) => f (Either a b) -> f a
   //.
-  //. Discards each element which is a Right, and unwraps each element which is
+  //. Discards each element that is a Right, and unwraps each element that is
   //. a Left.
   //.
   //. See also [`rights`](#rights).
@@ -2362,7 +2362,7 @@
 
   //# rights :: (Filterable f, Functor f) => f (Either a b) -> f b
   //.
-  //. Discards each element which is a Left, and unwraps each element which is
+  //. Discards each element that is a Left, and unwraps each element that is
   //. a Right.
   //.
   //. See also [`lefts`](#lefts).
@@ -2972,7 +2972,7 @@
 
   //# takeWhile :: (a -> Boolean) -> Array a -> Array a
   //.
-  //. Discards the first element which does not satisfy the predicate,
+  //. Discards the first element that does not satisfy the predicate,
   //. and all subsequent elements.
   //.
   //. See also [`dropWhile`](#dropWhile).
@@ -2999,7 +2999,7 @@
 
   //# dropWhile :: (a -> Boolean) -> Array a -> Array a
   //.
-  //. Retains the first element which does not satisfy the predicate,
+  //. Retains the first element that does not satisfy the predicate,
   //. and all subsequent elements.
   //.
   //. See also [`takeWhile`](#takeWhile).
@@ -3247,7 +3247,7 @@
   //# find :: Foldable f => (a -> Boolean) -> f a -> Maybe a
   //.
   //. Takes a predicate and a structure and returns Just the leftmost element
-  //. of the structure which satisfies the predicate; Nothing if there is no
+  //. of the structure that satisfies the predicate; Nothing if there is no
   //. such element.
   //.
   //. See also [`elem`](#elem).
@@ -4239,7 +4239,7 @@
 
   //# parseJson :: (Any -> Boolean) -> String -> Maybe a
   //.
-  //. Takes a predicate and a string which may or may not be valid JSON, and
+  //. Takes a predicate and a string that may or may not be valid JSON, and
   //. returns Just the result of applying `JSON.parse` to the string *if* the
   //. result satisfies the predicate; Nothing otherwise.
   //.
@@ -4310,7 +4310,7 @@
 
   //# regexEscape :: String -> String
   //.
-  //. Takes a string which may contain regular expression metacharacters,
+  //. Takes a string that may contain regular expression metacharacters,
   //. and returns a string with those metacharacters escaped.
   //.
   //. Properties:
