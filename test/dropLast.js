@@ -1,7 +1,8 @@
 'use strict';
 
-const S = require ('..');
+const S = require ('./internal/sanctuary');
 
+const {Nil, Cons} = require ('./internal/List');
 const eq = require ('./internal/eq');
 
 
@@ -9,7 +10,7 @@ test ('dropLast', () => {
 
   eq (typeof S.dropLast) ('function');
   eq (S.dropLast.length) (1);
-  eq (S.show (S.dropLast)) ('dropLast :: Integer -> Array a -> Maybe (Array a)');
+  eq (S.show (S.dropLast)) ('dropLast :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
 
   eq (S.dropLast (0) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4, 5]));
   eq (S.dropLast (1) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4]));
@@ -20,5 +21,13 @@ test ('dropLast', () => {
   eq (S.dropLast (6) ([1, 2, 3, 4, 5])) (S.Nothing);
 
   eq (S.dropLast (-1) ([1, 2, 3, 4, 5])) (S.Nothing);
+
+  eq (S.dropLast (0) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Just (Cons (1) (Cons (2) (Cons (3) (Nil)))));
+  eq (S.dropLast (1) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Just (Cons (1) (Cons (2) (Nil))));
+  eq (S.dropLast (2) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Just (Cons (1) (Nil)));
+  eq (S.dropLast (3) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Just (Nil));
+  eq (S.dropLast (4) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Nothing);
+
+  eq (S.dropLast (-1) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Nothing);
 
 });
