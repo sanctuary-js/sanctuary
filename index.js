@@ -2652,56 +2652,6 @@
     impl: unless
   };
 
-  //# allPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
-  //.
-  //. Takes a structure containing zero or more predicates, and a value
-  //. of any type. Returns `true` [iff][] the value satisfies all of the
-  //. predicates. None of the subsequent predicates will be applied after
-  //. the first predicate not satisfied.
-  //.
-  //. ```javascript
-  //. > S.allPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('quiessence')
-  //. true
-  //.
-  //. > S.allPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('fissiparous')
-  //. false
-  //. ```
-  function allPass(preds) {
-    return function(x) {
-      return Z.reduce (function(b, p) { return b && p (x); }, true, preds);
-    };
-  }
-  _.allPass = {
-    consts: {f: [Z.Foldable]},
-    types: [f ($.Predicate (a)), a, $.Boolean],
-    impl: allPass
-  };
-
-  //# anyPass :: Foldable f => f (a -> Boolean) -> a -> Boolean
-  //.
-  //. Takes a structure containing zero or more predicates, and a value
-  //. of any type. Returns `true` [iff][] the value satisfies any of the
-  //. predicates. None of the subsequent predicates will be applied after
-  //. the first predicate satisfied.
-  //.
-  //. ```javascript
-  //. > S.anyPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('incandescent')
-  //. true
-  //.
-  //. > S.anyPass ([S.test (/q/), S.test (/u/), S.test (/i/)]) ('empathy')
-  //. false
-  //. ```
-  function anyPass(preds) {
-    return function(x) {
-      return Z.reduce (function(b, p) { return b || p (x); }, false, preds);
-    };
-  }
-  _.anyPass = {
-    consts: {f: [Z.Foldable]},
-    types: [f ($.Predicate (a)), a, $.Boolean],
-    impl: anyPass
-  };
-
   //. ### Array
 
   //# array :: b -> (a -> Array a -> b) -> Array a -> b
