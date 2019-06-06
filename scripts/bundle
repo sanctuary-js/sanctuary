@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const fs = require ('fs');
+const path = require ('path');
+
+const sanctuary = require ('../package.json');
+
+
+//    expandDependencies :: StrMap String -> StrMap (Array String)
+const expandDependencies = children => {
+  const descendants = Object.create (null);
+  const todo = Object.keys (children);
+  while (todo.length > 0) {
+    const name = todo.shift ();
+    descendants[name] = Object.keys (
+      (require (`../node_modules/${name}/package.json`)).dependencies
+    );
+    Array.prototype.push.apply (todo, descendants[name]);
+  }
+  return descendants;
+};
+
+//    orderDependencies :: StrMap (Array String) -> Array String
+const orderDependencies = deps => {
+  const done = [];
+  const todo = (Object.keys (deps)).sort ();
+  while (todo.length > 0) {
+    const name = todo.shift ();
+    (deps[name].every (name => done.includes (name)) ? done : todo)
+    .push (name);
+  }
+  return done;
+};
+
+//    dependencies :: Array String
+const dependencies =
+  orderDependencies (expandDependencies (sanctuary.dependencies));
+
+//    spec :: { name :: String, version :: String } -> String
+const spec = pkg => pkg.name + '@' + pkg.version;
+
+process.stdout.write (
+  `//  ${spec (sanctuary)} with bundled dependencies:
+//
+${dependencies
+  .map (name => '//  - ' + spec (require (name + '/package.json')))
+  .join ('\n')}
+
+${dependencies
+  .map (name => fs.readFileSync (path.join ('node_modules', name, 'index.js'),
+                                 'utf8'))
+  .join ('\n')}
+${fs.readFileSync ('index.js', 'utf8')}`
+);

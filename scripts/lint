@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+node_modules/.bin/sanctuary-lint "$@"
+
+node_modules/.bin/eslint \
+  --report-unused-disable-directives \
+  -- scripts/bundle
