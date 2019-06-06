@@ -33,5 +33,5 @@ jobs:
               0) npm install && npm test ;;
               1) test_with_version 8 ;;
               2) test_with_version 10 ;;
-              3) test_with_version 11 ;;
+              3) test_with_version 12 ;;
             esac
