@@ -2079,7 +2079,7 @@
   //. a Just, the return value is the result of applying the function to
   //. the Just's value. Otherwise, the first argument is returned.
   //.
-  //. See also [`maybe_`](#maybe_).
+  //. See also [`maybe_`](#maybe_) and [`fromMaybe`](#fromMaybe).
   //.
   //. ```javascript
   //. > S.maybe (0) (S.prop ('length')) (S.Just ('refuge'))
@@ -2133,7 +2133,7 @@
   //. Takes a default value and a Maybe, and returns the Maybe's value
   //. if the Maybe is a Just; the default value otherwise.
   //.
-  //. See also [`fromMaybe_`](#fromMaybe_) and
+  //. See also [`maybe`](#maybe), [`fromMaybe_`](#fromMaybe_), and
   //. [`maybeToNullable`](#maybeToNullable).
   //.
   //. ```javascript
@@ -2342,6 +2342,8 @@
   //. is a Left, or the result of applying the second function to the
   //. Right's value, if the Either is a Right.
   //.
+  //. See also [`fromLeft`](#fromLeft) and [`fromRight`](#fromRight).
+  //.
   //. ```javascript
   //. > S.either (S.toUpper) (S.show) (S.Left ('Cannot divide by zero'))
   //. 'CANNOT DIVIDE BY ZERO'
@@ -2362,10 +2364,59 @@
     impl: either
   };
 
+  //# fromLeft :: a -> Either a b -> a
+  //.
+  //. Takes a default value and an Either, and returns the Left value
+  //. if the Either is a Left; the default value otherwise.
+  //.
+  //. See also [`either`](#either) and [`fromRight`](#fromRight).
+  //.
+  //. ```javascript
+  //. > S.fromLeft ('abc') (S.Left ('xyz'))
+  //. 'xyz'
+  //.
+  //. > S.fromLeft ('abc') (S.Right (123))
+  //. 'abc'
+  //. ```
+  function fromLeft(x) {
+    return either (I) (K (x));
+  }
+  _.fromLeft = {
+    consts: {},
+    types: [a, $.Either (a) (b), a],
+    impl: fromLeft
+  };
+
+  //# fromRight :: b -> Either a b -> b
+  //.
+  //. Takes a default value and an Either, and returns the Right value
+  //. if the Either is a Right; the default value otherwise.
+  //.
+  //. See also [`either`](#either) and [`fromLeft`](#fromLeft).
+  //.
+  //. ```javascript
+  //. > S.fromRight (123) (S.Right (789))
+  //. 789
+  //.
+  //. > S.fromRight (123) (S.Left ('abc'))
+  //. 123
+  //. ```
+  function fromRight(x) {
+    return either (K (x)) (I);
+  }
+  _.fromRight = {
+    consts: {},
+    types: [b, $.Either (a) (b), b],
+    impl: fromRight
+  };
+
   //# fromEither :: b -> Either a b -> b
   //.
   //. Takes a default value and an Either, and returns the Right value
   //. if the Either is a Right; the default value otherwise.
+  //.
+  //. The behaviour of `fromEither` is likely to change in a future release.
+  //. Please use [`fromRight`](#fromRight) instead.
   //.
   //. ```javascript
   //. > S.fromEither (0) (S.Right (42))
