@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('size', () => {
 
-  eq (S.show (S.size)) ('size :: Foldable f => f a -> Integer');
+  eq (S.show (S.size)) ('size :: Foldable f => f a -> NonNegativeInteger');
 
   eq (S.size ([])) (0);
   eq (S.size (['foo'])) (1);

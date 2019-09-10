@@ -3024,7 +3024,7 @@
     impl: dropWhile
   };
 
-  //# size :: Foldable f => f a -> Integer
+  //# size :: Foldable f => f a -> NonNegativeInteger
   //.
   //. Returns the number of elements of the given structure.
   //.
@@ -3052,7 +3052,7 @@
   //. ```
   _.size = {
     consts: {f: [Z.Foldable]},
-    types: [f (a), $.Integer],
+    types: [f (a), $.NonNegativeInteger],
     impl: Z.size
   };
 
