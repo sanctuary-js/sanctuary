@@ -7,7 +7,7 @@ jobs:
         environment:
           NPM_CONFIG_COLOR: false
           NVM_DIR: /home/circleci/.nvm
-    parallelism: 4
+    parallelism: 3
     steps:
       - checkout
       - restore_cache:
@@ -28,8 +28,7 @@ jobs:
               nvm exec $1 npm test
             }
             case $CIRCLE_NODE_INDEX in
-              0) test_with_version 6 ;;
-              1) test_with_version 8 ;;
-              2) test_with_version 10 ;;
-              3) npm install && npm test ;;
+              0) test_with_version 8 ;;
+              1) test_with_version 10 ;;
+              2) npm install && npm test ;;
             esac
