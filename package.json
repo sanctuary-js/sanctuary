@@ -27,7 +27,7 @@
     "jsverify": "0.8.x",
     "sanctuary-descending": "1.2.0",
     "sanctuary-identity": "1.2.x",
-    "sanctuary-scripts": "3.2.x"
+    "sanctuary-scripts": "4.0.x"
   },
   "files": [
     "/LICENSE",
