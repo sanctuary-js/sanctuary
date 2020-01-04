@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+cp index.js index.js.orig
+trap 'mv index.js.orig index.js' EXIT
+
+awk '
+  {
+    if ($1 == "//." && $2 ~ /^#{1,6}$/) {
+      text = "❑ "
+      slug = "section:"
+      for (n = 3 ; ; n += 1) {
+        text = text $n
+        gsub(/\W/, "", $n)
+        slug = slug tolower($n)
+        if (n == NF) {
+          break
+        }
+        text = text " "
+        slug = slug "-"
+      }
+      print "//. " $2 " <span id=\x22" slug "\x22>" text "</span>"
+    } else {
+      print
+    }
+  }
+' index.js.orig >index.js
+
+node_modules/.bin/sanctuary-generate-readme

@@ -1876,7 +1876,7 @@
     impl: on
   };
 
-  //. ### Pair type
+  //. ### Pair
   //.
   //. Pair is the canonical product type: a value of type `Pair a b` always
   //. contains exactly two values: one of type `a`; one of type `b`.
@@ -1959,7 +1959,7 @@
     impl: pair (C (Pair))
   };
 
-  //. ### Maybe type
+  //. ### Maybe
   //.
   //. The Maybe type represents optional values: a value of type `Maybe a` is
   //. either Nothing (the empty value) or a Just whose value is of type `a`.
@@ -2215,7 +2215,7 @@
     impl: maybeToEither
   };
 
-  //. ### Either type
+  //. ### Either
   //.
   //. The Either type represents values with two possibilities: a value of type
   //. `Either a b` is either a Left whose value is of type `a` or a Right whose
@@ -4686,14 +4686,14 @@
 //. [#488]:                     https://github.com/sanctuary-js/sanctuary/issues/488
 //. [Apply]:                    v:fantasyland/fantasy-land#apply
 //. [Chain]:                    v:fantasyland/fantasy-land#chain
-//. [Either]:                   #either-type
+//. [Either]:                   #section:either
 //. [Fantasy Land]:             v:fantasyland/fantasy-land
 //. [Foldable]:                 v:fantasyland/fantasy-land#foldable
 //. [Folktale]:                 https://folktale.origamitower.com/
 //. [GIGO]:                     https://en.wikipedia.org/wiki/Garbage_in,_garbage_out
 //. [Haskell]:                  https://www.haskell.org/
 //. [Kleisli]:                  https://en.wikipedia.org/wiki/Kleisli_category
-//. [Maybe]:                    #maybe-type
+//. [Maybe]:                    #section:maybe
 //. [Nullable]:                 v:sanctuary-js/sanctuary-def#Nullable
 //. [PureScript]:               http://www.purescript.org/
 //. [Ramda]:                    https://ramdajs.com/
@@ -4756,7 +4756,7 @@
 //. [stable sort]:              https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 //. [thrush]:                   https://github.com/raganwald-deprecated/homoiconic/blob/master/2008-10-30/thrush.markdown
 //. [total functions]:          https://en.wikipedia.org/wiki/Partial_function#Total_function
-//. [type checking]:            #type-checking
+//. [type checking]:            #section:type-checking
 //. [type identifier]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:      v:fantasyland/fantasy-land#type-representatives
 //. [variadic functions]:       https://en.wikipedia.org/wiki/Variadic_function
