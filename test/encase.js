@@ -10,13 +10,13 @@ const rem = require ('./internal/rem');
 
 test ('encase', () => {
 
-  eq (S.show (S.encase)) ('encase :: (a -> b) -> a -> Either Error b');
+  eq (S.show (S.encase)) ('encase :: (Throwing e a b) -> a -> Either e b');
 
   //    safeFactorial :: Number -> Maybe Number
   const safeFactorial = S.encase (factorial);
 
   eq (safeFactorial (5)) (S.Right (120));
-  eq (safeFactorial (-1)) (S.Left (new Error ('Cannot determine factorial of negative number')));
+  eq (safeFactorial (-1)) (S.Left ('Cannot determine factorial of negative number'));
 
   //    safeRem :: Number -> Number -> Maybe Number
   const safeRem = S.compose (S.encase) (rem);
