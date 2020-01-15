@@ -480,6 +480,24 @@
   var p = $.BinaryTypeVariable ('p');
   var s = $.BinaryTypeVariable ('s');
 
+  //  Throwing :: Type -> Type -> Type -> Type
+  //
+  //  `Throwing e a b` is the type of functions from `a` to `b` that may
+  //  throw values of type `e`.
+  function Throwing(E) {
+    return function(A) {
+      return function(B) {
+        var T = $.Fn (A) (B);
+        T.format = function(outer, inner) {
+          return outer ('Throwing ' + show (E)) +
+                 outer (' ') + inner ('$1') (show (A)) +
+                 outer (' ') + inner ('$2') (show (B));
+        };
+        return T;
+      };
+    };
+  }
+
   //  TypeRep :: Type -> Type
   var TypeRep = $.UnaryType
     ('TypeRep')
@@ -2398,7 +2416,7 @@
     impl: tagBy
   };
 
-  //# encase :: (a -> b) -> a -> Either Error b
+  //# encase :: Throwing e a b -> a -> Either e b
   //.
   //. Takes a function that may throw and returns a pure function.
   //.
@@ -2420,7 +2438,7 @@
   }
   _.encase = {
     consts: {},
-    types: [$.Fn (a) (b), a, $.Either ($.Error) (b)],
+    types: [Throwing (e) (a) (b), a, $.Either (e) (b)],
     impl: encase
   };
 
