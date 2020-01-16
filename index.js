@@ -2227,29 +2227,6 @@
     impl: maybeToNullable
   };
 
-  //# maybeToEither :: a -> Maybe b -> Either a b
-  //.
-  //. Converts a Maybe to an Either. Nothing becomes a Left (containing the
-  //. first argument); a Just becomes a Right.
-  //.
-  //. See also [`eitherToMaybe`](#eitherToMaybe).
-  //.
-  //. ```javascript
-  //. > S.maybeToEither ('Expecting an integer') (S.parseInt (10) ('xyz'))
-  //. Left ('Expecting an integer')
-  //.
-  //. > S.maybeToEither ('Expecting an integer') (S.parseInt (10) ('42'))
-  //. Right (42)
-  //. ```
-  function maybeToEither(x) {
-    return maybe (Left (x)) (Right);
-  }
-  _.maybeToEither = {
-    consts: {},
-    types: [a, $.Maybe (b), $.Either (a) (b)],
-    impl: maybeToEither
-  };
-
   //. ### Either
   //.
   //. The Either type represents values with two possibilities: a value of type
@@ -2508,29 +2485,6 @@
     consts: {},
     types: [Throwing (e) (a) (b), a, $.Either (e) (b)],
     impl: encase
-  };
-
-  //# eitherToMaybe :: Either a b -> Maybe b
-  //.
-  //. Converts an Either to a Maybe. A Left becomes Nothing; a Right becomes
-  //. a Just.
-  //.
-  //. See also [`maybeToEither`](#maybeToEither).
-  //.
-  //. ```javascript
-  //. > S.eitherToMaybe (S.Left ('Cannot divide by zero'))
-  //. Nothing
-  //.
-  //. > S.eitherToMaybe (S.Right (42))
-  //. Just (42)
-  //. ```
-  function eitherToMaybe(either) {
-    return either.isLeft ? Nothing : Just (either.value);
-  }
-  _.eitherToMaybe = {
-    consts: {},
-    types: [$.Either (a) (b), $.Maybe (b)],
-    impl: eitherToMaybe
   };
 
   //. ### Logic
@@ -4376,7 +4330,9 @@
   //. Just ([1, 2, 3])
   //. ```
   function parseJson(pred) {
-    return B (filter (pred)) (B (eitherToMaybe) (encase (JSON.parse)));
+    return B (filter (pred))
+             (B (either (K (Nothing)) (Just))
+                (encase (JSON.parse)));
   }
   _.parseJson = {
     consts: {},
