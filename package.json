@@ -18,7 +18,7 @@
     "sanctuary-either": "1.2.0",
     "sanctuary-maybe": "1.2.0",
     "sanctuary-pair": "1.2.0",
-    "sanctuary-show": "1.0.0",
+    "sanctuary-show": "2.0.0",
     "sanctuary-type-classes": "11.0.0",
     "sanctuary-type-identifiers": "2.0.1"
   },
