@@ -14,13 +14,13 @@
     "test": "npm run lint && sanctuary-test && npm run doctest"
   },
   "dependencies": {
-    "sanctuary-def": "0.20.1",
-    "sanctuary-either": "1.2.0",
-    "sanctuary-maybe": "1.2.0",
-    "sanctuary-pair": "1.2.0",
+    "sanctuary-def": "0.21.0",
+    "sanctuary-either": "2.0.0",
+    "sanctuary-maybe": "2.0.0",
+    "sanctuary-pair": "2.0.0",
     "sanctuary-show": "2.0.0",
-    "sanctuary-type-classes": "11.0.0",
-    "sanctuary-type-identifiers": "2.0.1"
+    "sanctuary-type-classes": "12.0.0",
+    "sanctuary-type-identifiers": "3.0.0"
   },
   "devDependencies": {
     "fantasy-land": "4.0.1",

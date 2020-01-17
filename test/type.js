@@ -51,7 +51,7 @@ test ('type', () => {
      ({namespace: S.Just ('sanctuary-maybe'), name: 'Maybe', version: 1});
 
   function Gizmo() {}
-  Gizmo['@@type'] = 'gadgets/Gizmo@42';
+  Gizmo.prototype['@@type'] = 'gadgets/Gizmo@42';
 
   eq (S.type (new Gizmo ()))
      ({namespace: S.Just ('gadgets'), name: 'Gizmo', version: 42});
