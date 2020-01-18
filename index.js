@@ -3216,7 +3216,7 @@
   //.   - `forall s :: String, t :: String.
   //.      S.joinWith (s) (S.splitOn (s) (t)) = t`
   //.
-  //. See also [`splitOn`](#splitOn).
+  //. See also [`splitOn`](#splitOn) and [`intercalate`](#intercalate).
   //.
   //. ```javascript
   //. > S.joinWith (':') (['foo', 'bar', 'baz'])
@@ -3293,6 +3293,39 @@
     consts: {f: [Z.Foldable]},
     types: [$.Predicate (a), f (a), $.Maybe (a)],
     impl: find
+  };
+
+  //# intercalate :: (Monoid m, Foldable f) => m -> f m -> m
+  //.
+  //. Curried version of [`Z.intercalate`][]. Concatenates the elements of
+  //. the given structure, separating each pair of adjacent elements with
+  //. the given separator.
+  //.
+  //. See also [`joinWith`](#joinWith).
+  //.
+  //. ```javascript
+  //. > S.intercalate (', ') ([])
+  //. ''
+  //.
+  //. > S.intercalate (', ') (['foo', 'bar', 'baz'])
+  //. 'foo, bar, baz'
+  //.
+  //. > S.intercalate (', ') (Nil)
+  //. ''
+  //.
+  //. > S.intercalate (', ') (Cons ('foo') (Cons ('bar') (Cons ('baz') (Nil))))
+  //. 'foo, bar, baz'
+  //.
+  //. > S.intercalate ([0, 0, 0]) ([])
+  //. []
+  //.
+  //. > S.intercalate ([0, 0, 0]) ([[1], [2, 3], [4, 5, 6], [7, 8], [9]])
+  //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
+  //. ```
+  _.intercalate = {
+    consts: {a: [Z.Monoid], f: [Z.Foldable]},
+    types: [a, f (a), a],
+    impl: curry2 (Z.intercalate)
   };
 
   //# foldMap :: (Monoid m, Foldable f) => TypeRep m -> (a -> m) -> f a -> m
@@ -4745,6 +4778,7 @@
 //. [`Z.gt`]:                   v:sanctuary-js/sanctuary-type-classes#gt
 //. [`Z.gte`]:                  v:sanctuary-js/sanctuary-type-classes#gte
 //. [`Z.id`]:                   v:sanctuary-js/sanctuary-type-classes#id
+//. [`Z.intercalate`]:          v:sanctuary-js/sanctuary-type-classes#intercalate
 //. [`Z.invert`]:               v:sanctuary-js/sanctuary-type-classes#invert
 //. [`Z.join`]:                 v:sanctuary-js/sanctuary-type-classes#join
 //. [`Z.lt`]:                   v:sanctuary-js/sanctuary-type-classes#lt
