@@ -22,14 +22,15 @@ function _List(tag, head, tail) {
   }
 }
 
-List['@@type'] = 'sanctuary/List';
+//    listTypeIdent :: String
+const listTypeIdent = List.prototype['@@type'] = 'sanctuary/List';
 
 //    Type :: Type -> Type
 List.Type = $.UnaryType
-  (List['@@type'])
+  (listTypeIdent)
   ('')
   ([])
-  (x => type (x) === List['@@type'])
+  (x => type (x) === listTypeIdent)
   (list => list);
 
 //    Nil :: List a

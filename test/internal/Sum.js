@@ -13,14 +13,15 @@ function Sum(value) {
   this.value = value;
 }
 
-Sum['@@type'] = 'sanctuary/Sum';
+//    sumTypeIdent :: String
+const sumTypeIdent = Sum.prototype['@@type'] = 'sanctuary/Sum';
 
 //    Type :: Type
 Sum.Type = $.NullaryType
-  (Sum['@@type'])
+  (sumTypeIdent)
   ('')
   ([])
-  (x => type (x) === Sum['@@type']);
+  (x => type (x) === sumTypeIdent);
 
 Sum[FL.empty] = () => Sum (0);
 

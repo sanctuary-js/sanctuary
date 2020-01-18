@@ -503,10 +503,7 @@
     ('TypeRep')
     ('https://github.com/fantasyland/fantasy-land#type-representatives')
     ([])
-    (function(x) {
-       return $.test ([]) ($.AnyFunction) (x) ||
-              x != null && $.test ([]) ($.String) (x['@@type']);
-     })
+    (K (true))
     (K ([]));
 
   //  Options :: Type
@@ -543,10 +540,11 @@
   //.   return identity;
   //. };
   //.
-  //. Identity['@@type'] = 'my-package/Identity@1';
+  //. //    identityTypeIdent :: String
+  //. const identityTypeIdent = 'my-package/Identity@1';
   //.
   //. const Identity$prototype = {
-  //.   'constructor': Identity,
+  //.   '@@type': identityTypeIdent,
   //.   '@@show': function() { return `Identity (${S.show (this.value)})`; },
   //.   'fantasy-land/map': function(f) { return Identity (f (this.value)); },
   //. };
@@ -556,7 +554,7 @@
   //.   ('Identity')
   //.   ('http://example.com/my-package#Identity')
   //.   ([])
-  //.   (x => type (x) === Identity['@@type'])
+  //.   (x => type (x) === identityTypeIdent)
   //.   (identity => [identity.value]);
   //.
   //. const S = create ({
@@ -610,7 +608,10 @@
   //. . $.Fn ($.Unknown) ($.Unknown),
   //. . $.HtmlElement,
   //. . $.Identity ($.Unknown),
+  //. . $.JsMap ($.Unknown) ($.Unknown),
+  //. . $.JsSet ($.Unknown),
   //. . $.Maybe ($.Unknown),
+  //. . $.Module,
   //. . $.Null,
   //. . $.Number,
   //. . $.Object,
