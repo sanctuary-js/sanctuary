@@ -8,6 +8,12 @@ const path = require ('path');
 const sanctuary = require ('../package.json');
 
 
+if (!(Object.prototype.hasOwnProperty.call (process.env, 'VERSION'))) {
+  process.stderr.write ('VERSION not specified\n');
+  process.exit (1);
+}
+const VERSION = process.env.VERSION;
+
 //    expandDependencies :: StrMap String -> StrMap (Array String)
 const expandDependencies = children => {
   const descendants = Object.create (null);
@@ -38,14 +44,11 @@ const orderDependencies = deps => {
 const dependencies =
   orderDependencies (expandDependencies (sanctuary.dependencies));
 
-//    spec :: { name :: String, version :: String } -> String
-const spec = pkg => pkg.name + '@' + pkg.version;
-
 process.stdout.write (
-  `//  ${spec (sanctuary)} with bundled dependencies:
+  `//  sanctuary@${VERSION} with bundled dependencies:
 //
 ${dependencies
-  .map (name => '//  - ' + spec (require (name + '/package.json')))
+  .map (name => `//  - ${name}@${(require (name + '/package.json')).version}`)
   .join ('\n')}
 
 ${dependencies
