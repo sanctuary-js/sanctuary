@@ -14,7 +14,7 @@
     "test": "npm run lint && sanctuary-test && npm run doctest"
   },
   "dependencies": {
-    "sanctuary-def": "0.21.0",
+    "sanctuary-def": "0.21.1",
     "sanctuary-either": "2.1.0",
     "sanctuary-maybe": "2.1.0",
     "sanctuary-pair": "2.1.0",
