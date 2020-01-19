@@ -1,6 +1,6 @@
 {
   "name": "sanctuary",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Refuge from unsafe JavaScript",
   "license": "MIT",
   "repository": {

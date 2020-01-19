@@ -1,12 +1,12 @@
-//  sanctuary@2.0.1 with bundled dependencies:
+//  sanctuary@3.0.0 with bundled dependencies:
 //
-//  - sanctuary-show@1.0.0
-//  - sanctuary-type-identifiers@2.0.1
-//  - sanctuary-type-classes@11.0.0
-//  - sanctuary-either@1.2.0
-//  - sanctuary-maybe@1.2.0
-//  - sanctuary-pair@1.2.0
-//  - sanctuary-def@0.20.1
+//  - sanctuary-show@2.0.0
+//  - sanctuary-type-identifiers@3.0.0
+//  - sanctuary-type-classes@12.1.0
+//  - sanctuary-either@2.1.0
+//  - sanctuary-maybe@2.1.0
+//  - sanctuary-pair@2.1.0
+//  - sanctuary-def@0.21.1
 
 //. # sanctuary-show
 //.
@@ -46,14 +46,14 @@
 
   /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = f();
+    module.exports = f ();
   } else if (typeof define === 'function' && define.amd != null) {
-    define([], f);
+    define ([], f);
   } else {
-    self.sanctuaryShow = f();
+    self.sanctuaryShow = f ();
   }
 
-}(function() {
+} (function() {
 
   'use strict';
 
@@ -66,8 +66,13 @@
   //  entry :: Object -> String -> String
   function entry(o) {
     return function(k) {
-      return show(k) + ': ' + show(o[k]);
+      return show (k) + ': ' + show (o[k]);
     };
+  }
+
+  //  sortedKeys :: Object -> Array String
+  function sortedKeys(o) {
+    return (Object.keys (o)).sort ();
   }
 
   //# show :: Showable a => a -> String
@@ -116,66 +121,81 @@
   //. '{"x": [1, 2], "y": [3, 4], "z": [5, 6]}'
   //. ```
   function show(x) {
-    if (seen.indexOf(x) >= 0) return '<Circular>';
+    if (seen.indexOf (x) >= 0) return '<Circular>';
 
-    switch (Object.prototype.toString.call(x)) {
+    switch (Object.prototype.toString.call (x)) {
 
       case '[object Boolean]':
         return typeof x === 'object' ?
-          'new Boolean (' + show(x.valueOf()) + ')' :
-          x.toString();
+          'new Boolean (' + show (x.valueOf ()) + ')' :
+          x.toString ();
 
       case '[object Number]':
         return typeof x === 'object' ?
-          'new Number (' + show(x.valueOf()) + ')' :
-          1 / x === -Infinity ? '-0' : x.toString(10);
+          'new Number (' + show (x.valueOf ()) + ')' :
+          1 / x === -Infinity ? '-0' : x.toString (10);
 
       case '[object String]':
         return typeof x === 'object' ?
-          'new String (' + show(x.valueOf()) + ')' :
-          JSON.stringify(x);
+          'new String (' + show (x.valueOf ()) + ')' :
+          JSON.stringify (x);
 
       case '[object Date]':
         return 'new Date (' +
-               show(isNaN(x.valueOf()) ? NaN : x.toISOString()) +
+               show (isNaN (x.valueOf ()) ? NaN : x.toISOString ()) +
                ')';
 
       case '[object Error]':
-        return 'new ' + x.name + ' (' + show(x.message) + ')';
+        return 'new ' + x.name + ' (' + show (x.message) + ')';
 
       case '[object Arguments]':
         return 'function () { return arguments; } (' +
-               Array.prototype.map.call(x, show).join(', ') +
+               (Array.prototype.map.call (x, show)).join (', ') +
                ')';
 
       case '[object Array]':
-        seen.push(x);
+        seen.push (x);
         try {
-          return '[' + x.map(show).concat(
-            Object.keys(x)
-            .sort()
-            .filter(function(k) { return !/^\d+$/.test(k); })
-            .map(entry(x))
-          ).join(', ') + ']';
+          return '[' + ((x.map (show)).concat (
+            sortedKeys (x)
+            .filter (function(k) { return !(/^\d+$/.test (k)); })
+            .map (entry (x))
+          )).join (', ') + ']';
         } finally {
-          seen.pop();
+          seen.pop ();
         }
 
       case '[object Object]':
-        seen.push(x);
+        seen.push (x);
         try {
           return (
             $$show in x &&
             (x.constructor == null || x.constructor.prototype !== x) ?
-              x[$$show]() :
-              '{' + Object.keys(x).sort().map(entry(x)).join(', ') + '}'
+              x[$$show] () :
+              '{' + ((sortedKeys (x)).map (entry (x))).join (', ') + '}'
           );
         } finally {
-          seen.pop();
+          seen.pop ();
+        }
+
+      case '[object Set]':
+        seen.push (x);
+        try {
+          return 'new Set (' + show (Array.from (x.values ())) + ')';
+        } finally {
+          seen.pop ();
+        }
+
+      case '[object Map]':
+        seen.push (x);
+        try {
+          return 'new Map (' + show (Array.from (x.entries ())) + ')';
+        } finally {
+          seen.pop ();
         }
 
       default:
-        return String(x);
+        return String (x);
 
     }
   }
@@ -217,10 +237,7 @@
 //.
 //. For a type to be compatible with the algorithm:
 //.
-//.   - every member of the type MUST have a `constructor` property
-//.     pointing to an object known as the _type representative_;
-//.
-//.   - the type representative MUST have a `@@type` property
+//.   - every member of the type MUST have a `@@type` property
 //.     (the _type identifier_); and
 //.
 //.   - the type identifier MUST be a string primitive and SHOULD have
@@ -241,48 +258,21 @@
 //. _namespace_ will be `null` and _version_ will be `0`.
 //.
 //. If the _version_ is not given, it is assumed to be `0`.
-//.
-//. For example:
-//.
-//. ```javascript
-//. //  Identity :: a -> Identity a
-//. function Identity(x) {
-//.   if (!(this instanceof Identity)) return new Identity(x);
-//.   this.value = x;
-//. }
-//.
-//. Identity['@@type'] = 'my-package/Identity';
-//. ```
-//.
-//. Note that by using a constructor function the `constructor` property is set
-//. implicitly for each value created. Constructor functions are convenient for
-//. this reason, but are not required. This definition is also valid:
-//.
-//. ```javascript
-//. //  IdentityTypeRep :: TypeRep Identity
-//. var IdentityTypeRep = {
-//.   '@@type': 'my-package/Identity'
-//. };
-//.
-//. //  Identity :: a -> Identity a
-//. function Identity(x) {
-//.   return {constructor: IdentityTypeRep, value: x};
-//. }
-//. ```
 
 (function(f) {
 
   'use strict';
 
+  /* istanbul ignore else */
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = f();
+    module.exports = f ();
   } else if (typeof define === 'function' && define.amd != null) {
-    define([], f);
+    define ([], f);
   } else {
-    self.sanctuaryTypeIdentifiers = f();
+    self.sanctuaryTypeIdentifiers = f ();
   }
 
-}(function() {
+} (function() {
 
   'use strict';
 
@@ -290,7 +280,7 @@
   var $$type = '@@type';
 
   //  pattern :: RegExp
-  var pattern = new RegExp(
+  var pattern = new RegExp (
     '^'
   + '([\\s\\S]+)'   //  <namespace>
   + '/'             //  SOLIDUS (U+002F)
@@ -305,17 +295,24 @@
   //. ### Usage
   //.
   //. ```javascript
-  //. const type = require('sanctuary-type-identifiers');
+  //. const type = require ('sanctuary-type-identifiers');
   //. ```
   //.
   //. ```javascript
-  //. > function Identity(x) {
-  //. .   if (!(this instanceof Identity)) return new Identity(x);
-  //. .   this.value = x;
+  //. > const Identity$prototype = {
+  //. .   '@@type': 'my-package/Identity@1',
+  //. .   '@@show': function() {
+  //. .     return 'Identity (' + show (this.value) + ')';
+  //. .   }
   //. . }
-  //. . Identity['@@type'] = 'my-package/Identity@1';
   //.
-  //. > type.parse(type(Identity(0)))
+  //. > const Identity = value =>
+  //. .   Object.assign (Object.create (Identity$prototype), {value})
+  //.
+  //. > type (Identity (0))
+  //. 'my-package/Identity@1'
+  //.
+  //. > type.parse (type (Identity (0)))
   //. {namespace: 'my-package', name: 'Identity', version: 1}
   //. ```
   //.
@@ -328,22 +325,23 @@
   //. returned.
   //.
   //. ```javascript
-  //. > type(null)
+  //. > type (null)
   //. 'Null'
   //.
-  //. > type(true)
+  //. > type (true)
   //. 'Boolean'
   //.
-  //. > type(Identity(0))
+  //. > type (Identity (0))
   //. 'my-package/Identity@1'
   //. ```
   function type(x) {
     return x != null &&
            x.constructor != null &&
            x.constructor.prototype !== x &&
-           typeof x.constructor[$$type] === 'string' ?
-      x.constructor[$$type] :
-      Object.prototype.toString.call(x).slice('[object '.length, -']'.length);
+           typeof x[$$type] === 'string' ?
+      x[$$type] :
+      (Object.prototype.toString.call (x)).slice ('[object '.length,
+                                                  -']'.length);
   }
 
   //# type.parse :: String -> { namespace :: Nullable String, name :: String, version :: Number }
@@ -352,22 +350,26 @@
   //. returning an object with `namespace`, `name`, and `version` fields.
   //.
   //. ```javascript
-  //. > type.parse('my-package/List@2')
+  //. > type.parse ('my-package/List@2')
   //. {namespace: 'my-package', name: 'List', version: 2}
   //.
-  //. > type.parse('nonsense!')
+  //. > type.parse ('nonsense!')
   //. {namespace: null, name: 'nonsense!', version: 0}
   //.
-  //. > type.parse(Identity['@@type'])
+  //. > type.parse (type (Identity (0)))
   //. {namespace: 'my-package', name: 'Identity', version: 1}
   //. ```
   type.parse = function parse(s) {
-    var groups = pattern.exec(s);
-    return {
-      namespace: groups == null || groups[1] == null ? null : groups[1],
-      name:      groups == null                      ? s    : groups[2],
-      version:   groups == null || groups[3] == null ? 0    : Number(groups[3])
-    };
+    var namespace = null;
+    var name = s;
+    var version = 0;
+    var groups = pattern.exec (s);
+    if (groups != null) {
+      namespace = groups[1];
+      name = groups[2];
+      if (groups[3] != null) version = Number (groups[3]);
+    }
+    return {namespace: namespace, name: name, version: version};
   };
 
   return type;
@@ -604,7 +606,7 @@
     };
   }
 
-  TypeClass['@@type'] = 'sanctuary-type-classes/TypeClass@1';
+  TypeClass.prototype['@@type'] = 'sanctuary-type-classes/TypeClass@1';
 
   //  data Location = Constructor | Value
 
@@ -666,7 +668,7 @@
         };
     }
 
-    var version = '11.0.0';  // updated programmatically
+    var version = '12.1.0';  // updated programmatically
     var keys = Object.keys (requirements);
 
     var typeClass = TypeClass (
@@ -2417,6 +2419,47 @@
     return any (function(y) { return equals (x, y); }, foldable);
   }
 
+  //# intercalate :: (Monoid m, Foldable f) => (m, f m) -> m
+  //.
+  //. Concatenates the elements of the given structure, separating each pair
+  //. of adjacent elements with the given separator.
+  //.
+  //. This function is derived from [`concat`](#concat), [`empty`](#empty),
+  //. and [`reduce`](#reduce).
+  //.
+  //. ```javascript
+  //. > intercalate (', ', [])
+  //. ''
+  //.
+  //. > intercalate (', ', ['foo', 'bar', 'baz'])
+  //. 'foo, bar, baz'
+  //.
+  //. > intercalate (', ', Nil)
+  //. ''
+  //.
+  //. > intercalate (', ', Cons ('foo', Cons ('bar', Cons ('baz', Nil))))
+  //. 'foo, bar, baz'
+  //.
+  //. > intercalate ([0, 0, 0], [])
+  //. []
+  //.
+  //. > intercalate ([0, 0, 0], [[1], [2, 3], [4, 5, 6], [7, 8], [9]])
+  //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
+  //. ```
+  function intercalate(separator, foldable) {
+    var result = reduce (
+      function(acc, x) {
+        return {
+          empty: false,
+          value: concat (acc.value, acc.empty ? x : concat (separator, x))
+        };
+      },
+      {empty: true, value: empty (separator.constructor)},
+      foldable
+    );
+    return result.value;
+  }
+
   //# foldMap :: (Monoid m, Foldable f) => (TypeRep m, a -> m, f a) -> m
   //.
   //. Deconstructs a foldable by mapping every element to a monoid and
@@ -2707,6 +2750,7 @@
     any: any,
     none: none,
     elem: elem,
+    intercalate: intercalate,
     foldMap: foldMap,
     reverse: reverse,
     sort: sort,
@@ -2816,21 +2860,16 @@
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
+    /* eslint-disable no-unused-vars */
+    var S = __doctest.require ('sanctuary');
     var $ = __doctest.require ('sanctuary-def');
     var type = __doctest.require ('sanctuary-type-identifiers');
-    var S = (function() {
-      var S = __doctest.require ('sanctuary');
-      var EitherType = $.BinaryType
-        ('sanctuary-either/Either')
-        ('')
-        (function(x) { return type (x) === Either['@@type']; })
-        (function(e) { return e.isLeft ? [e.value] : []; })
-        (function(e) { return e.isLeft ? [] : [e.value]; });
-      var env = Z.concat (S.env,
-                          [$.TypeClass, EitherType ($.Unknown) ($.Unknown)]);
-      return S.create ({checkTypes: true, env: env});
-    } ());
+    /* eslint-enable no-unused-vars */
+    S.bimap = S.unchecked.bimap;
+    S.of = S.unchecked.of;
   }
+
+  var eitherTypeIdent = 'sanctuary-either/Either@1';
 
   var Either = {};
 
@@ -2839,6 +2878,7 @@
     'constructor':            Either,
     'isLeft':                 true,
     'isRight':                false,
+    '@@type':                 eitherTypeIdent,
     '@@show':                 Left$prototype$show,
     'fantasy-land/map':       Left$prototype$map,
     'fantasy-land/bimap':     Left$prototype$bimap,
@@ -2856,6 +2896,7 @@
     'constructor':            Either,
     'isLeft':                 false,
     'isRight':                true,
+    '@@type':                 eitherTypeIdent,
     '@@show':                 Right$prototype$show,
     'fantasy-land/map':       Right$prototype$map,
     'fantasy-land/bimap':     Right$prototype$bimap,
@@ -2883,11 +2924,14 @@
   //. ```javascript
   //. > const Useless = require ('sanctuary-useless')
   //.
+  //. > const isTypeClass = x =>
+  //. .   type (x) === 'sanctuary-type-classes/TypeClass@1'
+  //.
   //. > S.map (k => k + ' '.repeat (16 - k.length) +
   //. .             (Z[k].test (Right (Useless)) ? '\u2705   ' :
   //. .              Z[k].test (Right (['foo'])) ? '\u2705 * ' :
   //. .              /* otherwise */               '\u274C   '))
-  //. .       (S.keys (S.unchecked.filter (S.is ($.TypeClass)) (Z)))
+  //. .       (S.keys (S.unchecked.filter (isTypeClass) (Z)))
   //. [ 'Setoid          ✅ * ',  // if ‘a’ and ‘b’ satisfy Setoid
   //. . 'Ord             ✅ * ',  // if ‘a’ and ‘b’ satisfy Ord
   //. . 'Semigroupoid    ❌   ',
@@ -2963,19 +3007,6 @@
     right.value = value;
     return right;
   };
-
-  //# Either.@@type :: String
-  //.
-  //. Either [type identifier][].
-  //.
-  //. ```javascript
-  //. > type (Right (42))
-  //. 'sanctuary-either/Either@1'
-  //.
-  //. > type.parse (type (Right (42)))
-  //. {namespace: 'sanctuary-either', name: 'Either', version: 1}
-  //. ```
-  Either['@@type'] = 'sanctuary-either/Either@1';
 
   //# Either.fantasy-land/of :: b -> Either a b
   //.
@@ -3212,22 +3243,22 @@
 
   //# Either#fantasy-land/alt :: Either a b ~> Either a b -> Either a b
   //.
-  //.   - `alt (Left (x)) (Left (y))` is equivalent to `Left (y)`
-  //.   - `alt (Left (x)) (Right (y))` is equivalent to `Right (y)`
-  //.   - `alt (Right (x)) (Left (y))` is equivalent to `Right (x)`
-  //.   - `alt (Right (x)) (Right (y))` is equivalent to `Right (x)`
+  //.   - `alt (Left (y)) (Left (x))` is equivalent to `Left (y)`
+  //.   - `alt (Right (y)) (Left (x))` is equivalent to `Right (y)`
+  //.   - `alt (Left (y)) (Right (x))` is equivalent to `Right (x)`
+  //.   - `alt (Right (y)) (Right (x))` is equivalent to `Right (x)`
   //.
   //. ```javascript
-  //. > S.alt (Left ('A')) (Left ('B'))
+  //. > S.alt (Left ('B')) (Left ('A'))
   //. Left ('B')
   //.
-  //. > S.alt (Left ('C')) (Right (1))
+  //. > S.alt (Right (1)) (Left ('C'))
   //. Right (1)
   //.
-  //. > S.alt (Right (2)) (Left ('D'))
+  //. > S.alt (Left ('D')) (Right (2))
   //. Right (2)
   //.
-  //. > S.alt (Right (3)) (Right (4))
+  //. > S.alt (Right (4)) (Right (3))
   //. Right (3)
   //. ```
   function Left$prototype$alt(other) {
@@ -3302,7 +3333,6 @@
 //. [`Z.equals`]:               v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.lte`]:                  v:sanctuary-js/sanctuary-type-classes#lte
 //. [iff]:                      https://en.wikipedia.org/wiki/If_and_only_if
-//. [type identifier]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:      v:fantasyland/fantasy-land#type-representatives
 
 /*
@@ -3349,19 +3379,17 @@
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
+    /* eslint-disable no-unused-vars */
+    var S = __doctest.require ('sanctuary');
     var $ = __doctest.require ('sanctuary-def');
     var type = __doctest.require ('sanctuary-type-identifiers');
-    var S = (function() {
-      var S = __doctest.require ('sanctuary');
-      var MaybeType = $.UnaryType
-        ('sanctuary-maybe/Maybe')
-        ('')
-        (function(x) { return type (x) === Maybe['@@type']; })
-        (function(m) { return m.isJust ? [m.value] : []; });
-      var env = Z.concat (S.env, [$.TypeClass, MaybeType ($.Unknown)]);
-      return S.create ({checkTypes: true, env: env});
-    } ());
+    /* eslint-enable no-unused-vars */
+    S.empty = S.unchecked.empty;
+    S.of = S.unchecked.of;
+    S.zero = S.unchecked.zero;
   }
+
+  var maybeTypeIdent = 'sanctuary-maybe/Maybe@1';
 
   var Maybe = {};
 
@@ -3370,6 +3398,7 @@
     'constructor':            Maybe,
     'isNothing':              true,
     'isJust':                 false,
+    '@@type':                 maybeTypeIdent,
     '@@show':                 Nothing$prototype$show,
     'fantasy-land/equals':    Nothing$prototype$equals,
     'fantasy-land/lte':       Nothing$prototype$lte,
@@ -3390,6 +3419,7 @@
     'constructor':            Maybe,
     'isNothing':              false,
     'isJust':                 true,
+    '@@type':                 maybeTypeIdent,
     '@@show':                 Just$prototype$show,
     'fantasy-land/filter':    Just$prototype$filter,
     'fantasy-land/map':       Just$prototype$map,
@@ -3417,11 +3447,14 @@
   //. ```javascript
   //. > const Useless = require ('sanctuary-useless')
   //.
+  //. > const isTypeClass = x =>
+  //. .   type (x) === 'sanctuary-type-classes/TypeClass@1'
+  //.
   //. > S.map (k => k + ' '.repeat (16 - k.length) +
   //. .             (Z[k].test (Just (Useless)) ? '\u2705   ' :
   //. .              Z[k].test (Nothing)        ? '\u2705 * ' :
   //. .              /* otherwise */              '\u274C   '))
-  //. .       (S.keys (S.unchecked.filter (S.is ($.TypeClass)) (Z)))
+  //. .       (S.keys (S.unchecked.filter (isTypeClass) (Z)))
   //. [ 'Setoid          ✅ * ',  // if ‘a’ satisfies Setoid
   //. . 'Ord             ✅ * ',  // if ‘a’ satisfies Ord
   //. . 'Semigroupoid    ❌   ',
@@ -3484,19 +3517,6 @@
     just.value = value;
     return just;
   };
-
-  //# Maybe.@@type :: String
-  //.
-  //. Maybe [type identifier][].
-  //.
-  //. ```javascript
-  //. > type (Just (42))
-  //. 'sanctuary-maybe/Maybe@1'
-  //.
-  //. > type.parse (type (Just (42)))
-  //. {namespace: 'sanctuary-maybe', name: 'Maybe', version: 1}
-  //. ```
-  Maybe['@@type'] = 'sanctuary-maybe/Maybe@1';
 
   //# Maybe.fantasy-land/empty :: () -> Maybe a
   //.
@@ -3750,21 +3770,21 @@
   //# Maybe#fantasy-land/alt :: Maybe a ~> Maybe a -> Maybe a
   //.
   //.   - `alt (Nothing) (Nothing)` is equivalent to `Nothing`
-  //.   - `alt (Nothing) (Just (x))` is equivalent to `Just (x)`
   //.   - `alt (Just (x)) (Nothing)` is equivalent to `Just (x)`
-  //.   - `alt (Just (x)) (Just (y))` is equivalent to `Just (x)`
+  //.   - `alt (Nothing) (Just (x))` is equivalent to `Just (x)`
+  //.   - `alt (Just (y)) (Just (x))` is equivalent to `Just (x)`
   //.
   //. ```javascript
   //. > S.alt (Nothing) (Nothing)
   //. Nothing
   //.
-  //. > S.alt (Nothing) (Just (1))
+  //. > S.alt (Just (1)) (Nothing)
   //. Just (1)
   //.
-  //. > S.alt (Just (2)) (Nothing)
+  //. > S.alt (Nothing) (Just (2))
   //. Just (2)
   //.
-  //. > S.alt (Just (3)) (Just (4))
+  //. > S.alt (Just (4)) (Just (3))
   //. Just (3)
   //. ```
   function Nothing$prototype$alt(other) {
@@ -3839,7 +3859,6 @@
 //. [`Z.equals`]:               v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.lte`]:                  v:sanctuary-js/sanctuary-type-classes#lte
 //. [iff]:                      https://en.wikipedia.org/wiki/If_and_only_if
-//. [type identifier]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:      v:fantasyland/fantasy-land#type-representatives
 
        /*                   *\
@@ -3885,25 +3904,21 @@
 
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
+    /* eslint-disable no-unused-vars */
+    var S = __doctest.require ('sanctuary');
     var $ = __doctest.require ('sanctuary-def');
     var type = __doctest.require ('sanctuary-type-identifiers');
-    var S = (function() {
-      var S = __doctest.require ('sanctuary');
-      var PairType = $.BinaryType
-        ('sanctuary-pair/Pair')
-        ('')
-        (function(x) { return type (x) === Pair['@@type']; })
-        (function(p) { return [p.fst]; })
-        (function(p) { return [p.snd]; });
-      var env = Z.concat (S.env,
-                          [$.TypeClass, PairType ($.Unknown) ($.Unknown)]);
-      return S.create ({checkTypes: true, env: env});
-    } ());
+    /* eslint-enable no-unused-vars */
+    S.bimap = S.unchecked.bimap;
+    S.compose = S.unchecked.compose;
   }
+
+  var pairTypeIdent = 'sanctuary-pair/Pair@1';
 
   var prototype = {
     /* eslint-disable key-spacing */
     'constructor':            Pair,
+    '@@type':                 pairTypeIdent,
     '@@show':                 Pair$prototype$show,
     'fantasy-land/compose':   Pair$prototype$compose,
     'fantasy-land/map':       Pair$prototype$map,
@@ -3935,11 +3950,14 @@
   //. ```javascript
   //. > const Useless = require ('sanctuary-useless')
   //.
+  //. > const isTypeClass = x =>
+  //. .   type (x) === 'sanctuary-type-classes/TypeClass@1'
+  //.
   //. > S.map (k => k + ' '.repeat (16 - k.length) +
   //. .             (Z[k].test (Pair (Useless) (Useless)) ? '\u2705   ' :
   //. .              Z[k].test (Pair (['foo']) (['bar'])) ? '\u2705 * ' :
   //. .              /* otherwise */                        '\u274C   '))
-  //. .       (S.keys (S.unchecked.filter (S.is ($.TypeClass)) (Z)))
+  //. .       (S.keys (S.unchecked.filter (isTypeClass) (Z)))
   //. [ 'Setoid          ✅ * ',  // if ‘a’ and ‘b’ satisfy Setoid
   //. . 'Ord             ✅ * ',  // if ‘a’ and ‘b’ satisfy Ord
   //. . 'Semigroupoid    ✅   ',
@@ -4026,19 +4044,6 @@
   //. Pair ([1, 2, 3]) ('abc')
   //. ```
   Pair.swap = function(p) { return Pair (p.snd) (p.fst); };
-
-  //# Pair.@@type :: String
-  //.
-  //. Pair [type identifier][].
-  //.
-  //. ```javascript
-  //. > type (Pair ('abc') ([1, 2, 3]))
-  //. 'sanctuary-pair/Pair@1'
-  //.
-  //. > type.parse (type (Pair ('abc') ([1, 2, 3])))
-  //. {namespace: 'sanctuary-pair', name: 'Pair', version: 1}
-  //. ```
-  Pair['@@type'] = 'sanctuary-pair/Pair@1';
 
   //# Pair#@@show :: (Showable a, Showable b) => Pair a b ~> () -> String
   //.
@@ -4226,7 +4231,6 @@
 //. [`Z.equals`]:               v:sanctuary-js/sanctuary-type-classes#equals
 //. [`Z.lte`]:                  v:sanctuary-js/sanctuary-type-classes#lte
 //. [iff]:                      https://en.wikipedia.org/wiki/If_and_only_if
-//. [type identifier]:          v:sanctuary-js/sanctuary-type-identifiers
 //. [type representative]:      v:fantasyland/fantasy-land#type-representatives
 
 /*              ___                 ______
@@ -4609,7 +4613,10 @@
   }
 
   var Type$prototype = {
-    'constructor': {'@@type': 'sanctuary-def/Type@1'},
+    '@@type': 'sanctuary-def/Type@1',
+    '@@show': function() {
+      return this.format (I, K (I));
+    },
     'validate': function(env) {
       var test2 = _test (env);
       var type = this;
@@ -4639,9 +4646,6 @@
         Z.equals (this.keys, other.keys) &&
         Z.equals (this.types, other.types)
       );
-    },
-    '@@show': function() {
-      return this.format (I, K (I));
     }
   };
 
@@ -4728,7 +4732,7 @@
 
   //  functionUrl :: String -> String
   function functionUrl(name) {
-    var version = '0.20.1';  // updated programmatically
+    var version = '0.21.1';  // updated programmatically
     return 'https://github.com/sanctuary-js/sanctuary-def/tree/v' + version +
            '#' + name;
   }
@@ -4761,6 +4765,18 @@
   //.   - `...`
   var Unknown =
   _Type (UNKNOWN, '', '', 0, always2 ('Unknown'), [], K (K (true)), []);
+
+  //# Void :: Type
+  //.
+  //. Uninhabited type.
+  //.
+  //. May be used to convey that a type parameter of an algebraic data type
+  //. will not be used. For example, a future of type `Future Void String`
+  //. will never be rejected.
+  var Void = NullaryTypeWithUrl
+    ('Void')
+    ([])
+    (K (false));
 
   //# Any :: Type
   //.
@@ -4941,6 +4957,28 @@
     (typeEq ('sanctuary-identity/Identity@1'))
     (I);
 
+  //# JsMap :: Type -> Type -> Type
+  //.
+  //. Constructor for native Map types. `$.JsMap ($.Number) ($.String)`,
+  //. for example, is the type comprising every native Map whose keys are
+  //. numbers and whose values are strings.
+  var JsMap = BinaryTypeWithUrl
+    ('JsMap')
+    ([])
+    (function(x) { return toString.call (x) === '[object Map]'; })
+    (function(jsMap) { return Array.from (jsMap.keys ()); })
+    (function(jsMap) { return Array.from (jsMap.values ()); });
+
+  //# JsSet :: Type -> Type
+  //.
+  //. Constructor for native Set types. `$.JsSet ($.Number)`, for example,
+  //. is the type comprising every native Set whose values are numbers.
+  var JsSet = UnaryTypeWithUrl
+    ('JsSet')
+    ([])
+    (function(x) { return toString.call (x) === '[object Set]'; })
+    (function(jsSet) { return Array.from (jsSet.values ()); });
+
   //# Maybe :: Type -> Type
   //.
   //. [Maybe][] type constructor.
@@ -4949,6 +4987,14 @@
     ([])
     (typeEq ('sanctuary-maybe/Maybe@1'))
     (I);
+
+  //# Module :: Type
+  //.
+  //. Type comprising every ES module.
+  var Module = NullaryTypeWithUrl
+    ('Module')
+    ([])
+    (function(x) { return toString.call (x) === '[object Module]'; });
 
   //# NonEmpty :: Type -> Type
   //.
@@ -5247,7 +5293,10 @@
   //.   - <code>[Fn](#Fn) ([Unknown][]) ([Unknown][])</code>
   //.   - <code>[HtmlElement](#HtmlElement)</code>
   //.   - <code>[Identity](#Identity) ([Unknown][])</code>
+  //.   - <code>[JsMap](#JsMap) ([Unknown][]) ([Unknown][])</code>
+  //.   - <code>[JsSet](#JsSet) ([Unknown][])</code>
   //.   - <code>[Maybe](#Maybe) ([Unknown][])</code>
+  //.   - <code>[Module](#Module)</code>
   //.   - <code>[Null](#Null)</code>
   //.   - <code>[Number](#Number)</code>
   //.   - <code>[Object](#Object)</code>
@@ -5272,7 +5321,10 @@
     Fn (Unknown) (Unknown),
     HtmlElement,
     Identity (Unknown),
+    JsMap (Unknown) (Unknown),
+    JsSet (Unknown),
     Maybe (Unknown),
+    Module,
     Null,
     Number_,
     Object_,
@@ -5787,30 +5839,30 @@
   //. const show = require ('sanctuary-show');
   //. const type = require ('sanctuary-type-identifiers');
   //.
-  //. //    MaybeTypeRep :: TypeRep Maybe
-  //. const MaybeTypeRep = {'@@type': 'my-package/Maybe'};
+  //. //    maybeTypeIdent :: String
+  //. const maybeTypeIdent = 'my-package/Maybe';
   //.
   //. //    Maybe :: Type -> Type
   //. const Maybe = $.UnaryType
   //.   ('Maybe')
   //.   ('http://example.com/my-package#Maybe')
   //.   ([])
-  //.   (x => type (x) === MaybeTypeRep['@@type'])
+  //.   (x => type (x) === maybeTypeIdent)
   //.   (maybe => maybe.isJust ? [maybe.value] : []);
   //.
   //. //    Nothing :: Maybe a
   //. const Nothing = {
-  //.   'constructor': MaybeTypeRep,
   //.   'isJust': false,
   //.   'isNothing': true,
+  //.   '@@type': maybeTypeIdent,
   //.   '@@show': () => 'Nothing',
   //. };
   //.
   //. //    Just :: a -> Maybe a
   //. const Just = x => ({
-  //.   'constructor': MaybeTypeRep,
   //.   'isJust': true,
   //.   'isNothing': false,
+  //.   '@@type': maybeTypeIdent,
   //.   '@@show': () => `Just (${show (x)})`,
   //.   'value': x,
   //. });
@@ -5903,15 +5955,15 @@
   //. ```javascript
   //. const type = require ('sanctuary-type-identifiers');
   //.
-  //. //    PairTypeRep :: TypeRep Pair
-  //. const PairTypeRep = {'@@type': 'my-package/Pair'};
+  //. //    pairTypeIdent :: String
+  //. const pairTypeIdent = 'my-package/Pair';
   //.
   //. //    $Pair :: Type -> Type -> Type
   //. const $Pair = $.BinaryType
   //.   ('Pair')
   //.   ('http://example.com/my-package#Pair')
   //.   ([])
-  //.   (x => type (x) === PairTypeRep['@@type'])
+  //.   (x => type (x) === pairTypeIdent)
   //.   (({fst}) => [fst])
   //.   (({snd}) => [snd]);
   //.
@@ -5921,9 +5973,9 @@
   //.     ({})
   //.     ([a, b, $Pair (a) (b)])
   //.     (fst => snd => ({
-  //.        'constructor': PairTypeRep,
   //.        'fst': fst,
   //.        'snd': snd,
+  //.        '@@type': pairTypeIdent,
   //.        '@@show': () => `Pair (${show (fst)}) (${show (snd)})`,
   //.      }));
   //.
@@ -7020,7 +7072,10 @@
           (Function_),
     HtmlElement: HtmlElement,
     Identity: fromUncheckedUnaryType (Identity),
+    JsMap: fromUncheckedBinaryType (JsMap),
+    JsSet: fromUncheckedUnaryType (JsSet),
     Maybe: fromUncheckedUnaryType (Maybe),
+    Module: Module,
     NonEmpty: NonEmpty,
     Null: Null,
     Nullable: fromUncheckedUnaryType (Nullable),
@@ -7051,6 +7106,7 @@
     TypeClass: TypeClass,
     Undefined: Undefined,
     Unknown: Unknown,
+    Void: Void,
     env: env,
     create:
       def ('create')
@@ -7513,24 +7569,20 @@
 //.
 //. `npm install sanctuary` will install Sanctuary for use in Node.js.
 //.
-//. Running Sanctuary in the browser is more involved. One must include a
-//. `<script>` for each dependency in addition to one for Sanctuary itself:
+//. To add Sanctuary to a website, first run the following command, replacing
+//. `X.Y.Z` with a version number greater than or equal to `2.0.2`:
 //.
-//. ```html
-//. <script src="vendor/sanctuary-show.js"></script>
-//. <script src="vendor/sanctuary-type-identifiers.js"></script>
-//. <script src="vendor/sanctuary-type-classes.js"></script>
-//. <script src="vendor/sanctuary-either.js"></script>
-//. <script src="vendor/sanctuary-maybe.js"></script>
-//. <script src="vendor/sanctuary-pair.js"></script>
-//. <script src="vendor/sanctuary-def.js"></script>
-//. <script src="vendor/sanctuary.js"></script>
+//. ```console
+//. $ curl https://raw.githubusercontent.com/sanctuary-js/sanctuary/vX.Y.Z/dist/bundle.js >vendor/sanctuary-bundle.js
 //. ```
 //.
-//. To ensure compatibility one should use the dependency versions specified
-//. in __package.json__.
+//. Then reference the bundle from __index.html__:
 //.
-//. For convenience one could define aliases for various modules:
+//. ```html
+//. <script src="vendor/sanctuary-bundle.js"></script>
+//. ```
+//.
+//. Optionally, define aliases for various modules:
 //.
 //. ```javascript
 //. const S = window.sanctuary;
@@ -7673,15 +7725,30 @@
   var p = $.BinaryTypeVariable ('p');
   var s = $.BinaryTypeVariable ('s');
 
+  //  Throwing :: Type -> Type -> Type -> Type
+  //
+  //  `Throwing e a b` is the type of functions from `a` to `b` that may
+  //  throw values of type `e`.
+  function Throwing(E) {
+    return function(A) {
+      return function(B) {
+        var T = $.Fn (A) (B);
+        T.format = function(outer, inner) {
+          return outer ('Throwing ' + show (E)) +
+                 outer (' ') + inner ('$1') (show (A)) +
+                 outer (' ') + inner ('$2') (show (B));
+        };
+        return T;
+      };
+    };
+  }
+
   //  TypeRep :: Type -> Type
   var TypeRep = $.UnaryType
     ('TypeRep')
     ('https://github.com/fantasyland/fantasy-land#type-representatives')
     ([])
-    (function(x) {
-       return $.test ([]) ($.AnyFunction) (x) ||
-              x != null && $.test ([]) ($.String) (x['@@type']);
-     })
+    (K (true))
     (K ([]));
 
   //  Options :: Type
@@ -7718,10 +7785,11 @@
   //.   return identity;
   //. };
   //.
-  //. Identity['@@type'] = 'my-package/Identity@1';
+  //. //    identityTypeIdent :: String
+  //. const identityTypeIdent = 'my-package/Identity@1';
   //.
   //. const Identity$prototype = {
-  //.   'constructor': Identity,
+  //.   '@@type': identityTypeIdent,
   //.   '@@show': function() { return `Identity (${S.show (this.value)})`; },
   //.   'fantasy-land/map': function(f) { return Identity (f (this.value)); },
   //. };
@@ -7731,7 +7799,7 @@
   //.   ('Identity')
   //.   ('http://example.com/my-package#Identity')
   //.   ([])
-  //.   (x => type (x) === Identity['@@type'])
+  //.   (x => type (x) === identityTypeIdent)
   //.   (identity => [identity.value]);
   //.
   //. const S = create ({
@@ -7785,7 +7853,10 @@
   //. . $.Fn ($.Unknown) ($.Unknown),
   //. . $.HtmlElement,
   //. . $.Identity ($.Unknown),
+  //. . $.JsMap ($.Unknown) ($.Unknown),
+  //. . $.JsSet ($.Unknown),
   //. . $.Maybe ($.Unknown),
+  //. . $.Module,
   //. . $.Null,
   //. . $.Number,
   //. . $.Object,
@@ -9591,7 +9662,7 @@
     impl: tagBy
   };
 
-  //# encase :: (a -> b) -> a -> Either Error b
+  //# encase :: Throwing e a b -> a -> Either e b
   //.
   //. Takes a function that may throw and returns a pure function.
   //.
@@ -9613,7 +9684,7 @@
   }
   _.encase = {
     consts: {},
-    types: [$.Fn (a) (b), a, $.Either ($.Error) (b)],
+    types: [Throwing (e) (a) (b), a, $.Either (e) (b)],
     impl: encase
   };
 
@@ -10390,7 +10461,7 @@
   //.   - `forall s :: String, t :: String.
   //.      S.joinWith (s) (S.splitOn (s) (t)) = t`
   //.
-  //. See also [`splitOn`](#splitOn).
+  //. See also [`splitOn`](#splitOn) and [`intercalate`](#intercalate).
   //.
   //. ```javascript
   //. > S.joinWith (':') (['foo', 'bar', 'baz'])
@@ -10467,6 +10538,39 @@
     consts: {f: [Z.Foldable]},
     types: [$.Predicate (a), f (a), $.Maybe (a)],
     impl: find
+  };
+
+  //# intercalate :: (Monoid m, Foldable f) => m -> f m -> m
+  //.
+  //. Curried version of [`Z.intercalate`][]. Concatenates the elements of
+  //. the given structure, separating each pair of adjacent elements with
+  //. the given separator.
+  //.
+  //. See also [`joinWith`](#joinWith).
+  //.
+  //. ```javascript
+  //. > S.intercalate (', ') ([])
+  //. ''
+  //.
+  //. > S.intercalate (', ') (['foo', 'bar', 'baz'])
+  //. 'foo, bar, baz'
+  //.
+  //. > S.intercalate (', ') (Nil)
+  //. ''
+  //.
+  //. > S.intercalate (', ') (Cons ('foo') (Cons ('bar') (Cons ('baz') (Nil))))
+  //. 'foo, bar, baz'
+  //.
+  //. > S.intercalate ([0, 0, 0]) ([])
+  //. []
+  //.
+  //. > S.intercalate ([0, 0, 0]) ([[1], [2, 3], [4, 5, 6], [7, 8], [9]])
+  //. [1, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 7, 8, 0, 0, 0, 9]
+  //. ```
+  _.intercalate = {
+    consts: {a: [Z.Monoid], f: [Z.Foldable]},
+    types: [a, f (a), a],
+    impl: curry2 (Z.intercalate)
   };
 
   //# foldMap :: (Monoid m, Foldable f) => TypeRep m -> (a -> m) -> f a -> m
@@ -11919,6 +12023,7 @@
 //. [`Z.gt`]:                   v:sanctuary-js/sanctuary-type-classes#gt
 //. [`Z.gte`]:                  v:sanctuary-js/sanctuary-type-classes#gte
 //. [`Z.id`]:                   v:sanctuary-js/sanctuary-type-classes#id
+//. [`Z.intercalate`]:          v:sanctuary-js/sanctuary-type-classes#intercalate
 //. [`Z.invert`]:               v:sanctuary-js/sanctuary-type-classes#invert
 //. [`Z.join`]:                 v:sanctuary-js/sanctuary-type-classes#join
 //. [`Z.lt`]:                   v:sanctuary-js/sanctuary-type-classes#lt
