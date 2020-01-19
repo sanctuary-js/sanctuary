@@ -320,24 +320,20 @@
 //.
 //. `npm install sanctuary` will install Sanctuary for use in Node.js.
 //.
-//. Running Sanctuary in the browser is more involved. One must include a
-//. `<script>` for each dependency in addition to one for Sanctuary itself:
+//. To add Sanctuary to a website, first run the following command, replacing
+//. `X.Y.Z` with a version number greater than or equal to `2.0.2`:
 //.
-//. ```html
-//. <script src="vendor/sanctuary-show.js"></script>
-//. <script src="vendor/sanctuary-type-identifiers.js"></script>
-//. <script src="vendor/sanctuary-type-classes.js"></script>
-//. <script src="vendor/sanctuary-either.js"></script>
-//. <script src="vendor/sanctuary-maybe.js"></script>
-//. <script src="vendor/sanctuary-pair.js"></script>
-//. <script src="vendor/sanctuary-def.js"></script>
-//. <script src="vendor/sanctuary.js"></script>
+//. ```console
+//. $ curl https://raw.githubusercontent.com/sanctuary-js/sanctuary/vX.Y.Z/dist/bundle.js >vendor/sanctuary-bundle.js
 //. ```
 //.
-//. To ensure compatibility one should use the dependency versions specified
-//. in __package.json__.
+//. Then reference the bundle from __index.html__:
 //.
-//. For convenience one could define aliases for various modules:
+//. ```html
+//. <script src="vendor/sanctuary-bundle.js"></script>
+//. ```
+//.
+//. Optionally, define aliases for various modules:
 //.
 //. ```javascript
 //. const S = window.sanctuary;
