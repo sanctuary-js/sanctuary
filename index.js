@@ -333,11 +333,33 @@
 //. <script src="vendor/sanctuary-bundle.js"></script>
 //. ```
 //.
+//. The bundle can also be included via:
+//. ```html
+//. <script src="https://sanctuary.js.org/vendor/sanctuary-bundle.js"></script>
+//. ```
+//.
+//. Installation of the bundle through jsdelivr:
+//. ```html
+//. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@3.0.0/dist/bundle.js"></script>
+//. ```
+//.
+//.
 //. Optionally, define aliases for various modules:
 //.
 //. ```javascript
 //. const S = window.sanctuary;
 //. const $ = window.sanctuaryDef;
+//. // ...
+//. ```
+//.
+//. Individual Types can be included through jsdelivr:
+//. ```html
+//. <script src="https://cdn.jsdelivr.net/npm/sanctuary-maybe@2.1.0/index.js"></script>
+//. ```
+//.
+//. And accessed and aliased like so:
+//. ```javascript
+//. const Maybe = window.sanctuaryMaybe;
 //. // ...
 //. ```
 //.
