@@ -317,32 +317,18 @@
 //. via selective use of [`unchecked`](#unchecked) functions.
 //.
 //. ## Installation
+//. ### Node.js
 //.
-//. `npm install sanctuary` will install Sanctuary for use in Node.js.
+//. `npm install sanctuary`
 //.
-//. To add Sanctuary to a website, first run the following command, replacing
+//. ### CDN
+//. To add Sanctuary to a website, include the following script tag, replacing
 //. `X.Y.Z` with a version number greater than or equal to `2.0.2`:
-//.
-//. ```console
-//. $ curl https://raw.githubusercontent.com/sanctuary-js/sanctuary/vX.Y.Z/dist/bundle.js >vendor/sanctuary-bundle.js
-//. ```
-//.
-//. Then reference the bundle from __index.html__:
-//.
-//. ```html
-//. <script src="vendor/sanctuary-bundle.js"></script>
-//. ```
-//.
-//. The bundle can also be included via:
-//. ```html
-//. <script src="https://sanctuary.js.org/vendor/sanctuary-bundle.js"></script>
-//. ```
 //.
 //. Installation of the bundle through jsdelivr:
 //. ```html
 //. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@X.Y.Z/dist/bundle.js"></script>
 //. ```
-//.
 //.
 //. Optionally, define aliases for various modules:
 //.
@@ -352,7 +338,7 @@
 //. // ...
 //. ```
 //.
-//. Individual Types can be included through jsdelivr:
+//. Individual Types can also be included:
 //. ```html
 //. <script src="https://cdn.jsdelivr.net/npm/sanctuary-maybe@2.1.0/index.js"></script>
 //. ```
