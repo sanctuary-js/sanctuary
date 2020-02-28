@@ -340,7 +340,7 @@
 //.
 //. Installation of the bundle through jsdelivr:
 //. ```html
-//. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@3.0.0/dist/bundle.js"></script>
+//. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@X.Y.Z/dist/bundle.js"></script>
 //. ```
 //.
 //.
