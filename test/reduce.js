@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('reduce', () => {
 
-  eq (S.show (S.reduce)) ('reduce :: Foldable f => (a -> b -> a) -> a -> f b -> a');
+  eq (S.show (S.reduce)) ('reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b');
 
   eq (S.reduce (S.concat) ('x') ([])) ('x');
   eq (S.reduce (S.concat) ('x') (['A', 'B', 'C'])) ('xABC');
