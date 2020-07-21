@@ -1731,12 +1731,12 @@
   //. Curries the given ternary function.
   //.
   //. ```javascript
-  //. > const replaceString = S.curry3 ((what, replacement, string) =>
-  //. .   string.replace (what, replacement)
-  //. . )
+  //. > const defineProperty = S.curry3 (Object.defineProperty)
   //.
-  //. > replaceString ('banana') ('orange') ('banana icecream')
-  //. 'orange icecream'
+  //. > const o = defineProperty ({}) ('x') ({value: 42, writable: false})
+  //.
+  //. > o.x
+  //. 42
   //. ```
   function curry3(f) {
     return function(x) {
@@ -4546,6 +4546,83 @@
     consts: {},
     types: [$.GlobalRegExp, $.String, $.Array (Match)],
     impl: matchAll
+  };
+
+  //# replaceWith :: String -> RegExp -> String -> String
+  //.
+  //. Replaces occurrences of the given pattern with the given replacement
+  //. within the given string. Replaces all occurrences of the pattern if
+  //. its `g` flag is set; just the first occurrence otherwise.
+  //.
+  //. See also [`replaceBy`](#replaceBy).
+  //.
+  //. ```javascript
+  //. > S.replaceWith ('x') (/o/) ('foo')
+  //. 'fxo'
+  //.
+  //. > S.replaceWith ('x') (/o/g) ('foo')
+  //. 'fxx'
+  //. ```
+  function replaceWith(replacement) {
+    return function(pattern) {
+      return function(text) {
+        return text.replace (pattern, function() { return replacement; });
+      };
+    };
+  }
+  _.replaceWith = {
+    consts: {},
+    types: [$.String, $.RegExp, $.String, $.String],
+    impl: replaceWith
+  };
+
+  //# replaceBy :: (Array (Maybe String) -> String) -> RegExp -> String -> String
+  //.
+  //. Replaces occurrences of the given pattern within the given string
+  //. in accordance with the given replacement function, which receives an
+  //. array of captured values. Replaces all occurrences of the pattern if
+  //. its `g` flag is set; just the first occurrence otherwise.
+  //.
+  //. See also [`replaceWith`](#replaceWith).
+  //.
+  //. ```javascript
+  //. > S.replaceBy (([$1]) => S.maybe ('') (S.toUpper) ($1)) (/(\w)/) ('foo')
+  //. 'Foo'
+  //.
+  //. > S.replaceBy (([$1]) => S.maybe ('') (S.toUpper) ($1)) (/(\w)/g) ('foo')
+  //. 'FOO'
+  //.
+  //. > S.replaceBy (S.show) (/(foo)(bar)?/) ('<>')
+  //. '<>'
+  //.
+  //. > S.replaceBy (S.show) (/(foo)(bar)?/) ('<foo>')
+  //. '<[Just ("foo"), Nothing]>'
+  //.
+  //. > S.replaceBy (S.show) (/(foo)(bar)?/) ('<foobar>')
+  //. '<[Just ("foo"), Just ("bar")]>'
+  //. ```
+  function replaceBy(substitute) {
+    return function(pattern) {
+      return function(text) {
+        return text.replace (pattern, function() {
+          var groups = [];
+          var group, idx = 1;
+          //  eslint-disable-next-line no-plusplus
+          while (typeof (group = arguments[idx++]) !== 'number') {
+            groups.push (group == null ? Nothing : Just (group));
+          }
+          return substitute (groups);
+        });
+      };
+    };
+  }
+  _.replaceBy = {
+    consts: {},
+    types: [$.Fn ($.Array ($.Maybe ($.String))) ($.String),
+            $.RegExp,
+            $.String,
+            $.String],
+    impl: replaceBy
   };
 
   //. ### String
