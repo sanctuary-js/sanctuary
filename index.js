@@ -452,6 +452,17 @@
     };
   }
 
+  //  invoke2 :: String -> a -> b -> c -> d
+  function invoke2(name) {
+    return function(x) {
+      return function(y) {
+        return function(target) {
+          return target[name] (x, y);
+        };
+      };
+    };
+  }
+
   //  toObject :: a -> Object
   function toObject(x) {
     return x == null ? Object.create (null) : Object (x);
@@ -1731,12 +1742,12 @@
   //. Curries the given ternary function.
   //.
   //. ```javascript
-  //. > const replaceString = S.curry3 ((what, replacement, string) =>
-  //. .   string.replace (what, replacement)
-  //. . )
+  //. > const defineProperty = S.curry3 (Object.defineProperty)
   //.
-  //. > replaceString ('banana') ('orange') ('banana icecream')
-  //. 'orange icecream'
+  //. > const o = defineProperty ({}) ('x') ({value: 42, writable: false})
+  //.
+  //. > o.x
+  //. 42
   //. ```
   function curry3(f) {
     return function(x) {
@@ -4497,6 +4508,88 @@
     impl: matchAll
   };
 
+  //# replace :: RegExp -> String -> String -> String
+  //.
+  //. Replaces occurrences of the given pattern with the given replacement
+  //. within the given string. Replaces all occurrences of the pattern if
+  //. its `g` flag is set; just the first occurrence otherwise.
+  //.
+  //. Dispatches to [`String#replace`][], so special replacement patterns
+  //. such as `$1`, `$2`, `$3`, and `$&` are supported.
+  //.
+  //. See also [`replace_`](#replace_).
+  //.
+  //. ```javascript
+  //. > S.replace (/o/) ('x') ('foo')
+  //. 'fxo'
+  //.
+  //. > S.replace (/o/g) ('x') ('foo')
+  //. 'fxx'
+  //.
+  //. > S.replace (/(foo)(bar)?/) ('-$1-$2-') ('<>')
+  //. '<>'
+  //.
+  //. > S.replace (/(foo)(bar)?/) ('-$1-$2-') ('<foo>')
+  //. '<-foo-->'
+  //.
+  //. > S.replace (/(foo)(bar)?/) ('-$1-$2-') ('<foobar>')
+  //. '<-foo-bar->'
+  //. ```
+  _.replace = {
+    consts: {},
+    types: [$.RegExp, $.String, $.String, $.String],
+    impl: invoke2 ('replace')
+  };
+
+  //# replace_ :: RegExp -> (Array (Maybe String) -> String) -> String -> String
+  //.
+  //. Replaces occurrences of the given pattern within the given string
+  //. in accordance with the given replacement function, which receives an
+  //. array of captured groups. Replaces all occurrences of the pattern if
+  //. its `g` flag is set; just the first occurrence otherwise.
+  //.
+  //. See also [`replace`](#replace).
+  //.
+  //. ```javascript
+  //. > S.replace_ (/(\w)/) (([$1]) => S.maybe ('') (S.toUpper) ($1)) ('foo')
+  //. 'Foo'
+  //.
+  //. > S.replace_ (/(\w)/g) (([$1]) => S.maybe ('') (S.toUpper) ($1)) ('foo')
+  //. 'FOO'
+  //.
+  //. > S.replace_ (/(foo)(bar)?/) (S.show) ('<>')
+  //. '<>'
+  //.
+  //. > S.replace_ (/(foo)(bar)?/) (S.show) ('<foo>')
+  //. '<[Just ("foo"), Nothing]>'
+  //.
+  //. > S.replace_ (/(foo)(bar)?/) (S.show) ('<foobar>')
+  //. '<[Just ("foo"), Just ("bar")]>'
+  //. ```
+  function replace_(pattern) {
+    return function(f) {
+      return function(s) {
+        return s.replace (pattern, function() {
+          var groups = [];
+          var group, idx = 1;
+          //  eslint-disable-next-line no-plusplus
+          while (typeof (group = arguments[idx++]) !== 'number') {
+            groups.push (group == null ? Nothing : Just (group));
+          }
+          return f (groups);
+        });
+      };
+    };
+  }
+  _.replace_ = {
+    consts: {},
+    types: [$.RegExp,
+            $.Fn ($.Array ($.Maybe ($.String))) ($.String),
+            $.String,
+            $.String],
+    impl: replace_
+  };
+
   //. ### String
 
   //# toUpper :: String -> String
@@ -4778,6 +4871,7 @@
 //. [`R.__`]:                   https://ramdajs.com/docs/#__
 //. [`R.bind`]:                 https://ramdajs.com/docs/#bind
 //. [`R.invoker`]:              https://ramdajs.com/docs/#invoker
+//. [`String#replace`]:         https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
 //. [`Z.alt`]:                  v:sanctuary-js/sanctuary-type-classes#alt
 //. [`Z.ap`]:                   v:sanctuary-js/sanctuary-type-classes#ap
 //. [`Z.apFirst`]:              v:sanctuary-js/sanctuary-type-classes#apFirst
