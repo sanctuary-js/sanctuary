@@ -1,9 +1,11 @@
 {
   "root": true,
   "extends": ["../node_modules/sanctuary-style/eslint-es6.json"],
+  "parserOptions": {"ecmaVersion": 2018},
   "env": {"node": true},
   "globals": {"suite": false, "test": false},
   "rules": {
+    "comma-dangle": ["error", {"arrays": "always-multiline", "objects": "always-multiline", "functions": "never"}],
     "max-len": ["off"]
   }
 }

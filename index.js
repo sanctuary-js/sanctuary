@@ -4403,6 +4403,53 @@
     impl: matchAll
   };
 
+  //# replace :: (Array (Maybe String) -> String) -> RegExp -> String -> String
+  //.
+  //. Replaces occurrences of the given pattern within the given string
+  //. in accordance with the given replacement function, which receives an
+  //. array of captured values. Replaces all occurrences of the pattern if
+  //. its `g` flag is set; just the first occurrence otherwise.
+  //.
+  //. ```javascript
+  //. > S.replace (([$1]) => S.maybe ('') (S.toUpper) ($1)) (/(\w)/) ('foo')
+  //. 'Foo'
+  //.
+  //. > S.replace (([$1]) => S.maybe ('') (S.toUpper) ($1)) (/(\w)/g) ('foo')
+  //. 'FOO'
+  //.
+  //. > S.replace (S.show) (/(foo)(bar)?/) ('<>')
+  //. '<>'
+  //.
+  //. > S.replace (S.show) (/(foo)(bar)?/) ('<foo>')
+  //. '<[Just ("foo"), Nothing]>'
+  //.
+  //. > S.replace (S.show) (/(foo)(bar)?/) ('<foobar>')
+  //. '<[Just ("foo"), Just ("bar")]>'
+  //. ```
+  function replace(substitute) {
+    return function(pattern) {
+      return function(text) {
+        return text.replace (pattern, function() {
+          var groups = [];
+          var group, idx = 1;
+          //  eslint-disable-next-line no-plusplus
+          while (typeof (group = arguments[idx++]) !== 'number') {
+            groups.push (group == null ? Nothing : Just (group));
+          }
+          return substitute (groups);
+        });
+      };
+    };
+  }
+  _.replace = {
+    consts: {},
+    types: [$.Fn ($.Array ($.Maybe ($.String))) ($.String),
+            $.RegExp,
+            $.String,
+            $.String],
+    impl: replace
+  };
+
   //. ### String
 
   //# toUpper :: String -> String
