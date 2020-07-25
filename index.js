@@ -1109,10 +1109,15 @@
   //. > S.flip (Cons (Math.floor) (Cons (Math.ceil) (Nil))) (1.5)
   //. Cons (1) (Cons (2) (Nil))
   //. ```
+  function flip(functor) {
+    return function(x) {
+      return Z.flip (functor, x);
+    };
+  }
   _.flip = {
     consts: {f: [Z.Functor]},
     types: [f ($.Fn (a) (b)), a, f (b)],
-    impl: curry2 (Z.flip)
+    impl: flip
   };
 
   //# bimap :: Bifunctor f => (a -> b) -> (c -> d) -> f a c -> f b d
@@ -1229,6 +1234,8 @@
   //. value if the Foldable is empty; the result of the final application
   //. otherwise.
   //.
+  //. See also [`reduce_`](#reduce_).
+  //.
   //. ```javascript
   //. > S.reduce (S.add) (0) ([1, 2, 3, 4, 5])
   //. 15
@@ -1247,8 +1254,26 @@
   }
   _.reduce = {
     consts: {f: [Z.Foldable]},
-    types: [$.Fn (a) ($.Fn (b) (a)), a, f (b), a],
+    types: [$.Fn (b) ($.Fn (a) (b)), b, f (a), b],
     impl: reduce
+  };
+
+  //# reduce_ :: Foldable f => (a -> b -> b) -> b -> f a -> b
+  //.
+  //. Variant of [`reduce`](#reduce) that takes a reducing function with
+  //. arguments flipped.
+  //.
+  //. ```javascript
+  //. > S.reduce_ (S.append) ([]) (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. [1, 2, 3]
+  //.
+  //. > S.reduce_ (S.prepend) ([]) (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. [3, 2, 1]
+  //. ```
+  _.reduce_ = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Fn (a) ($.Fn (b) (b)), b, f (a), b],
+    impl: B (reduce) (flip)
   };
 
   //# traverse :: (Applicative f, Traversable t) => TypeRep f -> (a -> f b) -> t a -> f (t b)
