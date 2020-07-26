@@ -2073,70 +2073,6 @@
     impl: isJust
   };
 
-  //# fromMaybe :: a -> Maybe a -> a
-  //.
-  //. Takes a default value and a Maybe, and returns the Maybe's value
-  //. if the Maybe is a Just; the default value otherwise.
-  //.
-  //. See also [`fromMaybe_`](#fromMaybe_) and
-  //. [`maybeToNullable`](#maybeToNullable).
-  //.
-  //. ```javascript
-  //. > S.fromMaybe (0) (S.Just (42))
-  //. 42
-  //.
-  //. > S.fromMaybe (0) (S.Nothing)
-  //. 0
-  //. ```
-  _.fromMaybe = {
-    consts: {},
-    types: [a, $.Maybe (a), a],
-    impl: C (maybe) (I)
-  };
-
-  //# fromMaybe_ :: (() -> a) -> Maybe a -> a
-  //.
-  //. Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
-  //. value is only computed if required.
-  //.
-  //. ```javascript
-  //. > function fib(n) { return n <= 1 ? n : fib (n - 2) + fib (n - 1); }
-  //.
-  //. > S.fromMaybe_ (() => fib (30)) (S.Just (1000000))
-  //. 1000000
-  //.
-  //. > S.fromMaybe_ (() => fib (30)) (S.Nothing)
-  //. 832040
-  //. ```
-  _.fromMaybe_ = {
-    consts: {},
-    types: [$.Thunk (a), $.Maybe (a), a],
-    impl: C (maybe_) (I)
-  };
-
-  //# maybeToNullable :: Maybe a -> Nullable a
-  //.
-  //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
-  //. [Nullable][] is defined in [sanctuary-def][].
-  //.
-  //. See also [`fromMaybe`](#fromMaybe).
-  //.
-  //. ```javascript
-  //. > S.maybeToNullable (S.Just (42))
-  //. 42
-  //.
-  //. > S.maybeToNullable (S.Nothing)
-  //. null
-  //. ```
-  function maybeToNullable(maybe) {
-    return maybe.isJust ? maybe.value : null;
-  }
-  _.maybeToNullable = {
-    consts: {},
-    types: [$.Maybe (a), $.Nullable (a)],
-    impl: maybeToNullable
-  };
-
   //# maybe :: b -> (a -> b) -> Maybe a -> b
   //.
   //. Takes a value of any type, a function, and a Maybe. If the Maybe is
@@ -2192,6 +2128,47 @@
     impl: maybe_
   };
 
+  //# fromMaybe :: a -> Maybe a -> a
+  //.
+  //. Takes a default value and a Maybe, and returns the Maybe's value
+  //. if the Maybe is a Just; the default value otherwise.
+  //.
+  //. See also [`fromMaybe_`](#fromMaybe_) and
+  //. [`maybeToNullable`](#maybeToNullable).
+  //.
+  //. ```javascript
+  //. > S.fromMaybe (0) (S.Just (42))
+  //. 42
+  //.
+  //. > S.fromMaybe (0) (S.Nothing)
+  //. 0
+  //. ```
+  _.fromMaybe = {
+    consts: {},
+    types: [a, $.Maybe (a), a],
+    impl: C (maybe) (I)
+  };
+
+  //# fromMaybe_ :: (() -> a) -> Maybe a -> a
+  //.
+  //. Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
+  //. value is only computed if required.
+  //.
+  //. ```javascript
+  //. > function fib(n) { return n <= 1 ? n : fib (n - 2) + fib (n - 1); }
+  //.
+  //. > S.fromMaybe_ (() => fib (30)) (S.Just (1000000))
+  //. 1000000
+  //.
+  //. > S.fromMaybe_ (() => fib (30)) (S.Nothing)
+  //. 832040
+  //. ```
+  _.fromMaybe_ = {
+    consts: {},
+    types: [$.Thunk (a), $.Maybe (a), a],
+    impl: C (maybe_) (I)
+  };
+
   //# justs :: (Filterable f, Functor f) => f (Maybe a) -> f a
   //.
   //. Discards each element that is Nothing, and unwraps each element that is
@@ -2230,6 +2207,29 @@
     consts: {f: [Z.Filterable, Z.Functor]},
     types: [$.Fn (a) ($.Maybe (b)), f (a), f (b)],
     impl: B (B (justs)) (map)
+  };
+
+  //# maybeToNullable :: Maybe a -> Nullable a
+  //.
+  //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
+  //. [Nullable][] is defined in [sanctuary-def][].
+  //.
+  //. See also [`fromMaybe`](#fromMaybe).
+  //.
+  //. ```javascript
+  //. > S.maybeToNullable (S.Just (42))
+  //. 42
+  //.
+  //. > S.maybeToNullable (S.Nothing)
+  //. null
+  //. ```
+  function maybeToNullable(maybe) {
+    return maybe.isJust ? maybe.value : null;
+  }
+  _.maybeToNullable = {
+    consts: {},
+    types: [$.Maybe (a), $.Nullable (a)],
+    impl: maybeToNullable
   };
 
   //# maybeToEither :: a -> Maybe b -> Either a b
@@ -2335,27 +2335,6 @@
     impl: isRight
   };
 
-  //# fromEither :: b -> Either a b -> b
-  //.
-  //. Takes a default value and an Either, and returns the Right value
-  //. if the Either is a Right; the default value otherwise.
-  //.
-  //. ```javascript
-  //. > S.fromEither (0) (S.Right (42))
-  //. 42
-  //.
-  //. > S.fromEither (0) (S.Left (42))
-  //. 0
-  //. ```
-  function fromEither(x) {
-    return either (K (x)) (I);
-  }
-  _.fromEither = {
-    consts: {},
-    types: [b, $.Either (a) (b), b],
-    impl: fromEither
-  };
-
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
   //. Takes two functions and an Either, and returns the result of
@@ -2381,6 +2360,27 @@
     consts: {},
     types: [$.Fn (a) (c), $.Fn (b) (c), $.Either (a) (b), c],
     impl: either
+  };
+
+  //# fromEither :: b -> Either a b -> b
+  //.
+  //. Takes a default value and an Either, and returns the Right value
+  //. if the Either is a Right; the default value otherwise.
+  //.
+  //. ```javascript
+  //. > S.fromEither (0) (S.Right (42))
+  //. 42
+  //.
+  //. > S.fromEither (0) (S.Left (42))
+  //. 0
+  //. ```
+  function fromEither(x) {
+    return either (K (x)) (I);
+  }
+  _.fromEither = {
+    consts: {},
+    types: [b, $.Either (a) (b), b],
+    impl: fromEither
   };
 
   //# lefts :: (Filterable f, Functor f) => f (Either a b) -> f a
