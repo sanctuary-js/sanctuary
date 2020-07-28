@@ -894,6 +894,88 @@
     impl: curry2 (Z.max)
   };
 
+  //# minBy :: Ord b => (a -> b) -> (a -> a -> a) -> a -> a -> a
+  //.
+  //. Takes a unary function `f`, a binary function `g`, and two values `x`
+  //. and `y`.
+  //.
+  //. Returns `x` if `f (x)` is less than `f (y)`.
+  //.
+  //. Returns `y` if `f (y)` is less than `f (x)`.
+  //.
+  //. Returns `g (x) (y)` if `f (x)` is equal to `f (y)`.
+  //.
+  //. ```javascript
+  //. > S.minBy (S.fst) (S.K) (S.Pair ('foo') (1)) (S.Pair ('bar') (2))
+  //. S.Pair ('bar') (2)
+  //.
+  //. > S.minBy (S.snd) (S.K) (S.Pair ('foo') (1)) (S.Pair ('bar') (2))
+  //. S.Pair ('foo') (1)
+  //.
+  //. > S.minBy (S.head) (x => y => x) ([1]) ([1, 2, 3])
+  //. [1]
+  //.
+  //. > S.minBy (S.head) (x => y => y) ([1]) ([1, 2, 3])
+  //. [1, 2, 3]
+  //. ```
+  function minBy(f) {
+    return function(g) {
+      return function(x) {
+        var fx = f (x);
+        return function(y) {
+          var fy = f (y);
+          return Z.lte (fx, fy) ? Z.lte (fy, fx) ? g (x) (y) : x : y;
+        };
+      };
+    };
+  }
+  _.minBy = {
+    consts: {b: [Z.Ord]},
+    types: [$.Fn (a) (b), $.Fn (a) ($.Fn (a) (a)), a, a, a],
+    impl: minBy
+  };
+
+  //# maxBy :: Ord b => (a -> b) -> (a -> a -> a) -> a -> a -> a
+  //.
+  //. Takes a unary function `f`, a binary function `g`, and two values `x`
+  //. and `y`.
+  //.
+  //. Returns `x` if `f (x)` is greater than `f (y)`.
+  //.
+  //. Returns `y` if `f (y)` is greater than `f (x)`.
+  //.
+  //. Returns `g (x) (y)` if `f (x)` is equal to `f (y)`.
+  //.
+  //. ```javascript
+  //. > S.maxBy (S.fst) (S.K) (S.Pair ('foo') (1)) (S.Pair ('bar') (2))
+  //. S.Pair ('foo') (1)
+  //.
+  //. > S.maxBy (S.snd) (S.K) (S.Pair ('foo') (1)) (S.Pair ('bar') (2))
+  //. S.Pair ('bar') (2)
+  //.
+  //. > S.maxBy (S.head) (x => y => x) ([1]) ([1, 2, 3])
+  //. [1]
+  //.
+  //. > S.maxBy (S.head) (x => y => y) ([1]) ([1, 2, 3])
+  //. [1, 2, 3]
+  //. ```
+  function maxBy(f) {
+    return function(g) {
+      return function(x) {
+        var fx = f (x);
+        return function(y) {
+          var fy = f (y);
+          return Z.lte (fx, fy) ? Z.lte (fy, fx) ? g (x) (y) : y : x;
+        };
+      };
+    };
+  }
+  _.maxBy = {
+    consts: {b: [Z.Ord]},
+    types: [$.Fn (a) (b), $.Fn (a) ($.Fn (a) (a)), a, a, a],
+    impl: maxBy
+  };
+
   //# clamp :: Ord a => a -> a -> a -> a
   //.
   //. Takes a lower bound, an upper bound, and a value of the same type.
