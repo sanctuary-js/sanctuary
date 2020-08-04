@@ -320,17 +320,11 @@
 //.
 //. `npm install sanctuary` will install Sanctuary for use in Node.js.
 //.
-//. To add Sanctuary to a website, first run the following command, replacing
-//. `X.Y.Z` with a version number greater than or equal to `2.0.2`:
-//.
-//. ```console
-//. $ curl https://raw.githubusercontent.com/sanctuary-js/sanctuary/vX.Y.Z/dist/bundle.js >vendor/sanctuary-bundle.js
-//. ```
-//.
-//. Then reference the bundle from __index.html__:
+//. To add Sanctuary to a website, add the following `<script>` element,
+//. replacing `X.Y.Z` with a version number greater than or equal to `2.0.2`:
 //.
 //. ```html
-//. <script src="vendor/sanctuary-bundle.js"></script>
+//. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@X.Y.Z/dist/bundle.js"></script>
 //. ```
 //.
 //. Optionally, define aliases for various modules:
