@@ -591,6 +591,7 @@
   //. . $.Array ($.Unknown),
   //. . $.Array2 ($.Unknown) ($.Unknown),
   //. . $.Boolean,
+  //. . $.Buffer,
   //. . $.Date,
   //. . $.Descending ($.Unknown),
   //. . $.Either ($.Unknown) ($.Unknown),
