@@ -2300,28 +2300,24 @@
     impl: fromRight
   };
 
-  //# fromEither :: b -> Either a b -> b
+  //# fromEither :: Either a a -> a
   //.
-  //. Takes a default value and an Either, and returns the Right value
-  //. if the Either is a Right; the default value otherwise.
+  //. Takes an Either with the same type on the Left and on the Right
+  //. and returns whichever value exists.
   //.
-  //. The behaviour of `fromEither` is likely to change in a future release.
-  //. Please use [`fromRight`](#fromRight) instead.
+  //. The inverse of [`tagBy`](#tagBy).
   //.
   //. ```javascript
-  //. > S.fromEither (0) (S.Right (42))
+  //. > S.fromEither (S.Left (42))
   //. 42
   //.
-  //. > S.fromEither (0) (S.Left (42))
-  //. 0
+  //. > S.fromEither (S.Right (42))
+  //. 42
   //. ```
-  function fromEither(x) {
-    return either (K (x)) (I);
-  }
   _.fromEither = {
     consts: {},
-    types: [b, $.Either (a) (b), b],
-    impl: fromEither
+    types: [$.Either (a) (a), a],
+    impl: either (I) (I)
   };
 
   //# lefts :: (Filterable f, Functor f) => f (Either a b) -> f a
