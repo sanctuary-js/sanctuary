@@ -1,4 +1,4 @@
-//  sanctuary@3.0.0 with bundled dependencies:
+//  sanctuary@3.1.0 with bundled dependencies:
 //
 //  - sanctuary-show@2.0.0
 //  - sanctuary-type-identifiers@3.0.0
@@ -6,7 +6,7 @@
 //  - sanctuary-either@2.1.0
 //  - sanctuary-maybe@2.1.0
 //  - sanctuary-pair@2.1.0
-//  - sanctuary-def@0.21.1
+//  - sanctuary-def@0.22.0
 
 //. # sanctuary-show
 //.
@@ -4296,9 +4296,11 @@
 //. const env = $.env.concat ([List ($.Unknown)]);
 //. ```
 //.
-//. The next step is to define a `def` function for the environment:
+//. The next step is to define a `def` function for the environment using
+//. `$.create`:
 //.
 //. ```javascript
+//. //    def :: String -> StrMap (Array TypeClass) -> Array Type -> Function -> Function
 //. const def = $.create ({checkTypes: true, env});
 //. ```
 //.
@@ -4307,6 +4309,7 @@
 //. during development. For example:
 //.
 //. ```javascript
+//. //    def :: String -> StrMap (Array TypeClass) -> Array Type -> Function -> Function
 //. const def = $.create ({
 //.   checkTypes: process.env.NODE_ENV === 'development',
 //.   env,
@@ -4318,10 +4321,10 @@
 //. ```javascript
 //. //    add :: Number -> Number -> Number
 //. const add =
-//. def ('add')
-//.     ({})
-//.     ([$.Number, $.Number, $.Number])
-//.     (x => y => x + y);
+//. def ('add')                           // name
+//.     ({})                              // type-class constraints
+//.     ([$.Number, $.Number, $.Number])  // input and output types
+//.     (x => y => x + y);                // implementation
 //. ```
 //.
 //. `[$.Number, $.Number, $.Number]` specifies that `add` takes two arguments
@@ -4732,7 +4735,7 @@
 
   //  functionUrl :: String -> String
   function functionUrl(name) {
-    var version = '0.21.1';  // updated programmatically
+    var version = '0.22.0';  // updated programmatically
     return 'https://github.com/sanctuary-js/sanctuary-def/tree/v' + version +
            '#' + name;
   }
@@ -4846,6 +4849,18 @@
     ('Boolean')
     ([])
     (typeofEq ('boolean'));
+
+  //# Buffer :: Type
+  //.
+  //. Type comprising every [Buffer][] object.
+  var Buffer_ = NullaryTypeWithUrl
+    ('Buffer')
+    ([])
+    (function(x) {
+       return typeof Buffer !== 'undefined' &&
+              // eslint-disable-next-line no-undef
+              Buffer.isBuffer (x);
+     });
 
   //# Date :: Type
   //.
@@ -5286,6 +5301,7 @@
   //.   - <code>[Array](#Array) ([Unknown][])</code>
   //.   - <code>[Array2](#Array2) ([Unknown][]) ([Unknown][])</code>
   //.   - <code>[Boolean](#Boolean)</code>
+  //.   - <code>[Buffer](#Buffer)</code>
   //.   - <code>[Date](#Date)</code>
   //.   - <code>[Descending](#Descending) ([Unknown][])</code>
   //.   - <code>[Either](#Either) ([Unknown][]) ([Unknown][])</code>
@@ -5314,6 +5330,7 @@
     Array_ (Unknown),
     Array2 (Unknown) (Unknown),
     Boolean_,
+    Buffer_,
     Date_,
     Descending (Unknown),
     Either_ (Unknown) (Unknown),
@@ -7055,6 +7072,7 @@
     Array1: fromUncheckedUnaryType (Array1),
     Array2: fromUncheckedBinaryType (Array2),
     Boolean: Boolean_,
+    Buffer: Buffer_,
     Date: Date_,
     ValidDate: ValidDate,
     Descending: fromUncheckedUnaryType (Descending),
@@ -7206,6 +7224,7 @@
 
 }));
 
+//. [Buffer]:               https://nodejs.org/api/buffer.html#buffer_buffer
 //. [Descending]:           v:sanctuary-js/sanctuary-descending
 //. [Either]:               v:sanctuary-js/sanctuary-either
 //. [FL:Semigroup]:         https://github.com/fantasyland/fantasy-land#semigroup
@@ -7569,17 +7588,11 @@
 //.
 //. `npm install sanctuary` will install Sanctuary for use in Node.js.
 //.
-//. To add Sanctuary to a website, first run the following command, replacing
-//. `X.Y.Z` with a version number greater than or equal to `2.0.2`:
-//.
-//. ```console
-//. $ curl https://raw.githubusercontent.com/sanctuary-js/sanctuary/vX.Y.Z/dist/bundle.js >vendor/sanctuary-bundle.js
-//. ```
-//.
-//. Then reference the bundle from __index.html__:
+//. To add Sanctuary to a website, add the following `<script>` element,
+//. replacing `X.Y.Z` with a version number greater than or equal to `2.0.2`:
 //.
 //. ```html
-//. <script src="vendor/sanctuary-bundle.js"></script>
+//. <script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@X.Y.Z/dist/bundle.js"></script>
 //. ```
 //.
 //. Optionally, define aliases for various modules:
@@ -7846,6 +7859,7 @@
   //. . $.Array ($.Unknown),
   //. . $.Array2 ($.Unknown) ($.Unknown),
   //. . $.Boolean,
+  //. . $.Buffer,
   //. . $.Date,
   //. . $.Descending ($.Unknown),
   //. . $.Either ($.Unknown) ($.Unknown),
@@ -8358,10 +8372,15 @@
   //. > S.flip (Cons (Math.floor) (Cons (Math.ceil) (Nil))) (1.5)
   //. Cons (1) (Cons (2) (Nil))
   //. ```
+  function flip(functor) {
+    return function(x) {
+      return Z.flip (functor, x);
+    };
+  }
   _.flip = {
     consts: {f: [Z.Functor]},
     types: [f ($.Fn (a) (b)), a, f (b)],
-    impl: curry2 (Z.flip)
+    impl: flip
   };
 
   //# bimap :: Bifunctor f => (a -> b) -> (c -> d) -> f a c -> f b d
@@ -8478,6 +8497,8 @@
   //. value if the Foldable is empty; the result of the final application
   //. otherwise.
   //.
+  //. See also [`reduce_`](#reduce_).
+  //.
   //. ```javascript
   //. > S.reduce (S.add) (0) ([1, 2, 3, 4, 5])
   //. 15
@@ -8496,8 +8517,26 @@
   }
   _.reduce = {
     consts: {f: [Z.Foldable]},
-    types: [$.Fn (a) ($.Fn (b) (a)), a, f (b), a],
+    types: [$.Fn (b) ($.Fn (a) (b)), b, f (a), b],
     impl: reduce
+  };
+
+  //# reduce_ :: Foldable f => (a -> b -> b) -> b -> f a -> b
+  //.
+  //. Variant of [`reduce`](#reduce) that takes a reducing function with
+  //. arguments flipped.
+  //.
+  //. ```javascript
+  //. > S.reduce_ (S.append) ([]) (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. [1, 2, 3]
+  //.
+  //. > S.reduce_ (S.prepend) ([]) (Cons (1) (Cons (2) (Cons (3) (Nil))))
+  //. [3, 2, 1]
+  //. ```
+  _.reduce_ = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Fn (a) ($.Fn (b) (b)), b, f (a), b],
+    impl: B (reduce) (flip)
   };
 
   //# traverse :: (Applicative f, Traversable t) => TypeRep f -> (a -> f b) -> t a -> f (t b)
@@ -9297,77 +9336,13 @@
     impl: isJust
   };
 
-  //# fromMaybe :: a -> Maybe a -> a
-  //.
-  //. Takes a default value and a Maybe, and returns the Maybe's value
-  //. if the Maybe is a Just; the default value otherwise.
-  //.
-  //. See also [`fromMaybe_`](#fromMaybe_) and
-  //. [`maybeToNullable`](#maybeToNullable).
-  //.
-  //. ```javascript
-  //. > S.fromMaybe (0) (S.Just (42))
-  //. 42
-  //.
-  //. > S.fromMaybe (0) (S.Nothing)
-  //. 0
-  //. ```
-  _.fromMaybe = {
-    consts: {},
-    types: [a, $.Maybe (a), a],
-    impl: C (maybe) (I)
-  };
-
-  //# fromMaybe_ :: (() -> a) -> Maybe a -> a
-  //.
-  //. Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
-  //. value is only computed if required.
-  //.
-  //. ```javascript
-  //. > function fib(n) { return n <= 1 ? n : fib (n - 2) + fib (n - 1); }
-  //.
-  //. > S.fromMaybe_ (() => fib (30)) (S.Just (1000000))
-  //. 1000000
-  //.
-  //. > S.fromMaybe_ (() => fib (30)) (S.Nothing)
-  //. 832040
-  //. ```
-  _.fromMaybe_ = {
-    consts: {},
-    types: [$.Thunk (a), $.Maybe (a), a],
-    impl: C (maybe_) (I)
-  };
-
-  //# maybeToNullable :: Maybe a -> Nullable a
-  //.
-  //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
-  //. [Nullable][] is defined in [sanctuary-def][].
-  //.
-  //. See also [`fromMaybe`](#fromMaybe).
-  //.
-  //. ```javascript
-  //. > S.maybeToNullable (S.Just (42))
-  //. 42
-  //.
-  //. > S.maybeToNullable (S.Nothing)
-  //. null
-  //. ```
-  function maybeToNullable(maybe) {
-    return maybe.isJust ? maybe.value : null;
-  }
-  _.maybeToNullable = {
-    consts: {},
-    types: [$.Maybe (a), $.Nullable (a)],
-    impl: maybeToNullable
-  };
-
   //# maybe :: b -> (a -> b) -> Maybe a -> b
   //.
   //. Takes a value of any type, a function, and a Maybe. If the Maybe is
   //. a Just, the return value is the result of applying the function to
   //. the Just's value. Otherwise, the first argument is returned.
   //.
-  //. See also [`maybe_`](#maybe_).
+  //. See also [`maybe_`](#maybe_) and [`fromMaybe`](#fromMaybe).
   //.
   //. ```javascript
   //. > S.maybe (0) (S.prop ('length')) (S.Just ('refuge'))
@@ -9416,6 +9391,47 @@
     impl: maybe_
   };
 
+  //# fromMaybe :: a -> Maybe a -> a
+  //.
+  //. Takes a default value and a Maybe, and returns the Maybe's value
+  //. if the Maybe is a Just; the default value otherwise.
+  //.
+  //. See also [`maybe`](#maybe), [`fromMaybe_`](#fromMaybe_), and
+  //. [`maybeToNullable`](#maybeToNullable).
+  //.
+  //. ```javascript
+  //. > S.fromMaybe (0) (S.Just (42))
+  //. 42
+  //.
+  //. > S.fromMaybe (0) (S.Nothing)
+  //. 0
+  //. ```
+  _.fromMaybe = {
+    consts: {},
+    types: [a, $.Maybe (a), a],
+    impl: C (maybe) (I)
+  };
+
+  //# fromMaybe_ :: (() -> a) -> Maybe a -> a
+  //.
+  //. Variant of [`fromMaybe`](#fromMaybe) that takes a thunk so the default
+  //. value is only computed if required.
+  //.
+  //. ```javascript
+  //. > function fib(n) { return n <= 1 ? n : fib (n - 2) + fib (n - 1); }
+  //.
+  //. > S.fromMaybe_ (() => fib (30)) (S.Just (1000000))
+  //. 1000000
+  //.
+  //. > S.fromMaybe_ (() => fib (30)) (S.Nothing)
+  //. 832040
+  //. ```
+  _.fromMaybe_ = {
+    consts: {},
+    types: [$.Thunk (a), $.Maybe (a), a],
+    impl: C (maybe_) (I)
+  };
+
   //# justs :: (Filterable f, Functor f) => f (Maybe a) -> f a
   //.
   //. Discards each element that is Nothing, and unwraps each element that is
@@ -9454,6 +9470,29 @@
     consts: {f: [Z.Filterable, Z.Functor]},
     types: [$.Fn (a) ($.Maybe (b)), f (a), f (b)],
     impl: B (B (justs)) (map)
+  };
+
+  //# maybeToNullable :: Maybe a -> Nullable a
+  //.
+  //. Returns the given Maybe's value if the Maybe is a Just; `null` otherwise.
+  //. [Nullable][] is defined in [sanctuary-def][].
+  //.
+  //. See also [`fromMaybe`](#fromMaybe).
+  //.
+  //. ```javascript
+  //. > S.maybeToNullable (S.Just (42))
+  //. 42
+  //.
+  //. > S.maybeToNullable (S.Nothing)
+  //. null
+  //. ```
+  function maybeToNullable(maybe) {
+    return maybe.isJust ? maybe.value : null;
+  }
+  _.maybeToNullable = {
+    consts: {},
+    types: [$.Maybe (a), $.Nullable (a)],
+    impl: maybeToNullable
   };
 
   //# maybeToEither :: a -> Maybe b -> Either a b
@@ -9559,33 +9598,14 @@
     impl: isRight
   };
 
-  //# fromEither :: b -> Either a b -> b
-  //.
-  //. Takes a default value and an Either, and returns the Right value
-  //. if the Either is a Right; the default value otherwise.
-  //.
-  //. ```javascript
-  //. > S.fromEither (0) (S.Right (42))
-  //. 42
-  //.
-  //. > S.fromEither (0) (S.Left (42))
-  //. 0
-  //. ```
-  function fromEither(x) {
-    return either (K (x)) (I);
-  }
-  _.fromEither = {
-    consts: {},
-    types: [b, $.Either (a) (b), b],
-    impl: fromEither
-  };
-
   //# either :: (a -> c) -> (b -> c) -> Either a b -> c
   //.
   //. Takes two functions and an Either, and returns the result of
   //. applying the first function to the Left's value, if the Either
   //. is a Left, or the result of applying the second function to the
   //. Right's value, if the Either is a Right.
+  //.
+  //. See also [`fromLeft`](#fromLeft) and [`fromRight`](#fromRight).
   //.
   //. ```javascript
   //. > S.either (S.toUpper) (S.show) (S.Left ('Cannot divide by zero'))
@@ -9605,6 +9625,76 @@
     consts: {},
     types: [$.Fn (a) (c), $.Fn (b) (c), $.Either (a) (b), c],
     impl: either
+  };
+
+  //# fromLeft :: a -> Either a b -> a
+  //.
+  //. Takes a default value and an Either, and returns the Left value
+  //. if the Either is a Left; the default value otherwise.
+  //.
+  //. See also [`either`](#either) and [`fromRight`](#fromRight).
+  //.
+  //. ```javascript
+  //. > S.fromLeft ('abc') (S.Left ('xyz'))
+  //. 'xyz'
+  //.
+  //. > S.fromLeft ('abc') (S.Right (123))
+  //. 'abc'
+  //. ```
+  function fromLeft(x) {
+    return either (I) (K (x));
+  }
+  _.fromLeft = {
+    consts: {},
+    types: [a, $.Either (a) (b), a],
+    impl: fromLeft
+  };
+
+  //# fromRight :: b -> Either a b -> b
+  //.
+  //. Takes a default value and an Either, and returns the Right value
+  //. if the Either is a Right; the default value otherwise.
+  //.
+  //. See also [`either`](#either) and [`fromLeft`](#fromLeft).
+  //.
+  //. ```javascript
+  //. > S.fromRight (123) (S.Right (789))
+  //. 789
+  //.
+  //. > S.fromRight (123) (S.Left ('abc'))
+  //. 123
+  //. ```
+  function fromRight(x) {
+    return either (K (x)) (I);
+  }
+  _.fromRight = {
+    consts: {},
+    types: [b, $.Either (a) (b), b],
+    impl: fromRight
+  };
+
+  //# fromEither :: b -> Either a b -> b
+  //.
+  //. Takes a default value and an Either, and returns the Right value
+  //. if the Either is a Right; the default value otherwise.
+  //.
+  //. The behaviour of `fromEither` is likely to change in a future release.
+  //. Please use [`fromRight`](#fromRight) instead.
+  //.
+  //. ```javascript
+  //. > S.fromEither (0) (S.Right (42))
+  //. 42
+  //.
+  //. > S.fromEither (0) (S.Left (42))
+  //. 0
+  //. ```
+  function fromEither(x) {
+    return either (K (x)) (I);
+  }
+  _.fromEither = {
+    consts: {},
+    types: [b, $.Either (a) (b), b],
+    impl: fromEither
   };
 
   //# lefts :: (Filterable f, Functor f) => f (Either a b) -> f a
