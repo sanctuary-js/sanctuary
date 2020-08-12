@@ -424,6 +424,39 @@
     };
   }
 
+  //  curry2 :: ((a, b) -> c) -> a -> b -> c
+  function curry2(f) {
+    return function(x) {
+      return function(y) {
+        return f (x, y);
+      };
+    };
+  }
+
+  //  curry3 :: ((a, b, c) -> d) -> a -> b -> c -> d
+  function curry3(f) {
+    return function(x) {
+      return function(y) {
+        return function(z) {
+          return f (x, y, z);
+        };
+      };
+    };
+  }
+
+  //  curry4 :: ((a, b, c, d) -> e) -> a -> b -> c -> d -> e
+  function curry4(f) {
+    return function(w) {
+      return function(x) {
+        return function(y) {
+          return function(z) {
+            return f (w, x, y, z);
+          };
+        };
+      };
+    };
+  }
+
   //  get_ :: String -> a -> Maybe b
   function get_(key) {
     return B (function(obj) { return key in obj ? Just (obj[key]) : Nothing; })
@@ -458,7 +491,6 @@
   var d = $.TypeVariable ('d');
   var e = $.TypeVariable ('e');
   var g = $.TypeVariable ('g');
-  var r = $.TypeVariable ('r');
 
   //  :: Type -> Type
   var f = $.UnaryTypeVariable ('f');
@@ -1696,120 +1728,6 @@
     consts: {},
     types: [a, $.Fn (a) (b), b],
     impl: T
-  };
-
-  //. ### Function
-
-  //# curry2 :: ((a, b) -> c) -> a -> b -> c
-  //.
-  //. Curries the given binary function.
-  //.
-  //. ```javascript
-  //. > S.map (S.curry2 (Math.pow) (10)) ([1, 2, 3])
-  //. [10, 100, 1000]
-  //. ```
-  function curry2(f) {
-    return function(x) {
-      return function(y) {
-        return f (x, y);
-      };
-    };
-  }
-  _.curry2 = {
-    consts: {},
-    types: [$.Function ([a, b, c]), a, b, c],
-    impl: curry2
-  };
-
-  //# curry3 :: ((a, b, c) -> d) -> a -> b -> c -> d
-  //.
-  //. Curries the given ternary function.
-  //.
-  //. ```javascript
-  //. > const replaceString = S.curry3 ((what, replacement, string) =>
-  //. .   string.replace (what, replacement)
-  //. . )
-  //.
-  //. > replaceString ('banana') ('orange') ('banana icecream')
-  //. 'orange icecream'
-  //. ```
-  function curry3(f) {
-    return function(x) {
-      return function(y) {
-        return function(z) {
-          return f (x, y, z);
-        };
-      };
-    };
-  }
-  _.curry3 = {
-    consts: {},
-    types: [$.Function ([a, b, c, d]), a, b, c, d],
-    impl: curry3
-  };
-
-  //# curry4 :: ((a, b, c, d) -> e) -> a -> b -> c -> d -> e
-  //.
-  //. Curries the given quaternary function.
-  //.
-  //. ```javascript
-  //. > const createRect = S.curry4 ((x, y, width, height) =>
-  //. .   ({x, y, width, height})
-  //. . )
-  //.
-  //. > createRect (0) (0) (10) (10)
-  //. {x: 0, y: 0, width: 10, height: 10}
-  //. ```
-  function curry4(f) {
-    return function(w) {
-      return function(x) {
-        return function(y) {
-          return function(z) {
-            return f (w, x, y, z);
-          };
-        };
-      };
-    };
-  }
-  _.curry4 = {
-    consts: {},
-    types: [$.Function ([a, b, c, d, e]), a, b, c, d, e],
-    impl: curry4
-  };
-
-  //# curry5 :: ((a, b, c, d, e) -> f) -> a -> b -> c -> d -> e -> f
-  //.
-  //. Curries the given quinary function.
-  //.
-  //. ```javascript
-  //. > const toUrl = S.curry5 ((protocol, creds, hostname, port, pathname) =>
-  //. .   protocol + '//' +
-  //. .   S.maybe ('') (S.flip (S.concat) ('@')) (creds) +
-  //. .   hostname +
-  //. .   S.maybe ('') (S.concat (':')) (port) +
-  //. .   pathname
-  //. . )
-  //.
-  //. > toUrl ('https:') (S.Nothing) ('example.com') (S.Just ('443')) ('/foo/bar')
-  //. 'https://example.com:443/foo/bar'
-  //. ```
-  function curry5(f) {
-    return function(v) {
-      return function(w) {
-        return function(x) {
-          return function(y) {
-            return function(z) {
-              return f (v, w, x, y, z);
-            };
-          };
-        };
-      };
-    };
-  }
-  _.curry5 = {
-    consts: {},
-    types: [$.Function ([a, b, c, d, e, r]), a, b, c, d, e, r],
-    impl: curry5
   };
 
   //. ### Composition
