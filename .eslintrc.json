@@ -56,7 +56,7 @@
       "files": ["index.js"],
       "globals": {"process": false},
       "rules": {
-        "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: )"}],
+        "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
         "multiline-comment-style": ["off"]
       }
     }
