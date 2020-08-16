@@ -4256,20 +4256,6 @@
 
   //. ### RegExp
 
-  //  Match :: Type
-  var Match = $.RecordType ({
-    match: $.String,
-    groups: $.Array ($.Maybe ($.String))
-  });
-
-  //  toMatch :: Array String? -> Match
-  function toMatch(ss) {
-    return {
-      match: ss[0],
-      groups: Z.map (B (reject (equals (undefined))) (Just), ss.slice (1))
-    };
-  }
-
   //  withRegex :: (RegExp, () -> a) -> a
   function withRegex(pattern, thunk) {
     var lastIndex = pattern.lastIndex;
@@ -4343,13 +4329,12 @@
     impl: test
   };
 
-  //# match :: NonGlobalRegExp -> String -> Maybe { match :: String, groups :: Array (Maybe String) }
+  //# match :: NonGlobalRegExp -> String -> Maybe (Array (Maybe String))
   //.
-  //. Takes a pattern and a string, and returns Just a match record if the
-  //. pattern matches the string; Nothing otherwise.
+  //. Takes a pattern and a string, and returns Just an array of captured
+  //. values if the pattern matches the string; Nothing otherwise.
   //.
-  //. `groups :: Array (Maybe String)` acknowledges the existence of optional
-  //. capturing groups.
+  //. `Maybe String` acknowledges the existence of optional capturing groups.
   //.
   //. Properties:
   //.
@@ -4360,30 +4345,36 @@
   //. See also [`matchAll`](#matchAll).
   //.
   //. ```javascript
-  //. > S.match (/(good)?bye/) ('goodbye')
-  //. Just ({match: 'goodbye', groups: [Just ('good')]})
+  //. > S.match (/^(.+[.].+?)(?::(.+))?$/) ('XXX')
+  //. Nothing
   //.
-  //. > S.match (/(good)?bye/) ('bye')
-  //. Just ({match: 'bye', groups: [Nothing]})
+  //. > S.match (/^(.+[.].+?)(?::(.+))?$/) ('example.com')
+  //. Just ([Just ('example.com'), Nothing])
+  //.
+  //. > S.match (/^(.+[.].+?)(?::(.+))?$/) ('example.com:8888')
+  //. Just ([Just ('example.com'), Just ('8888')])
   //. ```
   function match(pattern) {
     return function(s) {
-      return Z.map (toMatch,
-                    Z.reject (equals (null), Just (s.match (pattern))));
+      return Z.map (function(m) { return Z.map (toMaybe, m.slice (1)); },
+                    toMaybe (s.match (pattern)));
     };
+    function toMaybe(x) { return x == null ? Nothing : Just (x); }
   }
   _.match = {
     consts: {},
-    types: [$.NonGlobalRegExp, $.String, $.Maybe (Match)],
+    types: [$.NonGlobalRegExp,
+            $.String,
+            $.Maybe ($.Array ($.Maybe ($.String)))],
     impl: match
   };
 
-  //# matchAll :: GlobalRegExp -> String -> Array { match :: String, groups :: Array (Maybe String) }
+  //# matchAll :: GlobalRegExp -> String -> Array (Array (Maybe String))
   //.
-  //. Takes a pattern and a string, and returns an array of match records.
+  //. Takes a pattern and a string, and returns an array of arrays of captured
+  //. values.
   //.
-  //. `groups :: Array (Maybe String)` acknowledges the existence of optional
-  //. capturing groups.
+  //. `Maybe String` acknowledges the existence of optional capturing groups.
   //.
   //. See also [`match`](#match).
   //.
@@ -4392,24 +4383,23 @@
   //. []
   //.
   //. > S.matchAll (/@([a-z]+)/g) ('Hello, @foo! Hello, @bar! Hello, @baz!')
-  //. [ {match: '@foo', groups: [Just ('foo')]},
-  //. . {match: '@bar', groups: [Just ('bar')]},
-  //. . {match: '@baz', groups: [Just ('baz')]} ]
+  //. [[Just ('foo')], [Just ('bar')], [Just ('baz')]]
   //. ```
   function matchAll(pattern) {
     return function(s) {
       return withRegex (pattern, function() {
         return unfold (function(_) {
-          return Z.map (function(ss) {
-            return Pair (toMatch (ss)) (null);
+          return Z.map (function(m) {
+            return Pair (Z.map (toMaybe, m.slice (1))) (null);
           }, Z.reject (equals (null), Just (pattern.exec (s))));
         }) ([]);
       });
     };
+    function toMaybe(x) { return x == null ? Nothing : Just (x); }
   }
   _.matchAll = {
     consts: {},
-    types: [$.GlobalRegExp, $.String, $.Array (Match)],
+    types: [$.GlobalRegExp, $.String, $.Array ($.Array ($.Maybe ($.String)))],
     impl: matchAll
   };
 
