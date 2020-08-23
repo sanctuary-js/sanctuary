@@ -4011,41 +4011,6 @@
     impl: pow
   };
 
-  //# mean :: Foldable f => f FiniteNumber -> Maybe FiniteNumber
-  //.
-  //. Returns the mean of the given array of (finite) numbers.
-  //.
-  //. ```javascript
-  //. > S.mean ([1, 2, 3, 4, 5])
-  //. Just (3)
-  //.
-  //. > S.mean ([])
-  //. Nothing
-  //.
-  //. > S.mean (S.Just (42))
-  //. Just (42)
-  //.
-  //. > S.mean (S.Nothing)
-  //. Nothing
-  //. ```
-  function mean(foldable) {
-    var result = Z.reduce (
-      function(acc, n) {
-        acc.total += n;
-        acc.count += 1;
-        return acc;
-      },
-      {total: 0, count: 0},
-      foldable
-    );
-    return result.count > 0 ? Just (result.total / result.count) : Nothing;
-  }
-  _.mean = {
-    consts: {f: [Z.Foldable]},
-    types: [f ($.FiniteNumber), $.Maybe ($.FiniteNumber)],
-    impl: mean
-  };
-
   //. ### Integer
 
   //# even :: Integer -> Boolean
