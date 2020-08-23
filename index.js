@@ -3204,7 +3204,7 @@
   //. of the structure that satisfies the predicate; Nothing if there is no
   //. such element.
   //.
-  //. See also [`elem`](#elem).
+  //. See also [`findMap`](#findMap) and [`elem`](#elem).
   //.
   //. ```javascript
   //. > S.find (S.lt (0)) ([1, -2, 3, -4, 5])
@@ -3214,20 +3214,46 @@
   //. Nothing
   //. ```
   function find(pred) {
-    return function(xs) {
-      return Z.reduce (
-        function(m, x) {
-          return m.isJust ? m : pred (x) ? Just (x) : Nothing;
-        },
-        Nothing,
-        xs
-      );
-    };
+    return findMap (function(x) { return pred (x) ? Just (x) : Nothing; });
   }
   _.find = {
     consts: {f: [Z.Foldable]},
     types: [$.Predicate (a), f (a), $.Maybe (a)],
     impl: find
+  };
+
+  //# findMap :: Foldable f => (a -> Maybe b) -> f a -> Maybe b
+  //.
+  //. Finds the leftmost element of the given structure for which the given
+  //. function returns a Just, and returns that Just (or Nothing if none of
+  //. the elements matches).
+  //.
+  //. More flexible than [`find`](#find), and more convenient in situations
+  //. in which the result of a successful computation can be reused.
+  //.
+  //. ```javascript
+  //. > S.findMap (S.parseInt (16)) ([])
+  //. Nothing
+  //.
+  //. > S.findMap (S.parseInt (16)) (['X', 'Y', 'Z'])
+  //. Nothing
+  //.
+  //. > S.findMap (S.parseInt (16)) (['A', 'B', 'C'])
+  //. Just (10)
+  //. ```
+  function findMap(f) {
+    return function(xs) {
+      return Z.reduce (
+        function(m, x) { return m.isJust ? m : f (x); },
+        Nothing,
+        xs
+      );
+    };
+  }
+  _.findMap = {
+    consts: {f: [Z.Foldable]},
+    types: [$.Fn (a) ($.Maybe (b)), f (a), $.Maybe (b)],
+    impl: findMap
   };
 
   //# intercalate :: (Monoid m, Foldable f) => m -> f m -> m
