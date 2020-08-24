@@ -28,7 +28,7 @@ jobs:
               nvm exec $1 npm test
             }
             case $CIRCLE_NODE_INDEX in
-              0) test_with_version 8 ;;
-              1) test_with_version 10 ;;
-              2) npm install && npm test ;;
+              0) test_with_version 10 ;;
+              1) npm install && npm test ;;
+              2) test_with_version 14 ;;
             esac
