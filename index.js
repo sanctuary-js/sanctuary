@@ -43,8 +43,6 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
-//. Please refer to this video: [Sanctuary, Programming Safely in an Uncertain World](https://www.youtube.com/watch?v=a2astdDbOjk)
-//. for a brief introduction of Sanctuary's functionality.
 //.
 //. ## Folktale
 //.
@@ -337,6 +335,10 @@
 //. const $ = window.sanctuaryDef;
 //. // ...
 //. ```
+//. If you are using rollup in your project, where you have integrated Sanctuary, you might
+//. get errors. Please import builtins and globals from rollup-plugin-node-builtins and 
+//. rollup-plugin-node-globals respectively, in the rollup config file. These are needed to add 
+//. the utils folder, which is referenced in the sanctuary code.
 //.
 //. ## API
 
