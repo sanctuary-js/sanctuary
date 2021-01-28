@@ -43,7 +43,6 @@
 //.
 //. Sanctuary is designed to work in Node.js and in ES5-compatible browsers.
 //.
-//.
 //. ## Folktale
 //.
 //. [Folktale][], like Sanctuary, is a standard library for functional
