@@ -23,7 +23,7 @@
     "sanctuary-type-identifiers": "3.0.0"
   },
   "devDependencies": {
-    "fantasy-land": "4.0.1",
+    "fantasy-land": "5.0.0",
     "jsverify": "0.8.x",
     "sanctuary-descending": "2.1.0",
     "sanctuary-identity": "2.1.0",
