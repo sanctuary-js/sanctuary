@@ -345,6 +345,7 @@
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = f (require ('sanctuary-def'),
                         require ('sanctuary-either'),
+                        require ('sanctuary-identity'),
                         require ('sanctuary-maybe'),
                         require ('sanctuary-pair'),
                         require ('sanctuary-show'),
@@ -353,6 +354,7 @@
   } else if (typeof define === 'function' && define.amd != null) {
     define (['sanctuary-def',
              'sanctuary-either',
+             'sanctuary-identity',
              'sanctuary-maybe',
              'sanctuary-pair',
              'sanctuary-show',
@@ -362,6 +364,7 @@
   } else {
     self.sanctuary = f (self.sanctuaryDef,
                         self.sanctuaryEither,
+                        self.sanctuaryIdentity,
                         self.sanctuaryMaybe,
                         self.sanctuaryPair,
                         self.sanctuaryShow,
@@ -369,7 +372,7 @@
                         self.sanctuaryTypeIdentifiers);
   }
 
-} (function($, Either, Maybe, Pair, show, Z, type) {
+} (function($, Either, Identity, Maybe, Pair, show, Z, type) {
 
   'use strict';
 
@@ -4746,6 +4749,62 @@
     consts: {},
     types: [$.GlobalRegExp, $.String, $.Array ($.String)],
     impl: splitOnRegex
+  };
+
+  //. ### Lens
+
+  //# lens :: TK
+  //.
+  //. TK.
+  //.
+  //. ```javascript
+  //. > S.toUpper ('ABC def 123')
+  //. 'ABC DEF 123'
+  //. ```
+  function lens(getter) {
+    return function(setter) {
+      return function(f) {
+        return function(s) {
+          return Z.map (
+            function(v) { return setter (v) (s); },
+            f (getter (s))
+          );
+        };
+      };
+    };
+  }
+  _.lens = {
+    consts: {},
+    types: function(s) {
+      return [$.Fn (s) (a), $.Fn (a) ($.Fn (s) (s)), $.Any];
+    } ($.TypeVariable ('s')),
+    impl: lens
+  };
+
+  //# view :: TK
+  function view(lens) {
+    return function(x) {
+      return (lens (Left) (x)).value;
+    };
+  }
+  _.view = {
+    consts: {},
+    types: [$.Any, $.Any, $.Any],
+    impl: view
+  };
+
+  //# over :: TK
+  function over(lens) {
+    return function(f) {
+      return function(x) {
+        return Z.extract (lens (function(y) { return Identity (f (y)); }) (x));
+      };
+    };
+  }
+  _.over = {
+    consts: {},
+    types: [$.Any, $.Any, $.Any, $.Any],
+    impl: over
   };
 
   return create ({
