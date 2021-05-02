@@ -3168,7 +3168,7 @@
   //. Takes a value and a structure and returns `true` [iff][] the value is an
   //. element of the structure.
   //.
-  //. See also [`find`](#find).
+  //. See also [`elem_`](#elem_) and [`find`](#find).
   //.
   //. ```javascript
   //. > S.elem ('c') (['a', 'b', 'c'])
@@ -3192,10 +3192,33 @@
   //. > S.elem (0) (S.Nothing)
   //. false
   //. ```
+  var elem = (
+    curry2 (Z.elem)
+  );
   _.elem = {
     consts: {a: [Z.Setoid], f: [Z.Foldable]},
     types: [a, f (a), $.Boolean],
-    impl: curry2 (Z.elem)
+    impl: elem
+  };
+
+  //# elem_ :: (Setoid a, Foldable f) => f a -> a -> Boolean
+  //.
+  //. Variant of [`elem`](#elem) with arguments flipped.
+  //.
+  //. ```javascript
+  //. > S.filter (S.elem_ (['yes', 'oui', 'ja'])) (['yes', 'no'])
+  //. ['yes']
+  //.
+  //. > S.filter (S.elem_ (['yes', 'oui', 'ja'])) (['oui', 'non'])
+  //. ['oui']
+  //.
+  //. > S.filter (S.elem_ (['yes', 'oui', 'ja'])) (['ja', 'nein'])
+  //. ['ja']
+  //. ```
+  _.elem_ = {
+    consts: {a: [Z.Setoid], f: [Z.Foldable]},
+    types: [f (a), a, $.Boolean],
+    impl: C (elem)
   };
 
   //# find :: Foldable f => (a -> Boolean) -> f a -> Maybe a
