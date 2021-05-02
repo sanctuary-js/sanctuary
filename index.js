@@ -1088,10 +1088,9 @@
   //.
   //.     Functor f => (a -> b) -> f a -> f b
   //.     (a -> b) -> Function x a -> Function x b
-  //.     (a -> c) -> Function x a -> Function x c
-  //.     (b -> c) -> Function x b -> Function x c
-  //.     (b -> c) -> Function a b -> Function a c
-  //.     (b -> c) -> (a -> b) -> (a -> c)
+  //.     (a -> b) -> (x -> a) -> (x -> b)
+  //.     (a -> b) -> (x -> a) -> x -> b
+  //.     (b -> c) -> (a -> b) -> a -> c
   //.
   //. ```javascript
   //. > S.map (Math.sqrt) (S.add (1)) (99)
@@ -1118,9 +1117,8 @@
   //.
   //.     Functor f => f (a -> b) -> a -> f b
   //.     Function x (a -> b) -> a -> Function x b
-  //.     Function x (a -> c) -> a -> Function x c
-  //.     Function x (b -> c) -> b -> Function x c
-  //.     Function a (b -> c) -> b -> Function a c
+  //.     (x -> (a -> b)) -> a -> (x -> b)
+  //.     (x -> a -> b) -> a -> x -> b
   //.     (a -> b -> c) -> b -> a -> c
   //.
   //. ```javascript
@@ -1379,10 +1377,9 @@
   //.
   //.     Apply f => f (a -> b) -> f a -> f b
   //.     Function x (a -> b) -> Function x a -> Function x b
-  //.     Function x (a -> c) -> Function x a -> Function x c
-  //.     Function x (b -> c) -> Function x b -> Function x c
-  //.     Function a (b -> c) -> Function a b -> Function a c
-  //.     (a -> b -> c) -> (a -> b) -> (a -> c)
+  //.     (x -> (a -> b)) -> (x -> a) -> (x -> b)
+  //.     (x -> a -> b) -> (x -> a) -> x -> b
+  //.     (a -> b -> c) -> (a -> b) -> a -> c
   //.
   //. ```javascript
   //. > S.ap (s => n => s.slice (0, n)) (s => Math.ceil (s.length / 2)) ('Haskell')
@@ -1412,6 +1409,23 @@
   //. > S.lift2 (S.and) (S.Just (true)) (S.Just (false))
   //. Just (false)
   //. ```
+  //.
+  //. Replacing `Apply f => f` with `Function x` produces a combinator known
+  //. by various names including [`apply2way`][] and [`converge`][]:
+  //.
+  //.     Apply f => (a -> b -> c) -> f a -> f b -> f c
+  //.     (a -> b -> c) -> Function x a -> Function x b -> Function x c
+  //.     (a -> b -> c) -> (x -> a) -> (x -> b) -> (x -> c)
+  //.     (a -> b -> c) -> (x -> a) -> (x -> b) -> x -> c
+  //.     (b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d
+  //.
+  //. ```javascript
+  //. > S.lift2 (x => y => ({x, y}))
+  //. .         (s => s + '.')
+  //. .         (s => s + '?')
+  //. .         ('Hello')
+  //. {x: 'Hello.', y: 'Hello?'}
+  //. ```
   _.lift2 = {
     consts: {f: [Z.Apply]},
     types: [$.Fn (a) ($.Fn (b) (c)), f (a), f (b), f (c)],
@@ -1429,6 +1443,26 @@
   //.
   //. > S.lift3 (S.reduce) (S.Just (S.add)) (S.Just (0)) (S.Nothing)
   //. Nothing
+  //. ```
+  //.
+  //. Replacing `Apply f => f` with `Function x` produces a combinator that
+  //. applies the three given unary functions to the given input value, then
+  //. applies the given ternary function to the three intermediate results
+  //. to determine the final result:
+  //.
+  //.     Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+  //.     (a -> b -> c -> d) -> Function x a -> Function x b -> Function x c -> Function x d
+  //.     (a -> b -> c -> d) -> (x -> a) -> (x -> b) -> (x -> c) -> (x -> d)
+  //.     (a -> b -> c -> d) -> (x -> a) -> (x -> b) -> (x -> c) -> x -> d
+  //.     (b -> c -> d -> e) -> (a -> b) -> (a -> c) -> (a -> d) -> a -> e
+  //.
+  //. ```javascript
+  //. > S.lift3 (x => y => z => ({x, y, z}))
+  //. .         (s => s + '.')
+  //. .         (s => s + '?')
+  //. .         (s => s + '!')
+  //. .         ('Hello')
+  //. {x: 'Hello.', y: 'Hello?', z: 'Hello!'}
   //. ```
   _.lift3 = {
     consts: {f: [Z.Apply]},
@@ -1553,7 +1587,9 @@
   //.
   //.     Chain m => m (m a) -> m a
   //.     Function x (Function x a) -> Function x a
-  //.     (x -> x -> a) -> (x -> a)
+  //.     (x -> (x -> a)) -> (x -> a)
+  //.     (x -> x -> a) -> x -> a
+  //.     (a -> a -> b) -> a -> b
   //.
   //. ```javascript
   //. > S.join (S.concat) ('abc')
@@ -4779,6 +4815,8 @@
 //. [`Z.sequence`]:             v:sanctuary-js/sanctuary-type-classes#sequence
 //. [`Z.traverse`]:             v:sanctuary-js/sanctuary-type-classes#traverse
 //. [`Z.zero`]:                 v:sanctuary-js/sanctuary-type-classes#zero
+//. [`apply2way`]:              https://hackage.haskell.org/package/yjtools-0.9.18/docs/Data-Function-Tools.html#v:apply2way
+//. [`converge`]:               https://ramdajs.com/docs/#converge
 //. [`show`]:                   v:sanctuary-js/sanctuary-show#show
 //. [date parsing]:             https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
 //. [equivalence]:              https://en.wikipedia.org/wiki/Equivalence_relation
