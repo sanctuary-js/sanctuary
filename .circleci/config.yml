@@ -1,34 +1,29 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@4.3.0
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node:12
-        environment:
-          NPM_CONFIG_COLOR: false
-          NVM_DIR: /home/circleci/.nvm
-    parallelism: 3
+  test:
+    executor:
+      name: node/default
+      tag: <<parameters.version>>
+    parameters:
+      version:
+        type: string
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - nvm-cache-{{ checksum ".circleci/config.yml" }}
-      - run: curl https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-      - save_cache:
-          key: nvm-cache-{{ checksum ".circleci/config.yml" }}
-          paths:
-            - /home/circleci/.nvm
-      - run:
-          name: npm install && npm test
-          command: |
-            test_with_version() {
-              source "$NVM_DIR/nvm.sh"
-              nvm install $1
-              nvm exec $1 npm install
-              nvm exec $1 npm test
-            }
-            case $CIRCLE_NODE_INDEX in
-              0) test_with_version 10 ;;
-              1) npm install && npm test ;;
-              2) test_with_version 14 ;;
-            esac
+      - run: npm install
+      - run: npm test
+
+workflows:
+  test:
+    jobs:
+      - test:
+          version: 10.14.2
+      - test:
+          version: 12.0.0
+      - test:
+          version: 14.0.0
+      - test:
+          version: 16.0.0
