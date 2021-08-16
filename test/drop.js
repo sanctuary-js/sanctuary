@@ -28,4 +28,7 @@ test ('drop', () => {
 
   eq (S.drop (-1) (Cons (1) (Cons (2) (Cons (3) (Nil))))) (S.Nothing);
 
+  // eq (S.unchecked.drop (0) (new Uint8Array([10, 20, 30, 40, 50]))) (S.unchecked.Just (new Uint8Array([10, 20, 30, 40, 50])));
+  eq (S.unchecked.drop (1) (new Uint8Array([10, 20, 30, 40, 50]))) (S.unchecked.Just (new Uint8Array([20, 30, 40, 50])));
+
 });

@@ -2834,8 +2834,8 @@
       return function(xs) {
         if (n < 0) return Nothing;
 
-        //  Fast path for arrays.
-        if (Array.isArray (xs)) {
+        //  Fast path for objects supporting `slice`.
+        if (xs.slice) { // we want to support TypedArrays e.i. buffers
           return n <= xs.length ? Just (arrayCase (n, xs)) : Nothing;
         }
 
