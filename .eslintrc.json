@@ -27,21 +27,21 @@
     {
       "files": ["*.md"],
       "globals": {
-        "$": false,
-        "Cons": false,
-        "Descending": false,
-        "Just": false,
-        "Left": false,
-        "Nil": false,
-        "Nothing": false,
-        "Pair": false,
-        "R": false,
-        "Right": false,
-        "S": false,
-        "Sum": false,
-        "localStorage": false,
-        "sanctuary": false,
-        "window": false
+        "$": "readonly",
+        "Cons": "readonly",
+        "Descending": "readonly",
+        "Just": "readonly",
+        "Left": "readonly",
+        "Nil": "readonly",
+        "Nothing": "readonly",
+        "Pair": "readonly",
+        "R": "readonly",
+        "Right": "readonly",
+        "S": "readonly",
+        "Sum": "readonly",
+        "localStorage": "readonly",
+        "sanctuary": "readonly",
+        "window": "readonly"
       },
       "rules": {
         "comma-dangle": ["error", "always-multiline"],
@@ -54,7 +54,7 @@
     },
     {
       "files": ["index.js"],
-      "globals": {"process": false},
+      "globals": {"process": "readonly"},
       "rules": {
         "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
         "multiline-comment-style": ["off"]
