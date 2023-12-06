@@ -1,7 +1,7 @@
 # <span id="section:sanctuary">❑ Sanctuary</span>
 
 [![npm](https://img.shields.io/npm/v/sanctuary.svg)](https://www.npmjs.com/package/sanctuary)
-[![CircleCI](https://img.shields.io/circleci/project/github/sanctuary-js/sanctuary/master.svg)](https://circleci.com/gh/sanctuary-js/sanctuary/tree/master)
+[![CircleCI](https://img.shields.io/circleci/project/github/sanctuary-js/sanctuary/main.svg)](https://app.circleci.com/pipelines/github/sanctuary-js/sanctuary?branch=main)
 [![Gitter](https://img.shields.io/gitter/room/badges/shields.svg)](https://gitter.im/sanctuary-js/sanctuary)
 
 Sanctuary is a JavaScript functional programming library inspired by
