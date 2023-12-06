@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.0
+  node: circleci/node@5.1.0
 
 workflows:
   test:
@@ -14,7 +14,6 @@ workflows:
           matrix:
             parameters:
               version:
-                - 10.14.2
-                - 12.0.0
-                - 14.0.0
-                - 16.0.0
+                - 18.0.0
+                - 20.0.0
+                - 21.0.0
