@@ -20,4 +20,14 @@ test ('matchAll', () => {
 
   eq (pattern.lastIndex) (0);
 
+  {
+    // `lastIndex` property is respected and preserved
+    const pattern = /([0-9])/g;
+    eq (pattern.lastIndex) (0);
+    pattern.exec ('123');
+    eq (pattern.lastIndex) (1);
+    eq (S.matchAll (pattern) ('123')) ([[S.Just ('2')], [S.Just ('3')]]);
+    eq (pattern.lastIndex) (1);
+  }
+
 });

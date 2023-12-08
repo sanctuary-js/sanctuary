@@ -4316,14 +4316,6 @@
 
   //. ### RegExp
 
-  //  withRegex :: (RegExp, () -> a) -> a
-  function withRegex(pattern, thunk) {
-    var lastIndex = pattern.lastIndex;
-    var result = thunk ();
-    pattern.lastIndex = lastIndex;
-    return result;
-  }
-
   //# regex :: RegexFlags -> String -> RegExp
   //.
   //. Takes a [RegexFlags][] and a pattern, and returns a RegExp.
@@ -4380,7 +4372,10 @@
   //. ```
   function test(pattern) {
     return function(s) {
-      return withRegex (pattern, function() { return pattern.test (s); });
+      var lastIndex = pattern.lastIndex;
+      var result = pattern.test (s);
+      pattern.lastIndex = lastIndex;
+      return result;
     };
   }
   _.test = {
@@ -4447,15 +4442,21 @@
   //. ```
   function matchAll(pattern) {
     return function(s) {
-      return withRegex (pattern, function() {
-        return unfold (function(_) {
-          return Z.map (function(m) {
-            return Pair (Z.map (toMaybe, m.slice (1))) (null);
-          }, Z.reject (equals (null), Just (pattern.exec (s))));
-        }) ([]);
-      });
+      var lastIndex = pattern.lastIndex;
+      var result = [];
+      while (true) {
+        var match = pattern.exec (s);
+        if (match == null) {
+          pattern.lastIndex = lastIndex;
+          return result;
+        }
+        var groups = result[result.length] = new Array (match.length - 1);
+        for (var idx = 0; idx < groups.length; idx += 1) {
+          var group = match[idx + 1];
+          groups[idx] = group == null ? Nothing : Just (group);
+        }
+      }
     };
-    function toMaybe(x) { return x == null ? Nothing : Just (x); }
   }
   _.matchAll = {
     consts: {},
@@ -4734,22 +4735,25 @@
   //. ```
   function splitOnRegex(pattern) {
     return function(s) {
-      return withRegex (pattern, function() {
-        var result = [];
-        var lastIndex = 0;
-        var match;
-        while ((match = pattern.exec (s)) != null) {
-          if (pattern.lastIndex === lastIndex && match[0] === '') {
-            if (pattern.lastIndex === s.length) return result;
-            pattern.lastIndex += 1;
-          } else {
-            result.push (s.slice (lastIndex, match.index));
-            lastIndex = match.index + match[0].length;
-          }
+      var lastIndex = pattern.lastIndex;
+      var result = [];
+      var idx = 0;
+      while (true) {
+        var match = pattern.exec (s);
+        if (match == null) {
+          result.push (s.slice (idx));
+          break;
         }
-        result.push (s.slice (lastIndex));
-        return result;
-      });
+        if (pattern.lastIndex === idx && match[0] === '') {
+          if (pattern.lastIndex === s.length) break;
+          pattern.lastIndex += 1;
+          continue;
+        }
+        result.push (s.slice (idx, match.index));
+        idx = match.index + match[0].length;
+      }
+      pattern.lastIndex = lastIndex;
+      return result;
     };
   }
   _.splitOnRegex = {

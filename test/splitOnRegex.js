@@ -46,6 +46,16 @@ test ('splitOnRegex', () => {
   eq (S.splitOnRegex (/./g) ('')) (['']);
   eq (S.splitOnRegex (/./g) ('hello')) (['', '', '', '', '', '']);
 
+  {
+    // `lastIndex` property is respected and preserved
+    const pattern = /:/g;
+    eq (pattern.lastIndex) (0);
+    pattern.exec ('x:y:z');
+    eq (pattern.lastIndex) (2);
+    eq (S.splitOnRegex (pattern) ('x:y:z')) (['x:y', 'z']);
+    eq (pattern.lastIndex) (2);
+  }
+
   jsc.assert (jsc.forall (jsc.asciistring, t => {
     const min = 0;
     const max = t.length;
