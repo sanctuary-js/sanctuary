@@ -2818,33 +2818,20 @@
   //. > S.take (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
   //. Just (Cons (1) (Cons (2) (Cons (3) (Nil))))
   //. ```
-  function _takeDrop(arrayCase, generalCase) {
-    return function(n) {
-      return function(xs) {
-        if (n < 0) return Nothing;
-
-        //  Fast path for arrays.
-        if (Array.isArray (xs)) {
-          return n <= xs.length ? Just (arrayCase (n, xs)) : Nothing;
-        }
-
-        //  m :: Maybe (Pair Integer (f a))
-        var m = Z.reduce (function(m, x) {
-          return Z.map (function(pair) {
-            var n = pair.fst;
-            var xs = pair.snd;
-            return Pair (n - 1) (generalCase (n, xs, x));
-          }, m);
-        }, Just (Pair (n) (Z.empty (xs.constructor))), xs);
-
-        return Z.map (Pair.snd, Z.reject (B (gt (0)) (Pair.fst), m));
-      };
+  function take(n) {
+    return function(xs) {
+      if (n < 0) return Nothing;
+      //  Fast path for arrays.
+      if (Array.isArray (xs)) {
+        return n <= xs.length ? Just (xs.slice (0, n)) : Nothing;
+      }
+      var r = Z.reduce (reducer, {n: 0, xs: Z.empty (xs.constructor)}, xs);
+      return r.n < n ? Nothing : Just (r.xs);
     };
+    function reducer(r, x) {
+      return r.n < n ? (r.n += 1, r.xs = Z.append (x, r.xs), r) : r;
+    }
   }
-  var take = _takeDrop (
-    function(n, xs) { return xs.slice (0, n); },
-    function(n, xs, x) { return n > 0 ? Z.append (x, xs) : xs; }
-  );
   _.take = {
     consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
     types: [$.Integer, f (a), $.Maybe (f (a))],
@@ -2873,10 +2860,20 @@
   //. > S.drop (3) (Cons (1) (Cons (2) (Cons (3) (Cons (4) (Cons (5) (Nil))))))
   //. Just (Cons (4) (Cons (5) (Nil)))
   //. ```
-  var drop = _takeDrop (
-    function(n, xs) { return xs.slice (n); },
-    function(n, xs, x) { return n > 0 ? xs : Z.append (x, xs); }
-  );
+  function drop(n) {
+    return function(xs) {
+      if (n < 0) return Nothing;
+      //  Fast path for arrays.
+      if (Array.isArray (xs)) {
+        return n <= xs.length ? Just (xs.slice (n)) : Nothing;
+      }
+      var r = Z.reduce (reducer, {n: 0, xs: Z.empty (xs.constructor)}, xs);
+      return r.n < n ? Nothing : Just (r.xs);
+    };
+    function reducer(r, x) {
+      return r.n < n ? (r.n += 1, r) : (r.xs = Z.append (x, r.xs), r);
+    }
+  }
   _.drop = {
     consts: {f: [Z.Applicative, Z.Foldable, Z.Monoid]},
     types: [$.Integer, f (a), $.Maybe (f (a))],
