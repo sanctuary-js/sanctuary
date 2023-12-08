@@ -457,12 +457,6 @@
     };
   }
 
-  //  get_ :: String -> a -> Maybe b
-  function get_(key) {
-    return B (function(obj) { return key in obj ? Just (obj[key]) : Nothing; })
-             (toObject);
-  }
-
   //  invoke0 :: String -> a -> b
   function invoke0(name) {
     return function(target) {
@@ -477,11 +471,6 @@
         return target[name] (x);
       };
     };
-  }
-
-  //  toObject :: a -> Object
-  function toObject(x) {
-    return x == null ? Object.create (null) : Object (x);
   }
 
   //  :: Type
@@ -3628,8 +3617,10 @@
   //. ```
   function prop(key) {
     return function(x) {
-      var obj = toObject (x);
-      if (key in obj) return obj[key];
+      if (x != null) {
+        var obj = Object (x);
+        if (key in obj) return obj[key];
+      }
       throw new TypeError ('‘prop’ expected object to have a property named ' +
                            '‘' + key + '’; ' + show (x) + ' does not');
     };
@@ -3656,8 +3647,10 @@
   function props(path) {
     return function(x) {
       return path.reduce (function(x, key) {
-        var obj = toObject (x);
-        if (key in obj) return obj[key];
+        if (x != null) {
+          var obj = Object (x);
+          if (key in obj) return obj[key];
+        }
         throw new TypeError ('‘props’ expected object to have a property at ' +
                              show (path) + '; ' + show (x) + ' does not');
       }, x);
@@ -3694,7 +3687,20 @@
   //. Nothing
   //. ```
   function get(pred) {
-    return B (B (filter (pred))) (get_);
+    return function(key) {
+      return function(x) {
+        if (x != null) {
+          var obj = Object (x);
+          if (key in obj) {
+            var val = obj[key];
+            if (pred (val)) {
+              return Just (val);
+            }
+          }
+        }
+        return Nothing;
+      };
+    };
   }
   _.get = {
     consts: {},
@@ -3724,7 +3730,11 @@
     return function(keys) {
       return function(x) {
         return Z.filter (pred, keys.reduce (function(maybe, key) {
-          return Z.chain (get_ (key), maybe);
+          if (maybe.isJust && maybe.value != null) {
+            var obj = Object (maybe.value);
+            if (key in obj) return Just (obj[key]);
+          }
+          return Nothing;
         }, Just (x)));
       };
     };
