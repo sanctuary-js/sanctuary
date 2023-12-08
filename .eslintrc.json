@@ -1,27 +1,8 @@
 {
   "root": true,
-  "extends": ["./node_modules/sanctuary-style/eslint-es3.json"],
+  "extends": ["./node_modules/sanctuary-style/eslint-es6.json"],
   "rules": {
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1,
-        "FunctionDeclaration": {"parameters": "first"},
-        "FunctionExpression": {"parameters": "first"},
-        "CallExpression": {"arguments": "first"},
-        "ArrayExpression": "first",
-        "ObjectExpression": "first",
-        "ignoredNodes": [
-          "CallExpression",
-          "CallExpression > *",
-          "CallExpression > ArrowFunctionExpression ArrowFunctionExpression > *",
-          "CallExpression > FunctionExpression > BlockStatement",
-          "ConditionalExpression",
-          "MemberExpression"
-        ]
-      }
-    ]
+    "comma-dangle": ["error", {"arrays": "always-multiline", "objects": "always-multiline", "functions": "never"}]
   },
   "overrides": [
     {
@@ -44,10 +25,7 @@
         "window": "readonly"
       },
       "rules": {
-        "comma-dangle": ["error", "always-multiline"],
-        "func-style": ["error", "declaration", {"allowArrowFunctions": true}],
         "indent": ["off"],
-        "no-eval": ["off"],
         "no-extra-semi": ["off"],
         "no-unused-vars": ["error", {"args": "none", "varsIgnorePattern": "^([$]|S)$"}]
       }
@@ -56,8 +34,9 @@
       "files": ["index.js"],
       "globals": {"process": "readonly"},
       "rules": {
-        "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
-        "multiline-comment-style": ["off"]
+        "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
+        "multiline-comment-style": ["off"],
+        "no-param-reassign": ["off"]
       }
     }
   ]
