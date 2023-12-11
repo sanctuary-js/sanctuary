@@ -392,11 +392,12 @@
   let Descending, Nil, Cons, Sum, S;
   /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
-    const {create, env} = __doctest.require ('.');
-    const List = __doctest.require ('./test/internal/List');
+    const dirname = __dirname;  // eslint-disable-line no-undef
+    const {create, env} = __doctest.require (dirname);
+    const List = __doctest.require (`${dirname}/test/internal/List`);
     Descending = __doctest.require ('sanctuary-descending');
     ({Nil, Cons} = List);
-    Sum = __doctest.require ('./test/internal/Sum');
+    Sum = __doctest.require (`${dirname}/test/internal/Sum`);
     S = Object.assign (
       create ({
         checkTypes: true,
