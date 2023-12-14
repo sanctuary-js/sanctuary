@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import findMap from 'sanctuary/findMap';
 
 
 test ('findMap', () => {
 
+  eq (S.findMap === findMap, true);
   eq (String (S.findMap), 'findMap :: Foldable f => (a -> Maybe b) -> f a -> Maybe b');
 
   eq (S.findMap (S.parseInt (16)) ([]), S.Nothing);

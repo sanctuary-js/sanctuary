@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import find from 'sanctuary/find';
 
 
 test ('find', () => {
 
+  eq (S.find === find, true);
   eq (String (S.find), 'find :: Foldable f => (a -> Boolean) -> f a -> Maybe a');
 
   eq (S.find (S.even) ([]), S.Nothing);

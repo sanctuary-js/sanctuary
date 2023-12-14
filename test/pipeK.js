@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import pipeK from 'sanctuary/pipeK';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('pipeK', () => {
 
+  eq (S.pipeK === pipeK, true);
   eq (String (S.pipeK), 'pipeK :: (Foldable f, Chain m) => f (Any -> m Any) -> m a -> m b');
 
   eq (S.pipeK ([]) (S.Just ([1, 2, 3])), S.Just ([1, 2, 3]));

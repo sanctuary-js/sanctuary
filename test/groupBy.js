@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import groupBy from 'sanctuary/groupBy';
 
 
 test ('groupBy', () => {
 
+  eq (S.groupBy === groupBy, true);
   eq (String (S.groupBy), 'groupBy :: (a -> a -> Boolean) -> Array a -> Array (Array a)');
 
   eq (S.groupBy (x => y => x * y % 3 === 0) ([]), []);

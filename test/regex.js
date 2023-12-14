@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import regex from 'sanctuary/regex';
 
 
 test ('regex', () => {
 
+  eq (S.regex === regex, true);
   eq (String (S.regex), 'regex :: RegexFlags -> String -> RegExp');
 
   eq (S.regex ('') ('\\d'), /\d/);

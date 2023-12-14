@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euf -o pipefail
+
+# https://stackoverflow.com/a/284671/312785
+source "$(dirname "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")/node_modules/sanctuary-scripts/functions"
+
+set +f
+
+prefix="$(get comment-prefix)"
+opening="$(get opening-delimiter)"
+closing="$(get closing-delimiter)"
+module="$(get module-type)"
+
+trap 'rm -f -- "${files[@]}"' EXIT
+files=()
+for name in src/*.js ; do
+  files+=("$name.tmp")
+  cat <<-EOF >"$name.tmp"
+		//$prefix $opening
+		//$prefix > import Descending from 'sanctuary-descending'
+		//$prefix
+		//$prefix > import * as S from 'sanctuary'
+		//$prefix > import Left from 'sanctuary/Left'
+		//$prefix > import Right from 'sanctuary/Right'
+		//$prefix > import Nothing from 'sanctuary/Nothing'
+		//$prefix > import Just from 'sanctuary/Just'
+		//$prefix > import Pair from 'sanctuary/Pair'
+		//$prefix
+		//$prefix > import {Nil, Cons} from '../test/internal/List.js'
+		//$prefix $closing
+	EOF
+  cat "./$name" >>"$name.tmp"
+done
+
+node_modules/.bin/doctest \
+  --module "$module" \
+  --prefix "$prefix" \
+  --opening-delimiter "$opening" \
+  --closing-delimiter "$closing" \
+  -- "${files[@]}"

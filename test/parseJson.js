@@ -3,11 +3,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import $ from 'sanctuary-def';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import parseJson from 'sanctuary/parseJson';
 
 
 test ('parseJson', () => {
 
+  eq (S.parseJson === parseJson, true);
   eq (String (S.parseJson), 'parseJson :: (Any -> Boolean) -> String -> Maybe a');
 
   eq (S.parseJson (S.is ($.Any)) ('[Invalid JSON]'), S.Nothing);

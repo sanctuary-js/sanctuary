@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import parseFloat from 'sanctuary/parseFloat';
 
 
 test ('parseFloat', () => {
 
+  eq (S.parseFloat === parseFloat, true);
   eq (String (S.parseFloat), 'parseFloat :: String -> Maybe Number');
 
   eq (S.parseFloat ('12.34'), S.Just (12.34));

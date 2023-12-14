@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import matchAll from 'sanctuary/matchAll';
 
 
 test ('matchAll', () => {
 
+  eq (S.matchAll === matchAll, true);
   eq (String (S.matchAll), 'matchAll :: GlobalRegExp -> String -> Array (Array (Maybe String))');
 
   const pattern = S.regex ('g') ('<(h[1-6])(?: id="([^"]*)")?>([^<]*)</\\1>');

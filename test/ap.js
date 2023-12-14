@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import ap from 'sanctuary/ap';
 
 
 test ('ap', () => {
 
+  eq (S.ap === ap, true);
   eq (String (S.ap), 'ap :: Apply f => f (a -> b) -> f a -> f b');
 
   eq (S.ap ([]) ([]), []);

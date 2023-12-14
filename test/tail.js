@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import tail from 'sanctuary/tail';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('tail', () => {
 
+  eq (S.tail === tail, true);
   eq (String (S.tail), 'tail :: (Applicative f, Foldable f, Monoid f) => f a -> Maybe (f a)');
 
   eq (S.tail ([]), S.Nothing);

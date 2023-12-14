@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import remove from 'sanctuary/remove';
 
 
 test ('remove', () => {
 
+  eq (S.remove === remove, true);
   eq (String (S.remove), 'remove :: String -> StrMap a -> StrMap a');
 
   eq (S.remove ('a') ({}), {});

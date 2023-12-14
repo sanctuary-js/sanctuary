@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import test_ from 'sanctuary/test';
 
 
 test ('test', () => {
 
+  eq (S.test === test_, true);
   eq (String (S.test), 'test :: RegExp -> String -> Boolean');
 
   eq (S.test (/^a/) ('abacus'), true);

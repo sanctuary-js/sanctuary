@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import pow from 'sanctuary/pow';
 
 
 test ('pow', () => {
 
+  eq (S.pow === pow, true);
   eq (String (S.pow), 'pow :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.pow (2) (8), 64);

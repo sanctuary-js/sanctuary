@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import fromPairs from 'sanctuary/fromPairs';
 
 
 test ('fromPairs', () => {
 
+  eq (S.fromPairs === fromPairs, true);
   eq (String (S.fromPairs), 'fromPairs :: Foldable f => f (Pair String a) -> StrMap a');
 
   eq (S.fromPairs ([]),

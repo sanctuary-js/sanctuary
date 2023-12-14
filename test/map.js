@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import map from 'sanctuary/map';
 
 
 test ('map', () => {
 
+  eq (S.map === map, true);
   eq (String (S.map), 'map :: Functor f => (a -> b) -> f a -> f b');
 
   eq (S.map (S.not) (S.odd) (2), true);

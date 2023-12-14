@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import fromMaybe_ from 'sanctuary/fromMaybe_';
 
 
 test ('fromMaybe_', () => {
 
+  eq (S.fromMaybe_ === fromMaybe_, true);
   eq (String (S.fromMaybe_), 'fromMaybe_ :: (() -> a) -> Maybe a -> a');
 
   eq (S.fromMaybe_ (() => 0) (S.Nothing), 0);

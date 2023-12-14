@@ -2,11 +2,13 @@ import {deepStrictEqual as eq, throws} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import prop from 'sanctuary/prop';
 
 
 test ('prop', () => {
 
+  eq (S.prop === prop, true);
   eq (String (S.prop), 'prop :: String -> a -> b');
 
   throws (() => { S.prop ('xxx') ([1, 2, 3]); },

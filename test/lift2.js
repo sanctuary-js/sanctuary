@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import lift2 from 'sanctuary/lift2';
 
 
 test ('lift2', () => {
 
+  eq (S.lift2 === lift2, true);
   eq (String (S.lift2), 'lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
 
   eq (S.lift2 (S.add) (S.Just (3)) (S.Just (3)), S.Just (6));

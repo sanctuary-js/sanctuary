@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import product from 'sanctuary/product';
 
 
 test ('product', () => {
 
+  eq (S.product === product, true);
   eq (String (S.product), 'product :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.product ([]), 1);

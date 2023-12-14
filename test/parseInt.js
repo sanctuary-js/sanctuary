@@ -2,11 +2,13 @@ import {deepStrictEqual as eq, throws} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import parseInt from 'sanctuary/parseInt';
 
 
 test ('parseInt', () => {
 
+  eq (S.parseInt === parseInt, true);
   eq (String (S.parseInt), 'parseInt :: Radix -> String -> Maybe Integer');
 
   eq (S.parseInt (10) ('42'), S.Just (42));

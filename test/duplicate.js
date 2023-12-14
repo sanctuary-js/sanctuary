@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import duplicate from 'sanctuary/duplicate';
 
 
 test ('duplicate', () => {
 
+  eq (S.duplicate === duplicate, true);
   eq (String (S.duplicate), 'duplicate :: Extend w => w a -> w (w a)');
 
   eq (S.duplicate ([]), []);

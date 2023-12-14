@@ -1,14 +1,9 @@
 {
   "root": true,
   "extends": ["./node_modules/sanctuary-style/eslint.json"],
-  "overrides": [
-    {
-      "files": ["index.js"],
-      "globals": {"__doctest": "readonly", "define": "readonly", "module": "readonly", "process": "readonly", "require": "readonly", "self": "readonly"},
-      "rules": {
-        "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
-        "no-param-reassign": ["off"]
-      }
-    }
-  ]
+  "parserOptions": {"sourceType": "module"},
+  "rules": {
+    "max-len": ["off"],
+    "no-param-reassign": ["off"]
+  }
 }

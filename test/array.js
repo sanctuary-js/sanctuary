@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import array from 'sanctuary/array';
 
 
 test ('array', () => {
 
+  eq (S.array === array, true);
   eq (String (S.array), 'array :: b -> (a -> Array a -> b) -> Array a -> b');
 
   const size = S.array (0) (head => tail => 1 + size (tail));

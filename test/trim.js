@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import trim from 'sanctuary/trim';
 
 
 test ('trim', () => {
 
+  eq (S.trim === trim, true);
   eq (String (S.trim), 'trim :: String -> String');
 
   eq (S.trim (''), '');

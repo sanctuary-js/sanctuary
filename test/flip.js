@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import flip from 'sanctuary/flip';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('flip', () => {
 
+  eq (S.flip === flip, true);
   eq (String (S.flip), 'flip :: Functor f => f (a -> b) -> a -> f b');
 
   eq (S.flip (S.concat) ('foo') ('bar'), 'barfoo');

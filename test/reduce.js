@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import reduce from 'sanctuary/reduce';
 
 
 test ('reduce', () => {
 
+  eq (S.reduce === reduce, true);
   eq (String (S.reduce), 'reduce :: Foldable f => (b -> a -> b) -> b -> f a -> b');
 
   eq (S.reduce (S.concat) ('x') ([]), 'x');

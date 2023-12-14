@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import drop from 'sanctuary/drop';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('drop', () => {
 
+  eq (S.drop === drop, true);
   eq (String (S.drop), 'drop :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
 
   eq (S.drop (0) ([1, 2, 3, 4, 5]), S.Just ([1, 2, 3, 4, 5]));

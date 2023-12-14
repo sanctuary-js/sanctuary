@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import tagBy from 'sanctuary/tagBy';
 
 
 test ('tagBy', () => {
 
+  eq (S.tagBy === tagBy, true);
   eq (String (S.tagBy), 'tagBy :: (a -> Boolean) -> a -> Either a a');
 
   eq (S.tagBy (S.odd) (5), S.Right (5));

@@ -3,11 +3,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import Identity from 'sanctuary-identity';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import traverse from 'sanctuary/traverse';
 
 
 test ('traverse', () => {
 
+  eq (S.traverse === traverse, true);
   eq (String (S.traverse), 'traverse :: (Applicative f, Traversable t) => TypeRep (f b) -> (a -> f b) -> t a -> f (t b)');
 
   eq (S.traverse (S.Maybe) (S.parseInt (16)) (['A', 'B', 'C']), S.Just ([10, 11, 12]));

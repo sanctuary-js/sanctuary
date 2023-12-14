@@ -3,13 +3,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import $ from 'sanctuary-def';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import is from 'sanctuary/is';
 
-import {Sum} from './internal/Sum.mjs';
+import {Sum} from './internal/Sum.js';
 
 
 test ('is', () => {
 
+  eq (S.is === is, true);
   eq (String (S.is), 'is :: Type -> Any -> Boolean');
 
   eq (S.is ($.Boolean) (true), true);
@@ -42,12 +44,6 @@ test ('is', () => {
   eq (S.is ($.Array (a)) ([1, 2, 3]), true);
   eq (S.is ($.Array (a)) (['foo', 'bar', 'baz']), true);
   eq (S.is ($.Array (a)) (['foo', true, 42]), false);
-  eq (S.is ($.Array (a)) ([Sum (1), Sum (2), Sum (3)]), false);
-
-  eq ((S.create ({checkTypes: true, env: []})).is ($.Array (a)) ([]), false);
-  eq ((S.create ({checkTypes: true, env: [$.String]})).is ($.Array (a)) ([]), true);
-  eq ((S.create ({checkTypes: true, env: [$.String]})).is ($.Array (a)) ([1, 2, 3]), false);
-  eq ((S.create ({checkTypes: true, env: [$.Number]})).is ($.Array (a)) ([1, 2, 3]), true);
-  eq ((S.create ({checkTypes: true, env: [Sum.Type]})).is ($.Array (a)) ([Sum (1), Sum (2), Sum (3)]), true);
+  eq (S.is ($.Array (a)) ([Sum (1), Sum (2), Sum (3)]), true);
 
 });

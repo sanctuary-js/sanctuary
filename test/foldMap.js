@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import foldMap from 'sanctuary/foldMap';
 
 
 test ('foldMap', () => {
 
+  eq (S.foldMap === foldMap, true);
   eq (String (S.foldMap), 'foldMap :: (Monoid b, Foldable f) => TypeRep b -> (a -> b) -> f a -> b');
 
   const repeat = n => (new Array (n + 1)).join (String (n));

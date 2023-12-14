@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import size from 'sanctuary/size';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('size', () => {
 
+  eq (S.size === size, true);
   eq (String (S.size), 'size :: Foldable f => f a -> NonNegativeInteger');
 
   eq (S.size ([]), 0);

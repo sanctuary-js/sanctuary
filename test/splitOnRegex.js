@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import splitOnRegex from 'sanctuary/splitOnRegex';
 
 
 test ('splitOnRegex', () => {
 
+  eq (S.splitOnRegex === splitOnRegex, true);
   eq (String (S.splitOnRegex), 'splitOnRegex :: GlobalRegExp -> String -> Array String');
 
   eq (S.splitOnRegex (/b/g) ('abc'), ['a', 'c']);
