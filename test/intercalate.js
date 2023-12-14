@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import intercalate from 'sanctuary/intercalate';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('intercalate', () => {
 
+  eq (S.intercalate === intercalate, true);
   eq (String (S.intercalate), 'intercalate :: (Monoid a, Foldable f) => a -> f a -> a');
 
   eq (S.intercalate (', ') ([]), '');

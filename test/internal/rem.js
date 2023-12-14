@@ -1,3 +1,4 @@
+//    rem :: Number -> Number -> Number !
 export default x => y => {
   if (y === 0) {
     throw new Error ('Cannot divide by zero');

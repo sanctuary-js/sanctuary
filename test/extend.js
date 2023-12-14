@@ -3,11 +3,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import Identity from 'sanctuary-identity';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import extend from 'sanctuary/extend';
 
 
 test ('extend', () => {
 
+  eq (S.extend === extend, true);
   eq (String (S.extend), 'extend :: Extend w => (w a -> b) -> w a -> w b');
 
   eq (S.extend (S.joinWith ('')) ([]), []);

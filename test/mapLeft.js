@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import mapLeft from 'sanctuary/mapLeft';
 
 
 test ('mapLeft', () => {
 
+  eq (S.mapLeft === mapLeft, true);
   eq (String (S.mapLeft), 'mapLeft :: Bifunctor p => (a -> b) -> p a c -> p b c');
 
   eq (S.mapLeft (S.toUpper) (S.Left ('xxx')), S.Left ('XXX'));

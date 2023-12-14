@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import match from 'sanctuary/match';
 
 
 test ('match', () => {
 
+  eq (S.match === match, true);
   eq (String (S.match), 'match :: NonGlobalRegExp -> String -> Maybe (Array (Maybe String))');
 
   const scheme = '([a-z][a-z0-9+.-]*)';

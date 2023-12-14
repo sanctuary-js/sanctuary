@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import insert from 'sanctuary/insert';
 
 
 test ('insert', () => {
 
+  eq (S.insert === insert, true);
   eq (String (S.insert), 'insert :: String -> a -> StrMap a -> StrMap a');
 
   eq (S.insert ('a') (1) ({}), {a: 1});

@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import sortBy from 'sanctuary/sortBy';
 
 
 test ('sortBy', () => {
 
+  eq (S.sortBy === sortBy, true);
   eq (String (S.sortBy), 'sortBy :: (Ord b, Applicative m, Foldable m, Monoid m) => (a -> b) -> m a -> m a');
 
   eq (S.sortBy (S.I) ([]), []);

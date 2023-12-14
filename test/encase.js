@@ -2,7 +2,8 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import encase from 'sanctuary/encase';
 
 import area from './internal/area.js';
 import factorial from './internal/factorial.js';
@@ -11,6 +12,7 @@ import rem from './internal/rem.js';
 
 test ('encase', () => {
 
+  eq (S.encase === encase, true);
   eq (String (S.encase), 'encase :: (Throwing e a b) -> a -> Either e b');
 
   //    safeFactorial :: Number -> Maybe Number

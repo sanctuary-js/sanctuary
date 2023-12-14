@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import replace from 'sanctuary/replace';
 
 
 test ('replace', () => {
 
+  eq (S.replace === replace, true);
   eq (String (S.replace), 'replace :: (Array (Maybe String) -> String) -> RegExp -> String -> String');
 
   eq (S.replace (([$1]) => S.maybe ('') (S.toUpper) ($1)) (/(\w)/) ('foo'), 'Foo');

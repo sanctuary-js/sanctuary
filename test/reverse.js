@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import reverse from 'sanctuary/reverse';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('reverse', () => {
 
+  eq (S.reverse === reverse, true);
   eq (String (S.reverse), 'reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
 
   eq (S.reverse ([]), []);

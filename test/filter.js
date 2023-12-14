@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import filter from 'sanctuary/filter';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('filter', () => {
 
+  eq (S.filter === filter, true);
   eq (String (S.filter), 'filter :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq (S.filter (S.odd) ([]), []);

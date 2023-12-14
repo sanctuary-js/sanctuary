@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import max from 'sanctuary/max';
 
 
 test ('max', () => {
 
+  eq (S.max === max, true);
   eq (String (S.max), 'max :: Ord a => a -> a -> a');
 
   eq (S.max (10) (2), 10);

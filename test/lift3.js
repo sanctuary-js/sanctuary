@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import lift3 from 'sanctuary/lift3';
 
 import area from './internal/area.js';
 
 
 test ('lift3', () => {
 
+  eq (S.lift3 === lift3, true);
   eq (String (S.lift3), 'lift3 :: Apply f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d');
 
   eq (S.lift3 (S.reduce) (S.Just (S.add)) (S.Just (0)) (S.Just ([1, 2, 3])), S.Just (6));

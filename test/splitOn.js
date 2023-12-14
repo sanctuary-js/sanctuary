@@ -4,11 +4,13 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import splitOn from 'sanctuary/splitOn';
 
 
 test ('splitOn', () => {
 
+  eq (S.splitOn === splitOn, true);
   eq (String (S.splitOn), 'splitOn :: String -> String -> Array String');
 
   eq (S.splitOn ('') ('abc'), ['a', 'b', 'c']);

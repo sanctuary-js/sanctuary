@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import equals from 'sanctuary/equals';
 
 
 test ('equals', () => {
 
+  eq (S.equals === equals, true);
   eq (String (S.equals), 'equals :: Setoid a => a -> a -> Boolean');
 
   eq (S.equals (S.Nothing) (S.Nothing), true);

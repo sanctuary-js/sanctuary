@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import chainRec from 'sanctuary/chainRec';
 
 
 test ('chainRec', () => {
 
+  eq (S.chainRec === chainRec, true);
   eq (String (S.chainRec), 'chainRec :: ChainRec m => TypeRep (m b) -> (a -> m (Either a b)) -> a -> m b');
 
   eq (S.chainRec (Array)

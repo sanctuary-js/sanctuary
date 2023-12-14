@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import stripSuffix from 'sanctuary/stripSuffix';
 
 
 test ('stripSuffix', () => {
 
+  eq (S.stripSuffix === stripSuffix, true);
   eq (String (S.stripSuffix), 'stripSuffix :: String -> String -> Maybe String');
 
   eq (S.stripSuffix ('') (''), S.Just (''));

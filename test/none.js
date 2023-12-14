@@ -4,13 +4,15 @@ import jsc from 'jsverify';
 import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import none from 'sanctuary/none';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('none', () => {
 
+  eq (S.none === none, true);
   eq (String (S.none), 'none :: Foldable f => (a -> Boolean) -> f a -> Boolean');
 
   eq (S.none (S.gt (0)) ([]), true);

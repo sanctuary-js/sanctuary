@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import unfold from 'sanctuary/unfold';
 
 
 test ('unfold', () => {
 
+  eq (S.unfold === unfold, true);
   eq (String (S.unfold), 'unfold :: (b -> Maybe (Pair a b)) -> b -> Array a');
 
   const f = n => n >= 5 ? S.Nothing : S.Just (S.Pair (n) (n + 1));

@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import keys from 'sanctuary/keys';
 
 import strMap from './internal/strMap.js';
 
 
 test ('keys', () => {
 
+  eq (S.keys === keys, true);
   eq (String (S.keys), 'keys :: StrMap a -> Array String');
 
   eq (S.sort (S.keys ({})), []);

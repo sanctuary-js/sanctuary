@@ -310,136 +310,7 @@ via selective use of [`unchecked`](#unchecked) functions.
 
 `npm install sanctuary` will install Sanctuary for use in Node.js.
 
-To add Sanctuary to a website, add the following `<script>` element,
-replacing `X.Y.Z` with a version number greater than or equal to `2.0.2`:
-
-```html
-<script src="https://cdn.jsdelivr.net/gh/sanctuary-js/sanctuary@X.Y.Z/dist/bundle.js"></script>
-```
-
-Optionally, define aliases for various modules:
-
-```javascript
-const S = window.sanctuary;
-const $ = window.sanctuaryDef;
-// ...
-```
-
 ## <span id="section:api">❑ API</span>
-
-### <span id="section:configure">❑ Configure</span>
-
-#### <a name="create" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/create.js#L1">`create :: { checkTypes :: Boolean, env :: Array Type } -⁠> Module`</a>
-
-Takes an options record and returns a Sanctuary module. `checkTypes`
-specifies whether to enable type checking. The module's polymorphic
-functions (such as [`I`](#I)) require each value associated with a
-type variable to be a member of at least one type in the environment.
-
-A well-typed application of a Sanctuary function will produce the same
-result regardless of whether type checking is enabled. If type checking
-is enabled, a badly typed application will produce an exception with a
-descriptive error message.
-
-The following snippet demonstrates defining a custom type and using
-`create` to produce a Sanctuary module that is aware of that type:
-
-```javascript
-const {create, env} = require ('sanctuary');
-const $ = require ('sanctuary-def');
-const type = require ('sanctuary-type-identifiers');
-
-//    Identity :: a -> Identity a
-const Identity = x => {
-  const identity = Object.create (Identity$prototype);
-  identity.value = x;
-  return identity;
-};
-
-//    identityTypeIdent :: String
-const identityTypeIdent = 'my-package/Identity@1';
-
-const Identity$prototype = {
-  '@@type': identityTypeIdent,
-  '@@show': function() { return `Identity (${S.show (this.value)})`; },
-  'fantasy-land/map': function(f) { return Identity (f (this.value)); },
-};
-
-//    IdentityType :: Type -> Type
-const IdentityType = $.UnaryType
-  ('Identity')
-  ('http://example.com/my-package#Identity')
-  ([])
-  (x => type (x) === identityTypeIdent)
-  (identity => [identity.value]);
-
-const S = create ({
-  checkTypes: process.env.NODE_ENV !== 'production',
-  env: env.concat ([IdentityType ($.Unknown)]),
-});
-
-S.map (S.sub (1)) (Identity (43));
-// => Identity (42)
-```
-
-See also [`env`](#env).
-
-#### <a name="env" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/env.js#L1">`env :: Array Type`</a>
-
-The Sanctuary module's environment (`(S.create ({checkTypes, env})).env`
-is a reference to `env`). Useful in conjunction with [`create`](#create).
-
-```javascript
-> S.env
-[ $.AnyFunction,
-. $.Arguments,
-. $.Array ($.Unknown),
-. $.Array2 ($.Unknown) ($.Unknown),
-. $.Boolean,
-. $.Buffer,
-. $.Date,
-. $.Descending ($.Unknown),
-. $.Either ($.Unknown) ($.Unknown),
-. $.Error,
-. $.Fn ($.Unknown) ($.Unknown),
-. $.HtmlElement,
-. $.Identity ($.Unknown),
-. $.JsMap ($.Unknown) ($.Unknown),
-. $.JsSet ($.Unknown),
-. $.Maybe ($.Unknown),
-. $.Module,
-. $.Null,
-. $.Number,
-. $.Object,
-. $.Pair ($.Unknown) ($.Unknown),
-. $.RegExp,
-. $.StrMap ($.Unknown),
-. $.String,
-. $.Symbol,
-. $.Type,
-. $.TypeClass,
-. $.Undefined ]
-```
-
-#### <a name="unchecked" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/unchecked.js#L1">`unchecked :: Module`</a>
-
-A complete Sanctuary module that performs no type checking. This is
-useful as it permits operations that Sanctuary's type checking would
-disallow, such as mapping over an object with heterogeneous values.
-
-See also [`create`](#create).
-
-```javascript
-> S.unchecked.map (S.show) ({x: 'foo', y: true, z: 42})
-{x: '"foo"', y: 'true', z: '42'}
-```
-
-Opting out of type checking may cause type errors to go unnoticed.
-
-```javascript
-> S.unchecked.add (2) ('2')
-'22'
-```
 
 ### <span id="section:classify">❑ Classify</span>
 
@@ -1306,7 +1177,7 @@ Pair [type representative][].
 Pair ('foo') (42)
 ```
 
-#### <a name="pair" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/pair.js#L1">`pair :: (a -⁠> b -⁠> c) -⁠> Pair a b -⁠> c`</a>
+#### <a name="pair" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/pair~.js#L1">`pair :: (a -⁠> b -⁠> c) -⁠> Pair a b -⁠> c`</a>
 
 Case analysis for the `Pair a b` type.
 
@@ -1395,7 +1266,7 @@ true
 false
 ```
 
-#### <a name="maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/maybe.js#L1">`maybe :: b -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
+#### <a name="maybe" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/maybe~.js#L1">`maybe :: b -⁠> (a -⁠> b) -⁠> Maybe a -⁠> b`</a>
 
 Takes a value of any type, a function, and a Maybe. If the Maybe is
 a Just, the return value is the result of applying the function to
@@ -1553,7 +1424,7 @@ true
 false
 ```
 
-#### <a name="either" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/either.js#L1">`either :: (a -⁠> c) -⁠> (b -⁠> c) -⁠> Either a b -⁠> c`</a>
+#### <a name="either" href="https://github.com/sanctuary-js/sanctuary/blob/v10.0.0/src/either~.js#L1">`either :: (a -⁠> c) -⁠> (b -⁠> c) -⁠> Either a b -⁠> c`</a>
 
 Takes two functions and an Either, and returns the result of
 applying the first function to the Left's value, if the Either

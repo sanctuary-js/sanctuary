@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import concat from 'sanctuary/concat';
 
 
 test ('concat', () => {
 
+  eq (S.concat === concat, true);
   eq (String (S.concat), 'concat :: Semigroup a => a -> a -> a');
 
   eq (S.concat ([]) ([]), []);

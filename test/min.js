@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import min from 'sanctuary/min';
 
 
 test ('min', () => {
 
+  eq (S.min === min, true);
   eq (String (S.min), 'min :: Ord a => a -> a -> a');
 
   eq (S.min (10) (2), 2);

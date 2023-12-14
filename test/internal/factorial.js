@@ -1,3 +1,4 @@
+//    factorial :: Throwing String Number Number
 export default function factorial(n) {
   if (n < 0) {
     // eslint-disable-next-line no-throw-literal

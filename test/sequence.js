@@ -3,11 +3,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import Identity from 'sanctuary-identity';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import sequence from 'sanctuary/sequence';
 
 
 test ('sequence', () => {
 
+  eq (S.sequence === sequence, true);
   eq (String (S.sequence), 'sequence :: (Applicative f, Traversable t) => TypeRep (f a) -> t (f a) -> f (t a)');
 
   eq (S.sequence (Identity) ([]), Identity ([]));

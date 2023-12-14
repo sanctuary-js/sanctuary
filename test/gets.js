@@ -4,11 +4,13 @@ import vm from 'node:vm';
 import test from 'oletus';
 import $ from 'sanctuary-def';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import gets from 'sanctuary/gets';
 
 
 test ('gets', () => {
 
+  eq (S.gets === gets, true);
   eq (String (S.gets), 'gets :: (Any -> Boolean) -> Array String -> a -> Maybe b');
 
   eq (S.gets (S.is ($.Number)) (['x']) ({x: {z: 0}, y: 42}), S.Nothing);

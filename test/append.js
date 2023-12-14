@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import append from 'sanctuary/append';
 
 
 test ('append', () => {
 
+  eq (S.append === append, true);
   eq (String (S.append), 'append :: (Applicative f, Semigroup f) => a -> f a -> f a');
 
   eq (S.append (3) ([]), [3]);

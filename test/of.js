@@ -3,11 +3,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 import test from 'oletus';
 import Identity from 'sanctuary-identity';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import of from 'sanctuary/of';
 
 
 test ('of', () => {
 
+  eq (S.of === of, true);
   eq (String (S.of), 'of :: Applicative f => TypeRep (f a) -> a -> f a');
 
   eq (S.of (Array) (42), [42]);

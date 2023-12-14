@@ -2,13 +2,15 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from './internal/sanctuary.js';
+import * as S from 'sanctuary';
+import all from 'sanctuary/all';
 
-import {Nil, Cons} from './internal/List.mjs';
+import {Nil, Cons} from './internal/List.js';
 
 
 test ('all', () => {
 
+  eq (S.all === all, true);
   eq (String (S.all), 'all :: Foldable f => (a -> Boolean) -> f a -> Boolean');
 
   eq (S.all (S.gt (0)) ([]), true);

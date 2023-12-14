@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import sum from 'sanctuary/sum';
 
 
 test ('sum', () => {
 
+  eq (S.sum === sum, true);
   eq (String (S.sum), 'sum :: Foldable f => f FiniteNumber -> FiniteNumber');
 
   eq (S.sum ([]), 0);

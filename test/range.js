@@ -2,11 +2,13 @@ import {deepStrictEqual as eq} from 'node:assert';
 
 import test from 'oletus';
 
-import S from '../index.js';
+import * as S from 'sanctuary';
+import range from 'sanctuary/range';
 
 
 test ('range', () => {
 
+  eq (S.range === range, true);
   eq (String (S.range), 'range :: Integer -> Integer -> Array Integer');
 
   eq (S.range (0) (0), []);
