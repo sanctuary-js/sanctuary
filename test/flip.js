@@ -9,7 +9,7 @@ const map = require ('./internal/map');
 
 test ('flip', () => {
 
-  eq (S.show (S.flip)) ('flip :: Functor f => f (a -> b) -> a -> f b');
+  eq (String (S.flip)) ('flip :: Functor f => f (a -> b) -> a -> f b');
 
   eq (S.flip (S.concat) ('foo') ('bar')) ('barfoo');
   eq (map (S.flip (S.concat) ('!')) (['BAM', 'POW', 'KA-POW'])) (['BAM!', 'POW!', 'KA-POW!']);

@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('show', () => {
 
-  eq (S.show (S.show)) ('show :: Any -> String');
+  eq (String (S.show)) ('show :: Any -> String');
 
   eq (S.show (null)) ('null');
   eq (S.show (undefined)) ('undefined');

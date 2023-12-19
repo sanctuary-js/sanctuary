@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('matchAll', () => {
 
-  eq (S.show (S.matchAll)) ('matchAll :: GlobalRegExp -> String -> Array (Array (Maybe String))');
+  eq (String (S.matchAll)) ('matchAll :: GlobalRegExp -> String -> Array (Array (Maybe String))');
 
   const pattern = S.regex ('g') ('<(h[1-6])(?: id="([^"]*)")?>([^<]*)</\\1>');
 

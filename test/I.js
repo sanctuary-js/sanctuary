@@ -8,7 +8,7 @@ const properties = require ('./properties');
 
 test ('I', () => {
 
-  eq (S.show (S.I)) ('I :: a -> a');
+  eq (String (S.I)) ('I :: a -> a');
 
   eq (S.I ([1, 2, 3])) ([1, 2, 3]);
   eq (S.I (['foo', 42])) (['foo', 42]);

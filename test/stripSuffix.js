@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('stripSuffix', () => {
 
-  eq (S.show (S.stripSuffix)) ('stripSuffix :: String -> String -> Maybe String');
+  eq (String (S.stripSuffix)) ('stripSuffix :: String -> String -> Maybe String');
 
   eq (S.stripSuffix ('') ('')) (S.Just (''));
   eq (S.stripSuffix ('') ('xyz')) (S.Just ('xyz'));

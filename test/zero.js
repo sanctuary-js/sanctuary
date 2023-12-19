@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('zero', () => {
 
-  eq (S.show (S.zero)) ('zero :: Plus f => TypeRep (f a) -> f a');
+  eq (String (S.zero)) ('zero :: Plus f => TypeRep (f a) -> f a');
 
   eq (S.zero (Array)) ([]);
   eq (S.zero (Object)) ({});

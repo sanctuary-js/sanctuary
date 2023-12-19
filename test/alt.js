@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('alt', () => {
 
-  eq (S.show (S.alt)) ('alt :: Alt f => f a -> f a -> f a');
+  eq (String (S.alt)) ('alt :: Alt f => f a -> f a -> f a');
 
   eq (S.alt ([]) ([])) ([]);
   eq (S.alt ([1, 2, 3]) ([])) ([1, 2, 3]);

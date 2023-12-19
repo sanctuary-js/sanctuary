@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('takeLast', () => {
 
-  eq (S.show (S.takeLast)) ('takeLast :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
+  eq (String (S.takeLast)) ('takeLast :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
 
   eq (S.takeLast (0) ([1, 2, 3, 4, 5])) (S.Just ([]));
   eq (S.takeLast (1) ([1, 2, 3, 4, 5])) (S.Just ([5]));

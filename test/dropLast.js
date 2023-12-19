@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('dropLast', () => {
 
-  eq (S.show (S.dropLast)) ('dropLast :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
+  eq (String (S.dropLast)) ('dropLast :: (Applicative f, Foldable f, Monoid f) => Integer -> f a -> Maybe (f a)');
 
   eq (S.dropLast (0) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4, 5]));
   eq (S.dropLast (1) ([1, 2, 3, 4, 5])) (S.Just ([1, 2, 3, 4]));

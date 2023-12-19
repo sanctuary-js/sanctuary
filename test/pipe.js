@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('pipe', () => {
 
-  eq (S.show (S.pipe)) ('pipe :: Foldable f => f (Any -> Any) -> a -> b');
+  eq (String (S.pipe)) ('pipe :: Foldable f => f (Any -> Any) -> a -> b');
 
   eq (S.pipe ([]) ('99')) ('99');
   eq (S.pipe ([parseInt]) ('99')) (99);

@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('trim', () => {
 
-  eq (S.show (S.trim)) ('trim :: String -> String');
+  eq (String (S.trim)) ('trim :: String -> String');
 
   eq (S.trim ('')) ('');
   eq (S.trim (' ')) ('');

@@ -9,7 +9,7 @@ const eq = require ('./internal/eq');
 
 test ('type', () => {
 
-  eq (S.show (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
+  eq (String (S.type)) ('type :: Any -> { name :: String, namespace :: Maybe String, version :: NonNegativeInteger }');
 
   // eslint-disable-next-line prefer-rest-params
   eq (S.type (function() { return arguments; } ()))

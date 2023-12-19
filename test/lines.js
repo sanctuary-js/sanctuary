@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('lines', () => {
 
-  eq (S.show (S.lines)) ('lines :: String -> Array String');
+  eq (String (S.lines)) ('lines :: String -> Array String');
 
   eq (S.lines ('')) ([]);
   eq (S.lines ('\n')) (['']);

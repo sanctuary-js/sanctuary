@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('lift2', () => {
 
-  eq (S.show (S.lift2)) ('lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
+  eq (String (S.lift2)) ('lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c');
 
   eq (S.lift2 (S.add) (S.Just (3)) (S.Just (3))) (S.Just (6));
   eq (S.lift2 (S.add) (S.Nothing) (S.Just (3))) (S.Nothing);

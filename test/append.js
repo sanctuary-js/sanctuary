@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('append', () => {
 
-  eq (S.show (S.append)) ('append :: (Applicative f, Semigroup f) => a -> f a -> f a');
+  eq (String (S.append)) ('append :: (Applicative f, Semigroup f) => a -> f a -> f a');
 
   eq (S.append (3) ([])) ([3]);
   eq (S.append (3) ([1, 2])) ([1, 2, 3]);

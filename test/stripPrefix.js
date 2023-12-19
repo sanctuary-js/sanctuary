@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('stripPrefix', () => {
 
-  eq (S.show (S.stripPrefix)) ('stripPrefix :: String -> String -> Maybe String');
+  eq (String (S.stripPrefix)) ('stripPrefix :: String -> String -> Maybe String');
 
   eq (S.stripPrefix ('') ('')) (S.Just (''));
   eq (S.stripPrefix ('') ('abc')) (S.Just ('abc'));

@@ -8,7 +8,7 @@ const throws = require ('./internal/throws');
 
 test ('parseInt', () => {
 
-  eq (S.show (S.parseInt)) ('parseInt :: Radix -> String -> Maybe Integer');
+  eq (String (S.parseInt)) ('parseInt :: Radix -> String -> Maybe Integer');
 
   eq (S.parseInt (10) ('42')) (S.Just (42));
   eq (S.parseInt (16) ('2A')) (S.Just (42));

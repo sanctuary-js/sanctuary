@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('Pair', () => {
 
-  eq (S.show (S.Pair)) ('Pair :: a -> b -> Pair a b');
+  eq (String (S.Pair)) ('Pair :: a -> b -> Pair a b');
 
   eq (S.Pair ('foo') (42)) (S.Pair ('foo') (42));
 

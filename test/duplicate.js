@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('duplicate', () => {
 
-  eq (S.show (S.duplicate)) ('duplicate :: Extend w => w a -> w (w a)');
+  eq (String (S.duplicate)) ('duplicate :: Extend w => w a -> w (w a)');
 
   eq (S.duplicate ([])) ([]);
   eq (S.duplicate ([1])) ([[1]]);

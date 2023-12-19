@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('all', () => {
 
-  eq (S.show (S.all)) ('all :: Foldable f => (a -> Boolean) -> f a -> Boolean');
+  eq (String (S.all)) ('all :: Foldable f => (a -> Boolean) -> f a -> Boolean');
 
   eq (S.all (S.gt (0)) ([])) (true);
   eq (S.all (S.gt (0)) ([0])) (false);

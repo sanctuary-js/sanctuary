@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('join', () => {
 
-  eq (S.show (S.join)) ('join :: Chain m => m (m a) -> m a');
+  eq (String (S.join)) ('join :: Chain m => m (m a) -> m a');
 
   eq (S.join ([])) ([]);
   eq (S.join ([[]])) ([]);

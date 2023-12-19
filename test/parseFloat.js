@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('parseFloat', () => {
 
-  eq (S.show (S.parseFloat)) ('parseFloat :: String -> Maybe Number');
+  eq (String (S.parseFloat)) ('parseFloat :: String -> Maybe Number');
 
   eq (S.parseFloat ('12.34')) (S.Just (12.34));
   eq (S.parseFloat ('Infinity')) (S.Just (Infinity));

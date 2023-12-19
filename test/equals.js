@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('equals', () => {
 
-  eq (S.show (S.equals)) ('equals :: Setoid a => a -> a -> Boolean');
+  eq (String (S.equals)) ('equals :: Setoid a => a -> a -> Boolean');
 
   eq (S.equals (S.Nothing) (S.Nothing)) (true);
   eq (S.equals (S.Just (NaN)) (S.Just (NaN))) (true);

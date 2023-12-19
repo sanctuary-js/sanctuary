@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('zip', () => {
 
-  eq (S.show (S.zip)) ('zip :: Array a -> Array b -> Array (Pair a b)');
+  eq (String (S.zip)) ('zip :: Array a -> Array b -> Array (Pair a b)');
 
   eq (S.zip (['a', 'b']) (['x', 'y', 'z']))
      ([S.Pair ('a') ('x'), S.Pair ('b') ('y')]);

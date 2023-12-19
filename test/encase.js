@@ -10,7 +10,7 @@ const rem = require ('./internal/rem');
 
 test ('encase', () => {
 
-  eq (S.show (S.encase)) ('encase :: (Throwing e a b) -> a -> Either e b');
+  eq (String (S.encase)) ('encase :: (Throwing e a b) -> a -> Either e b');
 
   //    safeFactorial :: Number -> Maybe Number
   const safeFactorial = S.encase (factorial);

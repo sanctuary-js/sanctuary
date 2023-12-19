@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('array', () => {
 
-  eq (S.show (S.array)) ('array :: b -> (a -> Array a -> b) -> Array a -> b');
+  eq (String (S.array)) ('array :: b -> (a -> Array a -> b) -> Array a -> b');
 
   const size = S.array (0) (head => tail => 1 + size (tail));
   eq (size ([])) (0);

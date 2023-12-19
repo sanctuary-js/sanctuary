@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('ap', () => {
 
-  eq (S.show (S.ap)) ('ap :: Apply f => f (a -> b) -> f a -> f b');
+  eq (String (S.ap)) ('ap :: Apply f => f (a -> b) -> f a -> f b');
 
   eq (S.ap ([]) ([])) ([]);
   eq (S.ap ([]) ([1, 2, 3])) ([]);

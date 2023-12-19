@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('add', () => {
 
-  eq (S.show (S.add)) ('add :: FiniteNumber -> FiniteNumber -> FiniteNumber');
+  eq (String (S.add)) ('add :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.add (1) (1)) (2);
   eq (S.add (-1) (-1)) (-2);

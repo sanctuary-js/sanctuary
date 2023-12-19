@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('odd', () => {
 
-  eq (S.show (S.odd)) ('odd :: Integer -> Boolean');
+  eq (String (S.odd)) ('odd :: Integer -> Boolean');
 
   eq (S.odd (1)) (true);
   eq (S.odd (-1)) (true);
