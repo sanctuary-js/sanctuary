@@ -9,7 +9,7 @@ const eq = require ('./internal/eq');
 
 test ('of', () => {
 
-  eq (S.show (S.of)) ('of :: Applicative f => TypeRep (f a) -> a -> f a');
+  eq (String (S.of)) ('of :: Applicative f => TypeRep (f a) -> a -> f a');
 
   eq (S.of (Array) (42)) ([42]);
   eq (S.of (Function) (42) (null)) (42);

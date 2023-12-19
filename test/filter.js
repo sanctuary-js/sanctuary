@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('filter', () => {
 
-  eq (S.show (S.filter)) ('filter :: Filterable f => (a -> Boolean) -> f a -> f a');
+  eq (String (S.filter)) ('filter :: Filterable f => (a -> Boolean) -> f a -> f a');
 
   eq (S.filter (S.odd) ([])) ([]);
   eq (S.filter (S.odd) ([0, 2, 4, 6, 8])) ([]);

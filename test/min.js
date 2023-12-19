@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('min', () => {
 
-  eq (S.show (S.min)) ('min :: Ord a => a -> a -> a');
+  eq (String (S.min)) ('min :: Ord a => a -> a -> a');
 
   eq (S.min (10) (2)) (2);
   eq (S.min (2) (10)) (2);

@@ -10,7 +10,7 @@ const equals = require ('./internal/equals');
 
 test ('match', () => {
 
-  eq (S.show (S.match)) ('match :: NonGlobalRegExp -> String -> Maybe (Array (Maybe String))');
+  eq (String (S.match)) ('match :: NonGlobalRegExp -> String -> Maybe (Array (Maybe String))');
 
   const scheme = '([a-z][a-z0-9+.-]*)';
   const authentication = '(.*?):(.*?)@';

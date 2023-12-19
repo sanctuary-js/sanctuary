@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('test', () => {
 
-  eq (S.show (S.test)) ('test :: RegExp -> String -> Boolean');
+  eq (String (S.test)) ('test :: RegExp -> String -> Boolean');
 
   eq (S.test (/^a/) ('abacus')) (true);
   eq (S.test (/^a/) ('banana')) (false);

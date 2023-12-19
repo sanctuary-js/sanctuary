@@ -8,7 +8,7 @@ const throws = require ('./internal/throws');
 
 test ('props', () => {
 
-  eq (S.show (S.props)) ('props :: Array String -> a -> b');
+  eq (String (S.props)) ('props :: Array String -> a -> b');
 
   throws (() => { S.props (['a', 'b', 'c']) ([1, 2, 3]); })
          (new TypeError ('‘props’ expected object to have a property at ["a", "b", "c"]; [1, 2, 3] does not'));

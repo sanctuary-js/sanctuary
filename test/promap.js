@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('promap', () => {
 
-  eq (S.show (S.promap)) ('promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
+  eq (String (S.promap)) ('promap :: Profunctor p => (a -> b) -> (c -> d) -> p b c -> p a d');
 
   const before = S.map (S.prop ('length'));
   const after = S.join (S.mult);

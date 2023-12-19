@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('unfold', () => {
 
-  eq (S.show (S.unfold)) ('unfold :: (b -> Maybe (Pair a b)) -> b -> Array a');
+  eq (String (S.unfold)) ('unfold :: (b -> Maybe (Pair a b)) -> b -> Array a');
 
   const f = n => n >= 5 ? S.Nothing : S.Just (S.Pair (n) (n + 1));
   eq (S.unfold (f) (5)) ([]);

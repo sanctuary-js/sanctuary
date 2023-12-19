@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('max', () => {
 
-  eq (S.show (S.max)) ('max :: Ord a => a -> a -> a');
+  eq (String (S.max)) ('max :: Ord a => a -> a -> a');
 
   eq (S.max (10) (2)) (10);
   eq (S.max (2) (10)) (10);

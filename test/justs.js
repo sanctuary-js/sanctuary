@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('justs', () => {
 
-  eq (S.show (S.justs)) ('justs :: (Filterable f, Functor f) => f (Maybe a) -> f a');
+  eq (String (S.justs)) ('justs :: (Filterable f, Functor f) => f (Maybe a) -> f a');
 
   eq (S.justs ([])) ([]);
   eq (S.justs ([S.Nothing, S.Nothing])) ([]);

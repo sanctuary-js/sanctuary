@@ -10,7 +10,7 @@ const equals = require ('./internal/equals');
 
 test ('splitOn', () => {
 
-  eq (S.show (S.splitOn)) ('splitOn :: String -> String -> Array String');
+  eq (String (S.splitOn)) ('splitOn :: String -> String -> Array String');
 
   eq (S.splitOn ('') ('abc')) (['a', 'b', 'c']);
   eq (S.splitOn (':') ('')) (['']);

@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('words', () => {
 
-  eq (S.show (S.words)) ('words :: String -> Array String');
+  eq (String (S.words)) ('words :: String -> Array String');
 
   eq (S.words ('')) ([]);
   eq (S.words (' ')) ([]);

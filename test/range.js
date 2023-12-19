@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('range', () => {
 
-  eq (S.show (S.range)) ('range :: Integer -> Integer -> Array Integer');
+  eq (String (S.range)) ('range :: Integer -> Integer -> Array Integer');
 
   eq (S.range (0) (0)) ([]);
   eq (S.range (0) (10)) ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);

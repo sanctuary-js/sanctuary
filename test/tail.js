@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('tail', () => {
 
-  eq (S.show (S.tail)) ('tail :: (Applicative f, Foldable f, Monoid f) => f a -> Maybe (f a)');
+  eq (String (S.tail)) ('tail :: (Applicative f, Foldable f, Monoid f) => f a -> Maybe (f a)');
 
   eq (S.tail ([])) (S.Nothing);
   eq (S.tail (['foo'])) (S.Just ([]));

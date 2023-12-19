@@ -9,7 +9,7 @@ const eq = require ('./internal/eq');
 
 test ('extend', () => {
 
-  eq (S.show (S.extend)) ('extend :: Extend w => (w a -> b) -> w a -> w b');
+  eq (String (S.extend)) ('extend :: Extend w => (w a -> b) -> w a -> w b');
 
   eq (S.extend (S.joinWith ('')) ([])) ([]);
   eq (S.extend (S.joinWith ('')) (['x'])) (['x']);

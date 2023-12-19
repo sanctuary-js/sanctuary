@@ -10,7 +10,7 @@ const equals = require ('./internal/equals');
 
 test ('remove', () => {
 
-  eq (S.show (S.remove)) ('remove :: String -> StrMap a -> StrMap a');
+  eq (String (S.remove)) ('remove :: String -> StrMap a -> StrMap a');
 
   eq (S.remove ('a') ({})) ({});
   eq (S.remove ('b') ({a: 1})) ({a: 1});

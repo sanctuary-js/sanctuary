@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('mult', () => {
 
-  eq (S.show (S.mult)) ('mult :: FiniteNumber -> FiniteNumber -> FiniteNumber');
+  eq (String (S.mult)) ('mult :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
   eq (S.mult (4) (2)) (8);
   eq (S.mult (4) (-2)) (-8);

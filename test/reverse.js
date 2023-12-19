@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('reverse', () => {
 
-  eq (S.show (S.reverse)) ('reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
+  eq (String (S.reverse)) ('reverse :: (Applicative f, Foldable f, Monoid f) => f a -> f a');
 
   eq (S.reverse ([])) ([]);
   eq (S.reverse ([1])) ([1]);

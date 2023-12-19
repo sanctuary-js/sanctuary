@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('head', () => {
 
-  eq (S.show (S.head)) ('head :: Foldable f => f a -> Maybe a');
+  eq (String (S.head)) ('head :: Foldable f => f a -> Maybe a');
 
   eq (S.head ([])) (S.Nothing);
   eq (S.head (['foo'])) (S.Just ('foo'));

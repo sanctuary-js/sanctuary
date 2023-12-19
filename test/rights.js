@@ -8,7 +8,7 @@ const eq = require ('./internal/eq');
 
 test ('rights', () => {
 
-  eq (S.show (S.rights)) ('rights :: (Filterable f, Functor f) => f (Either a b) -> f b');
+  eq (String (S.rights)) ('rights :: (Filterable f, Functor f) => f (Either a b) -> f b');
 
   eq (S.rights ([])) ([]);
   eq (S.rights ([S.Left ('a'), S.Left ('b')])) ([]);

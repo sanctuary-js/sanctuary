@@ -8,7 +8,7 @@ const strMap = require ('./internal/strMap');
 
 test ('value', () => {
 
-  eq (S.show (S.value)) ('value :: String -> StrMap a -> Maybe a');
+  eq (String (S.value)) ('value :: String -> StrMap a -> Maybe a');
 
   eq (S.value ('foo') ({foo: 1, bar: 2})) (S.Just (1));
   eq (S.value ('bar') ({foo: 1, bar: 2})) (S.Just (2));

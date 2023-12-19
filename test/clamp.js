@@ -7,7 +7,7 @@ const eq = require ('./internal/eq');
 
 test ('clamp', () => {
 
-  eq (S.show (S.clamp)) ('clamp :: Ord a => a -> a -> a -> a');
+  eq (String (S.clamp)) ('clamp :: Ord a => a -> a -> a -> a');
 
   eq (S.clamp (0) (100) (-1)) (0);
   eq (S.clamp (0) (100) (0)) (0);
