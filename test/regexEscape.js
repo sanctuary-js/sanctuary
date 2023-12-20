@@ -1,17 +1,17 @@
 'use strict';
 
+const {deepStrictEqual: eq} = require ('assert');
+
 const jsc = require ('jsverify');
 
 const S = require ('..');
 
-const eq = require ('./internal/eq');
-
 
 test ('regexEscape', () => {
 
-  eq (String (S.regexEscape)) ('regexEscape :: String -> String');
+  eq (String (S.regexEscape), 'regexEscape :: String -> String');
 
-  eq (S.regexEscape ('-=*{XYZ}*=-')) ('\\-=\\*\\{XYZ\\}\\*=\\-');
+  eq (S.regexEscape ('-=*{XYZ}*=-'), '\\-=\\*\\{XYZ\\}\\*=\\-');
 
   jsc.assert (
     jsc.forall (

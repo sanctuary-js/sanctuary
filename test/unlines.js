@@ -1,19 +1,19 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('unlines', () => {
 
-  eq (String (S.unlines)) ('unlines :: Array String -> String');
+  eq (String (S.unlines), 'unlines :: Array String -> String');
 
-  eq (S.unlines ([])) ('');
-  eq (S.unlines ([''])) ('\n');
-  eq (S.unlines (['', ''])) ('\n\n');
-  eq (S.unlines (['\n'])) ('\n\n');
-  eq (S.unlines (['\n', '\n'])) ('\n\n\n\n');
-  eq (S.unlines (['foo', 'bar', 'baz'])) ('foo\nbar\nbaz\n');
+  eq (S.unlines ([]), '');
+  eq (S.unlines (['']), '\n');
+  eq (S.unlines (['', '']), '\n\n');
+  eq (S.unlines (['\n']), '\n\n');
+  eq (S.unlines (['\n', '\n']), '\n\n\n\n');
+  eq (S.unlines (['foo', 'bar', 'baz']), 'foo\nbar\nbaz\n');
 
 });

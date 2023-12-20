@@ -1,14 +1,14 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('pair', () => {
 
-  eq (String (S.pair)) ('pair :: (a -> b -> c) -> Pair a b -> c');
+  eq (String (S.pair), 'pair :: (a -> b -> c) -> Pair a b -> c');
 
-  eq (S.pair (S.concat) (S.Pair ('foo') ('bar'))) ('foobar');
+  eq (S.pair (S.concat) (S.Pair ('foo') ('bar')), 'foobar');
 
 });

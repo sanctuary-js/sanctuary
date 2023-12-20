@@ -1,18 +1,18 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('I', () => {
 
-  eq (String (S.I)) ('I :: a -> a');
+  eq (String (S.I), 'I :: a -> a');
 
-  eq (S.I ([1, 2, 3])) ([1, 2, 3]);
-  eq (S.I (['foo', 42])) (['foo', 42]);
+  eq (S.I ([1, 2, 3]), [1, 2, 3]);
+  eq (S.I (['foo', 42]), ['foo', 42]);
 
   const x = Symbol ('x');
-  eq (S.I (x) === x) (true);
+  eq (S.I (x) === x, true);
 
 });

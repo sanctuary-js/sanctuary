@@ -1,14 +1,14 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('singleton', () => {
 
-  eq (String (S.singleton)) ('singleton :: String -> a -> StrMap a');
+  eq (String (S.singleton), 'singleton :: String -> a -> StrMap a');
 
-  eq (S.singleton ('foo') (42)) ({foo: 42});
+  eq (S.singleton ('foo') (42), {foo: 42});
 
 });

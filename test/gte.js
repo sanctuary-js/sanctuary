@@ -1,14 +1,14 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('gte', () => {
 
-  eq (String (S.gte)) ('gte :: Ord a => a -> a -> Boolean');
+  eq (String (S.gte), 'gte :: Ord a => a -> a -> Boolean');
 
-  eq (S.filter (S.gte (3)) ([1, 2, 3, 4, 5])) ([3, 4, 5]);
+  eq (S.filter (S.gte (3)) ([1, 2, 3, 4, 5]), [3, 4, 5]);
 
 });

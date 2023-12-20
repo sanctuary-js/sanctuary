@@ -1,14 +1,14 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('sub', () => {
 
-  eq (String (S.sub)) ('sub :: FiniteNumber -> FiniteNumber -> FiniteNumber');
+  eq (String (S.sub), 'sub :: FiniteNumber -> FiniteNumber -> FiniteNumber');
 
-  eq (S.map (S.sub (1)) ([1, 2, 3])) ([0, 1, 2]);
+  eq (S.map (S.sub (1)) ([1, 2, 3]), [0, 1, 2]);
 
 });

@@ -1,17 +1,17 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('and', () => {
 
-  eq (String (S.and)) ('and :: Boolean -> Boolean -> Boolean');
+  eq (String (S.and), 'and :: Boolean -> Boolean -> Boolean');
 
-  eq (S.and (false) (false)) (false);
-  eq (S.and (false) (true)) (false);
-  eq (S.and (true) (false)) (false);
-  eq (S.and (true) (true)) (true);
+  eq (S.and (false) (false), false);
+  eq (S.and (false) (true), false);
+  eq (S.and (true) (false), false);
+  eq (S.and (true) (true), true);
 
 });

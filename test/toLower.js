@@ -1,15 +1,15 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('toLower', () => {
 
-  eq (String (S.toLower)) ('toLower :: String -> String');
+  eq (String (S.toLower), 'toLower :: String -> String');
 
-  eq (S.toLower ('')) ('');
-  eq (S.toLower ('ABC def 123')) ('abc def 123');
+  eq (S.toLower (''), '');
+  eq (S.toLower ('ABC def 123'), 'abc def 123');
 
 });

@@ -1,16 +1,16 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('zero', () => {
 
-  eq (String (S.zero)) ('zero :: Plus f => TypeRep (f a) -> f a');
+  eq (String (S.zero), 'zero :: Plus f => TypeRep (f a) -> f a');
 
-  eq (S.zero (Array)) ([]);
-  eq (S.zero (Object)) ({});
-  eq (S.zero (S.Maybe)) (S.Nothing);
+  eq (S.zero (Array), []);
+  eq (S.zero (Object), {});
+  eq (S.zero (S.Maybe), S.Nothing);
 
 });

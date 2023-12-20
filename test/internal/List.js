@@ -1,12 +1,12 @@
 'use strict';
 
+const {deepStrictEqual: eq} = require ('assert');
+
 const FL = require ('fantasy-land');
 const $ = require ('sanctuary-def');
 const show = require ('sanctuary-show');
 const Z = require ('sanctuary-type-classes');
 const type = require ('sanctuary-type-identifiers');
-
-const eq = require ('./eq');
 
 
 const List = {prototype: _List.prototype};
@@ -38,9 +38,9 @@ const Nil = List.Nil = new _List ('Nil');
 
 //    Cons :: a -> List a -> List a
 const Cons = List.Cons = function Cons(head) {
-  eq (arguments.length) (Cons.length);
+  eq (arguments.length, Cons.length);
   return function Cons$1(tail) {
-    eq (arguments.length) (Cons$1.length);
+    eq (arguments.length, Cons$1.length);
     return new _List ('Cons', head, tail);
   };
 };

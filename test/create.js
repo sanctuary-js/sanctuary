@@ -1,11 +1,10 @@
 'use strict';
 
+const {deepStrictEqual: eq, throws} = require ('assert');
+
 const $ = require ('sanctuary-def');
 
 const S = require ('..');
-
-const eq = require ('./internal/eq');
-const throws = require ('./internal/throws');
 
 
 //    FooTrue42 :: Type
@@ -22,29 +21,29 @@ const uncheckedCustomEnv  = S.create ({checkTypes: false, env: customEnv});
 
 test ('create', () => {
 
-  eq (String (S.create)) ('create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
+  eq (String (S.create), 'create :: { checkTypes :: Boolean, env :: Array Any } -> Object');
 
   const expected = S.sort (Object.keys (S));
-  eq (S.sort (Object.keys (checkedDefaultEnv))) (expected);
-  eq (S.sort (Object.keys (checkedCustomEnv))) (expected);
-  eq (S.sort (Object.keys (uncheckedDefaultEnv))) (expected);
-  eq (S.sort (Object.keys (uncheckedCustomEnv))) (expected);
+  eq (S.sort (Object.keys (checkedDefaultEnv)), expected);
+  eq (S.sort (Object.keys (checkedCustomEnv)), expected);
+  eq (S.sort (Object.keys (uncheckedDefaultEnv)), expected);
+  eq (S.sort (Object.keys (uncheckedCustomEnv)), expected);
 
-  eq (checkedDefaultEnv.env) (S.env);
-  eq (checkedCustomEnv.env) (customEnv);
-  eq (uncheckedDefaultEnv.env) (S.env);
-  eq (uncheckedCustomEnv.env) (customEnv);
+  eq (checkedDefaultEnv.env, S.env);
+  eq (checkedCustomEnv.env, customEnv);
+  eq (uncheckedDefaultEnv.env, S.env);
+  eq (uncheckedCustomEnv.env, customEnv);
 
-  eq (checkedDefaultEnv.unchecked.env) (S.env);
-  eq (checkedCustomEnv.unchecked.env) (customEnv);
-  eq (uncheckedDefaultEnv.unchecked.env) (S.env);
-  eq (uncheckedCustomEnv.unchecked.env) (customEnv);
+  eq (checkedDefaultEnv.unchecked.env, S.env);
+  eq (checkedCustomEnv.unchecked.env, customEnv);
+  eq (uncheckedDefaultEnv.unchecked.env, S.env);
+  eq (uncheckedCustomEnv.unchecked.env, customEnv);
 
-  eq (uncheckedDefaultEnv.add (1) (42)) (S.add (1) (42));
-  eq (uncheckedDefaultEnv.add (1) ('XXX')) ('1XXX');
+  eq (uncheckedDefaultEnv.add (1) (42), S.add (1) (42));
+  eq (uncheckedDefaultEnv.add (1) ('XXX'), '1XXX');
 
-  throws (() => { S.I (['foo', 'foo', 42]); })
-         (new TypeError ('Type-variable constraint violation\n' +
+  throws (() => { S.I (['foo', 'foo', 42]); },
+          new TypeError ('Type-variable constraint violation\n' +
                          '\n' +
                          'I :: a -> a\n' +
                          '     ^\n' +
@@ -54,6 +53,6 @@ test ('create', () => {
                          '\n' +
                          'Since there is no type of which all the above values are members, the type-variable constraint has been violated.\n'));
 
-  eq (checkedCustomEnv.I (['foo', 'foo', 42])) (['foo', 'foo', 42]);
+  eq (checkedCustomEnv.I (['foo', 'foo', 42]), ['foo', 'foo', 42]);
 
 });
