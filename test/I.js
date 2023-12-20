@@ -3,7 +3,6 @@
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const properties = require ('./properties');
 
 
 test ('I', () => {
@@ -13,7 +12,7 @@ test ('I', () => {
   eq (S.I ([1, 2, 3])) ([1, 2, 3]);
   eq (S.I (['foo', 42])) (['foo', 42]);
 
-  eq (properties.idempotent (S.I)) (true);
-  eq (properties.involution (S.I)) (true);
+  const x = Symbol ('x');
+  eq (S.I (x) === x) (true);
 
 });
