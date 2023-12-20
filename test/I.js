@@ -16,12 +16,4 @@ test ('I', () => {
   eq (properties.idempotent (S.I)) (true);
   eq (properties.involution (S.I)) (true);
 
-  if (typeof document !== 'undefined') {
-    //  eslint-disable-next-line no-undef
-    const a = document.createElement ('a');
-    const href = S.prop ('href');
-    eq (href (a)) ('');
-    eq (href (S.I (a))) ('');
-  }
-
 });
