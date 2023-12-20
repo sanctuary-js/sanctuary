@@ -3,7 +3,6 @@
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const map = require ('./internal/map');
 
 
 test ('chainRec', () => {
@@ -11,8 +10,8 @@ test ('chainRec', () => {
   eq (String (S.chainRec)) ('chainRec :: ChainRec m => TypeRep (m b) -> (a -> m (Either a b)) -> a -> m b');
 
   eq (S.chainRec (Array)
-                 (s => s.length === 2 ? map (S.Right) ([s + '!', s + '?'])
-                                      : map (S.Left) ([s + 'o', s + 'n']))
+                 (s => s.length === 2 ? S.map (S.Right) ([s + '!', s + '?'])
+                                      : S.map (S.Left) ([s + 'o', s + 'n']))
                  (''))
      (['oo!', 'oo?', 'on!', 'on?', 'no!', 'no?', 'nn!', 'nn?']);
 
@@ -21,8 +20,8 @@ test ('chainRec', () => {
   //  version of one from sanctuary-type-classes. The "stop" value is lower
   //  to prevent the execution time from exceeding the test runner's timeout.
   eq (S.chainRec (Function)
-                 (n => n === 3000 ? map (S.Right) (env => n + env.inc)
-                                  : map (S.Left) (env => n + env.step))
+                 (n => n === 3000 ? S.map (S.Right) (env => n + env.inc)
+                                  : S.map (S.Left) (env => n + env.step))
                  (0)
                  ({step: 2, inc: 100}))
      (3100);
