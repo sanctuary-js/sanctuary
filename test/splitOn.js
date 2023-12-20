@@ -1,11 +1,11 @@
 'use strict';
 
 const jsc = require ('jsverify');
+const Z = require ('sanctuary-type-classes');
 
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const equals = require ('./internal/equals');
 
 
 test ('splitOn', () => {
@@ -27,7 +27,7 @@ test ('splitOn', () => {
     const s = t.slice (Math.min (i, j), Math.max (i, j));
     const lhs = S.joinWith (s) (S.splitOn (s) (t));
     const rhs = t;
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
 });

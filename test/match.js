@@ -1,11 +1,11 @@
 'use strict';
 
 const jsc = require ('jsverify');
+const Z = require ('sanctuary-type-classes');
 
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const equals = require ('./internal/equals');
 
 
 test ('match', () => {
@@ -31,7 +31,7 @@ test ('match', () => {
     const p = '([A-Za-z]+)';
     const lhs = S.head (S.matchAll (S.regex ('g') (p)) (s));
     const rhs = S.match (S.regex ('') (p)) (s);
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
 });

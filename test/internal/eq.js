@@ -3,8 +3,7 @@
 const assert = require ('assert');
 
 const show = require ('sanctuary-show');
-
-const equals = require ('./equals');
+const Z = require ('sanctuary-type-classes');
 
 //    eq :: a -> b -> Undefined !
 module.exports = function eq(actual) {
@@ -12,6 +11,6 @@ module.exports = function eq(actual) {
   return function eq$1(expected) {
     assert.strictEqual (arguments.length, eq$1.length);
     assert.strictEqual (show (actual), show (expected));
-    assert.strictEqual (equals (actual) (expected), true);
+    assert.strictEqual (Z.equals (actual, expected), true);
   };
 };

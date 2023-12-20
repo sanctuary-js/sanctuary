@@ -1,11 +1,11 @@
 'use strict';
 
 const jsc = require ('jsverify');
+const Z = require ('sanctuary-type-classes');
 
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const equals = require ('./internal/equals');
 
 
 test ('insert', () => {
@@ -20,7 +20,7 @@ test ('insert', () => {
     const insert = S.insert (key) (val);
     const lhs = insert (insert (map));
     const rhs = insert (map);
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
 });
