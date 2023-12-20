@@ -1,11 +1,11 @@
 'use strict';
 
 const jsc = require ('jsverify');
+const Z = require ('sanctuary-type-classes');
 
 const S = require ('..');
 
 const eq = require ('./internal/eq');
-const equals = require ('./internal/equals');
 
 
 test ('remove', () => {
@@ -20,7 +20,7 @@ test ('remove', () => {
     const remove = S.remove (key);
     const lhs = remove (remove (map));
     const rhs = remove (map);
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
 });

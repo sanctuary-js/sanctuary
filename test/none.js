@@ -1,12 +1,12 @@
 'use strict';
 
 const jsc = require ('jsverify');
+const Z = require ('sanctuary-type-classes');
 
 const S = require ('./internal/sanctuary');
 
 const {Nil, Cons} = require ('./internal/List');
 const eq = require ('./internal/eq');
-const equals = require ('./internal/equals');
 
 
 test ('none', () => {
@@ -37,14 +37,14 @@ test ('none', () => {
     const p = S.odd;
     const lhs = S.none (p) (xs);
     const rhs = S.not (S.any (p) (xs));
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
   jsc.assert (jsc.forall (jsc.array (jsc.integer), xs => {
     const p = S.odd;
     const lhs = S.none (p) (xs);
     const rhs = S.all (S.complement (p)) (xs);
-    return equals (lhs) (rhs);
+    return Z.equals (lhs, rhs);
   }), {tests: 1000});
 
 });
