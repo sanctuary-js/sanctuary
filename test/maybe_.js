@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import S from '../index.js';
 
-const S = require ('..');
-
-const factorial = require ('./internal/factorial');
+import factorial from './internal/factorial.js';
 
 
 test ('maybe_', () => {

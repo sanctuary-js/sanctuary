@@ -394,10 +394,10 @@
   if (typeof __doctest !== 'undefined') {
     const dirname = __dirname;  // eslint-disable-line no-undef
     const {create, env} = __doctest.require (dirname);
-    const List = __doctest.require (`${dirname}/test/internal/List`);
+    const List = __doctest.require (`${dirname}/test/internal/List.cjs`);
     Descending = __doctest.require ('sanctuary-descending');
     ({Nil, Cons} = List);
-    Sum = __doctest.require (`${dirname}/test/internal/Sum`);
+    Sum = __doctest.require (`${dirname}/test/internal/Sum.cjs`);
     S = Object.assign (
       create ({
         checkTypes: true,

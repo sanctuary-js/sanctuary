@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import $ from 'sanctuary-def';
 
-const $ = require ('sanctuary-def');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 test ('env', () => {

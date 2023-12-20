@@ -1,12 +1,10 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import $ from 'sanctuary-def';
 
-const $ = require ('sanctuary-def');
+import S from '../index.js';
 
-const S = require ('..');
-
-const Sum = require ('./internal/Sum');
+import {Sum} from './internal/Sum.mjs';
 
 
 test ('is', () => {

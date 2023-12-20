@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq, throws} from 'assert';
 
-const {deepStrictEqual: eq, throws} = require ('assert');
+import $ from 'sanctuary-def';
 
-const $ = require ('sanctuary-def');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 //    FooTrue42 :: Type

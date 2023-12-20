@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import S from '../index.js';
 
-const S = require ('..');
-
-const strMap = require ('./internal/strMap');
+import strMap from './internal/strMap.js';
 
 
 test ('value', () => {

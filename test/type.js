@@ -1,9 +1,7 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
+import vm from 'vm';
 
-const {deepStrictEqual: eq} = require ('assert');
-const vm = require ('vm');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 test ('type', () => {
