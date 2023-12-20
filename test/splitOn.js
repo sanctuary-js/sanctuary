@@ -1,23 +1,23 @@
 'use strict';
 
+const {deepStrictEqual: eq} = require ('assert');
+
 const jsc = require ('jsverify');
 const Z = require ('sanctuary-type-classes');
 
 const S = require ('..');
 
-const eq = require ('./internal/eq');
-
 
 test ('splitOn', () => {
 
-  eq (String (S.splitOn)) ('splitOn :: String -> String -> Array String');
+  eq (String (S.splitOn), 'splitOn :: String -> String -> Array String');
 
-  eq (S.splitOn ('') ('abc')) (['a', 'b', 'c']);
-  eq (S.splitOn (':') ('')) (['']);
-  eq (S.splitOn (':') (':')) (['', '']);
-  eq (S.splitOn (':') (':foo:')) (['', 'foo', '']);
-  eq (S.splitOn (':') ('foo:bar:baz')) (['foo', 'bar', 'baz']);
-  eq (S.splitOn ('::') ('foo::bar::baz')) (['foo', 'bar', 'baz']);
+  eq (S.splitOn ('') ('abc'), ['a', 'b', 'c']);
+  eq (S.splitOn (':') (''), ['']);
+  eq (S.splitOn (':') (':'), ['', '']);
+  eq (S.splitOn (':') (':foo:'), ['', 'foo', '']);
+  eq (S.splitOn (':') ('foo:bar:baz'), ['foo', 'bar', 'baz']);
+  eq (S.splitOn ('::') ('foo::bar::baz'), ['foo', 'bar', 'baz']);
 
   jsc.assert (jsc.forall (jsc.asciistring, t => {
     const min = 0;

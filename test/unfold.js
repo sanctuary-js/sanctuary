@@ -1,17 +1,17 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('unfold', () => {
 
-  eq (String (S.unfold)) ('unfold :: (b -> Maybe (Pair a b)) -> b -> Array a');
+  eq (String (S.unfold), 'unfold :: (b -> Maybe (Pair a b)) -> b -> Array a');
 
   const f = n => n >= 5 ? S.Nothing : S.Just (S.Pair (n) (n + 1));
-  eq (S.unfold (f) (5)) ([]);
-  eq (S.unfold (f) (4)) ([4]);
-  eq (S.unfold (f) (1)) ([1, 2, 3, 4]);
+  eq (S.unfold (f) (5), []);
+  eq (S.unfold (f) (4), [4]);
+  eq (S.unfold (f) (1), [1, 2, 3, 4]);
 
 });

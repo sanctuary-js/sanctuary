@@ -1,15 +1,15 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('fromRight', () => {
 
-  eq (String (S.fromRight)) ('fromRight :: b -> Either a b -> b');
+  eq (String (S.fromRight), 'fromRight :: b -> Either a b -> b');
 
-  eq (S.fromRight (123) (S.Right (789))) (789);
-  eq (S.fromRight (123) (S.Left ('abc'))) (123);
+  eq (S.fromRight (123) (S.Right (789)), 789);
+  eq (S.fromRight (123) (S.Left ('abc')), 123);
 
 });

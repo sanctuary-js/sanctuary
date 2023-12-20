@@ -1,13 +1,11 @@
 'use strict';
 
+const {deepStrictEqual: eq, throws} = require ('assert');
 const fs = require ('fs');
 const path = require ('path');
 const vm = require ('vm');
 
 const $$version = (require ('sanctuary-def/package.json')).version;
-
-const eq = require ('./internal/eq');
-const throws = require ('./internal/throws');
 
 
 suite ('NODE_ENV', () => {
@@ -36,7 +34,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    throws (() => { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }, expected);
   });
 
   test ('typeof process !== "undefined" && process == null', () => {
@@ -47,7 +45,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    throws (() => { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }, expected);
   });
 
   test ('typeof process !== "undefined" && process != null && process.env == null', () => {
@@ -58,7 +56,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    throws (() => { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }, expected);
   });
 
   test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV == null', () => {
@@ -69,7 +67,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    throws (() => { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }, expected);
   });
 
   test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV !== "production"', () => {
@@ -80,7 +78,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    throws (() => { context.module.exports.add ('foo'); }) (expected);
+    throws (() => { context.module.exports.add ('foo'); }, expected);
   });
 
   test ('typeof process !== "undefined" && process != null && process.env != null && process.env.NODE_ENV === "production"', () => {
@@ -91,7 +89,7 @@ suite ('NODE_ENV', () => {
     };
     vm.runInNewContext (source, context);
 
-    eq (context.module.exports.add ('foo') ('bar')) ('foobar');
+    eq (context.module.exports.add ('foo') ('bar'), 'foobar');
   });
 
 });

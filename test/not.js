@@ -1,15 +1,15 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('not', () => {
 
-  eq (String (S.not)) ('not :: Boolean -> Boolean');
+  eq (String (S.not), 'not :: Boolean -> Boolean');
 
-  eq (S.not (false)) (true);
-  eq (S.not (true)) (false);
+  eq (S.not (false), true);
+  eq (S.not (true), false);
 
 });

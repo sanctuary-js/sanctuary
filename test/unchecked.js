@@ -1,15 +1,15 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('unchecked', () => {
 
-  eq (S.unchecked.add (2) (2)) (4);
-  eq (S.unchecked.add (2) ('2')) ('22');
-  eq (S.unchecked.add ('2') (2)) ('22');
-  eq (S.unchecked.add ('2') ('2')) ('22');
+  eq (S.unchecked.add (2) (2), 4);
+  eq (S.unchecked.add (2) ('2'), '22');
+  eq (S.unchecked.add ('2') (2), '22');
+  eq (S.unchecked.add ('2') ('2'), '22');
 
 });

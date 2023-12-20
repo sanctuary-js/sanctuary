@@ -1,16 +1,16 @@
 'use strict';
 
-const S = require ('..');
+const {deepStrictEqual: eq} = require ('assert');
 
-const eq = require ('./internal/eq');
+const S = require ('..');
 
 
 test ('empty', () => {
 
-  eq (String (S.empty)) ('empty :: Monoid a => TypeRep a -> a');
+  eq (String (S.empty), 'empty :: Monoid a => TypeRep a -> a');
 
-  eq (S.empty (String)) ('');
-  eq (S.empty (Array)) ([]);
-  eq (S.empty (Object)) ({});
+  eq (S.empty (String), '');
+  eq (S.empty (Array), []);
+  eq (S.empty (Object), {});
 
 });
