@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import jsc from 'jsverify';
 
-const jsc = require ('jsverify');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 test ('regexEscape', () => {

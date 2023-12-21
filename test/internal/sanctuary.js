@@ -1,11 +1,9 @@
-'use strict';
+import $ from 'sanctuary-def';
 
-const $ = require ('sanctuary-def');
+import S from '../../index.js';
 
-const S = require ('../..');
-
-const List = require ('./List');
-const Sum = require ('./Sum');
+import {List} from './List.mjs';
+import {Sum} from './Sum.mjs';
 
 
 //    env :: Array Type
@@ -14,4 +12,4 @@ const env = S.env.concat ([
   Sum.Type,
 ]);
 
-module.exports = S.create ({checkTypes: true, env});
+export default S.create ({checkTypes: true, env});

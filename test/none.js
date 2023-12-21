@@ -1,13 +1,11 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import jsc from 'jsverify';
+import Z from 'sanctuary-type-classes';
 
-const jsc = require ('jsverify');
-const Z = require ('sanctuary-type-classes');
+import S from './internal/sanctuary.js';
 
-const S = require ('./internal/sanctuary');
-
-const {Nil, Cons} = require ('./internal/List');
+import {Nil, Cons} from './internal/List.mjs';
 
 
 test ('none', () => {

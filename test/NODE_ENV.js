@@ -1,16 +1,25 @@
-'use strict';
-
-const {deepStrictEqual: eq, throws} = require ('assert');
-const fs = require ('fs');
-const path = require ('path');
-const vm = require ('vm');
-
-const $$version = (require ('sanctuary-def/package.json')).version;
+import {deepStrictEqual as eq, throws} from 'assert';
+import fs from 'fs';
+import module from 'module';
+import path from 'path';
+import url from 'url';
+import vm from 'vm';
 
 
 suite ('NODE_ENV', () => {
 
+  const __filename = url.fileURLToPath (import.meta.url);
+  const __dirname = path.dirname (__filename);
+
   const source = fs.readFileSync (path.join (__dirname, '..', 'index.js'), 'utf8');
+
+  const {version: $$version} = (
+    JSON.parse (
+      fs.readFileSync (
+        path.join (__dirname, '..', 'node_modules', 'sanctuary-def', 'package.json')
+      )
+    )
+  );
 
   const expected = new TypeError ([
     'Invalid value',
@@ -30,7 +39,7 @@ suite ('NODE_ENV', () => {
   test ('typeof process === "undefined"', () => {
     const context = {
       module: {exports: {}},
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 
@@ -41,7 +50,7 @@ suite ('NODE_ENV', () => {
     const context = {
       module: {exports: {}},
       process: null,
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 
@@ -52,7 +61,7 @@ suite ('NODE_ENV', () => {
     const context = {
       module: {exports: {}},
       process: {},
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 
@@ -63,7 +72,7 @@ suite ('NODE_ENV', () => {
     const context = {
       module: {exports: {}},
       process: {env: {}},
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 
@@ -74,7 +83,7 @@ suite ('NODE_ENV', () => {
     const context = {
       module: {exports: {}},
       process: {env: {NODE_ENV: 'XXX'}},
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 
@@ -85,7 +94,7 @@ suite ('NODE_ENV', () => {
     const context = {
       module: {exports: {}},
       process: {env: {NODE_ENV: 'production'}},
-      require: require,
+      require: module.createRequire (import.meta.url),
     };
     vm.runInNewContext (source, context);
 

@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import S from './internal/sanctuary.js';
 
-const S = require ('./internal/sanctuary');
-
-const {Nil, Cons} = require ('./internal/List');
+import {Nil, Cons} from './internal/List.mjs';
 
 
 test ('last', () => {

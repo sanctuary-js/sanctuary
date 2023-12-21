@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import Identity from 'sanctuary-identity';
 
-const Identity = require ('sanctuary-identity');
-
-const S = require ('./internal/sanctuary');
+import S from './internal/sanctuary.js';
 
 
 test ('extract', () => {

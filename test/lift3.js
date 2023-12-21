@@ -1,10 +1,8 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import S from '../index.js';
 
-const S = require ('..');
-
-const area = require ('./internal/area');
+import area from './internal/area.js';
 
 
 test ('lift3', () => {

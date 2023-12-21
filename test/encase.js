@@ -1,12 +1,10 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
+import S from '../index.js';
 
-const S = require ('..');
-
-const area = require ('./internal/area');
-const factorial = require ('./internal/factorial');
-const rem = require ('./internal/rem');
+import area from './internal/area.js';
+import factorial from './internal/factorial.js';
+import rem from './internal/rem.js';
 
 
 test ('encase', () => {

@@ -1,8 +1,6 @@
-'use strict';
+import {deepStrictEqual as eq} from 'assert';
 
-const {deepStrictEqual: eq} = require ('assert');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 test ('chainRec', () => {

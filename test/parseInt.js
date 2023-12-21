@@ -1,8 +1,6 @@
-'use strict';
+import {deepStrictEqual as eq, throws} from 'assert';
 
-const {deepStrictEqual: eq, throws} = require ('assert');
-
-const S = require ('..');
+import S from '../index.js';
 
 
 test ('parseInt', () => {

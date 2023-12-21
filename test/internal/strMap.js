@@ -1,5 +1,3 @@
-'use strict';
-
 const proto = Object.create (null);
 
 Object.defineProperty (
@@ -26,4 +24,4 @@ Object.defineProperty (
   {enumerable: true, value: 'enumerable own property'}
 );
 
-module.exports = strMap;
+export default strMap;
