@@ -4,8 +4,6 @@ import $ from 'sanctuary-def';
 
 import S from '../index.js';
 
-import {Sum} from './internal/Sum.mjs';
-
 
 test ('is', () => {
 
@@ -34,19 +32,5 @@ test ('is', () => {
   eq (S.is ($.Either ($.String) ($.Integer)) (S.Right ('')), false);
   eq (S.is ($.Either ($.String) ($.Integer)) (S.Left ('')), true);
   eq (S.is ($.Either ($.String) ($.Integer)) (S.Right (0)), true);
-
-  const a = $.TypeVariable ('a');
-
-  eq (S.is ($.Array (a)) ([]), true);
-  eq (S.is ($.Array (a)) ([1, 2, 3]), true);
-  eq (S.is ($.Array (a)) (['foo', 'bar', 'baz']), true);
-  eq (S.is ($.Array (a)) (['foo', true, 42]), false);
-  eq (S.is ($.Array (a)) ([Sum (1), Sum (2), Sum (3)]), false);
-
-  eq ((S.create ({checkTypes: true, env: []})).is ($.Array (a)) ([]), false);
-  eq ((S.create ({checkTypes: true, env: [$.String]})).is ($.Array (a)) ([]), true);
-  eq ((S.create ({checkTypes: true, env: [$.String]})).is ($.Array (a)) ([1, 2, 3]), false);
-  eq ((S.create ({checkTypes: true, env: [$.Number]})).is ($.Array (a)) ([1, 2, 3]), true);
-  eq ((S.create ({checkTypes: true, env: [Sum.Type]})).is ($.Array (a)) ([Sum (1), Sum (2), Sum (3)]), true);
 
 });

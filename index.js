@@ -526,7 +526,6 @@
       S[name] = def (name) (consts) (types) (impl);
     }
     S.env = env;
-    S.is = def ('is') ({}) ([$.Type, $.Any, $.Boolean]) ($.test (env));
     S.Maybe = Maybe;
     S.Nothing = Nothing;
     S.Either = Either;
@@ -633,7 +632,7 @@
   //# is :: Type -> Any -> Boolean
   //.
   //. Returns `true` [iff][] the given value is a member of the specified type.
-  //. See [`$.test`][] for details.
+  //. See [`$.test`][] for details, and for advanced use cases.
   //.
   //. ```javascript
   //. > S.is ($.Array ($.Integer)) ([1, 2, 3])
@@ -642,6 +641,11 @@
   //. > S.is ($.Array ($.Integer)) ([1, 2, 3.14])
   //. false
   //. ```
+  _.is = {
+    consts: {},
+    types: [$.Type, $.Any, $.Boolean],
+    impl: $.test ([]),
+  };
 
   //. ### Showable
 
