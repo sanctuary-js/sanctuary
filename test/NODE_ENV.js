@@ -1,9 +1,9 @@
-import {deepStrictEqual as eq, throws} from 'assert';
-import fs from 'fs';
-import module from 'module';
-import path from 'path';
-import url from 'url';
-import vm from 'vm';
+import {deepStrictEqual as eq, throws} from 'node:assert';
+import fs from 'node:fs';
+import module from 'node:module';
+import path from 'node:path';
+import url from 'node:url';
+import vm from 'node:vm';
 
 
 suite ('NODE_ENV', () => {
