@@ -1,6 +1,6 @@
 'use strict';
 
-const {deepStrictEqual: eq} = require ('assert');
+const {deepStrictEqual: eq} = require ('node:assert');
 
 const FL = require ('fantasy-land');
 const $ = require ('sanctuary-def');

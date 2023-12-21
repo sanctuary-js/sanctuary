@@ -1,4 +1,4 @@
-import {deepStrictEqual as eq, throws} from 'assert';
+import {deepStrictEqual as eq, throws} from 'node:assert';
 
 import S from '../index.js';
 

@@ -1,5 +1,5 @@
-import {deepStrictEqual as eq} from 'assert';
-import vm from 'vm';
+import {deepStrictEqual as eq} from 'node:assert';
+import vm from 'node:vm';
 
 import S from '../index.js';
 
