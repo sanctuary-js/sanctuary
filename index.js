@@ -4277,10 +4277,11 @@
   //. > S.stripPrefix ('https://') ('http://sanctuary.js.org')
   //. Nothing
   //. ```
-  const stripPrefix = prefix => s => {
-    const idx = prefix.length;
-    return s.slice (0, idx) === prefix ? Just (s.slice (idx)) : Nothing;
-  };
+  const stripPrefix = prefix => s => (
+    s.startsWith (prefix) ?
+    Just (s.slice (prefix.length)) :
+    Nothing
+  );
   _.stripPrefix = {
     consts: {},
     types: [$.String, $.String, $.Maybe ($.String)],
@@ -4302,10 +4303,11 @@
   //. > S.stripSuffix ('.md') ('README')
   //. Nothing
   //. ```
-  const stripSuffix = suffix => s => {
-    const idx = s.length - suffix.length;  // value may be negative
-    return s.slice (idx) === suffix ? Just (s.slice (0, idx)) : Nothing;
-  };
+  const stripSuffix = suffix => s => (
+    s.endsWith (suffix) ?
+    Just (s.slice (0, s.length - suffix.length)) :
+    Nothing
+  );
   _.stripSuffix = {
     consts: {},
     types: [$.String, $.String, $.Maybe ($.String)],
