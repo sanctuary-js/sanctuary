@@ -341,7 +341,7 @@
 
   'use strict';
 
-  /* istanbul ignore else */
+  /* c8 ignore start */
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = f (require ('sanctuary-def'),
                         require ('sanctuary-either'),
@@ -368,6 +368,7 @@
                         self.sanctuaryTypeClasses,
                         self.sanctuaryTypeIdentifiers);
   }
+  /* c8 ignore end */
 
 }) (($, Either, Maybe, Pair, show, Z, type) => {
 
@@ -390,7 +391,6 @@
   } = Pair;
 
   let Descending, Nil, Cons, Sum, S;
-  /* istanbul ignore if */
   if (typeof __doctest !== 'undefined') {
     const dirname = __dirname;  // eslint-disable-line no-undef
     const {create, env} = __doctest.require (dirname);

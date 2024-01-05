@@ -1,5 +1,7 @@
 import {deepStrictEqual as eq} from 'node:assert';
 
+import test from 'oletus';
+
 import S from '../index.js';
 
 import area from './internal/area.js';

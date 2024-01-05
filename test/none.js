@@ -1,6 +1,7 @@
 import {deepStrictEqual as eq} from 'node:assert';
 
 import jsc from 'jsverify';
+import test from 'oletus';
 import Z from 'sanctuary-type-classes';
 
 import S from './internal/sanctuary.js';

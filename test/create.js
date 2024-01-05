@@ -1,5 +1,6 @@
 import {deepStrictEqual as eq, throws} from 'node:assert';
 
+import test from 'oletus';
 import $ from 'sanctuary-def';
 
 import S from '../index.js';

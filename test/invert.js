@@ -1,5 +1,7 @@
 import {deepStrictEqual as eq} from 'node:assert';
 
+import test from 'oletus';
+
 import S from './internal/sanctuary.js';
 
 import {Sum} from './internal/Sum.mjs';
