@@ -3,36 +3,10 @@
   "extends": ["./node_modules/sanctuary-style/eslint.json"],
   "overrides": [
     {
-      "files": ["*.md"],
-      "globals": {
-        "$": "readonly",
-        "Cons": "readonly",
-        "Descending": "readonly",
-        "Just": "readonly",
-        "Left": "readonly",
-        "Nil": "readonly",
-        "Nothing": "readonly",
-        "Pair": "readonly",
-        "R": "readonly",
-        "Right": "readonly",
-        "S": "readonly",
-        "Sum": "readonly",
-        "localStorage": "readonly",
-        "sanctuary": "readonly",
-        "window": "readonly"
-      },
-      "rules": {
-        "indent": ["off"],
-        "no-extra-semi": ["off"],
-        "no-unused-vars": ["error", {"args": "none", "varsIgnorePattern": "^([$]|S)$"}]
-      }
-    },
-    {
       "files": ["index.js"],
-      "globals": {"process": "readonly"},
+      "globals": {"__doctest": "readonly", "define": "readonly", "module": "readonly", "process": "readonly", "require": "readonly", "self": "readonly"},
       "rules": {
         "max-len": ["error", {"code": 79, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignorePattern": "^ *//(# |  .* :: |[.] > |[.] // |[.] \\[.*\\]: |[.] .* Function x )"}],
-        "multiline-comment-style": ["off"],
         "no-param-reassign": ["off"]
       }
     }

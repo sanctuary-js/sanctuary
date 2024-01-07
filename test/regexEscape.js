@@ -1,6 +1,7 @@
 import {deepStrictEqual as eq} from 'node:assert';
 
 import jsc from 'jsverify';
+import test from 'oletus';
 
 import S from '../index.js';
 

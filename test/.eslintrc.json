@@ -3,7 +3,6 @@
   "extends": ["../.eslintrc.json"],
   "parserOptions": {"ecmaVersion": 2020, "sourceType": "module"},
   "env": {"node": true},
-  "globals": {"suite": false, "test": false},
   "rules": {
     "max-len": ["off"]
   }
