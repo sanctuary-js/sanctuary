@@ -19,7 +19,7 @@
     "sanctuary-maybe": "2.1.0",
     "sanctuary-pair": "2.1.0",
     "sanctuary-show": "2.0.0",
-    "sanctuary-type-classes": "12.1.0",
+    "sanctuary-type-classes": "13.0.0",
     "sanctuary-type-identifiers": "3.0.0"
   },
   "devDependencies": {
