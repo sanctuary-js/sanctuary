@@ -2020,6 +2020,54 @@
     impl: maybeToNullable,
   };
 
+  //# justToLeft :: b -> Maybe a -> Either a b
+  //.
+  //. Converts a Maybe to an Either. Nothing becomes a Right (containing the
+  //. first argument); a Just becomes a Left.
+  //.
+  //. See also [`leftToJust`](#leftToJust) and
+  // [`justToRight`](#justToRight).
+  //.
+  //. ```javascript
+  //. > S.justToLeft ('No negative numbers') (S.find (S.lt (0)) ([0, 1, 2]))
+  //. Right ('No negative numbers')
+  //.
+  //. > S.justToLeft ('No negative numbers') (S.find (S.lt (0)) ([-1, 0, 1]))
+  //. Left (-1)
+  //. ```
+  function justToLeft(x) {
+    return maybe (Right (x)) (Left);
+  }
+  _.justToLeft = {
+    consts: {},
+    types: [b, $.Maybe (a), $.Either (a) (b)],
+    impl: justToLeft
+  };
+
+  //# justToRight :: a -> Maybe b -> Either a b
+  //.
+  //. Converts a Maybe to an Either. Nothing becomes a Left (containing the
+  //. first argument); a Just becomes a Right.
+  //.
+  //. See also [`rightToJust`](#rightToJust) and
+  // [`justToLeft`](#justToLeft).
+  //.
+  //. ```javascript
+  //. > S.justToRight ('Expecting an integer') (S.parseInt (10) ('xyz'))
+  //. Left ('Expecting an integer')
+  //.
+  //. > S.justToRight ('Expecting an integer') (S.parseInt (10) ('42'))
+  //. Right (42)
+  //. ```
+  function justToRight(x) {
+    return maybe (Left (x)) (Right);
+  }
+  _.justToRight = {
+    consts: {},
+    types: [a, $.Maybe (b), $.Either (a) (b)],
+    impl: justToRight
+  };
+
   //. ### Either
   //.
   //. The Either type represents values with two possibilities: a value of type
@@ -2265,6 +2313,54 @@
     consts: {},
     types: [Throwing (e) (a) (b), a, $.Either (e) (b)],
     impl: encase,
+  };
+
+  //# leftToJust :: Either a b -> Maybe a
+  //.
+  //. Converts an Either to a Maybe. A Left becomes a Just; a Right becomes
+  //. Nothing.
+  //.
+  //. See also [`justToLeft`](#justToLeft) and
+  //. [`rightToJust`](#rightToJust).
+  //.
+  //. ```javascript
+  //. > S.leftToJust (S.Left ('Cannot divide by zero'))
+  //. Just ('Cannot divide by zero')
+  //.
+  //. > S.leftToJust (S.Right (42))
+  //. Nothing
+  //. ```
+  function leftToJust(either) {
+    return either.isLeft ? Just (either.value) : Nothing;
+  }
+  _.leftToJust = {
+    consts: {},
+    types: [$.Either (a) (b), $.Maybe (a)],
+    impl: leftToJust
+  };
+
+  //# rightToJust :: Either a b -> Maybe b
+  //.
+  //. Converts an Either to a Maybe. A Left becomes Nothing; a Right becomes
+  //. a Just.
+  //.
+  //. See also [`justToRight`](#justToRight) and
+  //. [`leftToJust`](#leftToJust).
+  //.
+  //. ```javascript
+  //. > S.rightToJust (S.Left ('Cannot divide by zero'))
+  //. Nothing
+  //.
+  //. > S.rightToJust (S.Right (42))
+  //. Just (42)
+  //. ```
+  function rightToJust(either) {
+    return either.isLeft ? Nothing : Just (either.value);
+  }
+  _.rightToJust = {
+    consts: {},
+    types: [$.Either (a) (b), $.Maybe (b)],
+    impl: rightToJust
   };
 
   //. ### Logic
